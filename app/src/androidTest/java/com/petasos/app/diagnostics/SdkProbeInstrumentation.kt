@@ -33,11 +33,13 @@ class SdkProbeInstrumentation : Instrumentation() {
     private var probe = ""
     private var startedAt = 0L
     private var fixturePort = 0
+    private var bundledStoryIndex: String? = null
 
     override fun onCreate(arguments: Bundle?) {
         super.onCreate(arguments)
         probe = arguments?.getString("probe").orEmpty()
         fixturePort = arguments?.getString("fixturePort")?.toIntOrNull() ?: 0
+        bundledStoryIndex = arguments?.getString("bundledStoryIndex")
         start()
     }
 
@@ -46,6 +48,12 @@ class SdkProbeInstrumentation : Instrumentation() {
         var outcome = "PASS"
         var reason = "completed"
         try {
+            if (probe == "bundled-playback") {
+                if (bundledStoryIndex?.matches(Regex("[0-9]")) != true)
+                    throw ProbeFailure("FAIL", "bundled_story_index_required_0_to_9")
+            } else if (bundledStoryIndex != null) {
+                throw ProbeFailure("FAIL", "bundled_story_index_only_for_bundled_playback")
+            }
             when (probe) {
                 "location" -> location()
                 "android-location-contract" -> com.petasos.app.storage.AndroidLocationContractProbe.run(this, ::mark)
@@ -70,6 +78,7 @@ class SdkProbeInstrumentation : Instrumentation() {
                 "bundled-stories" -> com.petasos.app.storage.BundledStoryCatalogProbe.run(this, ::mark)
                 "regional-content" -> com.petasos.app.storage.RegionalContentProbe.run(this, ::mark)
                 "landmark-storage" -> com.petasos.app.storage.LandmarkStorageProbe.run(this, ::mark)
+                "landmark-policy-storage" -> com.petasos.app.storage.LandmarkPolicyStorageProbe.run(this, ::mark)
                 "automatic-planning" -> com.petasos.app.storage.AutomaticPlanningProbe.run(this, ::mark)
                 "local-commands" -> com.petasos.app.storage.ExplicitPlaybackCommandProbe.run(this, ::mark)
                 "session-recovery" -> com.petasos.app.storage.SessionRecoveryProbe.run(this, ::mark)
@@ -79,6 +88,7 @@ class SdkProbeInstrumentation : Instrumentation() {
                 "music-runtime" -> com.petasos.app.storage.MusicRuntimeProbe.run(this, ::mark)
                 "media-session" -> MediaSessionControlProbe.run(this, ::mark)
                 "app-playback" -> ProductPlaybackProbe.run(this, ::mark)
+                "bundled-playback" -> ProductPlaybackProbe.run(this, ::mark, checkNotNull(bundledStoryIndex).toInt())
                 "app-music" -> ProductMusicProbe.run(this, ::mark)
                 "app-story-generation" -> ProductStoryGenerationProbe.run(this, ::mark)
                 "story-generation-storage" -> com.petasos.app.storage.StoryGenerationStorageProbe.run(this, ::mark)
@@ -140,6 +150,7 @@ class SdkProbeInstrumentation : Instrumentation() {
                 "resume-context" -> "actual_Room_Keystore_frozen_completed_only_context_and_revocation_synthetic_data"
                 "generation-planning-live" -> "actual_Android_HTTPS_story_install_and_bounded_resume_public_fixed_context"
                 "app-playback" -> "actual_product_media_service_installed_public_story_TTS_and_durable_playback_no_microphone"
+                "bundled-playback" -> "one_explicit_SHA_pinned_bundled_public_story_actual_TTS_all_required_paragraphs_durable_monotonic_callback_durations_no_acoustic_duration_claim_Activity_microphone_model_location_or_consent_change_history_retained"
                 "app-music" -> "actual_product_public_story_then_licensed_bundled_music_Stop_resume_natural_end_and_durable_commits_no_microphone_or_model"
                 "vehicle-preferences" -> "actual_Room_explicit_vehicle_preferences_with_disposable_synthetic_data_no_capture"
                 "trip-results" -> "actual_Room_read_only_committed_trip_results_disposable_synthetic_data_no_capture"
@@ -158,6 +169,7 @@ class SdkProbeInstrumentation : Instrumentation() {
                 "regional-content" -> "actual_Room_v1_v2_migration_reviewed_region_binding_synthetic_content_no_location_audio_or_model"
                 "recovery-music-gap" -> "actual_Room_durable_music_boundary_recovery_synthetic_scripted_no_capture_audio_or_model"
                 "landmark-storage" -> "actual_Room_reviewed_landmark_policy_coordinate_and_association_synthetic_content_no_location_audio_consent_change_or_model"
+                "landmark-policy-storage" -> "disposable_Room_synthetic_TX05_places_pinned_landmark_review_atomic_install_NULL_story_binding_rejection_history_preservation_no_product_policy_location_audio_or_model"
                 "session-recovery" -> "actual_Room_Keystore_TX04_recovery_with_synthetic_data"
                 "navigation" -> "actual_read_only_NaviHelper_no_route_mutation"
                 "auxiliary-route" -> "one_actual_HTTPS_public_official_route_example_disposable_NGII_hierarchy_projection_synthetic_Android_anchor_no_real_location_navigation_audio_model_or_product_records"

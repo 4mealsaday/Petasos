@@ -1,6 +1,6 @@
 # P0 랜드마크 자료와 첫 두 장소 연결 계획
 
-2026-11-09. 개발 단계 6의 자료 검토·설치 입력 초안이다. 앱 코드·production assets·제품 DB는 변경하지 않았다. 현재 [10개 지역 이야기](p0-content-review-evidence.md)의 stable story/fact, 버전·청취 이력을 유지하며 **문화역 서울 284의 S01, 대전엑스포과학공원의 S10**을 첫 연결 대상으로 선정한다. 두 장소의 공식 대표점 좌표 메타데이터는 검토·컴파일했지만 랜드마크 정책과 자동 안내는 활성화하지 않았다.
+2026-11-09. 개발 단계 6의 자료 검토 기록이다. dev.28에서 검토한 두 장소를 고정 콘텐츠 asset에 추가하고 제품 설치·실제 재생을 검증했다([결과](2026-11-09-landmark-install-and-bundled-playback.md)). 아래 private 초안과 최초 자료 검사 설명은 준비 당시의 범위다. 현재 [10개 지역 이야기](p0-content-review-evidence.md)의 stable story/fact, 버전·청취 이력을 유지하며 **문화역 서울 284의 S01, 대전엑스포과학공원의 S10**을 첫 연결 대상으로 선정한다. 두 장소의 공식 대표점 좌표 메타데이터는 검토·컴파일했지만 랜드마크 정책과 자동 안내는 활성화하지 않았다.
 
 ## 6개 후보와 이야기의 실제 관계
 
@@ -59,9 +59,7 @@ Bundle SHA-256: `c8f34431486e0581c2f2a9916eba2db17e6511259f47b4f7ee7a31d70cd7862
 
 ## 실제 연결에 남은 구현과 정책 자료
 
-현행 TX-05는 place를 추가할 수 있지만 `landmark_policy_json`은 null로 설치한다. 기존 story의 `placeId=null`을 바꿔 재설치하면 immutable 비교에서 거부한다. `RoomLandmarkCandidates`는 현재 `story.place_id`와 정책이 있어야 읽으므로 **이 초안을 설치하는 것만으로 자동 랜드마크가 나오지는 않는다**.
-
-다음 구현에서는 검토된 story↔place 연결을 명시적으로 설치하는 계약이 필요하다. 기존 story/fact와 청취 이력을 유지하는 **별도 binding revision 및 현재성 검사**가 가능한 최소 방향이다. 실제 schema·API는 아직 확정하지 않았다. canonical story 행을 임의 SQL로 변경하거나 이야기 ID를 복제하는 방식은 사용하지 않는다. 설치기는 좌표 출처·association fact·정책을 함께 고정하고 atomic install, exact reinstall, 충돌·철회·generated-version omission을 검사해야 한다.
+dev.28은 기존 NULL story FK를 보존하면서 검토 정책의 storyId와 독립 association fact로 연결하는 [설치 계약](reviewed-landmark-policy-install.md)을 구현했다. TX-05는 두 place를 정책 NULL로 설치하고, 동일 장소 재설치 때 기존 정책을 보존한다. 원자적 설치·정확한 재설치·충돌·철회·generated-version omission과 기존 이력 보존을 실제 Room에서 검증했다. 실제 정책은 여전히 0개이므로 좌표 설치만으로 자동 랜드마크가 나오지 않는다.
 
 [DATA-11](../Petasos_데이터_API_계약.md)과 [랜드마크 정책 계약](reviewed-landmark-policy.md)을 채우려면 다음 자료가 필요하다.
 

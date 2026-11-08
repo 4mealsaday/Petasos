@@ -144,12 +144,15 @@ class RoomContentInstaller internal constructor(
             ))
         }
         bundle.places.forEach { place ->
-            put("place", listOf("place_id"), linkedMapOf(
+            // Policy is installed/revoked independently. Exact geometry reload must preserve it,
+            // including rejected/malformed markers; TX-05 never approves or clears that authority.
+            val placeValues = linkedMapOf<String, Any?>(
                 "place_id" to place.placeId, "region_id" to null, "name" to place.name,
                 "aliases_json" to StrictJson.stringify(place.aliases), "latitude" to place.latitude?.toDouble(),
                 "longitude" to place.longitude?.toDouble(), "coordinate_source_revision_id" to place.coordinateSourceRevisionId,
-                "landmark_policy_json" to null,
-            ))
+            )
+            if (!compare("place", listOf("place_id"), placeValues))
+                insert("place", placeValues + ("landmark_policy_json" to null))
             place.externalIds.forEach { external ->
                 put("place_external_id", listOf("provider", "external_id"), linkedMapOf(
                     "provider" to external.provider, "external_id" to external.externalId,

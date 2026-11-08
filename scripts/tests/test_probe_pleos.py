@@ -304,6 +304,37 @@ class LandmarkStorageProbeTest(unittest.TestCase):
                     run.assert_not_called()
 
 
+class LandmarkPolicyStorageProbeTest(unittest.TestCase):
+    def test_synthetic_review_installer_scope_is_disposable_and_privacy_supported(self):
+        name = "landmark-policy-storage"
+        self.assertEqual(probe.PROBES.count(name), 1)
+        self.assertNotIn(name, probe.RUN_AS_PROBES)
+        self.assertEqual(probe.probe_timeout(name), 90)
+        self.assertEqual(probe.read_development_server(name, None), (None, None))
+        self.assertIsNone(probe.read_content_bundle(name, None))
+        report = probe.probe_evidence_metadata(name)
+        self.assertEqual(report["fixture"], "disposable_database_and_synthetic_test_content")
+        self.assertIn("explicit NULL story binding", report["scope"])
+        self.assertIn("retained rejection", report["scope"])
+        self.assertIn("existing scripted history/cards/proofs", report["scope"])
+        self.assertIn("no real policy approval, product database, location subscription", report["scope"])
+        self.assertIn("microphone, audio, consent change or model", report["scope"])
+
+    def test_actual_review_and_private_fixture_options_are_rejected_before_read_or_adb(self):
+        for variant in ("debug", "privacy"):
+            for option in ("--https-fixture-ready", "--development-server-ready", "--device-token-file", "--content-bundle"):
+                with self.subTest(variant=variant, option=option), \
+                        patch("sys.argv", ["probe-pleos.py", "landmark-policy-storage", "--build-type", variant,
+                                           option, "/not-a-synthetic-review/private-file"]), \
+                        patch.object(probe.subprocess, "run") as run, \
+                        patch.object(probe, "private_bytes") as private_read, patch("sys.stderr"):
+                    with self.assertRaises(SystemExit) as error:
+                        probe.main()
+                    self.assertEqual(error.exception.code, 2)
+                    private_read.assert_not_called()
+                    run.assert_not_called()
+
+
 class RecoveryMusicGapProbeTest(unittest.TestCase):
     def test_recovery_probe_preserves_fixture_and_no_capture_boundary(self):
         name = "recovery-music-gap"
@@ -755,6 +786,60 @@ class TtsBindingAuditTest(unittest.TestCase):
         for samples in ([], self.closed[:1], self.closed[:2], self.closed * 2):
             with self.subTest(count=len(samples)):
                 self.assertFalse(probe.audit_tts_binding_lifecycle(self.ready, samples)["passed"])
+
+
+class BundledPlaybackProbeTest(unittest.TestCase):
+    def test_explicit_indices_make_one_argument_and_separate_evidence_files(self):
+        name = "bundled-playback"
+        self.assertEqual(probe.PROBES.count(name), 1)
+        self.assertNotIn(name, probe.RUN_AS_PROBES)
+        self.assertEqual(probe.probe_timeout(name), 90)
+        self.assertEqual(probe.bundled_story_arguments("app-playback"), [])
+        self.assertEqual(probe.evidence_stem("app-playback", "privacy"), "app-playback-privacy")
+        stems = set()
+        for index in range(10):
+            self.assertEqual(probe.bundled_story_arguments(name, index), ["-e", "bundledStoryIndex", str(index)])
+            for variant in ("debug", "privacy"):
+                stems.add(probe.evidence_stem(name, variant, index))
+        self.assertEqual(len(stems), 20)
+        self.assertIn("bundled-playback-0-privacy", stems)
+        self.assertIn("bundled-playback-9", stems)
+        for index in (None, -1, 10, True, False, "0", 0.0):
+            with self.subTest(index=index), self.assertRaisesRegex(probe.AuditFailure, "^bundled_story_index_required_0_to_9$"):
+                probe.bundled_story_arguments(name, index)
+        with self.assertRaisesRegex(probe.AuditFailure, "^bundled_story_index_only_for_bundled_playback$"):
+            probe.bundled_story_arguments("app-playback", 0)
+
+    def test_invalid_or_misapplied_index_and_private_inputs_fail_before_adb(self):
+        cases = [
+            ["bundled-playback"],
+            ["bundled-playback", "--bundled-story-index", "-1"],
+            ["bundled-playback", "--bundled-story-index", "10"],
+            ["bundled-playback", "--bundled-story-index", "true"],
+            ["bundled-playback", "--bundled-story-index", "1.0"],
+            ["app-playback", "--bundled-story-index", "0"],
+        ]
+        for option in ("--https-fixture-ready", "--development-server-ready", "--device-token-file", "--content-bundle"):
+            cases.append(["bundled-playback", "--bundled-story-index", "0", option, "/private-input"])
+        for arguments in cases:
+            with self.subTest(arguments=arguments), \
+                    patch("sys.argv", ["probe-pleos.py", *arguments, "--build-type", "privacy"]), \
+                    patch.object(probe.subprocess, "run") as run, \
+                    patch.object(probe, "private_bytes") as private_read, patch("sys.stderr"):
+                with self.assertRaises(SystemExit) as error:
+                    probe.main()
+                self.assertEqual(error.exception.code, 2)
+                run.assert_not_called()
+                private_read.assert_not_called()
+
+    def test_scope_distinguishes_actual_callback_duration_and_preserved_product_history(self):
+        report = probe.probe_evidence_metadata("bundled-playback")
+        self.assertEqual(report["fixture"], "sha_pinned_packaged_public_story")
+        self.assertIn("all required paragraphs completed in a new session", report["scope"])
+        self.assertIn("ended_elapsed_ms minus started_elapsed_ms", report["scope"])
+        self.assertIn("not acoustic speech duration", report["scope"])
+        self.assertIn("history retained in product Room", report["scope"])
+        self.assertIn("no Activity, microphone, model, actual location, consent change or external fixture", report["scope"])
 
 
 if __name__ == "__main__":

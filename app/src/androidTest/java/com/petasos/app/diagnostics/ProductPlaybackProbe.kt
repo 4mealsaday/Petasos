@@ -14,6 +14,10 @@ import androidx.media3.session.SessionToken
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.SettableFuture
+import com.petasos.app.content.ContentBundleCodec
+import com.petasos.app.content.ContentVersion
+import com.petasos.app.generation.StrictJson
+import com.petasos.app.platform.android.content.BundledStoryCatalog
 import com.petasos.app.platform.android.runtime.PetasosSessionHost
 import com.petasos.app.platform.automotive.CarPolicySource
 import com.petasos.app.platform.automotive.VehiclePowerPolicy
@@ -21,6 +25,7 @@ import com.petasos.app.platform.media.PetasosMediaService
 import com.petasos.app.playback.AdapterPhase
 import com.petasos.app.playback.PlaybackBlocker
 import com.petasos.app.storage.StorageDatabase
+import java.io.ByteArrayOutputStream
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
@@ -32,7 +37,8 @@ import java.util.concurrent.atomic.AtomicReference
  */
 @androidx.annotation.OptIn(UnstableApi::class)
 object ProductPlaybackProbe {
-    fun run(instrumentation: Instrumentation, mark: (String) -> Unit) {
+    fun run(instrumentation: Instrumentation, mark: (String) -> Unit, bundledStoryIndex: Int? = null) {
+        if (bundledStoryIndex != null && bundledStoryIndex !in 0..9) throw ProbeFailure("BUNDLED_PLAYBACK_INDEX_INVALID")
         val context = instrumentation.targetContext
         val deadline = SystemClock.elapsedRealtime() + 70_000
         val workDeadline = deadline - 5_000 // Reserve time for the standard Stop and controller cleanup.
@@ -72,6 +78,33 @@ object ProductPlaybackProbe {
         if (!context.getDatabasePath("petasos.db").isFile) throw ProbeFailure("APP_PLAYBACK_INSTALLED_DATABASE_REQUIRED")
         val database = StorageDatabase.open(context, "petasos.db")
         try {
+            val bundledVersion: ContentVersion? = bundledStoryIndex?.let { index ->
+                val bytes = context.assets.open(BundledStoryCatalog.ASSET).use { input ->
+                    val output = ByteArrayOutputStream()
+                    val buffer = ByteArray(4096)
+                    while (true) {
+                        val size = input.read(buffer)
+                        if (size < 0) break
+                        if (size == 0 || output.size() + size > StrictJson.MAX_BYTES)
+                            throw ProbeFailure("BUNDLED_PLAYBACK_ASSET_INVALID")
+                        output.write(buffer, 0, size)
+                    }
+                    output.toByteArray()
+                }
+                if (ContentBundleCodec.sha256(bytes) != BundledStoryCatalog.SHA256)
+                    throw ProbeFailure("BUNDLED_PLAYBACK_ASSET_HASH_MISMATCH")
+                val bundle = ContentBundleCodec.decode(bytes, System.currentTimeMillis())
+                if (bundle.stories.size != 10 || bundle.versions.size != 10)
+                    throw ProbeFailure("BUNDLED_PLAYBACK_ASSET_INVENTORY_INVALID")
+                val storyId = bundle.stories.sortedBy { it.storyId }[index].storyId
+                val version = bundle.versions.singleOrNull { it.storyId == storyId }
+                    ?: throw ProbeFailure("BUNDLED_PLAYBACK_ASSET_VERSION_AMBIGUOUS")
+                mark("bundled_playback_index_$index")
+                mark("bundled_playback_public_story_${version.storyId}")
+                mark("bundled_playback_public_version_${version.storyVersionId}")
+                mark("bundled_playback_asset_sha256_${BundledStoryCatalog.SHA256}")
+                version
+            }
             val sql = database.openHelper.readableDatabase
             fun count(statement: String, vararg args: Any?): Long = sql.query(SimpleSQLiteQuery(statement, args)).use {
                 if (!it.moveToFirst()) throw ProbeFailure("APP_PLAYBACK_STORAGE_READ_FAILED")
@@ -121,6 +154,7 @@ object ProductPlaybackProbe {
             val entries = await(children, "APP_PLAYBACK_CATALOG_UNAVAILABLE").value
                 ?: throw ProbeFailure("APP_PLAYBACK_CATALOG_UNAVAILABLE")
             val selected: MediaItem = entries.firstOrNull { item ->
+                (bundledVersion == null || item.mediaId == bundledVersion.storyVersionId) &&
                 item.localConfiguration == null && item.mediaMetadata.isPlayable == true && count("""
                     SELECT count(*) FROM paragraph p JOIN paragraph_fact pf ON pf.paragraph_id=p.paragraph_id
                     JOIN fact_source fs ON fs.fact_revision_id=pf.fact_revision_id
@@ -129,6 +163,15 @@ object ProductPlaybackProbe {
                     AND s.source_url LIKE 'https://%' AND s.source_url NOT LIKE 'https://example.invalid/%'
                 """.trimIndent(), item.mediaId) > 0
             } ?: throw ProbeFailure("APP_PLAYBACK_REVIEWED_PUBLIC_STORY_REQUIRED")
+            if (bundledVersion != null) {
+                if (count("SELECT count(*) FROM story_version WHERE story_version_id=? AND story_id=? AND content_hash=? AND status='published'",
+                        bundledVersion.storyVersionId, bundledVersion.storyId, bundledVersion.contentHash) != 1L)
+                    throw ProbeFailure("BUNDLED_PLAYBACK_INSTALLED_VERSION_MISMATCH")
+                val requiredIds = sql.query(SimpleSQLiteQuery("SELECT paragraph_id FROM paragraph WHERE story_version_id=? AND required=1 ORDER BY ordinal",
+                    arrayOf(bundledVersion.storyVersionId))).use { rows -> buildList { while (rows.moveToNext()) add(rows.getString(0)) } }
+                if (requiredIds != bundledVersion.paragraphs.filter { it.required }.sortedBy { it.ordinal }.map { it.paragraphId })
+                    throw ProbeFailure("BUNDLED_PLAYBACK_REQUIRED_PARAGRAPHS_MISMATCH")
+            }
             onMain("APP_PLAYBACK_PREPARE_UNAVAILABLE") {
                 check(connected.isCommandAvailable(Player.COMMAND_SET_MEDIA_ITEM))
                 check(connected.isCommandAvailable(Player.COMMAND_PREPARE))
@@ -171,10 +214,16 @@ object ProductPlaybackProbe {
             fun completedCount() = count("""SELECT count(*) FROM playback_attempt a JOIN paragraph p ON p.paragraph_id=a.paragraph_id
                 WHERE a.session_id=? AND a.kind='story' AND p.story_version_id=? AND a.state='completed'
                   AND a.started_at IS NOT NULL AND a.started_elapsed_ms IS NOT NULL AND a.completed_at IS NOT NULL""", sessionId, selected.mediaId)
+            fun allRequiredCompleted(): Boolean = bundledVersion?.paragraphs?.filter { it.required }?.all { paragraph ->
+                count("""SELECT count(*) FROM playback_attempt WHERE session_id=? AND kind='story' AND paragraph_id=?
+                    AND state='completed' AND started_at IS NOT NULL AND completed_at IS NOT NULL
+                    AND started_elapsed_ms IS NOT NULL AND ended_elapsed_ms>started_elapsed_ms
+                    AND interrupted_at IS NULL AND length(clock_scope_id)>0""", sessionId, paragraph.paragraphId) == 1L
+            } ?: (completedCount() > 0)
             waitUntil("APP_PLAYBACK_TTS_STARTED_NOT_COMMITTED", 15_000) { checkRuntime(); startedCount() > 0 }
             mark("app_playback_product_actual_tts_started_in_new_session")
             waitUntil("APP_PLAYBACK_TTS_COMPLETION_NOT_COMMITTED", (remaining(workDeadline) - 8_000).coerceAtLeast(1)) {
-                checkRuntime(); completedCount() > 0
+                checkRuntime(); allRequiredCompleted()
             }
             mark("app_playback_product_actual_tts_completed_committed_to_petasos_db")
 
@@ -194,6 +243,33 @@ object ProductPlaybackProbe {
                 throw ProbeFailure("APP_PLAYBACK_UNEXPECTED_LOCATION_OR_CONVERSATION")
             }
             if (completedCount() == 0L) throw ProbeFailure("APP_PLAYBACK_COMPLETION_RECORD_NOT_RETAINED")
+            if (bundledVersion != null) {
+                if (!allRequiredCompleted()) throw ProbeFailure("BUNDLED_PLAYBACK_REQUIRED_COMPLETION_NOT_RETAINED")
+                val required = bundledVersion.paragraphs.filter { it.required }.sortedBy { it.ordinal }
+                val scopes = mutableSetOf<String>()
+                var durationSum = 0L
+                for (paragraph in required) {
+                    sql.query(SimpleSQLiteQuery("""SELECT started_elapsed_ms,ended_elapsed_ms,clock_scope_id FROM playback_attempt
+                        WHERE session_id=? AND kind='story' AND paragraph_id=? AND state='completed'""",
+                        arrayOf(sessionId, paragraph.paragraphId))).use { rows ->
+                        if (!rows.moveToFirst() || rows.isNull(0) || rows.isNull(1) || rows.isNull(2))
+                            throw ProbeFailure("BUNDLED_PLAYBACK_MONOTONIC_COMPLETION_MISSING")
+                        val started = rows.getLong(0)
+                        val ended = rows.getLong(1)
+                        if (started < 0 || ended <= started || rows.getString(2).isBlank())
+                            throw ProbeFailure("BUNDLED_PLAYBACK_MONOTONIC_COMPLETION_INVALID")
+                        scopes += rows.getString(2)
+                        val duration = ended - started
+                        durationSum = Math.addExact(durationSum, duration)
+                        if (rows.moveToNext()) throw ProbeFailure("BUNDLED_PLAYBACK_DUPLICATE_COMPLETION")
+                        mark("bundled_playback_required_ordinal_${paragraph.ordinal}_duration_ms_$duration")
+                    }
+                }
+                if (scopes.size != 1) throw ProbeFailure("BUNDLED_PLAYBACK_CLOCK_SCOPE_CHANGED")
+                mark("bundled_playback_required_paragraphs_${required.size}")
+                mark("bundled_playback_required_duration_total_ms_$durationSum")
+                mark("bundled_playback_all_required_actual_tts_callbacks_and_Room_monotonic_completion_verified")
+            }
             requireLocationPreferenceUnchanged()
             mark("app_playback_standard_stop_persists_false_intent_without_location_input_or_generation")
             mark("app_playback_existing_location_preference_preserved_no_activity_launched")

@@ -15,10 +15,10 @@ import time
 ROOT = Path(__file__).resolve().parent.parent
 PROBES = ("vehicle-preferences", "trip-results", "trip-lifecycle", "app-trip-lifecycle", "app-location-live", "location", "tts-connect", "tts-speak", "tts-stop", "tts-close", "stt-connect", "stt-ready",
           "stt-listen", "stt-cancel", "stt-close", "stt-pcm", "stt-owned-pcm", "stt-owned-listen", "stt-owned-stream", "stt-owned-delayed", "stt-owned-eof",
-          "location-storage", "android-location-contract", "android-speech-capability", "region-storage", "region-policy-storage", "region-hierarchy", "bundled-stories", "regional-content", "landmark-storage", "automatic-planning", "local-commands", "session-recovery", "recovery-music-gap", "navigation", "music-runtime", "media-session", "app-playback", "app-music", "car-policy-ui",
+          "location-storage", "android-location-contract", "android-speech-capability", "region-storage", "region-policy-storage", "region-hierarchy", "bundled-stories", "regional-content", "landmark-storage", "landmark-policy-storage", "automatic-planning", "local-commands", "session-recovery", "recovery-music-gap", "navigation", "music-runtime", "media-session", "app-playback", "app-music", "car-policy-ui",
           "storage", "runtime-scripted", "runtime-tts", "runtime-tts-stop", "story-generation-storage", "resume-context", "app-story-generation",
           "summary-storage", "summary-work", "summary-rights", "generation-https", "generation-provision", "generation-live",
-          "content-install", "content-install-local", "content-runtime", "generation-planning-live", "auxiliary-route")
+          "content-install", "content-install-local", "content-runtime", "generation-planning-live", "auxiliary-route", "bundled-playback")
 CAAS = "ai.pleos.playground.caas"
 APP = "com.petasos.app"
 BUILD_TYPES = ("debug", "privacy")
@@ -47,10 +47,24 @@ def build_instruction(build_type):
     return f"Build {option}:app:assemble{variant} :app:assemble{variant}AndroidTest first."
 
 
-def evidence_stem(probe, build_type):
+def bundled_story_arguments(probe, index=None):
+    """A single public asset index, never a path, user story ID, or private fixture."""
+    if probe == "bundled-playback":
+        if type(index) is not int or index not in range(10):
+            raise AuditFailure("bundled_story_index_required_0_to_9")
+        return ["-e", "bundledStoryIndex", str(index)]
+    if index is not None:
+        raise AuditFailure("bundled_story_index_only_for_bundled_playback")
+    return []
+
+
+def evidence_stem(probe, build_type, bundled_story_index=None):
     if probe not in PROBES:
         raise AuditFailure("unsupported_probe")
     apk_paths(build_type)
+    bundled_story_arguments(probe, bundled_story_index)
+    if bundled_story_index is not None:
+        probe = f"{probe}-{bundled_story_index}"
     # Preserve historical debug paths; optimized evidence must not overwrite them.
     return probe if build_type == "debug" else f"{probe}-privacy"
 
@@ -103,13 +117,15 @@ def read_development_server(probe, path, token_path=None):
 def probe_timeout(probe):
     if probe == "auxiliary-route":
         return 90  # Probe checks its own 60s budget; host permits bounded Android cleanup/reporting.
+    if probe == "bundled-playback":
+        return 90  # One explicit story uses the existing 70s product-playback probe budget.
     if probe == "app-music":
         return 190  # One full licensed track plus public story and standard stop/resume cleanup.
     if probe in ("app-trip-lifecycle", "app-location-live", "music-runtime", "generation-live", "generation-planning-live", "app-story-generation", "resume-context", "story-generation-storage"):
         return 120
     # Multi-database Keystore rights checks also need headroom on a loaded emulator.
     # These are host process limits, not product speech or generation deadlines.
-    if probe in ("generation-https", "stt-listen", "stt-owned-listen", "stt-owned-stream", "stt-owned-delayed", "stt-owned-eof", "app-playback", "summary-rights", "automatic-planning", "landmark-storage", "region-policy-storage", "region-hierarchy", "bundled-stories", "recovery-music-gap", "local-commands"):
+    if probe in ("generation-https", "stt-listen", "stt-owned-listen", "stt-owned-stream", "stt-owned-delayed", "stt-owned-eof", "app-playback", "summary-rights", "automatic-planning", "landmark-storage", "landmark-policy-storage", "region-policy-storage", "region-hierarchy", "bundled-stories", "recovery-music-gap", "local-commands"):
         return 90
     return 50
 
@@ -117,9 +133,9 @@ def probe_timeout(probe):
 def probe_evidence_metadata(probe, has_https_fixture=False):
     """Describe fixture boundaries identically in the report and host regressions."""
     return {
-        "fixture": "official_public_route_example_and_packaged_geometry_disposable_database_synthetic_android_anchor" if probe == "auxiliary-route" else "official_packaged_geometry_disposable_database_public_synthetic_coordinates" if probe in ("region-storage", "region-policy-storage", "region-hierarchy", "bundled-stories") else "two_synthetic_coordinates" if probe == "location" else (
+        "fixture": "sha_pinned_packaged_public_story" if probe == "bundled-playback" else "official_public_route_example_and_packaged_geometry_disposable_database_synthetic_android_anchor" if probe == "auxiliary-route" else "official_packaged_geometry_disposable_database_public_synthetic_coordinates" if probe in ("region-storage", "region-policy-storage", "region-hierarchy", "bundled-stories") else "two_synthetic_coordinates" if probe == "location" else (
             "synthetic_korean_pcm" if probe in ("stt-pcm", "stt-owned-pcm", "stt-owned-stream", "stt-owned-delayed", "stt-owned-eof") else (
-                "disposable_database_and_synthetic_test_content" if probe in ("vehicle-preferences", "trip-results", "trip-lifecycle", "regional-content", "landmark-storage", "recovery-music-gap", "storage", "runtime-scripted", "runtime-tts", "runtime-tts-stop", "story-generation-storage", "resume-context", "automatic-planning", "local-commands", "summary-storage", "summary-work") else (
+                "disposable_database_and_synthetic_test_content" if probe in ("vehicle-preferences", "trip-results", "trip-lifecycle", "regional-content", "landmark-storage", "landmark-policy-storage", "recovery-music-gap", "storage", "runtime-scripted", "runtime-tts", "runtime-tts-stop", "story-generation-storage", "resume-context", "automatic-planning", "local-commands", "summary-storage", "summary-work") else (
                     "local_https_synthetic_provider_one_day_ca_ephemeral_device_token" if has_https_fixture else None))),
         "scope": {
             "stt-owned-pcm": "actual Pleos PCM with finite synthetic capture and fixture stop proof; no microphone; timing acceptance is separate",
@@ -139,6 +155,7 @@ def probe_evidence_metadata(probe, has_https_fixture=False):
             "region-policy-storage": "disposable Room with packaged official geometry, explicitly synthetic region policy reviews and public synthetic coordinates; atomic first finalization, exact no-op, immutable conflicts, catalog reload, terminal current-authority revocation and existing-proof preservation; no product policy approval, consent change, location subscription, audio or model",
             "recovery-music-gap": "actual Room durable story/music completion recovery with synthetic content and scripted outputs; no location, microphone, audio or external model",
             "landmark-storage": "actual Room reviewed landmark policy, coordinate and story association with synthetic content; no location, audio, consent change or model",
+            "landmark-policy-storage": "disposable Room with synthetic TX05 places and strict pinned landmark policy reviews; atomic install and rollback, explicit NULL story binding, exact reload and retained rejection, duplicate association guards, generated omission and existing scripted history/cards/proofs; no real policy approval, product database, location subscription, coordinate output, microphone, audio, consent change or model",
             "region-hierarchy": "disposable Room with reviewed hierarchy and public synthetic points; leaf-only card and parent story scope; no product policy, microphone or network",
             "bundled-stories": "disposable Room with ten packaged public stories and exact bindings; no product records, visit policy, audio or network",
             "regional-content": "actual Room v1-to-v2 migration and reviewed textual region bindings with synthetic content; no location, audio, consent change or model",
@@ -151,6 +168,7 @@ def probe_evidence_metadata(probe, has_https_fixture=False):
             "media-session": "actual MediaController command transport to synthetic target plus product browse and voice gate; no audio or microphone",
             "car-policy-ui": "actual CarUx observation plus synthetic visibility states; no vehicle mutation",
             "app-playback": "actual product MediaBrowser/service/host, installed public story TTS and durable petasos.db completion; no microphone or model call",
+            "bundled-playback": "one explicit SHA-pinned public bundled story selected by storyId-sorted index 0..9; actual product MediaBrowser/service/host and Pleos TTS; all required paragraphs completed in a new session with durable ended_elapsed_ms minus started_elapsed_ms per paragraph and sum; callback intervals are not acoustic speech duration; 70-second internal budget; history retained in product Room; no Activity, microphone, model, actual location, consent change or external fixture",
             "app-music": "actual product public story then licensed bundled music with attribution, Media3 Stop/resume/natural end and durable petasos.db commits; no microphone, model, synthetic tone or location opt-in",
             "storage": "actual Room/SQLite/Keystore, synthetic data; not full product acceptance",
             "runtime-scripted": "actual Room/Keystore with explicitly scripted speech and generation; no microphone or network",
@@ -350,7 +368,13 @@ def main():
                         help="Optional private token file for generation-provision; transferred only over stdin, never printed.")
     parser.add_argument("--content-bundle", type=Path,
                         help="Reviewed local bundle for content or generation-planning-live probes; copied privately, never printed.")
+    parser.add_argument("--bundled-story-index", type=int,
+                        help="Required only for bundled-playback: one SHA-pinned public story, sorted by storyId, index 0..9.")
     args = parser.parse_args()
+    try:
+        story_arguments = bundled_story_arguments(args.probe, args.bundled_story_index)
+    except AuditFailure as failure:
+        parser.error(str(failure))
     if args.build_type == "privacy" and args.probe in RUN_AS_PROBES:
         parser.error("privacy_probe_requires_unavailable_run_as; use a supported synthetic probe or the ordinary debug build.")
     if not re.fullmatch(r"emulator-\d+", args.serial):
@@ -416,10 +440,11 @@ def main():
 
     folder = args.artifacts_dir.expanduser().resolve()
     folder.mkdir(parents=True, exist_ok=True)
-    stem = evidence_stem(args.probe, args.build_type)
+    stem = evidence_stem(args.probe, args.build_type, args.bundled_story_index)
     log = folder / f"{stem}.txt"
     command = [str(adb_path), "-s", args.serial, "shell", "am", "instrument", "-w", "--user", user,
                "-e", "probe", args.probe]
+    command += story_arguments
     if fixture is not None:
         command += ["-e", "fixturePort", str(fixture["port"])]
     if development is not None:
@@ -640,6 +665,8 @@ def main():
         "audioAudit": audio_audit,
         "ttsBindingAudit": tts_audit,
         "contentBundleSha256": hashlib.sha256(content_bytes).hexdigest() if content_bytes is not None else None,
+        **({"bundledStoryIndex": args.bundled_story_index, "bundledStoryOrder": "storyId_ascending"}
+           if args.bundled_story_index is not None else {}),
         **probe_evidence_metadata(args.probe, has_https_fixture=fixture is not None),
     }
     (folder / f"{stem}.json").write_text(json.dumps(metadata, indent=2) + "\n")

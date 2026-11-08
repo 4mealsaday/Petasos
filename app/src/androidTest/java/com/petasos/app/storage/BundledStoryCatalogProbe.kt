@@ -23,7 +23,8 @@ object BundledStoryCatalogProbe {
                 check(ContentBundleCodec.sha256(bytes) == BundledStoryCatalog.SHA256)
                 val bundle = ContentBundleCodec.decode(bytes, System.currentTimeMillis())
                 check(bundle.stories.size == 10 && bundle.versions.size == 10 && bundle.regionBindings.size == 10)
-                check(bundle.places.isEmpty())
+                check(bundle.places.size == 2 && bundle.sources.size == 14)
+                check(bundle.stories.all { it.placeId == null })
                 // Existing identity stays intact even when it has no currently published version.
                 sql.execSQL("INSERT INTO story(story_id,topic_id,title,core_question) VALUES ('existing-story','existing-topic','Existing title','Existing question')")
                 val catalog = BundledStoryCatalog(context)
@@ -33,7 +34,10 @@ object BundledStoryCatalogProbe {
                 check(count("SELECT count(*) FROM story_region_binding") == 10L)
                 check(count("SELECT count(*) FROM region_revision") == 264L)
                 check(count("SELECT count(*) FROM region_revision WHERE verified_at IS NOT NULL") == 0L)
-                check(count("SELECT count(*) FROM place") == 0L)
+                check(count("SELECT count(*) FROM place") == 2L)
+                check(count("SELECT count(*) FROM place WHERE coordinate_source_revision_id IS NOT NULL AND landmark_policy_json IS NULL") == 2L)
+                check(count("SELECT count(*) FROM story WHERE place_id IS NOT NULL") == 0L)
+                check(RoomLandmarkCandidates(database).candidates().isEmpty())
                 listOf("trip", "session", "preference", "recording_segment", "playback_attempt", "collection_record").forEach {
                     check(count("SELECT count(*) FROM $it") == 0L)
                 }
@@ -43,6 +47,7 @@ object BundledStoryCatalogProbe {
                     }
                 }
                 mark("bundled_ten_reviewed_stories_and_exact_bindings_install_without_location_policy_or_trip")
+                mark("bundled_two_reviewed_public_place_coordinates_do_not_approve_landmark_policy_or_change_story_ids")
                 check(catalog.loadVerified(database) == ContentInstallResult(0, 10))
                 check(count("SELECT count(*) FROM story") == 11L)
                 mark("bundled_identical_reinstall_is_noop_and_preserves_prior_story")
