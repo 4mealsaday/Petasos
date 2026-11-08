@@ -2,6 +2,7 @@ package com.petasos.app.storage
 
 import android.app.Instrumentation
 import androidx.sqlite.db.SimpleSQLiteQuery
+import com.petasos.app.capability.location.AndroidLocationMetadata
 import com.petasos.app.capability.location.LocationReadingKind
 import com.petasos.app.capability.location.LocationSample
 import com.petasos.app.generation.StrictJson
@@ -206,6 +207,67 @@ object RegionPolicyStorageProbe {
                 check(reader.reviewedPolicy("synthetic-legacy-r1") == null)
                 check(count("SELECT count(*) FROM preference") == 0L)
                 mark("region_policy_minimal_legacy_contract_supported_but_partial_packaged_envelope_never_downgrades")
+
+                // Same Room path at 5 Hz: N is a minimum, and the 2-second evidence suffix needs
+                // eleven real stored rows. The pinned GEOS interior point is public geometry;
+                // all measurements and this disposable review are explicitly synthetic.
+                val highRateRegion = manifest.regions.single { it.code == "11710" }
+                val highRateReview = review(highRateRegion).let { base ->
+                    base.copy(policy = base.policy.copy(consecutiveSamples = 3, minConfirmationDurationMs = 2_000,
+                        qualityAdapterVersion = AndroidLocationMeaningAdapter.VERSION))
+                }
+                installer.install(manifest, listOf(highRateReview))
+                val highRateLatitude = 37.504905217504685
+                val highRateLongitude = 127.10599606740601
+                check(lookup.containing(highRateLatitude, highRateLongitude).single().regionRevisionId == highRateRegion.regionRevisionId)
+                RoomLocationStore(runtime.database, lookup, { now }, ownsDatabase = false).use { locations ->
+                    val segment = "region-policy-high-rate-segment"
+                    locations.openSegment("region-policy-trip", "region-policy-session", segment)
+                    val normalizer = LocationNormalizer(AndroidLocationMeaningAdapter(100.0))
+                    fun point(index: Int, valid: Boolean = true): RecordedLocation {
+                        val receipt = 100_000L + index * 200L
+                        val metadata = if (valid) AndroidLocationMetadata("gps", receipt * 1_000_000,
+                            receipt * 1_000_000, 1.0, false, null) else null
+                        return normalizer.normalize(LocationSample(highRateLatitude, highRateLongitude, 0.0, 0f, 0f,
+                            receipt, receipt, receipt, metadata), LocationReadingKind.UPDATE,
+                            "region-policy-high-rate-point-$index", "synthetic-android-only", "synthetic-high-rate-clock")
+                    }
+                    fun proofIds(): List<String> = sql.query(SimpleSQLiteQuery("""
+                        SELECT p.point_id FROM collection_proof proof
+                        JOIN collection_record card ON card.collection_id=proof.collection_id
+                        JOIN route_point p ON p.point_id=proof.point_id
+                        WHERE card.collection_type='region' AND card.region_id=? ORDER BY p.sequence
+                    """.trimIndent(), arrayOf<Any?>(highRateRegion.regionId))).use { cursor ->
+                        buildList { while (cursor.moveToNext()) add(cursor.getString(0)) }
+                    }
+                    // A valid prefix before an invalid row cannot be silently filtered into the
+                    // suffix. The ten valid rows after it cover only 1.8 seconds.
+                    val prefix = (0..12).map { point(it, valid = it != 2) }
+                    check(locations.append(segment, prefix).confirmedRegion == null)
+                    check(count("SELECT count(*) FROM collection_record WHERE region_id=?", highRateRegion.regionId) == 0L)
+                    check(proofIds().isEmpty())
+                    val last = point(13)
+                    val confirmation = checkNotNull(locations.append(segment, listOf(last)).confirmedRegion)
+                    check(confirmation.regionRevisionId == highRateRegion.regionRevisionId && confirmation.lastPointId == last.pointId)
+                    check(locations.isConfirmedRegionCurrent(confirmation))
+                    val expectedProof = (3..13).map { "region-policy-high-rate-point-$it" }
+                    check(proofIds() == expectedProof)
+                    check(text("SELECT rule_version FROM collection_record WHERE region_id=?", highRateRegion.regionId) ==
+                        "region-confirmation-hierarchy-v2")
+                    check(count("SELECT count(*) FROM collection_proof WHERE region_revision_id=?", highRateRegion.regionRevisionId) == 11L)
+                    val next = point(14)
+                    check(locations.append(segment, listOf(next)).confirmedRegion?.lastPointId == next.pointId)
+                    check(proofIds() == expectedProof) // Latest authority changes, earned proof does not.
+                    check(locations.append(segment, listOf(point(15, valid = false))).confirmedRegion == null)
+                    check(proofIds() == expectedProof)
+                    check(count("SELECT count(*) FROM route_point WHERE segment_id=?", segment) == 16L)
+                    check(count("SELECT count(*) FROM route_point WHERE segment_id=? AND quality_status='unknown'", segment) == 2L)
+                    check(count("SELECT count(*) FROM collection_record WHERE region_id=?", highRateRegion.regionId) == 1L)
+                    locations.finishSegment(segment, "explicit_stop", interrupted = false)
+                }
+                check(count("SELECT count(*) FROM preference") == 0L)
+                mark("region_policy_5hz_minimum_count_duration_exact_11_row_suffix_and_v2_proof_verified")
+                mark("region_policy_invalid_cutoff_latest_identity_all_raw_rows_and_earned_proof_preserved")
             }
         } finally { SyntheticStorageFixture.cleanup(context, name) }
     }

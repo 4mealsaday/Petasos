@@ -14,7 +14,7 @@ import org.junit.Test
 /**
  * Demo-policy investigation only. Real pinned administrative geometry with synthetic Android
  * observations; no policy approval, product database, network, GPS injection or route ETA claim.
- * The in-memory store mirrors the CURRENT same-segment, last-N selection; it is not a Room audit.
+ * The in-memory store mirrors the bounded same-segment proof selection; it is not a Room audit.
  */
 class RegionPolicyDemoHarnessTest {
     @Test fun candidateMatrixReportsFalseCardsDelayAndMissesAgainstPinnedDemoRegions() {
@@ -37,12 +37,15 @@ class RegionPolicyDemoHarnessTest {
                 for (hz in listOf(1, 2, 5)) {
                     val events = samples(interior, 6 * hz + 1, 1_000L / hz)
                     val result = run(candidate, entry.regionRevisionId, fixture.boundary, events)
+                    val fixedCount = run(candidate, entry.regionRevisionId, fixture.boundary, events, fixedCountWindow = true)
                     positiveTrials++
                     // This fixture has sufficient true residence time and all samples are deep
                     // inside. A miss is reported, not hidden by lowering the candidate duration.
                     samplesByRate += linkedMapOf("hz" to hz, "sampleCount" to events.size,
                         "miss" to (result.firstConfirmationMs == null),
-                        "confirmationDelayMs" to result.firstConfirmationMs?.minus(START_MS))
+                        "confirmationDelayMs" to result.firstConfirmationMs?.minus(START_MS),
+                        "fixedCountWindowMiss" to (fixedCount.firstConfirmationMs == null),
+                        "fixedCountWindowDelayMs" to fixedCount.firstConfirmationMs?.minus(START_MS))
                 }
                 val edge = fixture.edge(code)
                 val negatives = negativeCases(interior, edge, count)
@@ -66,12 +69,14 @@ class RegionPolicyDemoHarnessTest {
             "datasetVersion" to fixture.manifest.datasetVersion, "manifestSha256" to MANIFEST_SHA,
             "hierarchySha256" to HIERARCHY_SHA, "qualityAdapterVersion" to AndroidLocationMeaningAdapter.VERSION,
             "oracle" to "pinned independent GEOS interior points plus exact packed boundary vertices",
-            "oracleSha256" to fixture.oracleSha256, "fixtureVersion" to "region-policy-demo-v1",
+            "oracleSha256" to fixture.oracleSha256, "fixtureVersion" to "region-policy-demo-v2",
+            "transformAccuracyDeductedMeters" to fixture.manifest.transform.expectedAccuracyMeters.toString(),
+            "pairedBaseline" to "FIXED_N_WINDOW_WITH_CURRENT_VALIDATOR_AND_SAME_ADJUSTED_GEOMETRY",
             "candidateCount" to report.size, "demoLeafCodes" to DEMO_LEAF_CODES,
             "positiveTrials" to positiveTrials, "negativeTrials" to negativeTrials,
             "falseCardDefinition" to "Target-region confirmation on an invalid, discontinuous or not-proven-interior synthetic trace",
             "geometryQueries" to fixture.geometryQueries, "maximumCachedCoordinates" to MAX_CACHED_POINTS,
-            "selectionUnderTest" to "CURRENT_LAST_N_ROWS_WITHIN_ONE_RECORDER_SEGMENT",
+            "selectionUnderTest" to "SHORTEST_CONTINUOUS_SUFFIX_MIN_COUNT_AND_DURATION_MAX_100",
             "syntheticReceiptRatesHz" to listOf(1, 2, 5), "receiptGapMs" to GAP_MS,
             "approvedPolicyCount" to 0, "networkUsed" to false, "productDatabaseUsed" to false,
             "naverRouteUsed" to false, "cardCountsAreSynthetic" to true,
@@ -85,8 +90,8 @@ class RegionPolicyDemoHarnessTest {
         writeOptionalReport(StrictJson.encode(document))
         assertEquals("No bounded-error/invalid/discontinuous trace may produce a candidate card", 0L,
             report.sumOf { it["falseCardCount"] as Long })
-        // At least the zero-duration candidates must establish the positive control at every rate.
-        report.filter { it["minConfirmationDurationMs"] == 0L }.forEach { row ->
+        // All candidates must detect these sufficiently long, deep-interior positive controls.
+        report.forEach { row ->
             @Suppress("UNCHECKED_CAST") val regions = row["regions"] as List<Map<String, Any?>>
             regions.forEach { region ->
                 @Suppress("UNCHECKED_CAST") val rates = region["rates"] as List<Map<String, Any?>>
@@ -122,8 +127,8 @@ class RegionPolicyDemoHarnessTest {
     }
 
     private fun run(policy: RegionPolicy, revision: String, boundary: RegionBoundaryLookup,
-                    events: List<LocationEvent>): Trial {
-        val store = MemoryStore(policy, revision, boundary)
+                    events: List<LocationEvent>, fixedCountWindow: Boolean = false): Trial {
+        val store = MemoryStore(policy, revision, boundary, fixedCountWindow)
         var id = 0
         val recorder = LocationRecorder(store, LocationNormalizer(AndroidLocationMeaningAdapter(100.0)),
             { "synthetic-${++id}" }, "demo-clock", GAP_MS, "synthetic-android")
@@ -135,7 +140,8 @@ class RegionPolicyDemoHarnessTest {
 
     private data class Trial(val cardCount: Long, val firstConfirmationMs: Long?)
     private class MemoryStore(private val policy: RegionPolicy, private val revision: String,
-                              private val boundary: RegionBoundaryLookup) : LocationRecordingStore {
+                              private val boundary: RegionBoundaryLookup,
+                              private val fixedCountWindow: Boolean) : LocationRecordingStore {
         private val rows = mutableMapOf<String, MutableList<RegionPoint>>()
         private val sequences = mutableMapOf<String, Long>()
         var cardCount = 0L
@@ -152,9 +158,9 @@ class RegionPolicyDemoHarnessTest {
                 val sequence = sequences.getValue(segmentId)
                 sequences[segmentId] = sequence + 1
                 segment += RegionPoint(sequence, point)
-                if (segment.size > 100) segment.removeAt(0)
+                if (segment.size > RegionConfirmation.MAX_PROOF_POINTS) segment.removeAt(0)
                 if (cardCount == 0L && RegionConfirmation.confirmed(revision, policy,
-                        segment.takeLast(policy.consecutiveSamples), boundary)) {
+                        if (fixedCountWindow) segment.takeLast(policy.consecutiveSamples) else segment, boundary)) {
                     cardCount = 1
                     firstConfirmationMs = point.receivedAtElapsedMs
                 }
@@ -187,7 +193,10 @@ class RegionPolicyDemoHarnessTest {
                 it.geometryBytes, it.ringCount, it.pointCount, it.bounds)
         }, open = { File(ASSETS, byRevision.getValue(it.regionRevisionId).geometryAsset).inputStream() },
             quarantinedBounds = manifest.regions.filter { it.status == "quarantined" }.map { it.bounds })
-        private val selected = HierarchicalRegionBoundaryLookup(raw, hierarchy)
+        private val adjusted = RegionBoundaryLookup { latitude, longitude -> raw.containing(latitude, longitude).map {
+            it.copy(interiorDistanceMeters = maxOf(0.0, it.interiorDistanceMeters - manifest.transform.expectedAccuracyMeters))
+        } }
+        private val selected = HierarchicalRegionBoundaryLookup(adjusted, hierarchy)
         private val cache = mutableMapOf<Pair<Double, Double>, List<RegionContainment>>()
         var geometryQueries = 0
             private set

@@ -63,4 +63,82 @@ class RegionConfirmationTest {
         assertFalse(RegionConfirmation.confirmed("revision", zeroMargin, located(127.0 - 1e-11), realEngine))
         assertTrue(RegionConfirmation.confirmed("revision", zeroMargin, located(127.005), realEngine))
     }
+
+    @Test fun minimumCountAndDurationSelectExactShortestSuffixAtEveryReceiptRate() {
+        for ((interval, expectedSize) in listOf(1_000L to 3, 500L to 5, 200L to 11)) {
+            val rows = rows(31, interval)
+            val selected = RegionConfirmation.proof("revision", policy, rows, boundary)!!
+            assertEquals(expectedSize, selected.size)
+            assertEquals(rows.takeLast(expectedSize), selected)
+            assertEquals(2_000L, selected.last().location.receivedAtElapsedMs - selected.first().location.receivedAtElapsedMs)
+            assertNull(RegionConfirmation.proof("revision", policy, selected.drop(1), boundary))
+        }
+    }
+
+    @Test fun olderBadRowsAreOutsideTheShortestProofButInterveningBadRowsCannotBeSkipped() {
+        val rows = rows(20, 200).toMutableList()
+        rows[0] = rows[0].copy(location = rows[0].location.copy(quality = LocationQuality.INVALID))
+        assertEquals(rows.takeLast(11), RegionConfirmation.proof("revision", policy, rows, boundary))
+        rows[15] = rows[15].copy(location = rows[15].location.copy(quality = LocationQuality.UNKNOWN))
+        assertNull(RegionConfirmation.proof("revision", policy, rows, boundary))
+        val differentRegion = RegionBoundaryLookup { _, longitude ->
+            listOf(RegionContainment(if (longitude == 128.0) "other" else "revision", "synthetic-dataset", "EPSG:4326", 100.0))
+        }
+        val crossing = rows(11, 200).toMutableList().apply {
+            this[5] = this[5].copy(location = this[5].location.copy(longitude = 128.0))
+        }
+        assertNull(RegionConfirmation.proof("revision", policy, crossing, differentRegion))
+    }
+
+    @Test fun proofSizeIsBoundedAndOnlyNecessaryGeometryIsRead() {
+        var calls = 0
+        val counted = RegionBoundaryLookup { a, b -> calls++; boundary.containing(a, b) }
+        val shortPolicy = policy.copy(consecutiveSamples = 2, minConfirmationDurationMs = 0)
+        assertEquals(2, RegionConfirmation.proof("revision", shortPolicy, rows(100, 200), counted)!!.size)
+        assertEquals(2, calls)
+        assertNull(RegionConfirmation.proof("revision", shortPolicy, rows(101, 200), counted))
+        assertEquals(2, calls)
+        assertNull(RegionConfirmation.proof("revision", policy, rows(100, 10), boundary))
+    }
+
+    @Test fun finalSelectionRecheckCannotAcceptWithdrawalAfterAllGeometryReads() {
+        var checks = 0
+        val changed = object : RegionBoundaryLookup {
+            override val selectionKey = "reviewed-selection"
+            override fun containing(latitude: Double, longitude: Double) = boundary.containing(latitude, longitude)
+            override fun isSelectionCurrent(regionRevisionId: String) = ++checks <= 3
+        }
+        assertNull(RegionConfirmation.proof("revision", policy, points, changed))
+        assertEquals(4, checks)
+    }
+
+    @Test fun duplicatePointIdsAndAndroidMeasurementsNeverCountAsNewEvidence() {
+        val duplicate = rows(11, 200).toMutableList().apply {
+            this[5] = this[5].copy(location = this[5].location.copy(pointId = this[6].location.pointId))
+        }
+        assertNull(RegionConfirmation.proof("revision", policy, duplicate, boundary))
+        val androidPolicy = policy.copy(qualityAdapterVersion = AndroidLocationMeaningAdapter.VERSION)
+        val normalizer = LocationNormalizer(AndroidLocationMeaningAdapter(100.0))
+        fun androidRows(cached: Boolean) = (0..10).map { index ->
+            val receipt = 10_000L + index * 200
+            val measured = if (cached) 10_000L else receipt
+            val sample = LocationSample(37.0, 127.0, 0.0, 0f, 0f, receipt, receipt, receipt,
+                AndroidLocationMetadata("gps", measured * 1_000_000, receipt * 1_000_000, 5.0, false, null))
+            RegionPoint(index.toLong(), normalizer.normalize(sample, LocationReadingKind.UPDATE,
+                "android-$index", "android", "clock"))
+        }
+        assertEquals(11, RegionConfirmation.proof("revision", androidPolicy, androidRows(false), boundary)!!.size)
+        // Epoch advances, but the independently verified same-boot measurement is unchanged.
+        assertNull(RegionConfirmation.proof("revision", androidPolicy, androidRows(true), boundary))
+        val corrupt = androidRows(false).toMutableList().apply {
+            this[5] = this[5].copy(location = this[5].location.copy(providerConfidenceJson = "{}"))
+        }
+        assertNull(RegionConfirmation.proof("revision", androidPolicy, corrupt, boundary))
+    }
+
+    private fun rows(count: Int, intervalMs: Long): List<RegionPoint> = List(count) { index ->
+        val at = 10_000L + index * intervalMs
+        RegionPoint(index.toLong(), points.first().location.copy(pointId = "sample-$index",
+            observedAtEpochMs = at, receivedAtEpochMs = at, receivedAtElapsedMs = at))
+    }
 }

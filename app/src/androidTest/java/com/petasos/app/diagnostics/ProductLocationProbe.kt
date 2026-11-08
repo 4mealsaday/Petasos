@@ -28,6 +28,7 @@ import com.petasos.app.storage.StorageDatabase
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.atomic.AtomicReference
 
 /**
@@ -85,13 +86,46 @@ object ProductLocationProbe {
             future.get(minOf(remaining(until), limitMs), TimeUnit.MILLISECONDS)
         } catch (error: Failure) { throw error }
         catch (_: Exception) { throw Failure("FAIL", code) }
-        fun <T> onMain(code: String, cleanup: Boolean = false, action: () -> T): T {
+        fun <T> timed(phase: String, action: () -> T): T {
+            val startedAt = SystemClock.elapsedRealtime()
+            mark("app_location_${phase}_entered")
+            try {
+                return action().also { mark("app_location_${phase}_returned") }
+            } finally { mark("app_location_${phase}_elapsed_ms_${SystemClock.elapsedRealtime() - startedAt}") }
+        }
+        fun <T> onMain(code: String, cleanup: Boolean = false, until: Long = if (cleanup) deadline else workDeadline,
+                       diagnostic: String? = null, action: () -> T): T {
             val result = SettableFuture.create<T>()
+            val requestedAt = SystemClock.elapsedRealtime()
+            val enteredAt = AtomicLong(-1)
+            val finishedAt = AtomicLong(-1)
             main.post {
                 if (!cleanup && !active.get()) { result.setException(Failure("FAIL", "app_location_cancelled")); return@post }
-                try { result.set(action()) } catch (_: Exception) { result.setException(Failure("FAIL", code)) }
+                enteredAt.set(SystemClock.elapsedRealtime())
+                try {
+                    val value = action()
+                    finishedAt.set(SystemClock.elapsedRealtime())
+                    result.set(value)
+                } catch (_: Exception) {
+                    finishedAt.set(SystemClock.elapsedRealtime())
+                    result.setException(Failure("FAIL", code))
+                }
             }
-            return await(result, code, if (cleanup) deadline else workDeadline)
+            try { return await(result, code, until) }
+            finally {
+                // Mark on the instrumentation thread only. A timeout reports the observed state;
+                // it never turns a pending callback into a completed framework/SDK acknowledgment.
+                if (diagnostic != null) {
+                    val entered = enteredAt.get()
+                    val finished = finishedAt.get()
+                    mark("app_location_${diagnostic}_callback_entered_${if (entered >= 0) 1 else 0}")
+                    mark("app_location_${diagnostic}_callback_finished_${if (finished >= 0) 1 else 0}")
+                    if (entered >= 0) mark("app_location_${diagnostic}_queue_wait_ms_${entered - requestedAt}")
+                    if (entered >= 0 && finished >= entered)
+                        mark("app_location_${diagnostic}_callback_elapsed_ms_${finished - entered}")
+                    mark("app_location_${diagnostic}_wait_elapsed_ms_${SystemClock.elapsedRealtime() - requestedAt}")
+                }
+            }
         }
         val sql = database.openHelper.readableDatabase
         fun count(statement: String, vararg args: Any?): Long = sql.query(SimpleSQLiteQuery(statement, args)).use {
@@ -115,9 +149,10 @@ object ProductLocationProbe {
         fun requireCondition(code: String, limitMs: Long, condition: () -> Boolean) {
             if (!awaitCondition(limitMs, condition = condition)) throw Failure("FAIL", code)
         }
-        fun points(session: String): Long = count("""
-            SELECT count(*) FROM route_point p JOIN recording_segment g ON g.segment_id=p.segment_id WHERE g.session_id=?
-        """.trimIndent(), session)
+        fun points(session: String, afterSegmentRow: Long = 0): Long = count("""
+            SELECT count(*) FROM route_point p JOIN recording_segment g ON g.segment_id=p.segment_id
+            WHERE g.session_id=? AND g.rowid>?
+        """.trimIndent(), session, afterSegmentRow)
         fun updates(session: String, afterSegmentRow: Long = 0): Long = count("""
             SELECT count(*) FROM route_point p JOIN recording_segment g ON g.segment_id=p.segment_id
             WHERE g.session_id=? AND g.rowid>? AND json_extract(p.raw_coordinates_json,'$.readingKind')='UPDATE'
@@ -128,14 +163,17 @@ object ProductLocationProbe {
             AND p.provider LIKE 'android-location-manager:%' AND json_extract(p.raw_coordinates_json,'$.readingKind')='UPDATE'
         """.trimIndent(), session, afterSegmentRow)
         fun activeSegments(session: String): Long = count("SELECT count(*) FROM recording_segment WHERE session_id=? AND status='active'", session)
-        fun reportCounts(phase: String, session: String) {
-            mark("app_location_${phase}_points_${points(session)}")
-            mark("app_location_${phase}_updates_${updates(session)}")
+        fun reportCounts(phase: String, session: String, afterSegmentRow: Long = 0) {
+            val segments = count("SELECT count(*) FROM recording_segment WHERE session_id=? AND rowid>?", session, afterSegmentRow)
+            mark("app_location_${phase}_segments_$segments")
+            mark("app_location_${phase}_points_${points(session, afterSegmentRow)}")
+            mark("app_location_${phase}_updates_${updates(session, afterSegmentRow)}")
+            mark("app_location_${phase}_live_valid_${liveValid(session, afterSegmentRow)}")
             for (quality in listOf("valid", "stale", "invalid", "unknown")) {
                 val value = count("""
                     SELECT count(*) FROM route_point p JOIN recording_segment g ON g.segment_id=p.segment_id
-                    WHERE g.session_id=? AND p.quality_status=?
-                """.trimIndent(), session, quality)
+                    WHERE g.session_id=? AND g.rowid>? AND p.quality_status=?
+                """.trimIndent(), session, afterSegmentRow, quality)
                 mark("app_location_${phase}_${quality}_$value")
             }
         }
@@ -265,9 +303,23 @@ object ProductLocationProbe {
             launch()
             if (PetasosMediaService.currentHost !== live || live.snapshot()?.sessionId != session)
                 throw Failure("FAIL", "app_location_return_replaced_open_session")
-            val returnedValid = awaitCondition(15_000) { requireConsent(); liveValid(session, segmentBoundary) > 0 }
+            // The barriers consume the existing 15-second observation budget; they do not extend
+            // it or restart a source. Their timings distinguish queue delay from absent live data.
+            val returnDeadline = minOf(workDeadline, SystemClock.elapsedRealtime() + 15_000)
+            val returnedValid = try {
+                onMain("app_location_return_main_barrier_failed", until = returnDeadline, diagnostic = "return_main_barrier") { Unit }
+                timed("return_worker_barrier") {
+                    await(live.readRecordingSettings(), "app_location_return_worker_barrier_failed", returnDeadline)
+                }
+                timed("return_live_observation") {
+                    awaitCondition(15_000, returnDeadline) { requireConsent(); liveValid(session, segmentBoundary) > 0 }
+                }
+            } finally {
+                // Match the exact predicate's new-segment scope even when a barrier fails.
+                reportCounts("returned_new", session, segmentBoundary)
+                reportCounts("returned_total", session)
+            }
             val returnedLive = updates(session, segmentBoundary) > 0
-            reportCounts("returned", session)
             mark(if (returnedLive) "app_location_return_new_segment_actual_update_committed" else "app_location_no_live_location_after_return")
             if (live.snapshot()?.playIntent != false || live.snapshot()?.interactionIntent != false)
                 throw Failure("FAIL", "app_location_return_started_output_or_input")
@@ -287,27 +339,50 @@ object ProductLocationProbe {
         catch (_: Exception) { failure = Failure("FAIL", "app_location_operation_failed") }
         finally {
             active.set(false)
+            failure?.let {
+                mark("app_location_primary_failure_before_cleanup")
+                mark(it.code)
+            }
+            var cleanupFailure: Failure? = null
+            fun recordCleanupFailure(error: Exception, fallback: String) {
+                val detail = error as? Failure ?: Failure("FAIL", fallback)
+                mark(detail.code)
+                if (cleanupFailure == null) cleanupFailure = detail
+            }
             try {
                 val live = host
-                val stopping = onMain("app_location_cleanup_failed", cleanup = true) {
+                val stopping = onMain("app_location_cleanup_main_dispatch_failed", cleanup = true,
+                    diagnostic = "cleanup_main_dispatch") {
                     val future = if (playbackIssued) live?.stop() else null
                     activity.get()?.finish()
                     future
                 }
-                if (stopping != null) await(stopping, "app_location_cleanup_stop_failed", deadline)
-                if (!awaitCondition(5_000, deadline) { !visible.get() }) throw Failure("FAIL", "app_location_cleanup_activity_visible")
-                if (live != null) await(live.readRecordingSettings(), "app_location_cleanup_queue_barrier_failed", deadline)
+                if (stopping != null) timed("cleanup_stop_wait") {
+                    await(stopping, "app_location_cleanup_stop_failed", deadline)
+                }
+                if (!timed("cleanup_activity_stop_wait") { awaitCondition(5_000, deadline) { !visible.get() } })
+                    throw Failure("FAIL", "app_location_cleanup_activity_visible")
+                if (live != null) timed("cleanup_worker_barrier") {
+                    await(live.readRecordingSettings(), "app_location_cleanup_queue_barrier_failed", deadline)
+                }
                 val session = sessionId
-                if (session != null && activeSegments(session) != 0L) throw Failure("FAIL", "app_location_cleanup_segment_active")
+                if (session != null) {
+                    val remainingSegments = timed("cleanup_segment_read") { activeSegments(session) }
+                    mark("app_location_cleanup_active_segments_$remainingSegments")
+                    if (remainingSegments != 0L) throw Failure("FAIL", "app_location_cleanup_segment_active")
+                }
                 if (starts.get() > 0) mark("app_location_finished_activity_storage_closed_history_and_consent_retained")
-            } catch (_: Exception) { failure = Failure("FAIL", "app_location_cleanup_failed") }
+            } catch (error: Exception) { recordCleanupFailure(error, "app_location_cleanup_failed") }
             try {
-                onMain("app_location_cleanup_release_failed", cleanup = true) {
+                onMain("app_location_cleanup_release_failed", cleanup = true, diagnostic = "cleanup_release") {
                     if (registered) application.unregisterActivityLifecycleCallbacks(lifecycle)
                     connection?.let(MediaController::releaseFuture)
                 }
-            } catch (_: Exception) { failure = Failure("FAIL", "app_location_cleanup_release_failed") }
+            } catch (error: Exception) { recordCleanupFailure(error, "app_location_cleanup_release_failed") }
             database.close()
+            // Cleanup failure must remain a FAIL, but never erase the original diagnostic or a
+            // more specific first cleanup failure with a generic later cleanup-release result.
+            failure = cleanupFailure ?: failure
         }
         failure?.let { mark(it.code); throw it }
     }

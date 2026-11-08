@@ -77,15 +77,23 @@ object ProductPlaybackProbe {
                 if (!it.moveToFirst()) throw ProbeFailure("APP_PLAYBACK_STORAGE_READ_FAILED")
                 it.getLong(0)
             }
-            fun requireLocationOff() {
-                if (count("SELECT count(*) FROM preference WHERE scope_id='vehicle' AND location_enabled=1") != 0L) {
-                    throw ProbeFailure("APP_PLAYBACK_LOCATION_RECORDING_ENABLED")
+            fun locationPreference(): List<String?> = sql.query(
+                "SELECT location_enabled,version,updated_at FROM preference WHERE scope_id='vehicle'"
+            ).use { rows ->
+                if (!rows.moveToFirst()) emptyList() else (0 until rows.columnCount).map {
+                    if (rows.isNull(it)) null else rows.getString(it)
                 }
+            }
+            val savedLocationPreference = locationPreference()
+            fun requireLocationPreferenceUnchanged() {
+                if (locationPreference() != savedLocationPreference)
+                    throw ProbeFailure("APP_PLAYBACK_LOCATION_PREFERENCE_CHANGED")
             }
             fun baseline() = listOf("trip", "session", "recording_segment", "playback_attempt").map {
                 count("SELECT count(*) FROM $it")
             }
-            requireLocationOff()
+            // This probe never launches an Activity. Foreground location eligibility remains false
+            // even when the user previously opted in; preserve that preference rather than toggling it.
             onMain("APP_PLAYBACK_EXISTING_RUNTIME") {
                 check(PetasosMediaService.currentHost?.snapshot() == null)
             }
@@ -134,7 +142,7 @@ object ProductPlaybackProbe {
             if (baseline() != before) throw ProbeFailure("APP_PLAYBACK_BROWSE_OR_PREPARE_CREATED_RECORDS")
             mark("app_playback_product_browse_and_prepare_keep_runtime_uncreated")
 
-            requireLocationOff()
+            requireLocationPreferenceUnchanged()
             if (!power.get().available) throw ProbeFailure("APP_PLAYBACK_POWER_UNAVAILABLE")
             if (power.get().audioBlocked) throw ProbeFailure("APP_PLAYBACK_POWER_AUDIO_BLOCKED")
             playIssued = true
@@ -186,7 +194,9 @@ object ProductPlaybackProbe {
                 throw ProbeFailure("APP_PLAYBACK_UNEXPECTED_LOCATION_OR_CONVERSATION")
             }
             if (completedCount() == 0L) throw ProbeFailure("APP_PLAYBACK_COMPLETION_RECORD_NOT_RETAINED")
+            requireLocationPreferenceUnchanged()
             mark("app_playback_standard_stop_persists_false_intent_without_location_input_or_generation")
+            mark("app_playback_existing_location_preference_preserved_no_activity_launched")
         } catch (error: ProbeFailure) { failure = error.code }
         catch (_: Exception) { failure = "APP_PLAYBACK_OPERATION_FAILED" }
         finally {

@@ -95,23 +95,34 @@ class RoomLocationStore internal constructor(
         val match = matches.singleOrNull() ?: return null
         val region = regionPolicies.reviewedPolicy(match.regionRevisionId) ?: return null
         if (match.datasetVersion != region.policy.datasetVersion || match.coordinateReferenceSystem != region.policy.coordinateReferenceSystem) return null
+        val selectionKey = boundary.selectionKey
+        val authorityKey = policySelectionKey(region.eligibilityKey)
         val recent = mutableListOf<RegionPoint>()
-        query("SELECT * FROM route_point WHERE segment_id=? AND sequence<=? ORDER BY sequence DESC LIMIT ?", segment, sequence, region.policy.consecutiveSamples).use {
+        // Never filter invalid rows or clocks before selecting the continuous suffix.
+        query("SELECT * FROM route_point WHERE segment_id=? AND sequence<=? ORDER BY sequence DESC LIMIT ?",
+            segment, sequence, RegionConfirmation.MAX_PROOF_POINTS).use {
             while (it.moveToNext()) recent += RegionPoint(it.long("sequence"), readPoint(it))
         }
         recent.reverse()
-        if (!RegionConfirmation.confirmed(region.regionRevisionId, region.policy, recent, boundary)) return null
+        val proof = RegionConfirmation.proof(region.regionRevisionId, region.policy, recent, boundary) ?: return null
+        if (proof.last().sequence != sequence || proof.last().location.pointId != point.pointId) return null
+        // Up to 100 geometry reads can intervene. Recheck the exact policy/source and selection
+        // before both a new card write and a refreshed current-region authority.
+        val current = regionPolicies.reviewedPolicy(region.regionRevisionId) ?: return null
+        if (current.regionId != region.regionId || current.eligibilityKey != region.eligibilityKey ||
+            boundary.selectionKey != selectionKey || policySelectionKey(current.eligibilityKey) != authorityKey ||
+            !(try { boundary.isSelectionCurrent(region.regionRevisionId) } catch (_: Exception) { false })) return null
         if (number("SELECT count(*) FROM collection_record WHERE collection_type='region' AND region_id=?", region.regionId) == 0L) {
             val collection = UUID.randomUUID().toString()
             exec("INSERT INTO collection_record(collection_id,collection_type,region_id,rule_version,earned_at,created_at) VALUES (?,'region',?,?,?,?)",
-                collection, region.regionId, if (boundary.selectionKey == null) "region-confirmation-v1" else "region-confirmation-hierarchy-v1", point.observedAtEpochMs, wallTime())
-            recent.forEach { proof ->
+                collection, region.regionId, if (selectionKey == null) "region-confirmation-v2" else "region-confirmation-hierarchy-v2", point.observedAtEpochMs, wallTime())
+            proof.forEach { row ->
                 exec("INSERT INTO collection_proof(collection_id,proof_key,point_id,region_revision_id) VALUES (?,?,?,?)", collection,
-                    "point:${proof.location.pointId}", proof.location.pointId, region.regionRevisionId)
+                    "point:${row.location.pointId}", row.location.pointId, region.regionRevisionId)
             }
             acquired += region.regionId
         }
-        return ConfirmedRegion(region.regionId, region.regionRevisionId, policySelectionKey(region.eligibilityKey), point.pointId)
+        return ConfirmedRegion(region.regionId, region.regionRevisionId, authorityKey, point.pointId)
     }
 
     private fun policySelectionKey(policyKey: String): String = boundary.selectionKey?.let {
