@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-    <!-- The engine has no UI entry yet. No product/library startup component can execute here. -->
+    <!-- Exactly one parked-only UI. No product/library startup component can execute here. -->
     <uses-permission tools:node="removeAll" />
     <uses-permission-sdk-23 tools:node="removeAll" />
     <permission tools:node="removeAll" />
@@ -17,6 +17,13 @@
         android:icon="@drawable/ic_petasos"
         android:label="Petasos Demo"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Petasos"
-        android:usesCleartextTraffic="false" />
+        android:theme="@style/Theme.Petasos.Demo"
+        android:usesCleartextTraffic="false">
+        <activity android:name="com.petasos.app.demo.DemoActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
 </manifest>

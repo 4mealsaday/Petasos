@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="demo_background">#10151D</color>
+    <color name="demo_surface">#19222D</color>
+    <color name="demo_surface_secondary">#151D27</color>
+    <color name="demo_surface_pressed">#293C49</color>
+    <color name="demo_border">#33424F</color>
+    <color name="demo_text_primary">#F3EFE6</color>
+    <color name="demo_text_secondary">#AFBBC5</color>
+    <color name="demo_text_muted">#82939F</color>
+    <color name="demo_accent">#9DD8CE</color>
+    <color name="demo_accent_pressed">#C4EAE3</color>
+    <color name="demo_accent_ink">#122B30</color>
+    <color name="demo_accent_subtle">#223A41</color>
+    <color name="demo_disabled_surface">#202A35</color>
+    <color name="demo_disabled_text">#7F8B96</color>
+    <color name="demo_progress_track">#35444F</color>
+</resources>

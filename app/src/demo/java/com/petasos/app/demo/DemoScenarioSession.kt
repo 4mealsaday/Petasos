@@ -209,7 +209,9 @@ internal class DemoScenarioSession(
             count("SELECT count(*) FROM playback_attempt WHERE kind='story' AND state='completed'"),
             count("SELECT count(*) FROM playback_attempt WHERE kind='music' AND state='completed'"),
             count("SELECT count(*) FROM playback_attempt WHERE kind='music' AND state='interrupted'"),
-            Collections.unmodifiableList(starts.toList()), Collections.unmodifiableList(automaticStarts.toList()), failure)
+            Collections.unmodifiableList(starts.toList()), Collections.unmodifiableList(automaticStarts.toList()), failure,
+            observationRegion.takeIf { observationFresh() }?.let(::publicRegionName),
+            currentTarget?.regionId?.let(::publicRegionName), offeredStoryId?.let(::publicTitle))
     }
 
     /** Does not close/delete the Room fixture. False must preserve its database and encryption keys. */
@@ -347,6 +349,10 @@ internal class DemoScenarioSession(
 
     private fun publicTitle(storyId: String): String? = store.database.openHelper.readableDatabase.query(
         SimpleSQLiteQuery("SELECT title FROM story WHERE story_id=?", arrayOf(storyId)),
+    ).use { if (it.moveToFirst()) it.getString(0) else null }
+
+    private fun publicRegionName(regionId: String): String? = store.database.openHelper.readableDatabase.query(
+        SimpleSQLiteQuery("SELECT name FROM region WHERE region_id=?", arrayOf(regionId)),
     ).use { if (it.moveToFirst()) it.getString(0) else null }
 
     private fun count(statement: String): Long = store.database.openHelper.readableDatabase.query(statement)

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the demo-only engine instrumentation. Never targets or reconfigures the product package."""
+"""Run the demo-only engine and UI instrumentation. Never targets or reconfigures the product package."""
 import argparse
 import hashlib
 import json
@@ -17,7 +17,7 @@ RUNNER = APP + ".test/com.petasos.app.demo.DemoScenarioInstrumentation"
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--serial", default="emulator-5554")
-    parser.add_argument("--artifacts-dir", type=Path, default=ROOT / "artifacts/milestone-32/demo-session")
+    parser.add_argument("--artifacts-dir", type=Path, default=ROOT / "artifacts/milestone-33/demo-session")
     args = parser.parse_args()
     if not re.fullmatch(r"emulator-[0-9]+", args.serial):
         parser.error("An explicitly selected emulator serial is required")
@@ -27,7 +27,7 @@ def main():
     test_apk = ROOT / "app/build/outputs/apk/androidTest/demo/app-demo-androidTest.apk"
     args.artifacts_dir.mkdir(parents=True, exist_ok=True)
     result = {"outcome": "FAIL", "package": APP,
-              "scope": "Separate demo engine, actual core/Room, public assets, synthetic inputs and silent outputs; no UI or live acceptance"}
+              "scope": "Separate demo UI, actual CarUx/core/Room, public assets, synthetic inputs and silent outputs; not live driving or human acceptance"}
     stage = "preflight"
     def run(command, timeout=90):
         completed = subprocess.run(command, capture_output=True, text=True, timeout=timeout)

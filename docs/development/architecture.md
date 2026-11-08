@@ -168,3 +168,10 @@ GenerationClient는 HTTPS·기기 인증·strict JSON·canonical v0.8 schema를 
 Host는 동일 `ContentPlanner`와 `AutomaticStoryPlaybackBridge`에 조립한다. 랜드마크 전용 재생 큐나 UI 로직은 없다. 실제 위치의 신선도와 미래 지역 대상의 준비 여부를 분리하고, 알려진 비활성 내비 상태만 현재 위치 모드로 인정한다. 활성 경로에는 별도 경로 포함 근거가 필요하다. 위치 batch의 마지막 현재 permit을 가진 점끼리 비교하며 과거 점을 현재 입력으로 재생하지 않는다.
 
 일시정지·차단·대화 중에도 통과 여부를 갱신하되 출력 권한은 철회한다. 일반 이야기는 기존 길이 기반 지역 대상이 있을 때 선택하고, 랜드마크도 기존 이야기 연속성과 음악 정상 완료 이후의 자동 슬롯을 사용한다. 자세한 정책 형식은 [검토 랜드마크 계약](./reviewed-landmark-policy.md)을 따른다. 이 구현은 실제 좌표/접근 정책의 검토 완료나 실주행 수락을 뜻하지 않는다.
+
+
+## dev.32–33 별도 데모와 화면
+
+`src/demo` build type는 `.demo` 앱 ID와 일반 Application을 사용한다. 고유 Room·Keystore 이름을 사용하며 제품 Host/Controls/MediaService·사용자 동의/이력을 공유하지 않는다. 실제 코어·편성·저장 흐름은 그대로 사용하되 경로·시계·무음 출력은 명시된 fixture다.
+
+`DemoActivity`는 실제 CarUx와 Activity 가시성만 구독한다. `DemoSessionController`가 단일 worker에서 세션을 소유하고 세대별 권한 취소, 1초 이하 가상 전진, 종료 확인 뒤 초기화를 처리한다. `DemoPresentation`은 불변 snapshot을 기존 순수 mapper/renderer 및 추가 표시 View에 전달한다. XML 배치·색상·스타일·문구는 demo 리소스에 분리한다. 제품 UI는 변경하지 않는다. 구현·검사 범위는 [실행부](demo-engine.md)와 [화면](demo-ui.md)을 따른다. 이 화면은 사용자 디자인 검토용이며 사람 음성·실주행·실제 차량 Suspend 수용을 대신하지 않는다.

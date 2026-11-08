@@ -5,11 +5,16 @@ import android.app.Application
 import android.app.Instrumentation
 import android.content.Context
 import android.content.ContextWrapper
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.SystemClock
+import android.view.View
+import android.widget.TextView
 import androidx.sqlite.db.SimpleSQLiteQuery
+import com.petasos.app.R
 import com.petasos.app.playback.PlaybackMode
+import com.petasos.app.presentation.ParkedPresentationGate
 
 /** Runs only in the separate demo package. Fixed markers/counts only; no product data or SDK input. */
 class DemoScenarioInstrumentation : Instrumentation() {
@@ -29,6 +34,8 @@ class DemoScenarioInstrumentation : Instrumentation() {
             controlsAndExpiry()
             stage = "durable_close"
             failedClose()
+            stage = "actual_ui"
+            actualUi()
             result.putString("outcome", "PASS")
             result.putString("reason", "completed")
         } catch (failure: Throwable) {
@@ -40,7 +47,7 @@ class DemoScenarioInstrumentation : Instrumentation() {
         }
         result.putString("stage", stage)
         result.putString("events", marks.joinToString(","))
-        result.putString("scope", "separate_demo_plain_Application_no_permissions_components_or_product_storage_actual_core_Room_public_stories_synthetic_time_route_silent_ports_not_final_UI_or_live_acceptance")
+        result.putString("scope", "separate_demo_plain_Application_zero_permissions_one_Activity_actual_CarUx_and_UI_buttons_core_Room_synthetic_route_silent_time_instrumented_pause_resume_not_vehicle_or_human_acceptance")
         result.putLong("elapsed_ms", SystemClock.elapsedRealtime() - started)
         finish(if (result.getString("outcome") == "PASS") Activity.RESULT_OK else Activity.RESULT_CANCELED, result)
     }
@@ -52,7 +59,8 @@ class DemoScenarioInstrumentation : Instrumentation() {
         val info = targetContext.packageManager.getPackageInfo(targetContext.packageName,
             PackageManager.GET_PERMISSIONS or PackageManager.GET_ACTIVITIES or PackageManager.GET_SERVICES or
                 PackageManager.GET_PROVIDERS or PackageManager.GET_RECEIVERS)
-        check(info.requestedPermissions.isNullOrEmpty() && info.activities.isNullOrEmpty() &&
+        check(info.requestedPermissions.isNullOrEmpty() &&
+            info.activities?.map { it.name } == listOf(DemoActivity::class.java.name) &&
             info.services.isNullOrEmpty() && info.providers.isNullOrEmpty() && info.receivers.isNullOrEmpty())
         val impostor = object : ContextWrapper(targetContext) {
             override fun getApplicationContext(): Context = this
@@ -61,7 +69,7 @@ class DemoScenarioInstrumentation : Instrumentation() {
         val rejected = try { DemoFixtureStore(impostor, DemoVirtualTime()); false }
             catch (failure: IllegalStateException) { failure.message == "DEMO_PACKAGE_REQUIRED" }
         check(rejected)
-        marks += "demo_plain_application_zero_permissions_components_and_product_package_rejected"
+        marks += "demo_plain_application_zero_permissions_single_activity_and_product_package_rejected"
     }
 
     private fun reroutedStory() {
@@ -164,6 +172,87 @@ class DemoScenarioInstrumentation : Instrumentation() {
             check(session.close())
             marks += "demo_failed_durable_close_preserves_fixture_and_retry_acknowledges_success"
         }
+    }
+
+    /** Actual CarUx observation; no synthetic parked state or vehicle injection enters the Activity. */
+    private fun actualUi() {
+        val activity = startActivitySync(Intent(targetContext, DemoActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) as DemoActivity
+        fun state(): DemoControllerState? {
+            var value: DemoControllerState? = null
+            runOnMainSync { value = activity.latestState }
+            return value
+        }
+        fun waitFor(predicate: () -> Boolean) {
+            val until = SystemClock.elapsedRealtime() + 8_000L
+            while (!predicate() && SystemClock.elapsedRealtime() < until) SystemClock.sleep(20)
+            check(predicate())
+        }
+        fun click(id: Int) {
+            waitFor { state()?.let { !it.busy && it.snapshot != null } == true }
+            runOnMainSync {
+                val button = activity.findViewById<View>(id)
+                check(button.isEnabled && button.isShown)
+                check(button.performClick())
+            }
+            waitFor { state()?.busy == false }
+        }
+        try {
+            waitFor {
+                var parked = false
+                runOnMainSync { parked = activity.currentGate == ParkedPresentationGate.PARKED }
+                parked && state()?.snapshot != null && state()?.busy == false
+            }
+            click(R.id.playback_play)
+            check(state()?.snapshot?.activeStoryId == FIRST)
+            click(R.id.demo_advance_30)
+            repeat(4) { click(R.id.demo_advance_1) }
+            check(state()?.snapshot?.mode == PlaybackMode.MUSIC)
+            repeat(2) { click(R.id.demo_advance_1) }
+            click(R.id.playback_stop)
+            check(state()?.snapshot?.musicPositionMs == 2_000L && state()?.snapshot?.playIntent == false)
+            click(R.id.demo_route_yuseong)
+            click(R.id.demo_advance_1)
+            click(R.id.playback_play)
+            repeat(8) { click(R.id.demo_advance_1) }
+            check(state()?.snapshot?.activeStoryId == FINAL)
+            check(state()?.snapshot?.completedMusicCount == 1L)
+            check(state()?.snapshot?.automaticStartedStoryIds == listOf(FINAL))
+            runOnMainSync {
+                check(activity.findViewById<TextView>(R.id.demo_story_title).text ==
+                    activity.latestState?.snapshot?.activeStoryTitle)
+                check(activity.findViewById<View>(R.id.playback_talk).visibility == View.GONE)
+                callActivityOnPause(activity)
+                check(activity.findViewById<View>(R.id.preview_content).visibility == View.GONE)
+            }
+            waitFor { state()?.snapshot?.playIntent == false && state()?.busy == false }
+            runOnMainSync { callActivityOnResume(activity) }
+            waitFor { state()?.busy == false }
+            check(state()?.snapshot?.playIntent == false)
+            click(R.id.demo_reset)
+            check(state()?.snapshot?.elapsedMs == DemoFixtureStore.START_MS)
+            check(state()?.snapshot?.completedStoryCount == 0L && state()?.snapshot?.playIntent == false)
+            click(R.id.playback_play)
+            runOnMainSync {
+                check(activity.findViewById<View>(R.id.demo_advance_30).performClick())
+                // Cancellation is submitted in the same main turn, even if the worker is running.
+                callActivityOnPause(activity)
+                check(activity.findViewById<View>(R.id.preview_content).visibility == View.GONE)
+            }
+            waitFor { state()?.busy == false && state()?.snapshot?.playIntent == false }
+            runOnMainSync { callActivityOnResume(activity) }
+            check(state()?.snapshot?.playIntent == false)
+            click(R.id.demo_reset)
+            check(state()?.snapshot?.elapsedMs == DemoFixtureStore.START_MS)
+            check(state()?.snapshot?.completedStoryCount == 0L && state()?.snapshot?.playIntent == false)
+            marks += "demo_actual_parked_ui_buttons_reroute_pause_resume_no_autoplay_reset_pass"
+            marks += "demo_pending_advance_revoked_on_pause_and_return_remains_stopped"
+        } finally {
+            runOnMainSync { activity.finish() }
+            waitFor { activity.closeAcknowledged != null }
+            check(activity.closeAcknowledged == true)
+        }
+        marks += "demo_actual_activity_finish_durable_close_and_owned_cleanup_pass"
     }
 
     private fun withSession(gate: () -> Boolean, body: (DemoFixtureStore, DemoScenarioSession) -> Unit) {

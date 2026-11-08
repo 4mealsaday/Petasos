@@ -23,8 +23,8 @@ android {
         applicationId = "com.petasos.app"
         minSdk = 28
         targetSdk = 34
-        versionCode = 32
-        versionName = "0.8.0-dev.32"
+        versionCode = 33
+        versionName = "0.8.0-dev.33"
         testInstrumentationRunner = if (providers.gradleProperty("petasosTestBuildType").orNull == "demo")
             "com.petasos.app.demo.DemoScenarioInstrumentation"
         else "com.petasos.app.diagnostics.SdkProbeInstrumentation"

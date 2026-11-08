@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Only the real current vehicle policy may reveal this content. -->
+    <ScrollView
+        android:id="@+id/preview_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:scrollbarStyle="outsideOverlay"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/demo_screen_horizontal"
+            android:paddingVertical="@dimen/demo_screen_vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/Widget.Petasos.Demo.Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:letterSpacing="0.12"
+                    android:text="@string/demo_brand"
+                    android:textSize="22sp" />
+
+                <TextView
+                    style="@style/Widget.Petasos.Demo.Caption"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_weight="1"
+                    android:text="@string/demo_brand_description" />
+
+                <TextView
+                    style="@style/Widget.Petasos.Demo.Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/demo_badge"
+                    android:paddingHorizontal="14dp"
+                    android:paddingVertical="8dp"
+                    android:text="@string/demo_badge"
+                    android:textColor="@color/demo_accent" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:baselineAligned="false"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.65"
+                    android:background="@drawable/demo_panel"
+                    android:orientation="vertical"
+                    android:padding="@dimen/demo_panel_padding">
+
+                    <TextView
+                        style="@style/Widget.Petasos.Demo.Label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/demo_current_label" />
+
+                    <TextView
+                        android:id="@+id/demo_story_title"
+                        style="@style/Widget.Petasos.Demo.Title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="18dp"
+                        android:accessibilityHeading="true"
+                        android:text="@string/demo_story_ready" />
+
+                    <TextView
+                        android:id="@+id/demo_region"
+                        style="@style/Widget.Petasos.Demo.Text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="@string/demo_region_ready"
+                        android:textColor="@color/demo_text_secondary" />
+
+                    <TextView
+                        android:id="@+id/playback_status"
+                        style="@style/Widget.Petasos.Demo.Label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:accessibilityLiveRegion="polite"
+                        android:text="@string/ready_title"
+                        android:textColor="@color/demo_accent" />
+
+                    <ProgressBar
+                        android:id="@+id/demo_music_progress"
+                        style="@android:style/Widget.Material.ProgressBar.Horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="6dp"
+                        android:layout_marginTop="14dp"
+                        android:contentDescription="@string/demo_music_progress_description"
+                        android:indeterminate="false"
+                        android:max="10000"
+                        android:progress="0"
+                        android:progressDrawable="@drawable/demo_music_progress"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/playback_notice"
+                        style="@style/Widget.Petasos.Demo.Caption"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/ready_description" />
+
+                    <!-- Four fixed controls share this panel's width; no scrolling item reuse. -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="26dp"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal"
+                        tools:ignore="NestedWeights">
+
+                        <Button
+                            android:id="@+id/playback_previous"
+                            style="@style/Widget.Petasos.Demo.Button"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:enabled="false"
+                            android:text="@string/playback_previous" />
+                        <Button
+                            android:id="@+id/playback_play"
+                            style="@style/Widget.Petasos.Demo.Button.Primary"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/demo_control_gap"
+                            android:layout_weight="1.25"
+                            android:enabled="false"
+                            android:text="@string/playback_play" />
+                        <Button
+                            android:id="@+id/playback_stop"
+                            style="@style/Widget.Petasos.Demo.Button"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/demo_control_gap"
+                            android:layout_weight="1"
+                            android:enabled="false"
+                            android:text="@string/playback_stop" />
+                        <Button
+                            android:id="@+id/playback_next"
+                            style="@style/Widget.Petasos.Demo.Button"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/demo_control_gap"
+                            android:layout_weight="1"
+                            android:enabled="false"
+                            android:text="@string/playback_next" />
+                    </LinearLayout>
+
+                    <!-- Shared renderer slots; this demo exposes none of these capabilities. -->
+                    <View
+                        android:id="@+id/story_selection"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:importantForAccessibility="no"
+                        android:visibility="gone" />
+                    <Button
+                        android:id="@+id/playback_new_story"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:enabled="false"
+                        android:importantForAccessibility="no"
+                        android:text="@string/playback_new_story"
+                        android:visibility="gone" />
+                    <Button
+                        android:id="@+id/playback_talk"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:enabled="false"
+                        android:importantForAccessibility="no"
+                        android:text="@string/playback_talk"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <Space
+                    android:layout_width="@dimen/demo_panel_gap"
+                    android:layout_height="1dp" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/demo_panel_secondary"
+                    android:orientation="vertical"
+                    android:padding="@dimen/demo_panel_padding">
+
+                    <TextView
+                        style="@style/Widget.Petasos.Demo.Label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/demo_next_label" />
+                    <TextView
+                        android:id="@+id/demo_next_title"
+                        style="@style/Widget.Petasos.Demo.NextTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="18dp"
+                        android:accessibilityHeading="true"
+                        android:text="@string/demo_next_ready" />
+                    <TextView
+                        style="@style/Widget.Petasos.Demo.Caption"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:text="@string/demo_next_description" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="24dp"
+                        android:layout_marginBottom="20dp"
+                        android:background="@color/demo_border" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+                        <TextView
+                            style="@style/Widget.Petasos.Demo.Label"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/demo_clock_label" />
+                        <TextView
+                            android:id="@+id/demo_clock"
+                            style="@style/Widget.Petasos.Demo.Text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:fontFeatureSettings="tnum"
+                            android:text="@string/demo_clock_initial"
+                            android:textSize="24sp" />
+                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/demo_completed"
+                        style="@style/Widget.Petasos.Demo.Caption"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="@string/demo_completed_initial" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/demo_panel_gap"
+                android:background="@drawable/demo_panel_secondary"
+                android:orientation="vertical"
+                android:padding="@dimen/demo_panel_padding">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+                    <TextView
+                        style="@style/Widget.Petasos.Demo.Text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:accessibilityHeading="true"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="@string/demo_controls_title"
+                        android:textSize="20sp" />
+                    <TextView
+                        style="@style/Widget.Petasos.Demo.Caption"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_weight="1"
+                        android:text="@string/demo_controls_description" />
+                    <TextView
+                        style="@style/Widget.Petasos.Demo.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:text="@string/demo_route_badge"
+                        android:textColor="@color/demo_accent" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView
+                            style="@style/Widget.Petasos.Demo.Caption"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/demo_time_label" />
+                        <!-- Three fixed controls keep their touch targets aligned across widths. -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:baselineAligned="false"
+                            android:orientation="horizontal"
+                            tools:ignore="NestedWeights">
+                            <Button
+                                android:id="@+id/demo_advance_1"
+                                style="@style/Widget.Petasos.Demo.Button.Secondary"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:enabled="false"
+                                android:text="@string/demo_advance_1" />
+                            <Button
+                                android:id="@+id/demo_advance_10"
+                                style="@style/Widget.Petasos.Demo.Button.Secondary"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/demo_control_gap"
+                                android:layout_weight="1"
+                                android:enabled="false"
+                                android:text="@string/demo_advance_10" />
+                            <Button
+                                android:id="@+id/demo_advance_30"
+                                style="@style/Widget.Petasos.Demo.Button.Secondary"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/demo_control_gap"
+                                android:layout_weight="1"
+                                android:enabled="false"
+                                android:text="@string/demo_advance_30" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <Space android:layout_width="@dimen/demo_panel_gap" android:layout_height="1dp" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.75"
+                        android:orientation="vertical">
+                        <TextView
+                            style="@style/Widget.Petasos.Demo.Caption"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/demo_route_label" />
+                        <!-- Three fixed choices, independent of content and list length. -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:baselineAligned="false"
+                            android:orientation="horizontal"
+                            tools:ignore="NestedWeights">
+                            <Button
+                                android:id="@+id/demo_route_anseong"
+                                style="@style/Widget.Petasos.Demo.Button.Secondary"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:enabled="false"
+                                android:text="@string/demo_route_anseong" />
+                            <Button
+                                android:id="@+id/demo_route_yuseong"
+                                style="@style/Widget.Petasos.Demo.Button.Secondary"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/demo_control_gap"
+                                android:layout_weight="1"
+                                android:enabled="false"
+                                android:text="@string/demo_route_yuseong" />
+                            <Button
+                                android:id="@+id/demo_route_gap"
+                                style="@style/Widget.Petasos.Demo.Button.Secondary"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/demo_control_gap"
+                                android:layout_weight="1.1"
+                                android:enabled="false"
+                                android:text="@string/demo_route_gap" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <Button
+                        android:id="@+id/demo_reset"
+                        style="@style/Widget.Petasos.Demo.Button.Secondary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_marginStart="@dimen/demo_panel_gap"
+                        android:enabled="false"
+                        android:text="@string/demo_reset" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                style="@style/Widget.Petasos.Demo.Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:text="@string/demo_scope_note" />
+        </LinearLayout>
+    </ScrollView>
+
+    <TextView
+        android:id="@+id/vehicle_policy_notice"
+        style="@style/Widget.Petasos.Demo.Text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:accessibilityLiveRegion="polite"
+        android:gravity="center"
+        android:paddingHorizontal="@dimen/demo_screen_horizontal"
+        android:paddingVertical="@dimen/demo_screen_vertical"
+        android:text="@string/vehicle_policy_waiting"
+        android:textColor="@color/demo_text_secondary"
+        android:textSize="24sp"
+        android:visibility="visible" />
+</merge>

@@ -36,4 +36,7 @@ internal data class DemoScenarioSnapshot(
     val startedStoryIds: List<String>,
     val automaticStartedStoryIds: List<String>,
     val failure: DemoScenarioFailure?,
+    val currentRegionName: String? = null,
+    val targetRegionName: String? = null,
+    val offeredStoryTitle: String? = null,
 )

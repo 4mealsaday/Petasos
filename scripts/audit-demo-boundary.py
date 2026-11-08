@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Bounded static inspection of the engine-only demo manifest and direct source references.
+"""Bounded static inspection of a demo manifest and direct source references.
 
 No APK execution, device access, Kotlin compilation, transitive call analysis or runtime
 isolation proof is performed. Reports contain fixed codes, counts and input hashes only.
@@ -18,11 +18,13 @@ import xml.etree.ElementTree as ET
 
 ANDROID = "{http://schemas.android.com/apk/res/android}"
 PACKAGE = "com.petasos.app.demo"
+UI_ACTIVITY = PACKAGE + ".DemoActivity"
+PROFILES = ("engine", "ui")
 MANIFEST_LIMIT = 1024 * 1024
 SOURCE_LIMIT = 512 * 1024
 TOTAL_SOURCE_LIMIT = 8 * 1024 * 1024
 FILE_LIMIT = 512
-SCOPE = "Static engine-only demo manifest and direct source-reference inspection; not runtime isolation proof"
+SCOPE = "Static demo manifest and direct source-reference inspection; not runtime isolation proof"
 
 # Exact package boundaries and type names. Pure RuntimeSpeech/RuntimeMusic, planners,
 # location models, public bundled catalogs and Room stores remain usable.
@@ -80,7 +82,28 @@ def read_bounded(path, limit):
     return data
 
 
-def manifest_checks(data):
+def ui_activity_checks(activity):
+    """One explicit launcher only. No aliases, additional entry filters or hidden hooks."""
+    failures = set()
+    if activity.tag != "activity" or activity.attrib != {
+            ANDROID + "name": UI_ACTIVITY, ANDROID + "exported": "true"}:
+        failures.add("MANIFEST_UI_ACTIVITY")
+    filters = list(activity)
+    if len(filters) != 1 or filters[0].tag != "intent-filter" or filters[0].attrib:
+        failures.add("MANIFEST_UI_LAUNCHER_FILTER")
+    else:
+        entries = list(filters[0])
+        expected = {("action", "android.intent.action.MAIN"), ("category", "android.intent.category.LAUNCHER")}
+        actual = {(node.tag, node.get(ANDROID + "name")) for node in entries}
+        if len(entries) != 2 or actual != expected or any(
+                set(node.attrib) != {ANDROID + "name"} or list(node) for node in entries):
+            failures.add("MANIFEST_UI_LAUNCHER_FILTER")
+    return failures
+
+
+def manifest_checks(data, profile="engine"):
+    if profile not in PROFILES:
+        raise AuditError("PROFILE_UNSUPPORTED")
     if len(data) > MANIFEST_LIMIT:
         raise AuditError("INPUT_TOO_LARGE")
     try:
@@ -114,7 +137,8 @@ def manifest_checks(data):
     if permissions:
         failures.add("MANIFEST_PERMISSIONS")
     components = [node for node in nodes if node.tag in ("activity", "activity-alias", "service", "provider", "receiver")]
-    if components:
+    if (profile == "engine" and components) or (profile == "ui" and (
+            len(components) != 1 or components[0].tag != "activity")):
         failures.add("MANIFEST_COMPONENTS")
     apps = root.findall("application")
     if len(apps) != 1:
@@ -127,8 +151,13 @@ def manifest_checks(data):
             failures.add("MANIFEST_BACKUP")
         if app.get(ANDROID + "usesCleartextTraffic") != "false":
             failures.add("MANIFEST_CLEARTEXT")
-        if list(app):
+        if profile == "engine":
+            if list(app):
+                failures.add("MANIFEST_APPLICATION_CHILDREN")
+        elif len(app) != 1 or app[0].tag != "activity":
             failures.add("MANIFEST_APPLICATION_CHILDREN")
+        else:
+            failures.update(ui_activity_checks(app[0]))
     if any(ANDROID + "networkSecurityConfig" in node.attrib for node in nodes):
         failures.add("MANIFEST_NETWORK_CONFIG")
     if any(any(ANDROID + name in node.attrib for name in ("appComponentFactory", "backupAgent", "process"))
@@ -259,14 +288,15 @@ def source_checks(data, java=False):
     return sorted(failures)
 
 
-def audit(manifest, source_dir):
+def audit(manifest, source_dir, profile="engine"):
     report = {"formatVersion": 1, "status": "FAIL", "scope": SCOPE,
               "runtimeIsolationVerified": False, "transitiveCallsInspected": False,
+              "profile": profile if profile in PROFILES else "unsupported",
               "expectedPackage": PACKAGE, "manifestSha256": None, "sourceFiles": [], "violations": []}
     try:
         data = read_bounded(manifest, MANIFEST_LIMIT)
         report["manifestSha256"] = digest(data)
-        manifest_result = manifest_checks(data)
+        manifest_result = manifest_checks(data, profile)
         report["manifest"] = {key: value for key, value in manifest_result.items() if key != "codes"}
         report["violations"].extend({"code": code} for code in manifest_result["codes"])
         if source_dir.is_symlink() or not source_dir.is_dir():
@@ -309,8 +339,10 @@ def main(argv=None):
     parser.add_argument("--manifest", required=True, type=Path)
     parser.add_argument("--source-dir", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
+    parser.add_argument("--profile", choices=PROFILES, default="engine",
+                        help="engine forbids all components; ui allows only the exact DemoActivity launcher")
     args = parser.parse_args(argv)
-    report = audit(args.manifest, args.source_dir)
+    report = audit(args.manifest, args.source_dir, args.profile)
     temporary = None
     try:
         destination = args.output.resolve()
@@ -330,7 +362,7 @@ def main(argv=None):
             temporary.unlink(missing_ok=True)
         print(json.dumps({"status": "FAIL", "code": "REPORT_WRITE_REJECTED", "scope": SCOPE}))
         return 2
-    print(json.dumps({"status": report["status"], "sourceFileCount": report["sourceFileCount"],
+    print(json.dumps({"status": report["status"], "profile": report["profile"], "sourceFileCount": report["sourceFileCount"],
                       "violationCounts": report["violationCounts"], "runtimeIsolationVerified": False}))
     return 0 if report["status"] == "PASS" else 1
 
