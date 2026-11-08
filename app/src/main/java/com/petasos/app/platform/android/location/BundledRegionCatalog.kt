@@ -10,6 +10,9 @@ import com.petasos.app.location.RegionDatasetManifestCodec
 import com.petasos.app.location.HierarchicalRegionBoundaryLookup
 import com.petasos.app.location.ReviewedRegionHierarchy
 import com.petasos.app.location.ReviewedRegionHierarchyCodec
+import com.petasos.app.location.PackedRegionPolylineLookup
+import com.petasos.app.location.RegionPolylineLookup
+import com.petasos.app.planning.auxiliary.AuxiliaryRegionTimeline
 import com.petasos.app.storage.RoomRegionInstaller
 import com.petasos.app.storage.StorageDatabase
 import java.io.ByteArrayOutputStream
@@ -37,19 +40,57 @@ internal class BundledRegionCatalog(context: Context) {
         // Only APK-pinned, explicitly reviewed policies may finalize initial pending revisions.
         // The current catalog is empty; geometry installation alone never grants visit authority.
         BundledRegionPolicyCatalog(app).install(database, manifest)
-        val ready = manifest.regions.filter { it.status == "ready" }
-        val assets = ready.associate { it.regionRevisionId to it.geometryAsset }
-        val packed = PackedRegionBoundaryLookup(ready.map {
-            PackedRegionBoundaryMetadata(it.regionRevisionId, manifest.datasetVersion, it.geometrySha256,
-                it.geometryBytes, it.ringCount, it.pointCount, it.bounds)
-        }, open = { app.assets.open(assets.getValue(it.regionRevisionId)) },
-            isAuthorized = { installer.isAuthorized(manifest, it.regionRevisionId) },
-            quarantinedBounds = manifest.regions.filter { it.status == "quarantined" }.map { it.bounds })
+        val packed = packed(manifest, installer)
         // Deduct the CRS operation's stated expected accuracy. It is not a hard bound or a visit policy.
         val adjusted = RegionBoundaryLookup { latitude, longitude -> packed.containing(latitude, longitude).map {
             it.copy(interiorDistanceMeters = max(0.0, it.interiorDistanceMeters - manifest.transform.expectedAccuracyMeters))
         } }
         return HierarchicalRegionBoundaryLookup(adjusted, hierarchy) { installer.isAuthorized(manifest, it) }
+    }
+
+    /**
+     * Owner-worker snapshot for detailed projection. Projection never queries a closing database;
+     * polylineAuthorizer must recheck the relevant live rights before accepting/using its result.
+     * It never installs visit policies or confirms an observed location.
+     */
+    fun loadPolyline(database: StorageDatabase): RegionPolylineLookup {
+        val manifest = readManifest()
+        val hierarchy = readHierarchy(manifest)
+        val installer = RoomRegionInstaller(database)
+        val authorized = manifest.regions.filter { it.status == "ready" && installer.isAuthorized(manifest, it.regionRevisionId) }
+            .mapTo(HashSet()) { it.regionRevisionId }
+        return PackedRegionPolylineLookup(packed(manifest, installer, authorized),
+            manifest.regions.filter { it.status == "ready" }.associate { it.regionRevisionId to it.regionId },
+            hierarchy, MANIFEST_SHA256)
+    }
+
+    /** Called on the runtime worker. Source withdrawal revokes cached forecasts as well as new queries. */
+    fun polylineAuthorizer(database: StorageDatabase): (AuxiliaryRegionTimeline) -> Boolean {
+        val manifest = readManifest()
+        val hierarchy = readHierarchy(manifest)
+        val installer = RoomRegionInstaller(database)
+        val revisions = manifest.regions.filter { it.status == "ready" }.associateBy { it.regionRevisionId }
+        return { timeline ->
+            timeline.windows.all { window ->
+                val region = window.region
+                region.datasetVersion == manifest.datasetVersion && region.hierarchyKey == hierarchy.fingerprint &&
+                    revisions[region.regionRevisionId]?.regionId == region.regionId &&
+                    hierarchy.revisionChain(region.regionRevisionId).all { installer.isAuthorized(manifest, it) }
+            }
+        }
+    }
+
+    private fun packed(manifest: RegionDatasetManifest, installer: RoomRegionInstaller,
+                       authorizedSnapshot: Set<String>? = null): PackedRegionBoundaryLookup {
+        val ready = manifest.regions.filter { it.status == "ready" }
+        val assets = ready.associate { it.regionRevisionId to it.geometryAsset }
+        return PackedRegionBoundaryLookup(ready.map {
+            PackedRegionBoundaryMetadata(it.regionRevisionId, manifest.datasetVersion, it.geometrySha256,
+                it.geometryBytes, it.ringCount, it.pointCount, it.bounds)
+        }, open = { app.assets.open(assets.getValue(it.regionRevisionId)) },
+            isAuthorized = { metadata -> authorizedSnapshot?.contains(metadata.regionRevisionId)
+                ?: installer.isAuthorized(manifest, metadata.regionRevisionId) },
+            quarantinedBounds = manifest.regions.filter { it.status == "quarantined" }.map { it.bounds })
     }
 
     fun readHierarchy(manifest: RegionDatasetManifest = readManifest()): ReviewedRegionHierarchy {

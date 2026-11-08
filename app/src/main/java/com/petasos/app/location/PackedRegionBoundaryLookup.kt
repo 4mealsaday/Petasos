@@ -110,7 +110,40 @@ class PackedRegionBoundaryLookup(
         }
     }
 
-    private fun readRegion(metadata: PackedRegionBoundaryMetadata, longitude: Double, latitude: Double): Double? {
+    internal val polylineRegionRevisions: Set<String> get() = regions.map { it.regionRevisionId }.toSet()
+    internal val polylineGeometryKey: String by lazy {
+        fun boundsKey(bounds: PackedRegionBounds) = listOf(bounds.minLongitude, bounds.minLatitude,
+            bounds.maxLongitude, bounds.maxLatitude).map { java.lang.Double.toHexString(it) }
+        polylineDigest(listOf("packed-polyline-geometry-v1") + regions.sortedBy { it.regionRevisionId }.flatMap {
+            listOf("ready", it.regionRevisionId, it.datasetVersion, it.sha256, it.byteLength.toString(),
+                it.ringCount.toString(), it.pointCount.toString()) + boundsKey(it.bounds)
+        } + quarantinedBounds.map(::boundsKey).sortedBy { it.joinToString(":") }.flatMap { listOf("quarantined") + it })
+    }
+
+    /**
+     * Internal first-point containment set, only if no boundary touches ANY segment of the path.
+     * The returned clearance is deliberately still that first point's clearance; callers must use
+     * the separate PolylineRegion contract and must not interpret it as a path clearance.
+     */
+    internal fun matchesForUnbrokenPolyline(path: List<BoundaryCoordinate>): List<RegionContainment> = try {
+        val index = PolylineBoundaryIndex(path)
+        if (quarantinedBounds.any(index::overlaps)) emptyList() else {
+            val candidates = regions.filter { index.overlaps(it.bounds) }
+            val matches = ArrayList<RegionContainment>()
+            for (metadata in candidates) {
+                checkPacked(isAuthorized(metadata))
+                val clearance = readRegion(metadata, index.first.longitude, index.first.latitude, index)
+                checkPacked(isAuthorized(metadata))
+                if (clearance != null) matches += RegionContainment(metadata.regionRevisionId, metadata.datasetVersion,
+                    "EPSG:4326", clearance)
+            }
+            checkPacked(candidates.all(isAuthorized))
+            Collections.unmodifiableList(matches)
+        }
+    } catch (_: Exception) { emptyList() }
+
+    private fun readRegion(metadata: PackedRegionBoundaryMetadata, longitude: Double, latitude: Double,
+                           path: PolylineBoundaryIndex? = null): Double? {
         val digest = MessageDigest.getInstance("SHA-256")
         val counted = ExactLengthInputStream(open(metadata), metadata.byteLength)
         DataInputStream(BufferedInputStream(DigestInputStream(counted, digest), BUFFER_BYTES)).use { input ->
@@ -158,6 +191,8 @@ class PackedRegionBoundaryLookup(
                         firstLongitude = nextLongitude
                         firstLatitude = nextLatitude
                     } else {
+                        // A competing region absent at the first vertex can still cross the path.
+                        checkPacked(path?.touches(previousLongitude, previousLatitude, nextLongitude, nextLatitude) != true)
                         if (packedOnSegment(longitude, latitude, previousLongitude, previousLatitude, nextLongitude, nextLatitude)) {
                             boundary = true
                         }

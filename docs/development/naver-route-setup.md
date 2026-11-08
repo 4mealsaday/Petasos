@@ -1,6 +1,6 @@
 # 네이버 보조 경로 조회 준비
 
-확인: 2026-11-09 KST. 기존 Pleos NaviHelper는 실제 내비 상태의 기준이다. 네이버 Directions 5는 외부에서 계산한 **보조 예상 경로**를 공급하는 후보이며, 동일한 목적지·옵션을 썼다는 이유로 현재 Pleos 선택 경로와 같다고 간주하지 않는다. 카카오 가입/키는 필요 없다.
+확인: 2026-11-09 KST. 기존 Pleos NaviHelper는 실제 내비 상태의 기준이다. dev.26은 네이버 Directions 5의 **보조 예상 경로**를 서버 HTTPS와 Android 예측 편성에 연결했다. 동일한 목적지·옵션을 썼다는 이유로 현재 Pleos 선택 경로와 같다고 간주하지 않는다. 카카오 가입/키는 필요 없다.
 
 ## 등록과 입력 위치
 
@@ -45,6 +45,20 @@ PETASOS_NAVER_MAPS_CLIENT_SECRET=
 
 [Directions 5](https://api.ncloud-docs.com/docs/application-maps-directions5)의 `path` 전체 좌표와 `guide.pointIndex`/`guide.duration`(밀리초)을 대응한다. `section`은 일부 주요 도로이므로 전체 시간을 채우는 데 사용하지 않는다. 마지막 구간 누락, 이동 구간 0ms, 합계 불일치를 원값 그대로 표시하며 총 ETA를 임의로 나누지 않는다. `timingUsable=true`도 예상시간의 정확성이나 실제 Pleos 경로 일치의 증거는 아니다.
 
-서버 독립 모듈과 개발용 CLI의 합성 파서/전송 테스트 32개, CLI 테스트 8개를 통과했다. 2026-11-09 사용자가 입력한 인증 정보로 공식 공개 예제 좌표를 실제 호출하여 PASS했다. 좌표 4,067개·시간 구간 29개, 전체 경로의 시간 연결과 합계 일치, `timingUsable=true`를 확인했다. 사용자 위치를 읽거나 응답 좌표열을 저장하지 않았다([검증 메타데이터](../../artifacts/p0-completion/naver-official-example.json)).
+서버 독립 모듈·CLI 검사에 이어 dev.26의 Android 연결을 구현했다. Pleos 공개 API에서 읽은 목적지·경유지는 별도 메모리 입력으로 유지하고 기존 기기 Bearer로 고정 `/v1/routes/auxiliary`를 호출한다. 네이버 키는 서버에만 있다. Android 호출은 최대 2개 worker·전체 15초로 제한하며 자동 재시도·원본 경로 저장을 하지 않는다. 경로 변경·입력 철회·위치 이탈·만료는 기존 예측을 폐기한다. [통합 구조](2026-11-09-auxiliary-route-integration.md).
 
-Android 자동 편성 연결은 아직 하지 않았다. 기기에서 받은 유효 위치만 지역 방문 카드의 근거가 될 수 있다. 보조 경로가 현재 위치/내비 상태와 어긋나면 예측을 철회하는 연결과 지역별 통과 시간 검수가 다음 구현이다.
+지역 시간창은 **guide 전체 선분이 하나의 검토된 NGII 지역 안에 있는 구간**에서만 만든다. 경계를 넘거나 확정할 수 없는 구간은 unknown으로 남긴다. 실제 위치와 연결하는 앵커도 가능한 전체 경로 구간과 측정 시각·정확도를 검사하며 guide 내부 시간을 거리 비례로 나누지 않는다.
+
+2026-11-09 공식 공개 예제 실호출 기록은 다음과 같다. 호출 시각의 교통·경로 계산에 따라 점·guide 개수가 달라질 수 있다.
+
+| 검사 | 확인한 결과 | 증거 |
+| --- | --- | --- |
+| 개발 CLI → 네이버 | 4,067점·29 guide, 시간 연결·합계 일치, `timingUsable=true` | [초기 기록](../../artifacts/p0-completion/naver-official-example.json) |
+| 등록 기기 인증 → localhost HTTPS endpoint → 네이버 | 4,203점·29 guide, `timingUsable=true` | [서버 경로 기록](../../artifacts/milestone-26/naver-https-official-example.json) |
+| 최종 privacy APK의 `auxiliary-route` | 4,138점·27 guide, 실제 NGII/계층 투영 71ms, 지역 시간창 7개·unknown guide 18개. 공개 경로 위 **합성 Android 점·시계**의 앵커가 passage 2개를 생성하고 출처 만료·철회를 거부 | [기기 결과](../../artifacts/milestone-26/auxiliary-route/auxiliary-route-privacy.json), [개수·시간 기록](../../artifacts/milestone-26/auxiliary-route/auxiliary-route-privacy.txt) |
+
+기기 probe는 기존 암호화 config로 공개 예제 요청을 한 번 보내고 폐기용 Room을 사용했다. 전체 1,202ms, 기하 조회 예산 초과 없음이었다. 사용자 위치·내비 입력·이동 이력을 읽거나 제품 여행·방문 카드·정책을 생성하지 않았다. 원본 경로 파일, 좌표 출력, 오디오·모델 호출도 없다. 7개 시간창과 18개 unknown은 서로 다른 집계 단위이며 합쳐 guide 수를 계산하지 않는다.
+
+최종 Debug JVM **964개/75 suite**(실패·오류·생략 0), privacy 앱·검증 APK 빌드, Lint와 APK 정적 감사가 통과했다. [JVM 집계](../../artifacts/milestone-26/jvm-test-summary.json), [빌드](../../artifacts/milestone-26/build.log), [Lint](../../artifacts/milestone-26/lint.log), [정적 감사](../../artifacts/milestone-26/client-dex-audit.json). 정적 감사는 별도 SpeechService의 동작·개인정보 안전성 검증을 대신하지 않는다.
+
+**실제 Pleos 선택 목적지와 실제 유효 위치를 함께 사용하는 기기 전체 흐름은 아직 미검증**이다. 이번 공개 예제의 합성 앵커를 실제 주행이나 활성 Pleos 경로 일치로 표시하지 않는다. 방문 카드에는 기기에서 받은 유효 위치와 별도 검토된 지역 정책이 필요하며 현재 승인된 지역·랜드마크 정책은 없다.

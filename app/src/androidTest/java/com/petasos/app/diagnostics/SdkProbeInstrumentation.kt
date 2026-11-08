@@ -75,6 +75,7 @@ class SdkProbeInstrumentation : Instrumentation() {
                 "session-recovery" -> com.petasos.app.storage.SessionRecoveryProbe.run(this, ::mark)
                 "recovery-music-gap" -> com.petasos.app.storage.RecoveryMusicGapProbe.run(this, ::mark)
                 "navigation" -> NavigationSdkProbe.run(this, ::mark)
+                "auxiliary-route" -> AuxiliaryRouteProbe.run(this, ::mark)
                 "music-runtime" -> com.petasos.app.storage.MusicRuntimeProbe.run(this, ::mark)
                 "media-session" -> MediaSessionControlProbe.run(this, ::mark)
                 "app-playback" -> ProductPlaybackProbe.run(this, ::mark)
@@ -110,6 +111,9 @@ class SdkProbeInstrumentation : Instrumentation() {
             reason = failure.code
         } catch (failure: AndroidSpeechCapabilityProbe.Failure) {
             outcome = "BLOCKED"
+            reason = failure.code
+        } catch (failure: AuxiliaryRouteProbe.Failure) {
+            outcome = failure.outcome
             reason = failure.code
         } catch (failure: com.petasos.app.storage.ExplicitPlaybackCommandProbe.Failure) {
             outcome = "FAIL"
@@ -156,6 +160,7 @@ class SdkProbeInstrumentation : Instrumentation() {
                 "landmark-storage" -> "actual_Room_reviewed_landmark_policy_coordinate_and_association_synthetic_content_no_location_audio_consent_change_or_model"
                 "session-recovery" -> "actual_Room_Keystore_TX04_recovery_with_synthetic_data"
                 "navigation" -> "actual_read_only_NaviHelper_no_route_mutation"
+                "auxiliary-route" -> "one_actual_HTTPS_public_official_route_example_disposable_NGII_hierarchy_projection_synthetic_Android_anchor_no_real_location_navigation_audio_model_or_product_records"
                 "music-runtime" -> "actual_Media3_and_Room_with_synthetic_test_tone_no_microphone_or_model"
                 "media-session" -> "actual_MediaController_commands_and_product_browse_no_audio_or_microphone"
                 "car-policy-ui" -> "actual_CarUx_observation_and_synthetic_visibility_gates_no_vehicle_mutation"

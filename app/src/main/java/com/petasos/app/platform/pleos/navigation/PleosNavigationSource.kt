@@ -6,9 +6,12 @@ import ai.pleos.playground.navi.constants.NavigationStatus
 import ai.pleos.playground.navi.constants.RouteOption
 import ai.pleos.playground.navi.data.CurrentLocationInfo
 import ai.pleos.playground.navi.data.DestinationInfo
+import ai.pleos.playground.navi.data.DestinationArrivedInfo
 import ai.pleos.playground.navi.data.RouteStateInfo
 import ai.pleos.playground.navi.data.RouteStartInfo
 import ai.pleos.playground.navi.data.WaypointChangedInfo
+import ai.pleos.playground.navi.data.WaypointArrivedInfo
+import ai.pleos.playground.navi.data.WaypointInfo
 import ai.pleos.playground.navi.helper.NaviHelper
 import ai.pleos.playground.navi.helper.listener.NaviHelperEventListener
 import android.annotation.SuppressLint
@@ -17,14 +20,25 @@ import android.content.pm.PackageManager
 import android.os.Handler
 import android.os.Looper
 import com.petasos.app.capability.navigation.*
+import com.petasos.app.location.BoundaryCoordinate
 import java.security.MessageDigest
 
 /** NaviHelper 3.0.5 read-only adapter. No route/search/map command is exposed or called. */
-class PleosNavigationSource(context: Context, private val initialRevision: Long = 0) : NavigationSource {
+class PleosNavigationSource(context: Context, private val initialRevision: Long = 0) : NavigationSource, NavigationAuxiliaryInputSource {
     private val appContext = context.applicationContext
     private val main = Handler(Looper.getMainLooper())
     private var active: Session? = null
     private var latestRevision = initialRevision
+    @Volatile private var auxiliaryController: NavigationAuxiliaryInputController? = null
+    private var auxiliarySink: ((NavigationAuxiliaryInput?) -> Unit)? = null
+
+    override fun setAuxiliaryInputSink(sink: ((NavigationAuxiliaryInput?) -> Unit)?) {
+        requireMainThread()
+        auxiliarySink = sink
+        sink?.invoke(auxiliaryInput())
+    }
+
+    override fun auxiliaryInput(): NavigationAuxiliaryInput? = auxiliaryController?.input()
 
     override fun start(onEvent: (NavigationEvent) -> Unit) {
         requireMainThread()
@@ -35,6 +49,7 @@ class PleosNavigationSource(context: Context, private val initialRevision: Long 
         }
         val session = Session(sdk, onEvent)
         active = session
+        auxiliaryController = session.input
         emit(session, NavigationEvent.Availability(NavigationAvailability.CONNECTING))
         session.initializationAttempted = true
         try {
@@ -61,6 +76,8 @@ class PleosNavigationSource(context: Context, private val initialRevision: Long 
         requireMainThread()
         val session = active ?: return
         active = null // Fence queued callbacks before listener removal or SDK release.
+        auxiliaryController = null
+        session.input.close()
         session.tracker.unavailable()?.let { latestRevision = it.revision; session.onEvent(NavigationEvent.Changed(it)) }
         release(session)
         session.onEvent(NavigationEvent.Availability(NavigationAvailability.CLOSED))
@@ -76,15 +93,43 @@ class PleosNavigationSource(context: Context, private val initialRevision: Long 
     @SuppressLint("MissingPermission")
     private fun requestIdentity(session: Session) {
         if (!permissionGranted()) { fail(session, NavigationAvailability.PERMISSION_DENIED, "NAVI_PERMISSION_DENIED"); return }
-        try { session.sdk.getCurrentLocationInfo(); session.sdk.getDestinationInfo() }
+        try {
+            session.sdk.getCurrentLocationInfo()
+            if (session.tracker.snapshot.simulated) {
+                // Keep ordinary simulated destination fingerprint reads, but never publish their
+                // coordinates as observed auxiliary input or overlap them with an observed pair.
+                if (session.simulationDestinationRead == null && session.input.callbackRead() == null) {
+                    session.simulationDestinationRead = Any()
+                    session.sdk.getDestinationInfo()
+                }
+            } else requestAuxiliaryInputs(session)
+        }
+        catch (_: Exception) { fail(session, NavigationAvailability.UNAVAILABLE, "NAVI_READ_FAILED") }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun requestAuxiliaryInputs(session: Session) {
+        if (active !== session || !session.connected || session.destinationArrived ||
+            session.simulationDestinationRead != null || !session.tracker.acceptsRouteReadings) return
+        if (!permissionGranted()) { fail(session, NavigationAvailability.PERMISSION_DENIED, "NAVI_PERMISSION_DENIED"); return }
+        // Repeated location/state reads do not change the reviewed navigation context. Keep its
+        // current pair; explicit path/destination/waypoint events invalidate before refreshing.
+        if (session.input.input() != null) return
+        session.input.beginRead() ?: return
+        try { session.sdk.getDestinationInfo(); session.sdk.getWaypointInfo() }
         catch (_: Exception) { fail(session, NavigationAvailability.UNAVAILABLE, "NAVI_READ_FAILED") }
     }
 
     private inner class Session(val sdk: NaviHelper, val onEvent: (NavigationEvent) -> Unit) {
         val tracker = NavigationRevisionTracker(latestRevision)
+        val input: NavigationAuxiliaryInputController = NavigationAuxiliaryInputController(tracker.snapshot,
+            allowed = { auxiliaryController === this@Session.input && permissionGranted() },
+            onChanged = { auxiliarySink?.invoke(it) })
         var initializationAttempted = false
         var listenerRegistered = false
         var connected = false
+        var destinationArrived = false
+        @Volatile var simulationDestinationRead: Any? = null
         val listener = object : NaviHelperEventListener {
             override fun onRouteStateInfo(routeStateInfo: RouteStateInfo) { post(this@Session) {
                 emit(this@Session, NavigationEvent.ReadReceived(NavigationReading.ROUTE_STATE))
@@ -103,28 +148,80 @@ class PleosNavigationSource(context: Context, private val initialRevision: Long 
                 if (!tracker.acceptsRouteReadings) return@post
                 // Deliberately ignore current coordinates, heading, address and route index.
                 changed(tracker.routeIdentity(currentLocationInfo.routeId))
+                requestAuxiliaryInputs(this@Session)
             } }
-            override fun onDestinationInfo(destinationInfo: DestinationInfo) { post(this@Session) {
-                emit(this@Session, NavigationEvent.ReadReceived(NavigationReading.DESTINATION_IDENTITY))
-                if (!tracker.acceptsRouteReadings) return@post
-                if (!destinationInfo.latitude.isFinite() || destinationInfo.latitude !in -90.0..90.0 ||
-                    !destinationInfo.longitude.isFinite() || destinationInfo.longitude !in -180.0..180.0) {
-                    changed(tracker.pathChangeCancelled()); emit(this@Session, NavigationEvent.Failure("NAVI_DESTINATION_INVALID"))
-                } else changed(tracker.destination(destinationIdentity(destinationInfo)))
-            } }
+            override fun onDestinationInfo(destinationInfo: DestinationInfo) {
+                val read = input.callbackRead()
+                val simulationRead = simulationDestinationRead
+                val point = BoundaryCoordinate(destinationInfo.longitude, destinationInfo.latitude)
+                val identity = destinationIdentity(destinationInfo)
+                post(this@Session) {
+                    emit(this@Session, NavigationEvent.ReadReceived(NavigationReading.DESTINATION_IDENTITY))
+                    if (simulationRead != null && simulationDestinationRead === simulationRead) {
+                        simulationDestinationRead = null
+                        if (tracker.acceptsRouteReadings && tracker.snapshot.simulated) {
+                            if (!validDestination(point)) {
+                                changed(tracker.pathChangeCancelled())
+                                emit(this@Session, NavigationEvent.Failure("NAVI_DESTINATION_INVALID"))
+                            } else changed(tracker.destination(identity))
+                        } else requestAuxiliaryInputs(this@Session)
+                        return@post
+                    }
+                    if (!tracker.acceptsRouteReadings || !input.accepts(read)) {
+                        if (input.destination(read, null, tracker.snapshot)) requestAuxiliaryInputs(this@Session)
+                        return@post
+                    }
+                    if (!validDestination(point)) {
+                        input.invalidate()
+                        changed(tracker.pathChangeCancelled()); emit(this@Session, NavigationEvent.Failure("NAVI_DESTINATION_INVALID"))
+                        input.destination(read, null, tracker.snapshot)
+                    } else {
+                        val change = tracker.destination(identity)
+                        // This requested destination can legitimately advance the existing fingerprint
+                        // revision once. All other revision changes invalidate the complete read pair.
+                        val restart = input.destination(read, point, tracker.snapshot)
+                        changed(change)
+                        if (restart) requestAuxiliaryInputs(this@Session)
+                    }
+                }
+            }
+            override fun onWayPointInfo(waypointInfoList: List<WaypointInfo>) {
+                val read = input.callbackRead()
+                // Copy only bounded coordinates at callback ingress; no names/addresses/countdown
+                // fields are retained in the queued task or used to infer route/waypoint order.
+                val points = waypointInfoList.takeIf { it.size <= 2 }?.map { BoundaryCoordinate(it.longitude, it.latitude) }
+                post(this@Session) {
+                    if (input.waypoints(read, points)) requestAuxiliaryInputs(this@Session)
+                }
+            }
             // Public callbacks have no request correlation or ordering guarantee. A mutation waits
             // for a completion event; if the provider omits it, route dependency stays unavailable.
             // Neither completion nor identity refresh proves GPS quality or road geometry.
-            override fun onDestinationChanged() { post(this@Session) { changed(tracker.pathChangeStarted()) } }
+            override fun onDestinationChanged() { post(this@Session) {
+                destinationArrived = false
+                input.invalidate(); changed(tracker.pathChangeStarted())
+            } }
             override fun onRouteStarted(routeStartInfo: RouteStartInfo) { post(this@Session) {
+                destinationArrived = false
+                input.invalidate()
                 changed(tracker.routeStarted())
             } }
             override fun onRouteOptionChanged(routeOption: RouteOption) { post(this@Session) {
+                input.invalidate()
                 changed(tracker.pathChangeStarted())
             } }
             override fun onWaypointChanged(waypointChangedInfo: WaypointChangedInfo) { post(this@Session) {
-                // onWayPointArrived is intentionally not handled: passage progress alone is not a path mutation.
+                input.invalidate()
                 changed(tracker.pathChangeStarted())
+            } }
+            override fun onWayPointArrived(waypointArrivedInfo: WaypointArrivedInfo) { post(this@Session) {
+                // Passage progress does not mutate the ordinary route revision. Refresh the
+                // provider's remaining waypoint list instead of guessing/removing an index.
+                input.invalidate(); requestAuxiliaryInputs(this@Session)
+            } }
+            override fun onDestinationArrived(destinationArrivedInfo: DestinationArrivedInfo) { post(this@Session) {
+                destinationArrived = true
+                input.invalidate()
             } }
             override fun onRoutingCompleted() { post(this@Session) {
                 tracker.pathChangeCompleted()
@@ -134,11 +231,11 @@ class PleosNavigationSource(context: Context, private val initialRevision: Long 
                 // A provider can finish a reroute without first sending a search-start callback.
                 // Invalidate the old identity even then; this is not a new lifecycle and cannot
                 // reopen a cancelled/failed route when the completion callback arrives late.
-                changed(tracker.pathChangeStarted())
+                input.invalidate(); changed(tracker.pathChangeStarted())
                 tracker.pathChangeCompleted()
                 if (tracker.acceptsRouteReadings) requestState(this@Session)
             } }
-            override fun onRouteCancelled() { post(this@Session) { changed(tracker.pathChangeCancelled()) } }
+            override fun onRouteCancelled() { post(this@Session) { input.invalidate(); changed(tracker.pathChangeCancelled()) } }
             override fun onNavigationStatus(status: NavigationStatus) { post(this@Session) {
                 when (status) {
                     NavigationStatus.INACTIVE, NavigationStatus.FREE_DRIVE -> changed(tracker.navigationInactive())
@@ -152,11 +249,15 @@ class PleosNavigationSource(context: Context, private val initialRevision: Long 
                 }
             } }
             override fun onError(errorCode: NaviErrorCode) { post(this@Session) {
+                input.invalidate()
                 changed(tracker.pathChangeCancelled())
                 emit(this@Session, NavigationEvent.Failure("NAVI_REQUEST_FAILED"))
             } }
         }
-        fun changed(snapshot: NavigationSnapshot?) { snapshot?.let { emit(this, NavigationEvent.Changed(it)) } }
+        fun changed(snapshot: NavigationSnapshot?) { snapshot?.let {
+            input.observe(it)
+            emit(this, NavigationEvent.Changed(it))
+        } }
     }
 
     private fun destinationIdentity(destination: DestinationInfo): String {
@@ -168,9 +269,14 @@ class PleosNavigationSource(context: Context, private val initialRevision: Long 
         finally { encoded.fill(0) }
     }
 
+    private fun validDestination(point: BoundaryCoordinate) = point.latitude.isFinite() && point.latitude in -90.0..90.0 &&
+        point.longitude.isFinite() && point.longitude in -180.0..180.0
+
     private fun fail(session: Session, state: NavigationAvailability, code: String) {
         if (active !== session) return
         active = null
+        auxiliaryController = null
+        session.input.close()
         session.tracker.unavailable()?.let { latestRevision = it.revision; session.onEvent(NavigationEvent.Changed(it)) }
         release(session)
         session.onEvent(NavigationEvent.Failure(code)); session.onEvent(NavigationEvent.Availability(state))

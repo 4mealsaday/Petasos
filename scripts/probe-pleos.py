@@ -18,7 +18,7 @@ PROBES = ("vehicle-preferences", "trip-results", "trip-lifecycle", "app-trip-lif
           "location-storage", "android-location-contract", "android-speech-capability", "region-storage", "region-policy-storage", "region-hierarchy", "bundled-stories", "regional-content", "landmark-storage", "automatic-planning", "local-commands", "session-recovery", "recovery-music-gap", "navigation", "music-runtime", "media-session", "app-playback", "app-music", "car-policy-ui",
           "storage", "runtime-scripted", "runtime-tts", "runtime-tts-stop", "story-generation-storage", "resume-context", "app-story-generation",
           "summary-storage", "summary-work", "summary-rights", "generation-https", "generation-provision", "generation-live",
-          "content-install", "content-install-local", "content-runtime", "generation-planning-live")
+          "content-install", "content-install-local", "content-runtime", "generation-planning-live", "auxiliary-route")
 CAAS = "ai.pleos.playground.caas"
 APP = "com.petasos.app"
 BUILD_TYPES = ("debug", "privacy")
@@ -101,6 +101,8 @@ def read_development_server(probe, path, token_path=None):
 
 
 def probe_timeout(probe):
+    if probe == "auxiliary-route":
+        return 90  # Probe checks its own 60s budget; host permits bounded Android cleanup/reporting.
     if probe == "app-music":
         return 190  # One full licensed track plus public story and standard stop/resume cleanup.
     if probe in ("app-trip-lifecycle", "app-location-live", "music-runtime", "generation-live", "generation-planning-live", "app-story-generation", "resume-context", "story-generation-storage"):
@@ -115,7 +117,7 @@ def probe_timeout(probe):
 def probe_evidence_metadata(probe, has_https_fixture=False):
     """Describe fixture boundaries identically in the report and host regressions."""
     return {
-        "fixture": "official_packaged_geometry_disposable_database_public_synthetic_coordinates" if probe in ("region-storage", "region-policy-storage", "region-hierarchy", "bundled-stories") else "two_synthetic_coordinates" if probe == "location" else (
+        "fixture": "official_public_route_example_and_packaged_geometry_disposable_database_synthetic_android_anchor" if probe == "auxiliary-route" else "official_packaged_geometry_disposable_database_public_synthetic_coordinates" if probe in ("region-storage", "region-policy-storage", "region-hierarchy", "bundled-stories") else "two_synthetic_coordinates" if probe == "location" else (
             "synthetic_korean_pcm" if probe in ("stt-pcm", "stt-owned-pcm", "stt-owned-stream", "stt-owned-delayed", "stt-owned-eof") else (
                 "disposable_database_and_synthetic_test_content" if probe in ("vehicle-preferences", "trip-results", "trip-lifecycle", "regional-content", "landmark-storage", "recovery-music-gap", "storage", "runtime-scripted", "runtime-tts", "runtime-tts-stop", "story-generation-storage", "resume-context", "automatic-planning", "local-commands", "summary-storage", "summary-work") else (
                     "local_https_synthetic_provider_one_day_ca_ephemeral_device_token" if has_https_fixture else None))),
@@ -144,6 +146,7 @@ def probe_evidence_metadata(probe, has_https_fixture=False):
             "automatic-planning": "actual Room with synthetic installed content and scripted runtime for region/explicit-interest planning, repeat filtering and playback boundaries; no microphone, model, location SDK or actual audio playback",
             "session-recovery": "actual Room/Keystore process-recovery transactions with synthetic interrupted data; no OS suspend or real microphone",
             "navigation": "actual read-only NaviHelper connection and callbacks or explicit fallback; no destination write or vehicle mutation",
+            "auxiliary-route": "one actual Android HTTPS request using the official public NAVER example and existing encrypted device configuration; actual packaged NGII/hierarchy projection in disposable Room; explicitly synthetic Android point/clock anchor, source expiry and revocation; 60-second probe budget; no observed location, active Pleos route proof, navigation change, raw route file, coordinate output, audio, model, product records or configuration change",
             "music-runtime": "actual Media3 playback and Room runtime using synthetic test tones; no licensed product music or microphone",
             "media-session": "actual MediaController command transport to synthetic target plus product browse and voice gate; no audio or microphone",
             "car-policy-ui": "actual CarUx observation plus synthetic visibility states; no vehicle mutation",

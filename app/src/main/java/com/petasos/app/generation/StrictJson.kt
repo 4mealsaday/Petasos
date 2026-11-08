@@ -2,17 +2,26 @@ package com.petasos.app.generation
 
 import java.nio.ByteBuffer
 import java.nio.charset.CodingErrorAction
+import java.math.BigDecimal
 
 /** Bounded RFC 8259 reader. Duplicate keys, malformed UTF-8/surrogates and lossy numbers fail closed. */
 internal object StrictJson {
     const val MAX_BYTES = 256 * 1024
-    fun parse(bytes: ByteArray): Any? {
-        if (bytes.size > MAX_BYTES) invalid()
+    fun parse(bytes: ByteArray): Any? = parseDocument(bytes, MAX_BYTES, false)
+
+    /** Separate road-geometry boundary. The generation v0.8 reader remains integer-only/256 KiB. */
+    fun parseDecimalDocument(bytes: ByteArray, maximumBytes: Int): Any? {
+        if (maximumBytes !in 1..8 * 1024 * 1024) invalid()
+        return parseDocument(bytes, maximumBytes, true)
+    }
+
+    private fun parseDocument(bytes: ByteArray, maximumBytes: Int, decimals: Boolean): Any? {
+        if (bytes.size > maximumBytes) invalid()
         val text = try {
             Charsets.UTF_8.newDecoder().onMalformedInput(CodingErrorAction.REPORT)
                 .onUnmappableCharacter(CodingErrorAction.REPORT).decode(ByteBuffer.wrap(bytes)).toString()
         } catch (_: Exception) { invalid() }
-        return Reader(text).read()
+        return Reader(text, decimals).read()
     }
     fun encode(value: Any?): ByteArray = stringify(value).toByteArray(Charsets.UTF_8).also {
         if (it.size > MAX_BYTES) invalid()
@@ -44,7 +53,7 @@ internal object StrictJson {
         else -> invalid()
     }
 
-    private class Reader(private val input: String) {
+    private class Reader(private val input: String, private val decimals: Boolean) {
         private var at = 0
         fun read(): Any? { val value = value(0); whitespace(); if (at != input.length) invalid(); return value }
         private fun whitespace() { while (at < input.length && input[at] in " \r\n\t") at++ }
@@ -117,7 +126,7 @@ internal object StrictJson {
             }
             invalid()
         }
-        private fun number(): Long {
+        private fun number(): Number {
             val start = at
             take('-')
             if (at >= input.length) invalid()
@@ -126,7 +135,23 @@ internal object StrictJson {
                 while (at < input.length && input[at] in '0'..'9') at++
             }
             // Every numeric field in v0.8 is an integer. Decimal/exponent coercion is prohibited.
-            if (at < input.length && input[at] in ".eE") invalid()
+            if (at < input.length && input[at] in ".eE") {
+                if (!decimals) invalid()
+                if (take('.')) {
+                    val fractionStart = at
+                    while (at < input.length && input[at] in '0'..'9') at++
+                    if (at == fractionStart) invalid()
+                }
+                if (at < input.length && input[at] in "eE") {
+                    at++
+                    if (at < input.length && input[at] in "+-") at++
+                    val exponentStart = at
+                    while (at < input.length && input[at] in '0'..'9') at++
+                    if (at == exponentStart) invalid()
+                }
+                if (at - start > 64) invalid()
+                return try { BigDecimal(input.substring(start, at)) } catch (_: NumberFormatException) { invalid() }
+            }
             return input.substring(start, at).toLongOrNull() ?: invalid()
         }
         private fun take(c: Char): Boolean = if (at < input.length && input[at] == c) { at++; true } else false

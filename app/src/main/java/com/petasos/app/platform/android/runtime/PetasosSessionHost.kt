@@ -33,6 +33,8 @@ import com.petasos.app.capability.navigation.NavigationEvent
 import com.petasos.app.capability.navigation.NavigationRouteState
 import com.petasos.app.location.*
 import com.petasos.app.planning.*
+import com.petasos.app.planning.auxiliary.AuxiliaryRouteClient
+import com.petasos.app.planning.auxiliary.AuxiliaryRouteSession
 import com.petasos.app.platform.pleos.location.PleosLocationSource
 import com.petasos.app.platform.pleos.navigation.PleosNavigationSource
 import java.util.UUID
@@ -42,7 +44,7 @@ import java.util.concurrent.atomic.AtomicReference
 /** One service-owned runtime; constructing/browsing the host never creates a trip or starts audio. */
 class PetasosSessionHost(
     context: Context,
-    private val routeForecasts: RegionalRouteForecastSource = RegionalRouteForecastSource.UNAVAILABLE,
+    private val routeForecasts: RegionalRouteForecastSource? = null,
 ) : CoordinatorSessionCommands, AutoCloseable {
     private val context = context.applicationContext
     private val main = Handler(Looper.getMainLooper())
@@ -55,6 +57,8 @@ class PetasosSessionHost(
     private var musicPlanning: AutomaticMusicPlaybackBridge? = null
     @Volatile private var runtime: PlaybackRuntime? = null
     private var generation: GenerationClient? = null
+    private var auxiliaryRouteClient: AuxiliaryRouteClient? = null
+    @Volatile private var auxiliaryRoutes: AuxiliaryRouteSession? = null
     private var pendingResumeTurnId: String? = null // Worker owned; consumed once by the next interaction resume.
     private val storyPreparation = AtomicReference<StoryPreparation?>(null)
     private val tripEnding = AtomicReference<TripEnding?>(null)
@@ -174,6 +178,7 @@ class PetasosSessionHost(
 
     override fun stop(): ListenableFuture<Void?> {
         fence.incrementAndGet()
+        auxiliaryRoutes?.revoke()
         val cancelledPreparation = cancelStoryPreparation()
         // Stop ingress invalidates queued SDK starts before the worker handles another command.
         if (!cancelledPreparation) runtime?.dispatch(PlaybackEvent.Stop)
@@ -328,6 +333,7 @@ class PetasosSessionHost(
     /** Main-thread ingress revocation precedes queued storage work and provider teardown callbacks. */
     private fun revokeLocationCapture() {
         locationInputAuthority?.invalidate()
+        auxiliaryRoutes?.revoke()
         revokeAutomaticPlanning()
         val source = locationSource
         locationSource = null
@@ -468,6 +474,20 @@ class PetasosSessionHost(
         val configurations = DeviceGenerationConfigStore(context)
         val client = GenerationClient(configurations, configurations)
         generation = client
+        if (routeForecasts == null) {
+            auxiliaryRoutes?.close(); auxiliaryRouteClient?.close()
+            try {
+                val routeClient = AuxiliaryRouteClient(configurations)
+                auxiliaryRouteClient = routeClient
+                auxiliaryRoutes = AuxiliaryRouteSession(routeClient,
+                    { regionCatalog.loadPolyline(persistence.database) },
+                    regionCatalog.polylineAuthorizer(persistence.database), queue, AndroidRuntimeClock,
+                    changed = { refreshPlanning() })
+            } catch (_: Exception) {
+                auxiliaryRoutes = null
+                auxiliaryRouteClient?.close(); auxiliaryRouteClient = null
+            }
+        }
         automaticGeneration = AutomaticStoryGeneration(
             generator = AutomaticStoryGenerator { plan, authorized, complete ->
                 val state = runtime?.snapshot()
@@ -686,6 +706,8 @@ class PetasosSessionHost(
                 ?: error("TRIP_END_STALE")
             val closed = storage.tripLifecycleStore().endTrip(ending.tripId, sessionId, candidate?.tripRevision)
             generation?.close(); generation = null
+            auxiliaryRoutes?.close(); auxiliaryRoutes = null
+            auxiliaryRouteClient?.close(); auxiliaryRouteClient = null
             speech = null; music = null // Runtime close already released the audio adapters.
             locationStore?.close(); locationStore = null
             navigationStore?.close(); navigationStore = null
@@ -734,45 +756,54 @@ class PetasosSessionHost(
         val source = PleosNavigationSource(context, routeRevision)
         navigationSource = source
         main.post {
-            if (!disposed && sourceSessionId == sessionId && navigationSource === source) source.start { event ->
-                val changesAuthority = event is NavigationEvent.Changed || event is NavigationEvent.Failure ||
-                    event is NavigationEvent.Availability && event.state != NavigationAvailability.READY &&
-                    event.state != NavigationAvailability.CONNECTING
-                val ingressRevision = if (!disposed && sourceSessionId == sessionId && navigationSource === source &&
-                    changesAuthority) navigationIngressRevision.incrementAndGet().also { revokeAutomaticPlanning() }
-                else null
-                queue.execute {
-                    if (!disposed && sourceSessionId == sessionId && navigationSource === source) {
-                        if (ingressRevision != null) committedNavigationIngressRevision = ingressRevision
-                        try {
-                            when (event) {
-                                is NavigationEvent.Changed -> {
-                                    if (navigationStore?.apply(sessionId, event.snapshot) == true) {
-                                        routeRevision = event.snapshot.revision
-                                        routeDependency = event.snapshot.observedRouteDependency
-                                        observedNavigationRouteState = event.snapshot.observedRouteState
-                                    } else {
+            if (!disposed && sourceSessionId == sessionId && navigationSource === source) {
+                source.setAuxiliaryInputSink {
+                    auxiliaryRoutes?.revoke()
+                    revokeAutomaticPlanning()
+                    queue.execute { if (sourceSessionId == sessionId && navigationSource === source) refreshPlanning() }
+                }
+                source.start { event ->
+                    val changesAuthority = event is NavigationEvent.Changed || event is NavigationEvent.Failure ||
+                        event is NavigationEvent.Availability && event.state != NavigationAvailability.READY &&
+                        event.state != NavigationAvailability.CONNECTING
+                    val ingressRevision = if (!disposed && sourceSessionId == sessionId && navigationSource === source &&
+                        changesAuthority) navigationIngressRevision.incrementAndGet().also {
+                            auxiliaryRoutes?.revoke(); revokeAutomaticPlanning()
+                        }
+                    else null
+                    queue.execute {
+                        if (!disposed && sourceSessionId == sessionId && navigationSource === source) {
+                            if (ingressRevision != null) committedNavigationIngressRevision = ingressRevision
+                            try {
+                                when (event) {
+                                    is NavigationEvent.Changed -> {
+                                        if (navigationStore?.apply(sessionId, event.snapshot) == true) {
+                                            routeRevision = event.snapshot.revision
+                                            routeDependency = event.snapshot.observedRouteDependency
+                                            observedNavigationRouteState = event.snapshot.observedRouteState
+                                        } else {
+                                            routeDependency = null
+                                            observedNavigationRouteState = NavigationRouteState.UNKNOWN
+                                        }
+                                        refreshPlanning()
+                                    }
+                                    is NavigationEvent.Availability -> if (event.state != NavigationAvailability.READY && event.state != NavigationAvailability.CONNECTING) {
                                         routeDependency = null
                                         observedNavigationRouteState = NavigationRouteState.UNKNOWN
+                                        refreshPlanning()
                                     }
-                                    refreshPlanning()
+                                    is NavigationEvent.Failure -> {
+                                        routeDependency = null
+                                        observedNavigationRouteState = NavigationRouteState.UNKNOWN
+                                        refreshPlanning()
+                                    }
+                                    is NavigationEvent.ReadReceived -> Unit
                                 }
-                                is NavigationEvent.Availability -> if (event.state != NavigationAvailability.READY && event.state != NavigationAvailability.CONNECTING) {
-                                    routeDependency = null
-                                    observedNavigationRouteState = NavigationRouteState.UNKNOWN
-                                    refreshPlanning()
-                                }
-                                is NavigationEvent.Failure -> {
-                                    routeDependency = null
-                                    observedNavigationRouteState = NavigationRouteState.UNKNOWN
-                                    refreshPlanning()
-                                }
-                                is NavigationEvent.ReadReceived -> Unit
+                            } catch (_: Exception) {
+                                routeDependency = null
+                                observedNavigationRouteState = NavigationRouteState.UNKNOWN
+                                refreshPlanning(); changed()
                             }
-                        } catch (_: Exception) {
-                            routeDependency = null
-                            observedNavigationRouteState = NavigationRouteState.UNKNOWN
-                            refreshPlanning(); changed()
                         }
                     }
                 }
@@ -857,7 +888,7 @@ class PetasosSessionHost(
                     inputAuthority.record(event.sample.receivedAtElapsedRealtimeMillis, !doubtful)
                 else { if (doubtful) inputAuthority.invalidate(); null }
                 if (doubtful && !disposed && sourceSessionId == sessionId && locationSource === source && recorder === recording)
-                    revokeAutomaticPlanning()
+                    { auxiliaryRoutes?.revoke(); revokeAutomaticPlanning() }
                 queue.execute {
                     if (locationAccessAllowed() && sourceSessionId == sessionId && recorder === recording && locationSource === source) {
                         if (event is LocationEvent.SampleReceived) latestReceivedElapsed = event.sample.receivedAtElapsedRealtimeMillis
@@ -916,6 +947,15 @@ class PetasosSessionHost(
             // Capture this committed input, never a mutable latest permit. Main-thread revocation
             // remains effective even if an older queued refresh runs before its worker callback.
             val inputAuthority = { locationAuthority() && navigationIngressRevision.get() == navigationRevision }
+            auxiliaryRoutes?.update(state.sessionId, clockScopeId, routeDependency, navigationSource?.auxiliaryInput(),
+                committedLocation, inputAuthority, allowOffer && locationValid && locationAccessAllowed(),
+                requestAllowed = { locationAccessAllowed() && !isEndingTrip() && sourceSessionId == state.sessionId &&
+                    navigationIngressRevision.get() == navigationRevision })
+            val forecast = routeForecasts?.forecast(state.sessionId, clockScopeId, routeDependency, now)
+                ?: auxiliaryRoutes?.forecast(state.sessionId, clockScopeId, routeDependency, now)
+            val planningInputAuthority = {
+                inputAuthority() && (forecast == null || routeForecasts != null || auxiliaryRoutes?.isCurrent(forecast) == true)
+            }
             // A raw position remains usable by independently reviewed landmarks when this region's
             // policy/source is withdrawn. Never issue a new regional candidate from a stale ID.
             val locations = locationStore
@@ -929,8 +969,8 @@ class PetasosSessionHost(
             }
             regionalTarget = regionalPlanner?.update(RegionalPlanningInput(state.sessionId, clockScopeId,
                 routeDependency, now, committedLocationElapsed, locationValid, currentRegionId,
-                state.interactionIntent, boundary, routeForecasts.forecast(state.sessionId, clockScopeId, routeDependency, now),
-                locationFreshUntilElapsedMs, inputAuthority,
+                state.interactionIntent, boundary, forecast,
+                locationFreshUntilElapsedMs, planningInputAuthority,
                 currentRegionPolicyKey = regionAuthority?.confirmation?.policySourceKey,
                 currentRegionAuthority = regionPermit))
             // Pauses/blockers suppress offers, but passing a landmark during them is still terminal.
@@ -940,7 +980,7 @@ class PetasosSessionHost(
                 LandmarkRouteContext.CurrentPosition else LandmarkRouteContext.Unavailable
             planning?.update(PlanningContext(currentRegionId, routeDependency, now, clockScopeId,
                 locationValid, state.interactionIntent, committedLocationElapsed, regionalTarget,
-                locationFreshUntilElapsedMs, inputAuthority, currentRegionAuthority = regionPermit,
+                locationFreshUntilElapsedMs, planningInputAuthority, currentRegionAuthority = regionPermit,
                 currentRegionEvidenceCurrent = regionEvidence), committedLocation, landmarkRoute, allowOffer)
         } catch (_: Exception) {
             automaticGenerationPlan = null; automaticGeneration?.update(null); regionalTarget = null
@@ -961,6 +1001,7 @@ class PetasosSessionHost(
     }
 
     private fun invalidateLocation() {
+        auxiliaryRoutes?.revoke()
         locationValid = false; currentRegionId = null; locationFreshUntilElapsedMs = null
         committedLocation = null
         committedLocationAuthority = { false }
@@ -1004,6 +1045,7 @@ class PetasosSessionHost(
     }
 
     private fun stopSessionSources() {
+        auxiliaryRoutes?.revoke()
         navigationIngressRevision.incrementAndGet()
         revokeAutomaticPlanning()
         sourceSessionId = null // Fence both SDK streams before flush or main-thread teardown.
@@ -1029,6 +1071,7 @@ class PetasosSessionHost(
         checkMain()
         if (disposed) return
         disposed = true
+        auxiliaryRoutes?.revoke()
         tripEnding.get()?.future?.setException(IllegalStateException("TRIP_END_UNCONFIRMED"))
         cancelStoryPreparation()
         visibleForTalk = false
@@ -1052,6 +1095,7 @@ class PetasosSessionHost(
         released = true
         musicPlanning?.clear(); musicPlanning = null
         automaticGeneration?.revoke(); automaticGeneration = null; automaticGenerationPlan = null
+        auxiliaryRoutes?.close(); auxiliaryRoutes = null; auxiliaryRouteClient?.close(); auxiliaryRouteClient = null
         speech?.close(); music?.close(); generation?.close(); locationStore?.close(); navigationStore?.close(); store?.close()
         queue.close()
     }

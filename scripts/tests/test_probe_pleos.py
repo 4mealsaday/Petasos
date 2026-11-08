@@ -124,6 +124,43 @@ class PackagedRegionalProbeTest(unittest.TestCase):
                     run.assert_not_called()
 
 
+class AuxiliaryRouteProbeTest(unittest.TestCase):
+    def test_existing_encrypted_configuration_requires_no_host_secret_or_run_as(self):
+        name = "auxiliary-route"
+        self.assertEqual(probe.PROBES.count(name), 1)
+        self.assertNotIn(name, probe.RUN_AS_PROBES)
+        self.assertEqual(probe.probe_timeout(name), 90)
+        self.assertEqual(probe.read_development_server(name, None), (None, None))
+        self.assertIsNone(probe.read_content_bundle(name, None))
+        for variant in ("debug", "privacy"):
+            self.assertEqual(probe.evidence_stem(name, variant), name + ("-privacy" if variant == "privacy" else ""))
+
+    def test_report_separates_real_public_route_from_synthetic_observation(self):
+        report = probe.probe_evidence_metadata("auxiliary-route")
+        self.assertEqual(report["fixture"],
+                         "official_public_route_example_and_packaged_geometry_disposable_database_synthetic_android_anchor")
+        for required in ("one actual Android HTTPS request", "official public NAVER example",
+                         "existing encrypted device configuration", "NGII/hierarchy projection in disposable Room",
+                         "explicitly synthetic Android point/clock anchor", "source expiry and revocation",
+                         "60-second probe budget", "no observed location", "active Pleos route proof",
+                         "raw route file", "coordinate output", "configuration change"):
+            self.assertIn(required, report["scope"])
+
+    def test_external_coordinates_fixtures_and_credentials_are_not_accepted(self):
+        for variant in ("debug", "privacy"):
+            for option in ("--https-fixture-ready", "--development-server-ready", "--device-token-file", "--content-bundle"):
+                with self.subTest(variant=variant, option=option), \
+                        patch("sys.argv", ["probe-pleos.py", "auxiliary-route", "--build-type", variant,
+                                           option, "/private/not-an-input"]), \
+                        patch.object(probe.subprocess, "run") as run, \
+                        patch.object(probe, "private_bytes") as private_read, patch("sys.stderr"):
+                    with self.assertRaises(SystemExit) as error:
+                        probe.main()
+                    self.assertEqual(error.exception.code, 2)
+                    private_read.assert_not_called()
+                    run.assert_not_called()
+
+
 class AutomaticPlanningProbeTest(unittest.TestCase):
     def test_scripted_planning_supports_both_variants_without_run_as(self):
         name = "automatic-planning"
