@@ -312,7 +312,7 @@ class LandmarkStorageProbeTest(unittest.TestCase):
 
 
 class LandmarkPolicyStorageProbeTest(unittest.TestCase):
-    def test_synthetic_review_installer_scope_is_disposable_and_privacy_supported(self):
+    def test_synthetic_and_packaged_review_scope_is_disposable_and_privacy_supported(self):
         name = "landmark-policy-storage"
         self.assertEqual(probe.PROBES.count(name), 1)
         self.assertNotIn(name, probe.RUN_AS_PROBES)
@@ -320,11 +320,13 @@ class LandmarkPolicyStorageProbeTest(unittest.TestCase):
         self.assertEqual(probe.read_development_server(name, None), (None, None))
         self.assertIsNone(probe.read_content_bundle(name, None))
         report = probe.probe_evidence_metadata(name)
-        self.assertEqual(report["fixture"], "disposable_database_and_synthetic_test_content")
+        self.assertEqual(report["fixture"], "disposable_databases_synthetic_regressions_and_actual_packaged_public_landmark_reviews")
+        self.assertIn("separate actual two-place packaged public policy catalog", report["scope"])
+        self.assertIn("source-rights withdrawal preserved", report["scope"])
         self.assertIn("explicit NULL story binding", report["scope"])
         self.assertIn("retained rejection", report["scope"])
         self.assertIn("existing scripted history/cards/proofs", report["scope"])
-        self.assertIn("no real policy approval, product database, location subscription", report["scope"])
+        self.assertIn("no new policy approval, product database, location subscription", report["scope"])
         self.assertIn("microphone, audio, consent change or model", report["scope"])
 
     def test_actual_review_and_private_fixture_options_are_rejected_before_read_or_adb(self):
@@ -340,6 +342,31 @@ class LandmarkPolicyStorageProbeTest(unittest.TestCase):
                     self.assertEqual(error.exception.code, 2)
                     private_read.assert_not_called()
                     run.assert_not_called()
+
+
+class RepresentativeRouteRuntimeProbeTest(unittest.TestCase):
+    def test_silent_public_scenario_scope_and_timeout(self):
+        name = "representative-route-runtime"
+        self.assertEqual(probe.PROBES.count(name), 1)
+        self.assertNotIn(name, probe.RUN_AS_PROBES)
+        self.assertEqual(probe.probe_timeout(name), 90)
+        report = probe.probe_evidence_metadata(name)
+        self.assertEqual(report["fixture"], "sha_pinned_public_stories_disposable_room_synthetic_route_clock_and_silent_music")
+        self.assertIn("silent 10-second fixture music", report["scope"])
+        self.assertIn("exact next-region story and planning revision", report["scope"])
+        self.assertIn("no product database, location SDK, microphone, actual audio or network", report["scope"])
+
+    def test_private_or_live_fixture_options_are_not_accepted(self):
+        for option in ("--https-fixture-ready", "--development-server-ready", "--device-token-file", "--content-bundle"):
+            with self.subTest(option=option), \
+                    patch("sys.argv", ["probe-pleos.py", "representative-route-runtime", "--build-type", "privacy", option, "/private-input"]), \
+                    patch.object(probe.subprocess, "run") as run, \
+                    patch.object(probe, "private_bytes") as read, patch("sys.stderr"):
+                with self.assertRaises(SystemExit) as error:
+                    probe.main()
+                self.assertEqual(error.exception.code, 2)
+                run.assert_not_called()
+                read.assert_not_called()
 
 
 class RecoveryMusicGapProbeTest(unittest.TestCase):

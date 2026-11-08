@@ -78,7 +78,11 @@ class SdkProbeInstrumentation : Instrumentation() {
                 "bundled-stories" -> com.petasos.app.storage.BundledStoryCatalogProbe.run(this, ::mark)
                 "regional-content" -> com.petasos.app.storage.RegionalContentProbe.run(this, ::mark)
                 "landmark-storage" -> com.petasos.app.storage.LandmarkStorageProbe.run(this, ::mark)
-                "landmark-policy-storage" -> com.petasos.app.storage.LandmarkPolicyStorageProbe.run(this, ::mark)
+                "landmark-policy-storage" -> {
+                    com.petasos.app.storage.LandmarkPolicyStorageProbe.run(this, ::mark)
+                    com.petasos.app.storage.BundledLandmarkPolicyProbe.run(this, ::mark)
+                }
+                "representative-route-runtime" -> com.petasos.app.storage.RepresentativeRouteRuntimeProbe.run(this, ::mark)
                 "automatic-planning" -> com.petasos.app.storage.AutomaticPlanningProbe.run(this, ::mark)
                 "local-commands" -> com.petasos.app.storage.ExplicitPlaybackCommandProbe.run(this, ::mark)
                 "session-recovery" -> com.petasos.app.storage.SessionRecoveryProbe.run(this, ::mark)
@@ -155,6 +159,7 @@ class SdkProbeInstrumentation : Instrumentation() {
                 "vehicle-preferences" -> "actual_Room_explicit_vehicle_preferences_with_disposable_synthetic_data_no_capture"
                 "trip-results" -> "actual_Room_read_only_committed_trip_results_disposable_synthetic_data_no_capture"
                 "trip-lifecycle" -> "actual_Room_explicit_trip_end_and_recovery_disposable_synthetic_data_no_capture"
+                "representative-route-runtime" -> "disposable_Room_SHA_pinned_public_stories_synthetic_route_clock_silent_music_exact_rerouted_story_after_music_commit_no_product_database_location_audio_microphone_network"
                 "automatic-planning" -> "actual_Room_automatic_region_interest_planning_synthetic_content_scripted_runtime_no_microphone_location_SDK_or_model"
                 "local-commands" -> "actual_Room_Keystore_explicit_local_commands_scripted_input_output_and_generation_no_microphone_audio_location_or_model"
                 "app-trip-lifecycle" -> "actual_product_public_TTS_end_trip_durable_results_new_trip_and_Stop_no_microphone_or_model"
@@ -169,7 +174,7 @@ class SdkProbeInstrumentation : Instrumentation() {
                 "regional-content" -> "actual_Room_v1_v2_migration_reviewed_region_binding_synthetic_content_no_location_audio_or_model"
                 "recovery-music-gap" -> "actual_Room_durable_music_boundary_recovery_synthetic_scripted_no_capture_audio_or_model"
                 "landmark-storage" -> "actual_Room_reviewed_landmark_policy_coordinate_and_association_synthetic_content_no_location_audio_consent_change_or_model"
-                "landmark-policy-storage" -> "disposable_Room_synthetic_TX05_places_pinned_landmark_review_atomic_install_NULL_story_binding_rejection_history_preservation_no_product_policy_location_audio_or_model"
+                "landmark-policy-storage" -> "disposable_Room_synthetic_policy_regressions_plus_actual_two_packaged_public_landmark_reviews_current_candidates_exact_reinstall_rights_and_rejection_preservation_no_product_database_location_audio_or_model"
                 "session-recovery" -> "actual_Room_Keystore_TX04_recovery_with_synthetic_data"
                 "navigation" -> "actual_read_only_NaviHelper_no_route_mutation"
                 "auxiliary-route" -> "one_actual_HTTPS_public_official_route_example_disposable_NGII_hierarchy_projection_unchanged_packaged_policies_synthetic_Android_anchor_no_real_location_navigation_audio_model_or_product_records"

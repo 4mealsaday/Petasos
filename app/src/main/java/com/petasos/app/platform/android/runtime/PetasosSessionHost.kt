@@ -12,6 +12,7 @@ import com.petasos.app.generation.*
 import com.petasos.app.platform.android.summary.SummaryBackground
 import com.petasos.app.platform.android.music.BundledMusicCatalog
 import com.petasos.app.platform.android.content.BundledStoryCatalog
+import com.petasos.app.platform.android.content.BundledLandmarkPolicyCatalog
 import com.petasos.app.platform.android.location.BundledRegionCatalog
 import com.petasos.app.platform.android.location.AndroidLocationSource
 import com.petasos.app.platform.android.location.LocationAccess
@@ -601,7 +602,10 @@ class PetasosSessionHost(
         return store ?: RoomRuntimePersistence(context, musicCatalog = musicCatalog).also {
             // Install reviewed public seeds once on the worker, before any catalog read. A rejected
             // bundle leaves existing content/settings available and grants no trip or location consent.
-            BundledStoryCatalog(context).load(it.database)
+            if (BundledStoryCatalog(context).load(it.database) != null) {
+                // Exact reviewed demo policies only; no source/story/consent changes or guessed thresholds.
+                BundledLandmarkPolicyCatalog(context).load(it.database)
+            }
             store = it
             musicTracks = try { musicCatalog.credits().map { credit -> credit.track } } catch (_: Exception) { emptyList() }
         }

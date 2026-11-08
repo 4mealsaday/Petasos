@@ -25,13 +25,16 @@ class LandmarkCandidateSession(
         var outsideAfterCooldown: RecordedLocation? = null
     }
 
+    private class Movement(val candidate: LandmarkStoryCandidate, val routeKey: String) {
+        val evidence = LandmarkMovementEvidence(candidate)
+    }
+
     private val encounters = mutableMapOf<String, Encounter>()
+    private val movements = mutableMapOf<String, Movement>()
     private var active: Encounter? = null
     private var activePermit = false
     private val currentPermit = AtomicReference<LandmarkOffer?>()
     private var sequence = 0L
-    private var latestMeasurement: RecordedLocation? = null
-    private var previousMeasurement: RecordedLocation? = null
     private var watermarkMeasurement: RecordedLocation? = null
     private var observedWatermark: Long? = null
     private var receiptWatermark: Long? = null
@@ -49,6 +52,7 @@ class LandmarkCandidateSession(
             currentPermit.set(offer)
             offer
         } catch (failure: Exception) {
+            movements.clear()
             retireActive(context.elapsedMs)
             throw failure
         }
@@ -66,8 +70,7 @@ class LandmarkCandidateSession(
         var newMeasurement = false
         var ordered = contextCurrent
         if (!contextCurrent) {
-            previousMeasurement = null
-            latestMeasurement = null
+            movements.clear()
         } else {
             val current = checkNotNull(point)
             val observed = checkNotNull(current.observedAtEpochMs)
@@ -76,8 +79,6 @@ class LandmarkCandidateSession(
             val previousReceipt = receiptWatermark
             if (previousObserved == null || (observed > previousObserved && receipt > checkNotNull(previousReceipt) &&
                     current.pointId != watermarkMeasurement?.pointId)) {
-                previousMeasurement = latestMeasurement
-                latestMeasurement = current
                 observedWatermark = observed
                 receiptWatermark = receipt
                 watermarkMeasurement = current
@@ -86,8 +87,7 @@ class LandmarkCandidateSession(
                 current.latitude != watermarkMeasurement?.latitude || current.longitude != watermarkMeasurement?.longitude ||
                 current.adapterVersion != watermarkMeasurement?.adapterVersion || current.accuracyMeters != watermarkMeasurement?.accuracyMeters) {
                 // Never rewind the movement history using a late callback or a backwards clock.
-                previousMeasurement = null
-                latestMeasurement = null
+                movements.clear()
                 ordered = false
             } else {
                 // A cache callback is not movement, but a subsequent callback cannot go backwards
@@ -97,10 +97,13 @@ class LandmarkCandidateSession(
         }
 
         synchronizeTerminal(context.elapsedMs)
+        val assessments = movementAssessments(candidates, point, context, route, newMeasurement, ordered)
         active?.let { encounter ->
             val candidate = encounter.offer.candidate
-            val available = candidates.any { it == candidate }
-            val assessment = if (ordered) assess(candidate, if (newMeasurement) previousMeasurement else null, point, context) else null
+            val available = movements[candidate.placeId]?.candidate == candidate &&
+                candidates.singleOrNull { it.placeId == candidate.placeId } == candidate
+            val assessment = if (!ordered) null else if (newMeasurement) assessments[candidate.placeId]?.assessment
+                else assess(candidate, null, point, context)
             activePermit = available && routeKey(candidate, context, route) == encounter.routeKey &&
                 assessment?.state in setOf(LandmarkApproachState.APPROACHING, LandmarkApproachState.HOLDING)
             if (!activePermit) retireActive(context.elapsedMs)
@@ -132,13 +135,14 @@ class LandmarkCandidateSession(
         if (active == null && newMeasurement && ordered) {
             val eligible = candidates.mapNotNull { candidate ->
                 val key = routeKey(candidate, context, route) ?: return@mapNotNull null
-                val assessment = assess(candidate, previousMeasurement, point, context)
+                val movement = assessments[candidate.placeId] ?: return@mapNotNull null
+                val assessment = movement.assessment
                 if (assessment.state != LandmarkApproachState.APPROACHING) return@mapNotNull null
                 val old = encounters[candidate.placeId]
                 if (old != null) {
                     val outside = old.outsideAfterCooldown ?: return@mapNotNull null
                     if (old.terminalAt == null || !sameGeometryPolicy(old.offer.candidate, candidate) ||
-                        !atOrAfter(previousMeasurement, outside) || !laterThan(point, outside)) return@mapNotNull null
+                        !atOrAfter(movement.baseline, outside) || !laterThan(point, outside)) return@mapNotNull null
                 }
                 Triple(candidate, key, checkNotNull(assessment.distance).maximumMeters)
             }.sortedWith(compareBy<Triple<LandmarkStoryCandidate, String, Double>> { it.third }
@@ -182,7 +186,34 @@ class LandmarkCandidateSession(
     fun clear(elapsedMs: Long) {
         require(elapsedMs >= 0)
         currentPermit.set(null)
+        movements.clear()
         retireActive(elapsedMs)
+    }
+
+    private fun movementAssessments(
+        candidates: List<LandmarkStoryCandidate>, point: RecordedLocation?, context: PlanningContext,
+        route: LandmarkRouteContext, newMeasurement: Boolean, ordered: Boolean,
+    ): Map<String, LandmarkMovementAssessment> {
+        if (!ordered || point == null) {
+            movements.clear()
+            return emptyMap()
+        }
+        // An ambiguous duplicate place, changed policy/source/story, or route boundary starts a new
+        // run. We never borrow observations from before the candidate had current authority.
+        val current = candidates.groupBy { it.placeId }.mapNotNull { (placeId, rows) ->
+            val candidate = rows.singleOrNull() ?: return@mapNotNull null
+            val key = routeKey(candidate, context, route) ?: return@mapNotNull null
+            placeId to (candidate to key)
+        }.toMap()
+        movements.entries.removeAll { (placeId, movement) ->
+            val bound = current[placeId]
+            bound == null || bound.first != movement.candidate || bound.second != movement.routeKey
+        }
+        if (!newMeasurement) return emptyMap()
+        return current.mapValues { (placeId, bound) ->
+            movements.getOrPut(placeId) { Movement(bound.first, bound.second) }
+                .evidence.observe(point, context.elapsedMs, clockScopeId)
+        }
     }
 
     private fun synchronizeTerminal(elapsedMs: Long) {
@@ -199,6 +230,7 @@ class LandmarkCandidateSession(
 
     private fun markTerminal(encounter: Encounter, elapsedMs: Long) {
         currentPermit.set(null)
+        movements.remove(encounter.offer.candidate.placeId)
         if (encounter.terminalAt == null) {
             encounter.terminalAt = maxOf(elapsedMs, lastElapsedMs ?: elapsedMs)
             encounter.terminalMeasurement = watermarkMeasurement

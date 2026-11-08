@@ -1,0 +1,39 @@
+{
+  "formatVersion": 1,
+  "reviews": [
+    {
+      "formatVersion": 1,
+      "placeId": "f79e9b40-aa96-5972-b59f-aa99f7bc8522",
+      "placeMetadataSha256": "54fc57c84004dae44080cffd31e74e14030b7a07b7850e0dc8d0cabf0dcbcdf9",
+      "storyId": "03849d89-1640-5603-be8b-9835d371ed02",
+      "associationFactRevisionId": "483cfc22-d83a-5346-9adc-69b756075edf",
+      "approachRadiusMeters": 300,
+      "cooldownMs": 180000,
+      "passedRule": "increasing_distance_after_approach",
+      "directionRule": "decreasing_distance",
+      "qualityAdapterVersion": "android-location-v1",
+      "policyVersion": "petasos-landmark-current-position-20261109-v1",
+      "reviewStatus": "verified",
+      "verifiedAt": 1794162464167,
+      "reviewBasis": "Two-place CurrentPosition demo review: exact official representative point and independent existing story association; 300m/180s selected after bounded continuous observation 648-condition comparison and two public auxiliary NAVER proximity checks. Only explicit INACTIVE navigation. 34/36 synthetic conditions per place; no field/road access/audio lead guarantee. See docs/development/data/landmark-current-position-demo-review-v1.json.",
+      "evidenceSha256": "28642339cb2366ab005bc0616e4211780df177e3b4d1a2a2a0dbfa71313c4653"
+    },
+    {
+      "formatVersion": 1,
+      "placeId": "f560a058-6fad-5f6f-9ac9-03ea8743ceb3",
+      "placeMetadataSha256": "f9d9a9d2182fa3471b5d5b2a9cab1567bf9342e302989f5df9b733e6057dfd6f",
+      "storyId": "666b77d3-aba4-5ea6-b9fc-1a4c6556eef5",
+      "associationFactRevisionId": "3ce2057c-bd6b-5e57-822a-3464a5ab4000",
+      "approachRadiusMeters": 300,
+      "cooldownMs": 180000,
+      "passedRule": "increasing_distance_after_approach",
+      "directionRule": "decreasing_distance",
+      "qualityAdapterVersion": "android-location-v1",
+      "policyVersion": "petasos-landmark-current-position-20261109-v1",
+      "reviewStatus": "verified",
+      "verifiedAt": 1794162464167,
+      "reviewBasis": "Two-place CurrentPosition demo review: exact official representative point and independent existing story association; 300m/180s selected after bounded continuous observation 648-condition comparison and two public auxiliary NAVER proximity checks. Only explicit INACTIVE navigation. 34/36 synthetic conditions per place; no field/road access/audio lead guarantee. See docs/development/data/landmark-current-position-demo-review-v1.json.",
+      "evidenceSha256": "28642339cb2366ab005bc0616e4211780df177e3b4d1a2a2a0dbfa71313c4653"
+    }
+  ]
+}

@@ -1,0 +1,2703 @@
+{
+  "formatVersion": 1,
+  "reviewedAtEpochMs": 1794162464167,
+  "scope": "TWO_PUBLIC_CURRENT_POSITION_DEMO_POLICIES_NOT_FIELD_ACCEPTANCE",
+  "navigationContext": "explicit_INACTIVE_only",
+  "selectedPolicy": {
+    "approachRadiusMeters": 300,
+    "cooldownMs": 180000,
+    "passedRule": "increasing_distance_after_approach",
+    "directionRule": "decreasing_distance",
+    "qualityAdapterVersion": "android-location-v1",
+    "policyVersion": "petasos-landmark-current-position-20261109-v1"
+  },
+  "placeIds": [
+    "f79e9b40-aa96-5972-b59f-aa99f7bc8522",
+    "f560a058-6fad-5f6f-9ac9-03ea8743ceb3"
+  ],
+  "files": {
+    "app/src/main/assets/content/p0-stories-v2.json": "c8f34431486e0581c2f2a9916eba2db17e6511259f47b4f7ee7a31d70cd7862b",
+    "app/src/test/resources/location/landmark-current-position-demo.json": "76939bfe69cb9975fbb486f060c3434ec416500c42c46b36b86b6b449bd2bfa4",
+    "scripts/generate-landmark-current-position-demo.py": "dc95e5a2f45556ea00d91f0ea75419b29457ac593cfa8da1111cef572a3d194e",
+    "app/src/main/java/com/petasos/app/planning/LandmarkMovementEvidence.kt": "3876af222ae1c7c5aaf820fe0ba3913e193c6bb51f6adf966c6f2bf0a62254d9",
+    "app/src/main/java/com/petasos/app/planning/LandmarkCandidateSession.kt": "bbe40c6f3e2a51d5160f3f4bd38a7735aa23250a9b06e351881bb9f8b8927829",
+    "app/src/main/java/com/petasos/app/location/LandmarkApproach.kt": "497d35196b7e76369fe89fe9a75f22d7cd898e0767c5d26173bc47ff51f756e7",
+    "app/src/test/java/com/petasos/app/planning/LandmarkMovementEvidenceTest.kt": "913ea94da37630278abda58b2f91cf7a59d7ef2f77db567fcce27c8582640c92",
+    "app/src/test/java/com/petasos/app/planning/LandmarkCurrentPositionReviewTest.kt": "015042267ed4e91b34d60ca0ddc9bf432902fa27fd2982740cfb5143f4a41a48",
+    "artifacts/milestone-30/landmark-review-initial.json": "5bee702e099a4ff7346cba6c834a35954560fddb203006f9c1d12f15c3b91bf2",
+    "artifacts/milestone-30/landmark-review-fixed.json": "7c816b4c48ffaa79e7f3617afb7ba5230348402a304369323f87190e263f16d5",
+    "artifacts/milestone-30/naver-public-proximity-summary.json": "5b36ce3f1c44d47994338b9af7044bdb6c8f6d6d87cb6d49b43e5a3c81936ea0"
+  },
+  "initialCandidateSummaries": [
+    {
+      "approachRadiusMeters": 150,
+      "cooldownMs": 60000,
+      "movingMissCount": 16,
+      "placeId": "f79e9b40-aa96-5972-b59f-aa99f7bc8522",
+      "storyId": "03849d89-1640-5603-be8b-9835d371ed02",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 2,
+          "minLeadBeforeSampledClosestPointMs": 5000,
+          "maxLeadBeforeSampledClosestPointMs": 9000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 4000,
+          "maxLeadBeforeSampledClosestPointMs": 28000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 0,
+          "minLeadBeforeSampledClosestPointMs": null,
+          "maxLeadBeforeSampledClosestPointMs": null
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 5600,
+          "maxLeadBeforeSampledClosestPointMs": 21200
+        }
+      ]
+    },
+    {
+      "approachRadiusMeters": 150,
+      "cooldownMs": 180000,
+      "movingMissCount": 16,
+      "placeId": "f79e9b40-aa96-5972-b59f-aa99f7bc8522",
+      "storyId": "03849d89-1640-5603-be8b-9835d371ed02",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 2,
+          "minLeadBeforeSampledClosestPointMs": 5000,
+          "maxLeadBeforeSampledClosestPointMs": 9000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 4000,
+          "maxLeadBeforeSampledClosestPointMs": 28000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 0,
+          "minLeadBeforeSampledClosestPointMs": null,
+          "maxLeadBeforeSampledClosestPointMs": null
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 5600,
+          "maxLeadBeforeSampledClosestPointMs": 21200
+        }
+      ]
+    },
+    {
+      "approachRadiusMeters": 150,
+      "cooldownMs": 300000,
+      "movingMissCount": 16,
+      "placeId": "f79e9b40-aa96-5972-b59f-aa99f7bc8522",
+      "storyId": "03849d89-1640-5603-be8b-9835d371ed02",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 2,
+          "minLeadBeforeSampledClosestPointMs": 5000,
+          "maxLeadBeforeSampledClosestPointMs": 9000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 4000,
+          "maxLeadBeforeSampledClosestPointMs": 28000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 0,
+          "minLeadBeforeSampledClosestPointMs": null,
+          "maxLeadBeforeSampledClosestPointMs": null
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 5600,
+          "maxLeadBeforeSampledClosestPointMs": 21200
+        }
+      ]
+    },
+    {
+      "approachRadiusMeters": 300,
+      "cooldownMs": 60000,
+      "movingMissCount": 16,
+      "placeId": "f79e9b40-aa96-5972-b59f-aa99f7bc8522",
+      "storyId": "03849d89-1640-5603-be8b-9835d371ed02",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 2,
+          "minLeadBeforeSampledClosestPointMs": 11000,
+          "maxLeadBeforeSampledClosestPointMs": 19000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 10000,
+          "maxLeadBeforeSampledClosestPointMs": 58000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 0,
+          "minLeadBeforeSampledClosestPointMs": null,
+          "maxLeadBeforeSampledClosestPointMs": null
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 11600,
+          "maxLeadBeforeSampledClosestPointMs": 21200
+        }
+      ]
+    },
+    {
+      "approachRadiusMeters": 300,
+      "cooldownMs": 180000,
+      "movingMissCount": 16,
+      "placeId": "f79e9b40-aa96-5972-b59f-aa99f7bc8522",
+      "storyId": "03849d89-1640-5603-be8b-9835d371ed02",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 2,
+          "minLeadBeforeSampledClosestPointMs": 11000,
+          "maxLeadBeforeSampledClosestPointMs": 19000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 10000,
+          "maxLeadBeforeSampledClosestPointMs": 58000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 0,
+          "minLeadBeforeSampledClosestPointMs": null,
+          "maxLeadBeforeSampledClosestPointMs": null
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 11600,
+          "maxLeadBeforeSampledClosestPointMs": 21200
+        }
+      ]
+    },
+    {
+      "approachRadiusMeters": 300,
+      "cooldownMs": 300000,
+      "movingMissCount": 16,
+      "placeId": "f79e9b40-aa96-5972-b59f-aa99f7bc8522",
+      "storyId": "03849d89-1640-5603-be8b-9835d371ed02",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 2,
+          "minLeadBeforeSampledClosestPointMs": 11000,
+          "maxLeadBeforeSampledClosestPointMs": 19000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 10000,
+          "maxLeadBeforeSampledClosestPointMs": 58000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 0,
+          "minLeadBeforeSampledClosestPointMs": null,
+          "maxLeadBeforeSampledClosestPointMs": null
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 11600,
+          "maxLeadBeforeSampledClosestPointMs": 21200
+        }
+      ]
+    },
+    {
+      "approachRadiusMeters": 500,
+      "cooldownMs": 60000,
+      "movingMissCount": 16,
+      "placeId": "f79e9b40-aa96-5972-b59f-aa99f7bc8522",
+      "storyId": "03849d89-1640-5603-be8b-9835d371ed02",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 2,
+          "minLeadBeforeSampledClosestPointMs": 19000,
+          "maxLeadBeforeSampledClosestPointMs": 32000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 18000,
+          "maxLeadBeforeSampledClosestPointMs": 98000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 0,
+          "minLeadBeforeSampledClosestPointMs": null,
+          "maxLeadBeforeSampledClosestPointMs": null
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 19600,
+          "maxLeadBeforeSampledClosestPointMs": 21200
+        }
+      ]
+    },
+    {
+      "approachRadiusMeters": 500,
+      "cooldownMs": 180000,
+      "movingMissCount": 16,
+      "placeId": "f79e9b40-aa96-5972-b59f-aa99f7bc8522",
+      "storyId": "03849d89-1640-5603-be8b-9835d371ed02",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 2,
+          "minLeadBeforeSampledClosestPointMs": 19000,
+          "maxLeadBeforeSampledClosestPointMs": 32000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 18000,
+          "maxLeadBeforeSampledClosestPointMs": 98000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 0,
+          "minLeadBeforeSampledClosestPointMs": null,
+          "maxLeadBeforeSampledClosestPointMs": null
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 19600,
+          "maxLeadBeforeSampledClosestPointMs": 21200
+        }
+      ]
+    },
+    {
+      "approachRadiusMeters": 500,
+      "cooldownMs": 300000,
+      "movingMissCount": 16,
+      "placeId": "f79e9b40-aa96-5972-b59f-aa99f7bc8522",
+      "storyId": "03849d89-1640-5603-be8b-9835d371ed02",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 2,
+          "minLeadBeforeSampledClosestPointMs": 19000,
+          "maxLeadBeforeSampledClosestPointMs": 32000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 18000,
+          "maxLeadBeforeSampledClosestPointMs": 98000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 0,
+          "minLeadBeforeSampledClosestPointMs": null,
+          "maxLeadBeforeSampledClosestPointMs": null
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 19600,
+          "maxLeadBeforeSampledClosestPointMs": 21200
+        }
+      ]
+    },
+    {
+      "approachRadiusMeters": 150,
+      "cooldownMs": 60000,
+      "movingMissCount": 16,
+      "placeId": "f560a058-6fad-5f6f-9ac9-03ea8743ceb3",
+      "storyId": "666b77d3-aba4-5ea6-b9fc-1a4c6556eef5",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 2,
+          "minLeadBeforeSampledClosestPointMs": 5000,
+          "maxLeadBeforeSampledClosestPointMs": 9000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 4000,
+          "maxLeadBeforeSampledClosestPointMs": 28000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 0,
+          "minLeadBeforeSampledClosestPointMs": null,
+          "maxLeadBeforeSampledClosestPointMs": null
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 5600,
+          "maxLeadBeforeSampledClosestPointMs": 21200
+        }
+      ]
+    },
+    {
+      "approachRadiusMeters": 150,
+      "cooldownMs": 180000,
+      "movingMissCount": 16,
+      "placeId": "f560a058-6fad-5f6f-9ac9-03ea8743ceb3",
+      "storyId": "666b77d3-aba4-5ea6-b9fc-1a4c6556eef5",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 2,
+          "minLeadBeforeSampledClosestPointMs": 5000,
+          "maxLeadBeforeSampledClosestPointMs": 9000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 4000,
+          "maxLeadBeforeSampledClosestPointMs": 28000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 0,
+          "minLeadBeforeSampledClosestPointMs": null,
+          "maxLeadBeforeSampledClosestPointMs": null
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 5600,
+          "maxLeadBeforeSampledClosestPointMs": 21200
+        }
+      ]
+    },
+    {
+      "approachRadiusMeters": 150,
+      "cooldownMs": 300000,
+      "movingMissCount": 16,
+      "placeId": "f560a058-6fad-5f6f-9ac9-03ea8743ceb3",
+      "storyId": "666b77d3-aba4-5ea6-b9fc-1a4c6556eef5",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 2,
+          "minLeadBeforeSampledClosestPointMs": 5000,
+          "maxLeadBeforeSampledClosestPointMs": 9000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 4000,
+          "maxLeadBeforeSampledClosestPointMs": 28000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 0,
+          "minLeadBeforeSampledClosestPointMs": null,
+          "maxLeadBeforeSampledClosestPointMs": null
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 5600,
+          "maxLeadBeforeSampledClosestPointMs": 21200
+        }
+      ]
+    },
+    {
+      "approachRadiusMeters": 300,
+      "cooldownMs": 60000,
+      "movingMissCount": 16,
+      "placeId": "f560a058-6fad-5f6f-9ac9-03ea8743ceb3",
+      "storyId": "666b77d3-aba4-5ea6-b9fc-1a4c6556eef5",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 2,
+          "minLeadBeforeSampledClosestPointMs": 11000,
+          "maxLeadBeforeSampledClosestPointMs": 19000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 10000,
+          "maxLeadBeforeSampledClosestPointMs": 58000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 0,
+          "minLeadBeforeSampledClosestPointMs": null,
+          "maxLeadBeforeSampledClosestPointMs": null
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 11600,
+          "maxLeadBeforeSampledClosestPointMs": 21200
+        }
+      ]
+    },
+    {
+      "approachRadiusMeters": 300,
+      "cooldownMs": 180000,
+      "movingMissCount": 16,
+      "placeId": "f560a058-6fad-5f6f-9ac9-03ea8743ceb3",
+      "storyId": "666b77d3-aba4-5ea6-b9fc-1a4c6556eef5",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 2,
+          "minLeadBeforeSampledClosestPointMs": 11000,
+          "maxLeadBeforeSampledClosestPointMs": 19000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 10000,
+          "maxLeadBeforeSampledClosestPointMs": 58000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 0,
+          "minLeadBeforeSampledClosestPointMs": null,
+          "maxLeadBeforeSampledClosestPointMs": null
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 11600,
+          "maxLeadBeforeSampledClosestPointMs": 21200
+        }
+      ]
+    },
+    {
+      "approachRadiusMeters": 300,
+      "cooldownMs": 300000,
+      "movingMissCount": 16,
+      "placeId": "f560a058-6fad-5f6f-9ac9-03ea8743ceb3",
+      "storyId": "666b77d3-aba4-5ea6-b9fc-1a4c6556eef5",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 2,
+          "minLeadBeforeSampledClosestPointMs": 11000,
+          "maxLeadBeforeSampledClosestPointMs": 19000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 10000,
+          "maxLeadBeforeSampledClosestPointMs": 58000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 0,
+          "minLeadBeforeSampledClosestPointMs": null,
+          "maxLeadBeforeSampledClosestPointMs": null
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 11600,
+          "maxLeadBeforeSampledClosestPointMs": 21200
+        }
+      ]
+    },
+    {
+      "approachRadiusMeters": 500,
+      "cooldownMs": 60000,
+      "movingMissCount": 16,
+      "placeId": "f560a058-6fad-5f6f-9ac9-03ea8743ceb3",
+      "storyId": "666b77d3-aba4-5ea6-b9fc-1a4c6556eef5",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 2,
+          "minLeadBeforeSampledClosestPointMs": 19000,
+          "maxLeadBeforeSampledClosestPointMs": 32000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 18000,
+          "maxLeadBeforeSampledClosestPointMs": 98000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 0,
+          "minLeadBeforeSampledClosestPointMs": null,
+          "maxLeadBeforeSampledClosestPointMs": null
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 19600,
+          "maxLeadBeforeSampledClosestPointMs": 21200
+        }
+      ]
+    },
+    {
+      "approachRadiusMeters": 500,
+      "cooldownMs": 180000,
+      "movingMissCount": 16,
+      "placeId": "f560a058-6fad-5f6f-9ac9-03ea8743ceb3",
+      "storyId": "666b77d3-aba4-5ea6-b9fc-1a4c6556eef5",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 2,
+          "minLeadBeforeSampledClosestPointMs": 19000,
+          "maxLeadBeforeSampledClosestPointMs": 32000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 18000,
+          "maxLeadBeforeSampledClosestPointMs": 98000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 0,
+          "minLeadBeforeSampledClosestPointMs": null,
+          "maxLeadBeforeSampledClosestPointMs": null
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 19600,
+          "maxLeadBeforeSampledClosestPointMs": 21200
+        }
+      ]
+    },
+    {
+      "approachRadiusMeters": 500,
+      "cooldownMs": 300000,
+      "movingMissCount": 16,
+      "placeId": "f560a058-6fad-5f6f-9ac9-03ea8743ceb3",
+      "storyId": "666b77d3-aba4-5ea6-b9fc-1a4c6556eef5",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 2,
+          "minLeadBeforeSampledClosestPointMs": 19000,
+          "maxLeadBeforeSampledClosestPointMs": 32000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 18000,
+          "maxLeadBeforeSampledClosestPointMs": 98000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 0,
+          "minLeadBeforeSampledClosestPointMs": null,
+          "maxLeadBeforeSampledClosestPointMs": null
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 19600,
+          "maxLeadBeforeSampledClosestPointMs": 21200
+        }
+      ]
+    }
+  ],
+  "candidateSummaries": [
+    {
+      "approachRadiusMeters": 150,
+      "cooldownMs": 60000,
+      "movingMissCount": 2,
+      "placeId": "f79e9b40-aa96-5972-b59f-aa99f7bc8522",
+      "storyId": "03849d89-1640-5603-be8b-9835d371ed02",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 1000,
+          "maxLeadBeforeSampledClosestPointMs": 25000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 2000,
+          "maxLeadBeforeSampledClosestPointMs": 26000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 2000,
+          "maxLeadBeforeSampledClosestPointMs": 26400
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 3200,
+          "maxLeadBeforeSampledClosestPointMs": 27200
+        }
+      ]
+    },
+    {
+      "approachRadiusMeters": 150,
+      "cooldownMs": 180000,
+      "movingMissCount": 2,
+      "placeId": "f79e9b40-aa96-5972-b59f-aa99f7bc8522",
+      "storyId": "03849d89-1640-5603-be8b-9835d371ed02",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 1000,
+          "maxLeadBeforeSampledClosestPointMs": 25000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 2000,
+          "maxLeadBeforeSampledClosestPointMs": 26000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 2000,
+          "maxLeadBeforeSampledClosestPointMs": 26400
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 3200,
+          "maxLeadBeforeSampledClosestPointMs": 27200
+        }
+      ]
+    },
+    {
+      "approachRadiusMeters": 150,
+      "cooldownMs": 300000,
+      "movingMissCount": 2,
+      "placeId": "f79e9b40-aa96-5972-b59f-aa99f7bc8522",
+      "storyId": "03849d89-1640-5603-be8b-9835d371ed02",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 1000,
+          "maxLeadBeforeSampledClosestPointMs": 25000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 2000,
+          "maxLeadBeforeSampledClosestPointMs": 26000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 2000,
+          "maxLeadBeforeSampledClosestPointMs": 26400
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 3200,
+          "maxLeadBeforeSampledClosestPointMs": 27200
+        }
+      ]
+    },
+    {
+      "approachRadiusMeters": 300,
+      "cooldownMs": 60000,
+      "movingMissCount": 2,
+      "placeId": "f79e9b40-aa96-5972-b59f-aa99f7bc8522",
+      "storyId": "03849d89-1640-5603-be8b-9835d371ed02",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 7000,
+          "maxLeadBeforeSampledClosestPointMs": 55000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 8000,
+          "maxLeadBeforeSampledClosestPointMs": 56000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 8000,
+          "maxLeadBeforeSampledClosestPointMs": 56000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 9200,
+          "maxLeadBeforeSampledClosestPointMs": 56800
+        }
+      ]
+    },
+    {
+      "approachRadiusMeters": 300,
+      "cooldownMs": 180000,
+      "movingMissCount": 2,
+      "placeId": "f79e9b40-aa96-5972-b59f-aa99f7bc8522",
+      "storyId": "03849d89-1640-5603-be8b-9835d371ed02",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 7000,
+          "maxLeadBeforeSampledClosestPointMs": 55000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 8000,
+          "maxLeadBeforeSampledClosestPointMs": 56000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 8000,
+          "maxLeadBeforeSampledClosestPointMs": 56000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 9200,
+          "maxLeadBeforeSampledClosestPointMs": 56800
+        }
+      ]
+    },
+    {
+      "approachRadiusMeters": 300,
+      "cooldownMs": 300000,
+      "movingMissCount": 2,
+      "placeId": "f79e9b40-aa96-5972-b59f-aa99f7bc8522",
+      "storyId": "03849d89-1640-5603-be8b-9835d371ed02",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 7000,
+          "maxLeadBeforeSampledClosestPointMs": 55000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 8000,
+          "maxLeadBeforeSampledClosestPointMs": 56000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 8000,
+          "maxLeadBeforeSampledClosestPointMs": 56000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 9200,
+          "maxLeadBeforeSampledClosestPointMs": 56800
+        }
+      ]
+    },
+    {
+      "approachRadiusMeters": 500,
+      "cooldownMs": 60000,
+      "movingMissCount": 2,
+      "placeId": "f79e9b40-aa96-5972-b59f-aa99f7bc8522",
+      "storyId": "03849d89-1640-5603-be8b-9835d371ed02",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 15000,
+          "maxLeadBeforeSampledClosestPointMs": 95000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 16000,
+          "maxLeadBeforeSampledClosestPointMs": 96000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 16000,
+          "maxLeadBeforeSampledClosestPointMs": 95200
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 17200,
+          "maxLeadBeforeSampledClosestPointMs": 96000
+        }
+      ]
+    },
+    {
+      "approachRadiusMeters": 500,
+      "cooldownMs": 180000,
+      "movingMissCount": 2,
+      "placeId": "f79e9b40-aa96-5972-b59f-aa99f7bc8522",
+      "storyId": "03849d89-1640-5603-be8b-9835d371ed02",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 15000,
+          "maxLeadBeforeSampledClosestPointMs": 95000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 16000,
+          "maxLeadBeforeSampledClosestPointMs": 96000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 16000,
+          "maxLeadBeforeSampledClosestPointMs": 95200
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 17200,
+          "maxLeadBeforeSampledClosestPointMs": 96000
+        }
+      ]
+    },
+    {
+      "approachRadiusMeters": 500,
+      "cooldownMs": 300000,
+      "movingMissCount": 2,
+      "placeId": "f79e9b40-aa96-5972-b59f-aa99f7bc8522",
+      "storyId": "03849d89-1640-5603-be8b-9835d371ed02",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 15000,
+          "maxLeadBeforeSampledClosestPointMs": 95000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 16000,
+          "maxLeadBeforeSampledClosestPointMs": 96000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 16000,
+          "maxLeadBeforeSampledClosestPointMs": 95200
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 17200,
+          "maxLeadBeforeSampledClosestPointMs": 96000
+        }
+      ]
+    },
+    {
+      "approachRadiusMeters": 150,
+      "cooldownMs": 60000,
+      "movingMissCount": 2,
+      "placeId": "f560a058-6fad-5f6f-9ac9-03ea8743ceb3",
+      "storyId": "666b77d3-aba4-5ea6-b9fc-1a4c6556eef5",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 1000,
+          "maxLeadBeforeSampledClosestPointMs": 25000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 2000,
+          "maxLeadBeforeSampledClosestPointMs": 26000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 2000,
+          "maxLeadBeforeSampledClosestPointMs": 26400
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 3200,
+          "maxLeadBeforeSampledClosestPointMs": 27200
+        }
+      ]
+    },
+    {
+      "approachRadiusMeters": 150,
+      "cooldownMs": 180000,
+      "movingMissCount": 2,
+      "placeId": "f560a058-6fad-5f6f-9ac9-03ea8743ceb3",
+      "storyId": "666b77d3-aba4-5ea6-b9fc-1a4c6556eef5",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 1000,
+          "maxLeadBeforeSampledClosestPointMs": 25000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 2000,
+          "maxLeadBeforeSampledClosestPointMs": 26000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 2000,
+          "maxLeadBeforeSampledClosestPointMs": 26400
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 3200,
+          "maxLeadBeforeSampledClosestPointMs": 27200
+        }
+      ]
+    },
+    {
+      "approachRadiusMeters": 150,
+      "cooldownMs": 300000,
+      "movingMissCount": 2,
+      "placeId": "f560a058-6fad-5f6f-9ac9-03ea8743ceb3",
+      "storyId": "666b77d3-aba4-5ea6-b9fc-1a4c6556eef5",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 1000,
+          "maxLeadBeforeSampledClosestPointMs": 25000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 2000,
+          "maxLeadBeforeSampledClosestPointMs": 26000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 2000,
+          "maxLeadBeforeSampledClosestPointMs": 26400
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 3200,
+          "maxLeadBeforeSampledClosestPointMs": 27200
+        }
+      ]
+    },
+    {
+      "approachRadiusMeters": 300,
+      "cooldownMs": 60000,
+      "movingMissCount": 2,
+      "placeId": "f560a058-6fad-5f6f-9ac9-03ea8743ceb3",
+      "storyId": "666b77d3-aba4-5ea6-b9fc-1a4c6556eef5",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 7000,
+          "maxLeadBeforeSampledClosestPointMs": 55000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 8000,
+          "maxLeadBeforeSampledClosestPointMs": 56000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 8000,
+          "maxLeadBeforeSampledClosestPointMs": 56000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 9200,
+          "maxLeadBeforeSampledClosestPointMs": 56800
+        }
+      ]
+    },
+    {
+      "approachRadiusMeters": 300,
+      "cooldownMs": 180000,
+      "movingMissCount": 2,
+      "placeId": "f560a058-6fad-5f6f-9ac9-03ea8743ceb3",
+      "storyId": "666b77d3-aba4-5ea6-b9fc-1a4c6556eef5",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 7000,
+          "maxLeadBeforeSampledClosestPointMs": 55000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 8000,
+          "maxLeadBeforeSampledClosestPointMs": 56000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 8000,
+          "maxLeadBeforeSampledClosestPointMs": 56000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 9200,
+          "maxLeadBeforeSampledClosestPointMs": 56800
+        }
+      ]
+    },
+    {
+      "approachRadiusMeters": 300,
+      "cooldownMs": 300000,
+      "movingMissCount": 2,
+      "placeId": "f560a058-6fad-5f6f-9ac9-03ea8743ceb3",
+      "storyId": "666b77d3-aba4-5ea6-b9fc-1a4c6556eef5",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 7000,
+          "maxLeadBeforeSampledClosestPointMs": 55000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 8000,
+          "maxLeadBeforeSampledClosestPointMs": 56000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 8000,
+          "maxLeadBeforeSampledClosestPointMs": 56000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 9200,
+          "maxLeadBeforeSampledClosestPointMs": 56800
+        }
+      ]
+    },
+    {
+      "approachRadiusMeters": 500,
+      "cooldownMs": 60000,
+      "movingMissCount": 2,
+      "placeId": "f560a058-6fad-5f6f-9ac9-03ea8743ceb3",
+      "storyId": "666b77d3-aba4-5ea6-b9fc-1a4c6556eef5",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 15000,
+          "maxLeadBeforeSampledClosestPointMs": 95000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 16000,
+          "maxLeadBeforeSampledClosestPointMs": 96000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 16000,
+          "maxLeadBeforeSampledClosestPointMs": 95200
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 17200,
+          "maxLeadBeforeSampledClosestPointMs": 96000
+        }
+      ]
+    },
+    {
+      "approachRadiusMeters": 500,
+      "cooldownMs": 180000,
+      "movingMissCount": 2,
+      "placeId": "f560a058-6fad-5f6f-9ac9-03ea8743ceb3",
+      "storyId": "666b77d3-aba4-5ea6-b9fc-1a4c6556eef5",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 15000,
+          "maxLeadBeforeSampledClosestPointMs": 95000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 16000,
+          "maxLeadBeforeSampledClosestPointMs": 96000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 16000,
+          "maxLeadBeforeSampledClosestPointMs": 95200
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 17200,
+          "maxLeadBeforeSampledClosestPointMs": 96000
+        }
+      ]
+    },
+    {
+      "approachRadiusMeters": 500,
+      "cooldownMs": 300000,
+      "movingMissCount": 2,
+      "placeId": "f560a058-6fad-5f6f-9ac9-03ea8743ceb3",
+      "storyId": "666b77d3-aba4-5ea6-b9fc-1a4c6556eef5",
+      "groups": [
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 15000,
+          "maxLeadBeforeSampledClosestPointMs": 95000
+        },
+        {
+          "sampleRateHz": 1,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 16000,
+          "maxLeadBeforeSampledClosestPointMs": 96000
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "zero_error",
+          "trials": 9,
+          "offers": 8,
+          "minLeadBeforeSampledClosestPointMs": 16000,
+          "maxLeadBeforeSampledClosestPointMs": 95200
+        },
+        {
+          "sampleRateHz": 5,
+          "syntheticNoise": "alternating_radial_error",
+          "trials": 9,
+          "offers": 9,
+          "minLeadBeforeSampledClosestPointMs": 17200,
+          "maxLeadBeforeSampledClosestPointMs": 96000
+        }
+      ]
+    }
+  ],
+  "selectedColumns": [
+    "sampleRateHz",
+    "speedMetersPerSecond",
+    "accuracyMeters",
+    "syntheticNoise",
+    "firstOfferElapsedMsOrNull",
+    "leadBeforeSampledClosestPointMsOrNull",
+    "trueDistanceAtFirstOfferMetersOrNull",
+    "availableDurationMsOrNull",
+    "falseDirectionOffers",
+    "falseRadiusOffers",
+    "samples"
+  ],
+  "selectedTrials": [
+    {
+      "approachRadiusMeters": 300,
+      "cooldownMs": 180000,
+      "movingMissCount": 2,
+      "placeId": "f79e9b40-aa96-5972-b59f-aa99f7bc8522",
+      "storyId": "03849d89-1640-5603-be8b-9835d371ed02",
+      "trials": [
+        [
+          1,
+          5,
+          5,
+          "zero_error",
+          205000,
+          55000,
+          275,
+          58000,
+          0,
+          0,
+          321
+        ],
+        [
+          1,
+          5,
+          5,
+          "alternating_radial_error",
+          204000,
+          56000,
+          280,
+          58000,
+          0,
+          0,
+          321
+        ],
+        [
+          1,
+          5,
+          15,
+          "zero_error",
+          211000,
+          49000,
+          245,
+          56000,
+          0,
+          0,
+          321
+        ],
+        [
+          1,
+          5,
+          15,
+          "alternating_radial_error",
+          208000,
+          52000,
+          260,
+          56000,
+          0,
+          0,
+          321
+        ],
+        [
+          1,
+          5,
+          30,
+          "zero_error",
+          null,
+          null,
+          null,
+          null,
+          0,
+          0,
+          321
+        ],
+        [
+          1,
+          5,
+          30,
+          "alternating_radial_error",
+          214000,
+          46000,
+          230,
+          54000,
+          0,
+          0,
+          321
+        ],
+        [
+          1,
+          15,
+          5,
+          "zero_error",
+          135000,
+          18000,
+          275,
+          20000,
+          0,
+          0,
+          107
+        ],
+        [
+          1,
+          15,
+          5,
+          "alternating_radial_error",
+          134000,
+          19000,
+          290,
+          22000,
+          0,
+          0,
+          107
+        ],
+        [
+          1,
+          15,
+          15,
+          "zero_error",
+          138000,
+          15000,
+          230,
+          18000,
+          0,
+          0,
+          107
+        ],
+        [
+          1,
+          15,
+          15,
+          "alternating_radial_error",
+          134000,
+          19000,
+          290,
+          1000,
+          0,
+          0,
+          107
+        ],
+        [
+          1,
+          15,
+          30,
+          "zero_error",
+          141000,
+          12000,
+          185,
+          17000,
+          0,
+          0,
+          107
+        ],
+        [
+          1,
+          15,
+          30,
+          "alternating_radial_error",
+          134000,
+          19000,
+          290,
+          1000,
+          0,
+          0,
+          107
+        ],
+        [
+          1,
+          25,
+          5,
+          "zero_error",
+          122000,
+          10000,
+          250,
+          11000,
+          0,
+          0,
+          65
+        ],
+        [
+          1,
+          25,
+          5,
+          "alternating_radial_error",
+          122000,
+          10000,
+          250,
+          11000,
+          0,
+          0,
+          65
+        ],
+        [
+          1,
+          25,
+          15,
+          "zero_error",
+          123000,
+          9000,
+          225,
+          11000,
+          0,
+          0,
+          65
+        ],
+        [
+          1,
+          25,
+          15,
+          "alternating_radial_error",
+          124000,
+          8000,
+          200,
+          10000,
+          0,
+          0,
+          65
+        ],
+        [
+          1,
+          25,
+          30,
+          "zero_error",
+          125000,
+          7000,
+          175,
+          10000,
+          0,
+          0,
+          65
+        ],
+        [
+          1,
+          25,
+          30,
+          "alternating_radial_error",
+          124000,
+          8000,
+          200,
+          10000,
+          0,
+          0,
+          65
+        ],
+        [
+          5,
+          5,
+          5,
+          "zero_error",
+          204000,
+          56000,
+          280,
+          58200,
+          0,
+          0,
+          1601
+        ],
+        [
+          5,
+          5,
+          5,
+          "alternating_radial_error",
+          203200,
+          56800,
+          284,
+          58000,
+          0,
+          0,
+          1601
+        ],
+        [
+          5,
+          5,
+          15,
+          "zero_error",
+          210000,
+          50000,
+          250,
+          56200,
+          0,
+          0,
+          1601
+        ],
+        [
+          5,
+          5,
+          15,
+          "alternating_radial_error",
+          207200,
+          52800,
+          264,
+          56000,
+          0,
+          0,
+          1601
+        ],
+        [
+          5,
+          5,
+          30,
+          "zero_error",
+          null,
+          null,
+          null,
+          null,
+          0,
+          0,
+          1601
+        ],
+        [
+          5,
+          5,
+          30,
+          "alternating_radial_error",
+          213200,
+          46800,
+          234,
+          53200,
+          0,
+          0,
+          1601
+        ],
+        [
+          5,
+          15,
+          5,
+          "zero_error",
+          134800,
+          18600,
+          278,
+          19400,
+          0,
+          0,
+          534
+        ],
+        [
+          5,
+          15,
+          5,
+          "alternating_radial_error",
+          134400,
+          19000,
+          284,
+          19600,
+          0,
+          0,
+          534
+        ],
+        [
+          5,
+          15,
+          15,
+          "zero_error",
+          136800,
+          16600,
+          248,
+          18800,
+          0,
+          0,
+          534
+        ],
+        [
+          5,
+          15,
+          15,
+          "alternating_radial_error",
+          136000,
+          17400,
+          260,
+          18800,
+          0,
+          0,
+          534
+        ],
+        [
+          5,
+          15,
+          30,
+          "zero_error",
+          139800,
+          13600,
+          203,
+          17800,
+          0,
+          0,
+          534
+        ],
+        [
+          5,
+          15,
+          30,
+          "alternating_radial_error",
+          138000,
+          15400,
+          230,
+          17600,
+          0,
+          0,
+          534
+        ],
+        [
+          5,
+          25,
+          5,
+          "zero_error",
+          121000,
+          11000,
+          275,
+          11600,
+          0,
+          0,
+          321
+        ],
+        [
+          5,
+          25,
+          5,
+          "alternating_radial_error",
+          120800,
+          11200,
+          280,
+          11600,
+          0,
+          0,
+          321
+        ],
+        [
+          5,
+          25,
+          15,
+          "zero_error",
+          122200,
+          9800,
+          245,
+          11200,
+          0,
+          0,
+          321
+        ],
+        [
+          5,
+          25,
+          15,
+          "alternating_radial_error",
+          121600,
+          10400,
+          260,
+          11200,
+          0,
+          0,
+          321
+        ],
+        [
+          5,
+          25,
+          30,
+          "zero_error",
+          124000,
+          8000,
+          200,
+          10600,
+          0,
+          0,
+          321
+        ],
+        [
+          5,
+          25,
+          30,
+          "alternating_radial_error",
+          122800,
+          9200,
+          230,
+          10800,
+          0,
+          0,
+          321
+        ]
+      ]
+    },
+    {
+      "approachRadiusMeters": 300,
+      "cooldownMs": 180000,
+      "movingMissCount": 2,
+      "placeId": "f560a058-6fad-5f6f-9ac9-03ea8743ceb3",
+      "storyId": "666b77d3-aba4-5ea6-b9fc-1a4c6556eef5",
+      "trials": [
+        [
+          1,
+          5,
+          5,
+          "zero_error",
+          205000,
+          55000,
+          275,
+          58000,
+          0,
+          0,
+          321
+        ],
+        [
+          1,
+          5,
+          5,
+          "alternating_radial_error",
+          204000,
+          56000,
+          280,
+          58000,
+          0,
+          0,
+          321
+        ],
+        [
+          1,
+          5,
+          15,
+          "zero_error",
+          211000,
+          49000,
+          245,
+          56000,
+          0,
+          0,
+          321
+        ],
+        [
+          1,
+          5,
+          15,
+          "alternating_radial_error",
+          208000,
+          52000,
+          260,
+          56000,
+          0,
+          0,
+          321
+        ],
+        [
+          1,
+          5,
+          30,
+          "zero_error",
+          null,
+          null,
+          null,
+          null,
+          0,
+          0,
+          321
+        ],
+        [
+          1,
+          5,
+          30,
+          "alternating_radial_error",
+          214000,
+          46000,
+          230,
+          54000,
+          0,
+          0,
+          321
+        ],
+        [
+          1,
+          15,
+          5,
+          "zero_error",
+          135000,
+          18000,
+          275,
+          20000,
+          0,
+          0,
+          107
+        ],
+        [
+          1,
+          15,
+          5,
+          "alternating_radial_error",
+          134000,
+          19000,
+          290,
+          22000,
+          0,
+          0,
+          107
+        ],
+        [
+          1,
+          15,
+          15,
+          "zero_error",
+          138000,
+          15000,
+          230,
+          18000,
+          0,
+          0,
+          107
+        ],
+        [
+          1,
+          15,
+          15,
+          "alternating_radial_error",
+          134000,
+          19000,
+          290,
+          1000,
+          0,
+          0,
+          107
+        ],
+        [
+          1,
+          15,
+          30,
+          "zero_error",
+          141000,
+          12000,
+          185,
+          17000,
+          0,
+          0,
+          107
+        ],
+        [
+          1,
+          15,
+          30,
+          "alternating_radial_error",
+          134000,
+          19000,
+          290,
+          1000,
+          0,
+          0,
+          107
+        ],
+        [
+          1,
+          25,
+          5,
+          "zero_error",
+          122000,
+          10000,
+          250,
+          11000,
+          0,
+          0,
+          65
+        ],
+        [
+          1,
+          25,
+          5,
+          "alternating_radial_error",
+          122000,
+          10000,
+          250,
+          11000,
+          0,
+          0,
+          65
+        ],
+        [
+          1,
+          25,
+          15,
+          "zero_error",
+          123000,
+          9000,
+          225,
+          11000,
+          0,
+          0,
+          65
+        ],
+        [
+          1,
+          25,
+          15,
+          "alternating_radial_error",
+          124000,
+          8000,
+          200,
+          10000,
+          0,
+          0,
+          65
+        ],
+        [
+          1,
+          25,
+          30,
+          "zero_error",
+          125000,
+          7000,
+          175,
+          10000,
+          0,
+          0,
+          65
+        ],
+        [
+          1,
+          25,
+          30,
+          "alternating_radial_error",
+          124000,
+          8000,
+          200,
+          10000,
+          0,
+          0,
+          65
+        ],
+        [
+          5,
+          5,
+          5,
+          "zero_error",
+          204000,
+          56000,
+          280,
+          58200,
+          0,
+          0,
+          1601
+        ],
+        [
+          5,
+          5,
+          5,
+          "alternating_radial_error",
+          203200,
+          56800,
+          284,
+          58000,
+          0,
+          0,
+          1601
+        ],
+        [
+          5,
+          5,
+          15,
+          "zero_error",
+          210000,
+          50000,
+          250,
+          56200,
+          0,
+          0,
+          1601
+        ],
+        [
+          5,
+          5,
+          15,
+          "alternating_radial_error",
+          207200,
+          52800,
+          264,
+          56000,
+          0,
+          0,
+          1601
+        ],
+        [
+          5,
+          5,
+          30,
+          "zero_error",
+          null,
+          null,
+          null,
+          null,
+          0,
+          0,
+          1601
+        ],
+        [
+          5,
+          5,
+          30,
+          "alternating_radial_error",
+          213200,
+          46800,
+          234,
+          53200,
+          0,
+          0,
+          1601
+        ],
+        [
+          5,
+          15,
+          5,
+          "zero_error",
+          134800,
+          18600,
+          278,
+          19400,
+          0,
+          0,
+          534
+        ],
+        [
+          5,
+          15,
+          5,
+          "alternating_radial_error",
+          134400,
+          19000,
+          284,
+          19600,
+          0,
+          0,
+          534
+        ],
+        [
+          5,
+          15,
+          15,
+          "zero_error",
+          136800,
+          16600,
+          248,
+          18800,
+          0,
+          0,
+          534
+        ],
+        [
+          5,
+          15,
+          15,
+          "alternating_radial_error",
+          136000,
+          17400,
+          260,
+          18800,
+          0,
+          0,
+          534
+        ],
+        [
+          5,
+          15,
+          30,
+          "zero_error",
+          139800,
+          13600,
+          203,
+          17800,
+          0,
+          0,
+          534
+        ],
+        [
+          5,
+          15,
+          30,
+          "alternating_radial_error",
+          138000,
+          15400,
+          230,
+          17600,
+          0,
+          0,
+          534
+        ],
+        [
+          5,
+          25,
+          5,
+          "zero_error",
+          121000,
+          11000,
+          275,
+          11600,
+          0,
+          0,
+          321
+        ],
+        [
+          5,
+          25,
+          5,
+          "alternating_radial_error",
+          120800,
+          11200,
+          280,
+          11600,
+          0,
+          0,
+          321
+        ],
+        [
+          5,
+          25,
+          15,
+          "zero_error",
+          122200,
+          9800,
+          245,
+          11200,
+          0,
+          0,
+          321
+        ],
+        [
+          5,
+          25,
+          15,
+          "alternating_radial_error",
+          121600,
+          10400,
+          260,
+          11200,
+          0,
+          0,
+          321
+        ],
+        [
+          5,
+          25,
+          30,
+          "zero_error",
+          124000,
+          8000,
+          200,
+          10600,
+          0,
+          0,
+          321
+        ],
+        [
+          5,
+          25,
+          30,
+          "alternating_radial_error",
+          122800,
+          9200,
+          230,
+          10800,
+          0,
+          0,
+          321
+        ]
+      ]
+    }
+  ],
+  "publicNaverProximity": {
+    "activePleosRouteVerified": false,
+    "actualTravelEvidence": false,
+    "credentialsStored": false,
+    "decodedProviderResponseCount": 2,
+    "formatVersion": 1,
+    "legalAccessPointVerified": false,
+    "limitations": [
+      "One requested route per POI at one traffic snapshot; no representative-route claim.",
+      "Endpoint coordinates are deterministic synthetic inputs, not verified road or entry points.",
+      "Reported POI point is a supplier representative point, not a building footprint or vehicle entrance.",
+      "Provider guide time is a route estimate; no speed interpolation or exact radius entry/exit time.",
+      "A radius decision requires separate reviewed synthetic approach evidence; these two routes alone cannot validate it."
+    ],
+    "networkEnabledRequestCount": 2,
+    "networkEnabledRequestLimit": 2,
+    "observedAtUtc": "2026-11-08T18:13:05.569825+00:00",
+    "officialContract": "https://api.ncloud-docs.com/docs/application-maps-directions5",
+    "pathStored": false,
+    "personalLocationUsed": false,
+    "priorSandboxDnsFailureAttemptCount": 2,
+    "publicPoiAssetSha256": "c8f34431486e0581c2f2a9916eba2db17e6511259f47b4f7ee7a31d70cd7862b",
+    "rawResponseStored": false,
+    "requestSelection": "For each pinned public POI, origin longitude=POI longitude-0.015 degrees and destination longitude=POI longitude+0.015 degrees, identical POI latitude. One traoptimal route without waypoints; no retries, no route or endpoint adjustment.",
+    "results": [
+      {
+        "activePleosRouteVerified": false,
+        "approximateNearestDistanceMeters": 105.1,
+        "approximatePathPolylineLengthMeters": 4261.1,
+        "collectionEvidence": false,
+        "coordinateReferenceSystem": "EPSG:4326",
+        "coordinateSourceRevisionId": "bbff35a2-9a3d-5829-9479-049b4e679fd8",
+        "distanceModel": "POI-centred local equirectangular projection with mean Earth radius 6371008.8m; approximate planimetric distances, not surveyed accuracy.",
+        "distanceTotalsMatch": true,
+        "guideCount": 14,
+        "placeId": "f79e9b40-aa96-5972-b59f-aa99f7bc8522",
+        "pointCount": 230,
+        "productEnabled": false,
+        "provider": "naver_maps",
+        "providerTotalDistanceMeters": 4269,
+        "providerTotalDurationMs": 587087,
+        "publicPlaceName": "문화역 서울 284",
+        "radiusSummaries": [
+          {
+            "approximatePathLengthInsideMeters": 160.7,
+            "fullyInsideGuideCount": 0,
+            "fullyInsideGuideDurationSumMs": 0,
+            "intersectingGuideDurationSumMs": 155749,
+            "intersectingGuideTimeEnvelopesMs": [
+              [
+                258531,
+                414280
+              ]
+            ],
+            "partiallyInsideGuideCount": 2,
+            "pathIntersects": true,
+            "radiusMeters": 150,
+            "timeMeaning": "Cumulative provider-guide estimates from request origin; whole-guide lower and intersecting-guide upper aggregate only. No intra-guide entry/exit interpolation or real dwell-time claim.",
+            "timingAvailable": true,
+            "touchingPathSegmentCount": 8
+          },
+          {
+            "approximatePathLengthInsideMeters": 474.5,
+            "fullyInsideGuideCount": 0,
+            "fullyInsideGuideDurationSumMs": 0,
+            "intersectingGuideDurationSumMs": 155749,
+            "intersectingGuideTimeEnvelopesMs": [
+              [
+                258531,
+                414280
+              ]
+            ],
+            "partiallyInsideGuideCount": 2,
+            "pathIntersects": true,
+            "radiusMeters": 300,
+            "timeMeaning": "Cumulative provider-guide estimates from request origin; whole-guide lower and intersecting-guide upper aggregate only. No intra-guide entry/exit interpolation or real dwell-time claim.",
+            "timingAvailable": true,
+            "touchingPathSegmentCount": 26
+          },
+          {
+            "approximatePathLengthInsideMeters": 1070.3,
+            "fullyInsideGuideCount": 2,
+            "fullyInsideGuideDurationSumMs": 63359,
+            "intersectingGuideDurationSumMs": 261273,
+            "intersectingGuideTimeEnvelopesMs": [
+              [
+                153007,
+                414280
+              ]
+            ],
+            "partiallyInsideGuideCount": 2,
+            "pathIntersects": true,
+            "radiusMeters": 500,
+            "timeMeaning": "Cumulative provider-guide estimates from request origin; whole-guide lower and intersecting-guide upper aggregate only. No intra-guide entry/exit interpolation or real dwell-time claim.",
+            "timingAvailable": true,
+            "touchingPathSegmentCount": 54
+          }
+        ],
+        "reviewStatus": "not_reviewed",
+        "service": "directions5",
+        "sourceMode": "AUXILIARY",
+        "stationaryTimedSegmentCount": 0,
+        "status": "PASS",
+        "storedGeometry": false,
+        "timingCoverageComplete": true,
+        "timingTotalsMatch": true,
+        "timingUsable": true,
+        "unknownTailPointCount": 0,
+        "zeroDurationSegmentCount": 0,
+        "zeroDurationTravelSegmentCount": 0
+      },
+      {
+        "activePleosRouteVerified": false,
+        "approximateNearestDistanceMeters": 148.3,
+        "approximatePathPolylineLengthMeters": 3754.7,
+        "collectionEvidence": false,
+        "coordinateReferenceSystem": "EPSG:4326",
+        "coordinateSourceRevisionId": "21ba8b7c-7016-512f-af79-f7226818273f",
+        "distanceModel": "POI-centred local equirectangular projection with mean Earth radius 6371008.8m; approximate planimetric distances, not surveyed accuracy.",
+        "distanceTotalsMatch": true,
+        "guideCount": 7,
+        "placeId": "f560a058-6fad-5f6f-9ac9-03ea8743ceb3",
+        "pointCount": 127,
+        "productEnabled": false,
+        "provider": "naver_maps",
+        "providerTotalDistanceMeters": 3760,
+        "providerTotalDurationMs": 446129,
+        "publicPlaceName": "대전엑스포과학공원",
+        "radiusSummaries": [
+          {
+            "approximatePathLengthInsideMeters": 33.4,
+            "fullyInsideGuideCount": 0,
+            "fullyInsideGuideDurationSumMs": 0,
+            "intersectingGuideDurationSumMs": 229439,
+            "intersectingGuideTimeEnvelopesMs": [
+              [
+                135502,
+                364941
+              ]
+            ],
+            "partiallyInsideGuideCount": 1,
+            "pathIntersects": true,
+            "radiusMeters": 150,
+            "timeMeaning": "Cumulative provider-guide estimates from request origin; whole-guide lower and intersecting-guide upper aggregate only. No intra-guide entry/exit interpolation or real dwell-time claim.",
+            "timingAvailable": true,
+            "touchingPathSegmentCount": 5
+          },
+          {
+            "approximatePathLengthInsideMeters": 464.0,
+            "fullyInsideGuideCount": 0,
+            "fullyInsideGuideDurationSumMs": 0,
+            "intersectingGuideDurationSumMs": 229439,
+            "intersectingGuideTimeEnvelopesMs": [
+              [
+                135502,
+                364941
+              ]
+            ],
+            "partiallyInsideGuideCount": 1,
+            "pathIntersects": true,
+            "radiusMeters": 300,
+            "timeMeaning": "Cumulative provider-guide estimates from request origin; whole-guide lower and intersecting-guide upper aggregate only. No intra-guide entry/exit interpolation or real dwell-time claim.",
+            "timingAvailable": true,
+            "touchingPathSegmentCount": 23
+          },
+          {
+            "approximatePathLengthInsideMeters": 895.0,
+            "fullyInsideGuideCount": 0,
+            "fullyInsideGuideDurationSumMs": 0,
+            "intersectingGuideDurationSumMs": 229439,
+            "intersectingGuideTimeEnvelopesMs": [
+              [
+                135502,
+                364941
+              ]
+            ],
+            "partiallyInsideGuideCount": 1,
+            "pathIntersects": true,
+            "radiusMeters": 500,
+            "timeMeaning": "Cumulative provider-guide estimates from request origin; whole-guide lower and intersecting-guide upper aggregate only. No intra-guide entry/exit interpolation or real dwell-time claim.",
+            "timingAvailable": true,
+            "touchingPathSegmentCount": 39
+          }
+        ],
+        "reviewStatus": "not_reviewed",
+        "service": "directions5",
+        "sourceMode": "AUXILIARY",
+        "stationaryTimedSegmentCount": 0,
+        "status": "PASS",
+        "storedGeometry": false,
+        "timingCoverageComplete": true,
+        "timingTotalsMatch": true,
+        "timingUsable": true,
+        "unknownTailPointCount": 0,
+        "zeroDurationSegmentCount": 0,
+        "zeroDurationTravelSegmentCount": 0
+      }
+    ],
+    "scope": "PUBLIC_SYNTHETIC_LANDMARK_AUXILIARY_ROUTE_PROXIMITY_REVIEW",
+    "sourceMode": "AUXILIARY"
+  },
+  "targetedJvm": {
+    "tests": 45,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "suites": 5
+  },
+  "decisionBasis": [
+    "150m leaves only about 1.7m between Expo representative point and one public auxiliary route minimum, and only 1-3.2s minimum synthetic lead across noise/rate groups.",
+    "300m increases synthetic minimum lead to 7-9.2s across noise/rate groups while retaining a smaller surrounding area than 500m; 500m gives more lead but no additional accepted synthetic trials.",
+    "180 seconds is an explicit demo operating tradeoff between 60/300 seconds, not an empirically optimal cooldown. Tests independently enforce post-cooldown new measured outside exit and new approach.",
+    "64-point fresh observation window fixes adjacent-pair cadence blindness without lowering distance uncertainty thresholds. Any definite recession overrides an older net approach."
+  ],
+  "limits": [
+    "POI representative point is not surveyed accuracy, entrance, road access, vehicle visibility or legal-route evidence.",
+    "The synthetic meridian crosses the point; it does not predict actual road approach times. NAVER proximity is separate auxiliary geometry evidence.",
+    "Both places accept 34/36 selected synthetic conditions. The 5m/s,30m accuracy,zero-error condition remains missed at both sample rates because 10 seconds cannot separate uncertainty.",
+    "Bounded noise is not a guarantee about statistical Android accuracy. Smaller-than-uncertainty turns cannot be instantly identified.",
+    "Lead is to the sampled closest point, not guaranteed output start or completion; story/music/interruption boundaries may legitimately discard an encounter.",
+    "UNKNOWN/ACTIVE navigation is never treated as INACTIVE. Active-route membership and actual Pleos route identity remain unimplemented.",
+    "No observed user coordinates, real driving, human speech, model call, product card creation or heard-history reset in this review."
+  ]
+}

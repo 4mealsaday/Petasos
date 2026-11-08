@@ -170,6 +170,12 @@ object ProductPlaybackProbe {
                     throw ProbeFailure("APP_PLAYBACK_PRODUCT_REGION_POLICY_NOT_CURRENT")
             }
             mark("app_playback_product_current_packaged_region_policies_${regionReviews.size}")
+            // Read only: the real Host must have installed the exact two packaged landmark reviews.
+            // Prior completed stories may have no automatic candidates and must retain their history.
+            val landmarkPolicyCount = try {
+                com.petasos.app.storage.BundledLandmarkPolicyProbe.requireCurrentPackagedPolicies(context, database)
+            } catch (_: Exception) { throw ProbeFailure("APP_PLAYBACK_PRODUCT_LANDMARK_POLICY_NOT_CURRENT") }
+            mark("app_playback_product_current_packaged_landmark_policies_$landmarkPolicyCount")
             val selected: MediaItem = entries.firstOrNull { item ->
                 (bundledVersion == null || item.mediaId == bundledVersion.storyVersionId) &&
                 item.localConfiguration == null && item.mediaMetadata.isPlayable == true && count("""

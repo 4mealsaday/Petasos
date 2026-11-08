@@ -18,7 +18,7 @@ PROBES = ("vehicle-preferences", "trip-results", "trip-lifecycle", "app-trip-lif
           "location-storage", "android-location-contract", "android-speech-capability", "region-storage", "region-policy-storage", "region-hierarchy", "bundled-stories", "regional-content", "landmark-storage", "landmark-policy-storage", "automatic-planning", "local-commands", "session-recovery", "recovery-music-gap", "navigation", "music-runtime", "media-session", "app-playback", "app-music", "car-policy-ui",
           "storage", "runtime-scripted", "runtime-tts", "runtime-tts-stop", "story-generation-storage", "resume-context", "app-story-generation",
           "summary-storage", "summary-work", "summary-rights", "generation-https", "generation-provision", "generation-live",
-          "content-install", "content-install-local", "content-runtime", "generation-planning-live", "auxiliary-route", "bundled-playback")
+          "content-install", "content-install-local", "content-runtime", "generation-planning-live", "auxiliary-route", "bundled-playback", "representative-route-runtime")
 CAAS = "ai.pleos.playground.caas"
 APP = "com.petasos.app"
 BUILD_TYPES = ("debug", "privacy")
@@ -125,7 +125,7 @@ def probe_timeout(probe):
         return 120
     # Multi-database Keystore rights checks also need headroom on a loaded emulator.
     # These are host process limits, not product speech or generation deadlines.
-    if probe in ("generation-https", "stt-listen", "stt-owned-listen", "stt-owned-stream", "stt-owned-delayed", "stt-owned-eof", "app-playback", "summary-rights", "automatic-planning", "landmark-storage", "landmark-policy-storage", "region-policy-storage", "region-hierarchy", "bundled-stories", "recovery-music-gap", "local-commands"):
+    if probe in ("generation-https", "stt-listen", "stt-owned-listen", "stt-owned-stream", "stt-owned-delayed", "stt-owned-eof", "app-playback", "summary-rights", "automatic-planning", "representative-route-runtime", "landmark-storage", "landmark-policy-storage", "region-policy-storage", "region-hierarchy", "bundled-stories", "recovery-music-gap", "local-commands"):
         return 90
     return 50
 
@@ -133,7 +133,7 @@ def probe_timeout(probe):
 def probe_evidence_metadata(probe, has_https_fixture=False):
     """Describe fixture boundaries identically in the report and host regressions."""
     return {
-        "fixture": "sha_pinned_packaged_public_story" if probe == "bundled-playback" else "official_public_route_example_and_packaged_geometry_disposable_database_synthetic_android_anchor" if probe == "auxiliary-route" else "official_packaged_geometry_disposable_database_public_synthetic_coordinates" if probe in ("region-storage", "region-policy-storage", "region-hierarchy", "bundled-stories") else "two_synthetic_coordinates" if probe == "location" else (
+        "fixture": "sha_pinned_public_stories_disposable_room_synthetic_route_clock_and_silent_music" if probe == "representative-route-runtime" else "sha_pinned_packaged_public_story" if probe == "bundled-playback" else "disposable_databases_synthetic_regressions_and_actual_packaged_public_landmark_reviews" if probe == "landmark-policy-storage" else "official_public_route_example_and_packaged_geometry_disposable_database_synthetic_android_anchor" if probe == "auxiliary-route" else "official_packaged_geometry_disposable_database_public_synthetic_coordinates" if probe in ("region-storage", "region-policy-storage", "region-hierarchy", "bundled-stories") else "two_synthetic_coordinates" if probe == "location" else (
             "synthetic_korean_pcm" if probe in ("stt-pcm", "stt-owned-pcm", "stt-owned-stream", "stt-owned-delayed", "stt-owned-eof") else (
                 "disposable_database_and_synthetic_test_content" if probe in ("vehicle-preferences", "trip-results", "trip-lifecycle", "regional-content", "landmark-storage", "landmark-policy-storage", "recovery-music-gap", "storage", "runtime-scripted", "runtime-tts", "runtime-tts-stop", "story-generation-storage", "resume-context", "automatic-planning", "local-commands", "summary-storage", "summary-work") else (
                     "local_https_synthetic_provider_one_day_ca_ephemeral_device_token" if has_https_fixture else None))),
@@ -155,11 +155,12 @@ def probe_evidence_metadata(probe, has_https_fixture=False):
             "region-policy-storage": "disposable Room with packaged official geometry, explicitly synthetic region policy reviews in one database and the actual selected 9-region catalog in a separate database; 255 pending regions, exact selected-value Android proofs, first finalization, no-op, immutable conflicts, terminal revocation and existing-proof preservation; public synthetic coordinates only; no product policy approval, consent change, location subscription, audio or model",
             "recovery-music-gap": "actual Room durable story/music completion recovery with synthetic content and scripted outputs; no location, microphone, audio or external model",
             "landmark-storage": "actual Room reviewed landmark policy, coordinate and story association with synthetic content; no location, audio, consent change or model",
-            "landmark-policy-storage": "disposable Room with synthetic TX05 places and strict pinned landmark policy reviews; atomic install and rollback, explicit NULL story binding, exact reload and retained rejection, duplicate association guards, generated omission and existing scripted history/cards/proofs; no real policy approval, product database, location subscription, coordinate output, microphone, audio, consent change or model",
+            "landmark-policy-storage": "disposable Room with synthetic TX05 policy regressions and a separate actual two-place packaged public policy catalog; atomic install and rollback, explicit NULL story binding, exact reload and retained rejection, duplicate association guards, generated omission and existing scripted history/cards/proofs; actual packaged candidate eligibility, metadata and source-rights withdrawal preserved; no new policy approval, product database, location subscription, coordinate output, microphone, audio, consent change or model",
             "region-hierarchy": "disposable Room with reviewed hierarchy and public synthetic points; leaf-only card and parent story scope; no product policy, microphone or network",
             "bundled-stories": "disposable Room with ten packaged public stories, exact bindings and the selected 9-region policy inventory; bootstrap and retries preserve exact policy payloads; no product records, trip, collection, audio or network",
             "regional-content": "actual Room v1-to-v2 migration and reviewed textual region bindings with synthetic content; no location, audio, consent change or model",
             "local-commands": "actual Room/Keystore explicit playback commands with scripted input, output and generation; durable final input, stop ACK, user-only frozen turns and recovery; no microphone, audio playback, location or external model",
+            "representative-route-runtime": "actual Room and product planning/runtime with SHA-pinned public stories, synthetic route/clock and silent 10-second fixture music; exact next-region story and planning revision after music commit, Stop/resume and reroute; no product database, location SDK, microphone, actual audio or network",
             "automatic-planning": "actual Room with synthetic installed content and scripted runtime for region/explicit-interest planning, repeat filtering and playback boundaries; no microphone, model, location SDK or actual audio playback",
             "session-recovery": "actual Room/Keystore process-recovery transactions with synthetic interrupted data; no OS suspend or real microphone",
             "navigation": "actual read-only NaviHelper connection and callbacks or explicit fallback; no destination write or vehicle mutation",
