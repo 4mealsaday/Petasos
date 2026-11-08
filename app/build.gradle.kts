@@ -5,6 +5,14 @@ plugins {
     id("androidx.room")
 }
 
+// The permissionless demo shares compiled, unused product speech adapters. Keep
+// their four file-specific exceptions confined to an explicitly requested demo
+// Lint invocation; product Lint and mixed task invocations must never use them.
+val demoLint = providers.gradleProperty("petasosDemoLint").orNull == "true"
+require(!demoLint || gradle.startParameter.taskNames.singleOrNull() in setOf("lintDemo", ":app:lintDemo")) {
+    "petasosDemoLint requires only :app:lintDemo"
+}
+
 android {
     namespace = "com.petasos.app"
     compileSdk = 36
@@ -15,9 +23,11 @@ android {
         applicationId = "com.petasos.app"
         minSdk = 28
         targetSdk = 34
-        versionCode = 31
-        versionName = "0.8.0-dev.31"
-        testInstrumentationRunner = "com.petasos.app.diagnostics.SdkProbeInstrumentation"
+        versionCode = 32
+        versionName = "0.8.0-dev.32"
+        testInstrumentationRunner = if (providers.gradleProperty("petasosTestBuildType").orNull == "demo")
+            "com.petasos.app.demo.DemoScenarioInstrumentation"
+        else "com.petasos.app.diagnostics.SdkProbeInstrumentation"
         // The current verified Pleos target is ARM64. Do not package untested host ABIs.
         ndk { abiFilters += "arm64-v8a" }
     }
@@ -47,6 +57,13 @@ android {
         }
     }
 
+    buildTypes.create("demo") {
+        // Separate UID/data sandbox, with main core but no product Application/services/permissions.
+        initWith(buildTypes.getByName("privacy"))
+        applicationIdSuffix = ".demo"
+        matchingFallbacks += listOf("release")
+    }
+
     sourceSets.getByName("privacy") {
         // initWith copies options, not source sets. This diagnostic variant explicitly
         // shares debug's localhost-only CA domain config; ordinary release does not.
@@ -55,7 +72,7 @@ android {
     }
 
     val requestedTestBuildType = providers.gradleProperty("petasosTestBuildType").orElse("debug").get()
-    require(requestedTestBuildType in setOf("debug", "privacy")) { "Unsupported Petasos test build type" }
+    require(requestedTestBuildType in setOf("debug", "privacy", "demo")) { "Unsupported Petasos test build type" }
     testBuildType = requestedTestBuildType
     sourceSets.getByName("androidTest").assets.srcDir("schemas")
 
@@ -65,7 +82,7 @@ android {
     }
 
     lint {
-        lintConfig = file("lint.xml")
+        lintConfig = file(if (demoLint) "lint-demo.xml" else "lint.xml")
         // Deliberately pin the documented toolchain and the Pleos API 34 target.
         // Revisit these version notices before upgrading the image or distributing.
         disable += setOf("ExpiredTargetSdkVersion", "OldTargetApi", "AndroidGradlePluginVersion")
