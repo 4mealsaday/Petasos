@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <ScrollView
+        android:id="@+id/preview_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="@dimen/preview_screen_padding_horizontal"
+        android:paddingVertical="@dimen/preview_screen_padding_vertical">
+
+        <!-- Framework Activity/TextView on API 28+ supports native vector compound drawables. -->
+        <TextView
+            style="@style/Widget.Petasos.Preview.Brand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_petasos"
+            tools:ignore="UseCompatTextViewDrawableXml"
+            android:drawablePadding="@dimen/preview_brand_mark_gap"
+            android:gravity="center_vertical"
+            android:text="@string/app_name" />
+
+        <TextView
+            style="@style/Widget.Petasos.Preview.Caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/preview_caption_margin_top"
+            android:text="@string/brand_caption" />
+
+        <TextView
+            style="@style/Widget.Petasos.Preview.HeroTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/preview_hero_title_margin_top"
+            android:text="@string/hero_title" />
+
+        <TextView
+            style="@style/Widget.Petasos.Preview.HeroDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/preview_hero_description_margin_top"
+            android:text="@string/hero_description" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/preview_card_margin_top"
+            android:background="@drawable/bg_card"
+            android:orientation="vertical"
+            android:padding="@dimen/preview_card_padding">
+
+            <TextView
+                style="@style/Widget.Petasos.Preview.Badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_badge"
+                android:paddingHorizontal="@dimen/preview_badge_padding_horizontal"
+                android:paddingVertical="@dimen/preview_badge_padding_vertical"
+                android:text="@string/preview_badge" />
+
+            <TextView
+                android:id="@+id/playback_status"
+                style="@style/Widget.Petasos.Preview.CardTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/preview_card_title_margin_top"
+                android:text="@string/ready_title" />
+
+            <TextView
+                android:id="@+id/playback_notice"
+                style="@style/Widget.Petasos.Preview.CardDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/preview_card_description_margin_top"
+                android:text="@string/ready_description" />
+
+            <Spinner
+                android:id="@+id/story_selection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/preview_card_title_margin_top"
+                android:minHeight="48dp"
+                android:contentDescription="@string/story_selection_label" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/playback_previous"
+                    style="@style/Widget.Petasos.Preview.CardDescription"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minHeight="48dp"
+                    android:text="@string/playback_previous" />
+
+                <Button
+                    android:id="@+id/playback_play"
+                    style="@style/Widget.Petasos.Preview.CardDescription"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minHeight="48dp"
+                    android:text="@string/playback_play" />
+
+                <Button
+                    android:id="@+id/playback_next"
+                    style="@style/Widget.Petasos.Preview.CardDescription"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minHeight="48dp"
+                    android:text="@string/playback_next" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/playback_stop"
+                    style="@style/Widget.Petasos.Preview.CardDescription"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minHeight="48dp"
+                    android:text="@string/playback_stop" />
+
+                <Button
+                    android:id="@+id/playback_talk"
+                    style="@style/Widget.Petasos.Preview.CardDescription"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minHeight="48dp"
+                    android:text="@string/playback_talk" />
+            </LinearLayout>
+            <Button
+                android:id="@+id/playback_new_story"
+                style="@style/Widget.Petasos.Preview.CardDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/playback_new_story" />
+            <Button
+                android:id="@+id/music_credits"
+                style="@style/Widget.Petasos.Preview.CardDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/music_credits_title" />
+        </LinearLayout>
+
+        <include layout="@layout/view_trip_controls" />
+
+        <TextView
+            style="@style/Widget.Petasos.Preview.Footer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/preview_footer_margin_top"
+            android:text="@string/preview_footer" />
+    </LinearLayout>
+    </ScrollView>
+
+    <TextView
+        android:id="@+id/vehicle_policy_notice"
+        style="@style/Widget.Petasos.Preview.CardDescription"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:paddingHorizontal="@dimen/preview_screen_padding_horizontal"
+        android:paddingVertical="@dimen/preview_screen_padding_vertical"
+        android:text="@string/vehicle_policy_waiting" />
+</merge>

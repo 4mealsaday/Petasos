@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="microphone_verification_pending">이야기 재생을 사용할 수 있습니다. 음성 입력은 준비 중입니다.</string>
+    <string name="app_name">Petasos</string>
+    <string name="brand_caption">함께 듣는 지역 이야기</string>
+    <string name="hero_title">지나는 곳마다,\n새로운 이야기.</string>
+    <string name="hero_description">함께 듣고, 궁금할 때 참여하세요.\n이동의 순간을 이야기로 채워갑니다.</string>
+    <string name="preview_badge">개발 프리뷰</string>
+    <string name="ready_title">이야기 연결 중</string>
+    <string name="ready_description">설치된 이야기를 선택한 뒤 재생을 눌러주세요.</string>
+    <string name="preview_footer">Petasos · 개발 프리뷰</string>
+    <string name="vehicle_policy_waiting">차량 연결 상태를 확인하고 있어요.\n정차한 상태에서 이용해주세요.</string>
+    <string name="vehicle_policy_restricted">정차한 뒤 이용해주세요.</string>
+    <string name="story_selection_label">설치된 이야기 선택</string>
+    <string name="story_selection_automatic">지역 이야기 자동 편성</string>
+    <string name="playback_previous">이전</string>
+    <string name="playback_play">재생</string>
+    <string name="playback_next">다음</string>
+    <string name="playback_stop">정지</string>
+    <string name="playback_talk">말하기</string>
+    <string name="playback_new_story">새로 만들어 듣기</string>
+    <string name="playback_preparing_story">새 이야기를 준비하고 있어요</string>
+    <string name="playback_preparing_story_description">선택한 이야기의 자료로 새 대본을 만들고 있어요. 정지하면 취소됩니다.</string>
+    <string name="playback_story_preparation_failed">새 이야기 준비가 끝나지 않았어요. 기존 이야기는 재생할 수 있습니다.</string>
+    <string name="playback_idle">재생 준비</string>
+    <string name="playback_story">이야기를 들려드리고 있어요</string>
+    <string name="playback_music">음악을 재생하고 있어요</string>
+    <string name="playback_talk_pending">현재 문단을 마친 뒤 들을게요</string>
+    <string name="playback_prompt">말하기를 준비하고 있어요</string>
+    <string name="playback_listening">말씀을 듣고 있어요</string>
+    <string name="playback_generating">답변을 준비하고 있어요</string>
+    <string name="playback_answering">답변을 들려드리고 있어요</string>
+    <string name="playback_resuming">이야기로 돌아가고 있어요</string>
+    <string name="playback_paused">재생이 멈췄어요</string>
+    <string name="playback_blocked">현재 재생을 사용할 수 없어요</string>
+    <string name="playback_unavailable">이야기 연결을 확인해주세요</string>
+    <string name="playback_no_content">설치된 이야기가 없어요</string>
+    <string name="playback_operation_unavailable">지금은 요청을 처리할 수 없어요. 잠시 후 다시 시도해주세요.</string>
+    <string name="microphone_permission_needed">말하기에는 마이크 권한이 필요해요.</string>
+    <string name="microphone_permission_granted">마이크 권한을 확인했어요. 시작하려면 말하기를 다시 눌러주세요.</string>
+    <string name="microphone_permission_denied">마이크 권한이 없어 말하기를 시작하지 않았어요.</string>
+</resources>

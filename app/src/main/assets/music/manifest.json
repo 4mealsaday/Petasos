@@ -1,0 +1,27 @@
+{
+  "formatVersion": 1,
+  "tracks": [
+    {
+      "assetId": "music-chris-zabriskie-prelude-no-1",
+      "fileName": "chris-zabriskie-prelude-no-1.m4a",
+      "sha256": "f8721ff76cfa8e575747c3015bc00afffc500a4d3e73bcd5043339fd1fad7009",
+      "sizeBytes": 1429535,
+      "durationMs": 68545,
+      "title": "Prelude No. 1",
+      "artist": "Chris Zabriskie",
+      "album": "Preludes",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceUrl": "https://audio.chriszabriskie.com/preludes/preludes-01.m4a",
+      "evidenceUrl": "https://chriszabriskie.com/preludes/",
+      "licenseEvidenceUrl": "https://chriszabriskie.com/use/",
+      "attribution": "Prelude No. 1 by Chris Zabriskie. From the album Preludes. Written, produced, and performed by Chris Zabriskie. © 2009 Chris Zabriskie. Published by You've Been a Wonderful Laugh Track (ASCAP). https://chriszabriskie.com/",
+      "changeNotice": "공식 원본 파일을 변경 없이 포함했습니다. No changes were made.",
+      "reviewedAt": "2026-11-08",
+      "reviewBasis": "The creator's album page identifies authorship and copyright; the creator's use page licenses all music under CC BY 4.0 with commercial use and attribution. CC BY 4.0 permits redistribution in any medium, including this app. The official album player resolves the audio.chriszabriskie.com URL. Download used verified HTTPS and an exact 1429535-byte bound. The unmodified file's afinfo duration is 68.545306 seconds (AAC stereo, 44100 Hz). Long.MAX_VALUE represents this non-expiring license grant, not a time-limited rights review. App policy may still withdraw playback through a replacement review snapshot.",
+      "rightsValidUntilMs": 9223372036854775807,
+      "playbackAllowed": true,
+      "distributionAllowed": true
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+package com.petasos.app.platform.android.location
+
+import android.content.Context
+import com.petasos.app.location.PackedRegionBoundaryLookup
+import com.petasos.app.location.PackedRegionBoundaryMetadata
+import com.petasos.app.location.RegionBoundaryLookup
+import com.petasos.app.location.RegionDatasetException
+import com.petasos.app.location.RegionDatasetManifest
+import com.petasos.app.location.RegionDatasetManifestCodec
+import com.petasos.app.storage.RoomRegionInstaller
+import com.petasos.app.storage.StorageDatabase
+import java.io.ByteArrayOutputStream
+import kotlin.math.max
+
+/** Construction does no I/O. Host invokes load on its serial worker; no location consent is changed. */
+internal class BundledRegionCatalog(context: Context) {
+    private val app = context.applicationContext
+
+    /** Read-only attribution from the pinned asset; never installs rows or opens a trip. */
+    fun creditsText(): String = readManifest().source.let { source ->
+        listOf(source.title, source.attribution, "CC BY 2.0 KR: ${source.licenseUrl}",
+            "원본: ${source.sourceUrl}").joinToString("\n")
+    }
+
+    fun load(database: StorageDatabase): RegionBoundaryLookup = try { loadVerified(database) }
+        catch (_: Exception) { RegionBoundaryLookup.NONE }
+
+    /** Exposed internally for isolated verification: unlike product load, a bad installation fails. */
+    fun loadVerified(database: StorageDatabase): RegionBoundaryLookup {
+        val manifest = readManifest()
+        val installer = RoomRegionInstaller(database)
+        installer.install(manifest)
+        // Only APK-pinned, explicitly reviewed policies may finalize initial pending revisions.
+        // The current catalog is empty; geometry installation alone never grants visit authority.
+        BundledRegionPolicyCatalog(app).install(database, manifest)
+        val ready = manifest.regions.filter { it.status == "ready" }
+        val assets = ready.associate { it.regionRevisionId to it.geometryAsset }
+        val packed = PackedRegionBoundaryLookup(ready.map {
+            PackedRegionBoundaryMetadata(it.regionRevisionId, manifest.datasetVersion, it.geometrySha256,
+                it.geometryBytes, it.ringCount, it.pointCount, it.bounds)
+        }, open = { app.assets.open(assets.getValue(it.regionRevisionId)) },
+            isAuthorized = { installer.isAuthorized(manifest, it.regionRevisionId) },
+            quarantinedBounds = manifest.regions.filter { it.status == "quarantined" }.map { it.bounds })
+        // Deduct the CRS operation's stated expected accuracy. It is not a hard bound or a visit policy.
+        return RegionBoundaryLookup { latitude, longitude -> packed.containing(latitude, longitude).map {
+            it.copy(interiorDistanceMeters = max(0.0, it.interiorDistanceMeters - manifest.transform.expectedAccuracyMeters))
+        } }
+    }
+
+    fun readManifest(): RegionDatasetManifest {
+        val bytes = app.assets.open(MANIFEST_ASSET).use { input ->
+            val output = ByteArrayOutputStream()
+            val buffer = ByteArray(8192)
+            while (true) {
+                val size = input.read(buffer)
+                if (size < 0) break
+                if (size == 0 || output.size() + size > RegionDatasetManifestCodec.MAX_MANIFEST_BYTES)
+                    throw RegionDatasetException("INVALID_REGION_DATASET")
+                output.write(buffer, 0, size)
+            }
+            output.toByteArray()
+        }
+        return RegionDatasetManifestCodec.decode(bytes, MANIFEST_SHA256)
+    }
+
+    companion object {
+        const val MANIFEST_ASSET = "regions/ngii-2026-09-21-v1/manifest.json"
+        // Review pin is changed only with the reviewed source/compiler artifacts, never from the manifest itself.
+        const val MANIFEST_SHA256 = "3e2117159aa65c6c8f69826f534a8065d1247497039827d1b638f77d580f1bf9"
+    }
+}

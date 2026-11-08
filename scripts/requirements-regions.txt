@@ -1,0 +1,6 @@
+# Isolated offline compiler only; never installed into the runtime generation server.
+certifi==2026.10.23
+numpy==2.3.5
+pyproj==3.7.2
+pyshp==2.3.1
+shapely==2.1.2

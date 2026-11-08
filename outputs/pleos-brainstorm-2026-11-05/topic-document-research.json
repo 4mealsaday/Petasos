@@ -1,0 +1,44 @@
+{
+  "date_kst": "2026-11-05",
+  "task": "가는길 라디오 주제 문서 작성 및 SDK 검토",
+  "document": "가는길_라디오_기획서.md",
+  "status": "product_direction_selected_documented",
+  "evidence_level": "official_documentation_review_only_no_runtime_validation",
+  "search_accounting": {
+    "exa_search_calls": 1,
+    "exa_requested_results_including_duplicates": 4,
+    "exa_fetch_calls": 1,
+    "exa_fetch_requested_urls": 4,
+    "web_search_queries": 3,
+    "note": "이번 사용자 요청에서 수행한 조사만 집계. 이전 대화의 경쟁 사례 검토는 별도이며 이번 기획서에서 참조했다."
+  },
+  "key_findings": [
+    "STT request/stop 및 결과·종료 이벤트가 문서화되어 있지만 실제 자유 발화 성능은 미검증",
+    "기본 핸들 미디어 제어 지원과 말하기 버튼 사용자 정의 매핑은 별도 검증 필요",
+    "SteeringWheel API 목록에서 열선·각도 기능 확인, 버튼 재매핑 미확인",
+    "오디오 포커스 해제만으로 외부 음악 앱의 곡·위치 복귀를 보장할 수 없음",
+    "Gleo는 앱 함수 연동 경로이며 스키마 검토 의존성 존재",
+    "SDK 개별 문서와 사용 신청 페이지의 제공 상태 차이가 남아 있음",
+    "한국관광공사의 장소·오디오 대본·스토리텔링 원천 확인, 실제 데이터 수집 미수행"
+  ],
+  "primary_sources": [
+    "https://document.pleos.ai/docs/pleos-only/connect-sdk-pleos/FusedLocation/intro",
+    "https://document.pleos.ai/docs/pleos-only/connect-sdk-pleos/TextToSpeech/intro",
+    "https://document.pleos.ai/docs/pleos-only/connect-sdk-pleos/SpeechToText/intro",
+    "https://document.pleos.ai/docs/pleos-only/connect-sdk-pleos/SpeechToText/start-and-stop",
+    "https://document.pleos.ai/docs/pleos-only/connect-sdk-pleos/SpeechToText/result-listeners",
+    "https://document.pleos.ai/docs/pleos-only/connect-sdk-pleos/NaviHelper/event-listeners",
+    "https://document.pleos.ai/docs/pleos-only/connect-sdk-pleos/Vehicle/vehicle/ai.pleos.playground.vehicle.api/steering-wheel/entry",
+    "https://document.pleos.ai/docs/pleos-only/create-my-project",
+    "https://document.pleos.ai/docs/pleos-only/app-integration-guide/guide/core-concepts",
+    "https://document.pleos.ai/docs/pleos-only/app-integration-guide/guide/deliver-schema",
+    "https://document.pleos.ai/en/docs/pleos-only/vehicle-app-developer-guide/music-audio-app-developement-guide",
+    "https://document.pleos.ai/en/docs/pleos-only/vehicle-app-developer-guide/audio-focus-development-guide/audio-focus-development",
+    "https://document.pleos.ai/en/docs/pleos-only/vehicle-app-developer-guide/driving-restriction-development-guide",
+    "https://www.data.go.kr/data/15101578/openapi.do",
+    "https://www.data.go.kr/data/15101971/openapi.do",
+    "https://www.data.go.kr/data/3041768/fileData.do",
+    "https://appdevchallenge.auto-hmg.io/guide/schedule",
+    "https://appdevchallenge.auto-hmg.io/guide/submission"
+  ]
+}

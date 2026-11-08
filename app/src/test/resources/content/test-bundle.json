@@ -1,0 +1,100 @@
+{
+  "formatVersion": 1,
+  "sources": [
+    {
+      "sourceRevisionId": "test-source-r1",
+      "sourceId": "test-source",
+      "provider": "synthetic-test",
+      "sourceUrl": "https://example.invalid/test",
+      "title": "SYNTHETIC TEST ONLY",
+      "fetchedAt": 1000,
+      "sourceUpdatedAt": null,
+      "sourceUpdatedRaw": "2026-11-07",
+      "verifiedAt": 1000,
+      "contentHash": "3b6b9f64680fe614d4ca770daa0d27c08040a5d2d066b7ee3ac7173366315cce",
+      "license": {
+        "type": "synthetic",
+        "url": "https://example.invalid/license",
+        "scope": "text",
+        "reviewBasis": "Synthetic test fixture only"
+      },
+      "allowedUses": {
+        "allowGeneration": false,
+        "allowDisplay": true,
+        "allowDistribution": true,
+        "reviewBasis": "Synthetic test fixture only"
+      },
+      "attribution": "Synthetic test fixture only",
+      "reviewStatus": "verified",
+      "normalizedText": "검증용 합성 사실입니다."
+    }
+  ],
+  "facts": [
+    {
+      "factRevisionId": "test-fact-r1",
+      "factId": "test-fact",
+      "version": 1,
+      "statement": "검증용 합성 사실입니다.",
+      "kind": "verified_fact",
+      "verifiedAt": 1000,
+      "sourceRevisionIds": [
+        "test-source-r1"
+      ]
+    }
+  ],
+  "places": [
+    {
+      "placeId": "test-place",
+      "name": "Synthetic place",
+      "aliases": [],
+      "latitude": null,
+      "longitude": null,
+      "coordinateSystem": null,
+      "coordinateSourceRevisionId": null,
+      "coordinateReviewBasis": null,
+      "externalIds": [
+        {
+          "provider": "synthetic-test",
+          "externalId": "001",
+          "verifiedAt": 1000
+        }
+      ]
+    }
+  ],
+  "stories": [
+    {
+      "storyId": "test-story",
+      "topicId": "test-topic",
+      "title": "SYNTHETIC TEST ONLY",
+      "coreQuestion": "Synthetic question",
+      "interestTags": [],
+      "placeId": "test-place"
+    }
+  ],
+  "versions": [
+    {
+      "storyVersionId": "test-story-v1",
+      "storyId": "test-story",
+      "version": 1,
+      "contentHash": "fa45822e00277598c2cadce689b390a924c77dfff3cb9c216c79a38a2a5e5169",
+      "createdAt": 1000,
+      "verifiedAt": 1000,
+      "validUntil": null,
+      "estimatedDurationMs": 5000,
+      "status": "published",
+      "paragraphs": [
+        {
+          "paragraphId": "test-paragraph-1",
+          "ordinal": 0,
+          "required": true,
+          "text": "검증용 합성 사실입니다.",
+          "audioRef": null,
+          "estimatedDurationMs": 5000,
+          "factRevisionIds": [
+            "test-fact-r1"
+          ]
+        }
+      ]
+    }
+  ]
+}

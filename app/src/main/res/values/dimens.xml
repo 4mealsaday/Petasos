@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dimensions belong to the temporary preview, not the SDK or product logic. -->
+    <dimen name="preview_screen_padding_horizontal">48dp</dimen>
+    <dimen name="preview_screen_padding_vertical">32dp</dimen>
+    <dimen name="preview_brand_mark_size">56dp</dimen>
+    <dimen name="preview_brand_mark_gap">16dp</dimen>
+    <dimen name="preview_caption_margin_top">24dp</dimen>
+    <dimen name="preview_hero_title_margin_top">12dp</dimen>
+    <dimen name="preview_hero_description_margin_top">16dp</dimen>
+    <dimen name="preview_text_line_spacing">4dp</dimen>
+    <dimen name="preview_body_line_spacing">6dp</dimen>
+    <dimen name="preview_card_margin_top">32dp</dimen>
+    <dimen name="preview_card_padding">24dp</dimen>
+    <dimen name="preview_card_radius">24dp</dimen>
+    <dimen name="preview_card_border_width">1dp</dimen>
+    <dimen name="preview_card_title_margin_top">16dp</dimen>
+    <dimen name="preview_card_description_margin_top">10dp</dimen>
+    <dimen name="preview_badge_padding_horizontal">12dp</dimen>
+    <dimen name="preview_badge_padding_vertical">6dp</dimen>
+    <dimen name="preview_badge_radius">16dp</dimen>
+    <dimen name="preview_footer_margin_top">24dp</dimen>
+</resources>

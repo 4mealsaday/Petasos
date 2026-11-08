@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<lint>
+    <!-- Pleos ARM64 is the only packaged ABI (defaultConfig.ndk.abiFilters).
+         Lint 8.10 also scans excluded dependency ABIs. This exact JNA x86_64
+         binary is absent from both APKs; ARM64 alignment checks remain enabled.
+         Remove this exception before adding x86_64 or updating JNA. -->
+    <issue id="Aligned16KB">
+        <ignore path="**/jna-5.13.0/jni/x86_64/libjnidispatch.so" />
+    </issue>
+    <!-- The manifest requires Automotive hardware; ChromeOS is not a supported target. -->
+    <issue id="ChromeOsAbiSupport">
+        <ignore path="build.gradle.kts" />
+    </issue>
+</lint>

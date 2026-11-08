@@ -1,0 +1,2430 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "0f7664d45fa70cca66d75ac9b619b81e",
+    "entities": [
+      {
+        "tableName": "trip",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`trip_id` TEXT NOT NULL, `started_at` INTEGER NOT NULL, `ended_at` INTEGER, `last_observed_at` INTEGER, `interruption_detected_at` INTEGER, `status` TEXT NOT NULL, `end_reason` TEXT, `revision` INTEGER NOT NULL DEFAULT 1, PRIMARY KEY(`trip_id`))",
+        "fields": [
+          {
+            "fieldPath": "trip_id",
+            "columnName": "trip_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "started_at",
+            "columnName": "started_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ended_at",
+            "columnName": "ended_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "last_observed_at",
+            "columnName": "last_observed_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "interruption_detected_at",
+            "columnName": "interruption_detected_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "end_reason",
+            "columnName": "end_reason",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "revision",
+            "columnName": "revision",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "1"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "trip_id"
+          ]
+        }
+      },
+      {
+        "tableName": "session",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`session_id` TEXT NOT NULL, `trip_id` TEXT NOT NULL, `started_at` INTEGER NOT NULL, `closed_at` INTEGER, `status` TEXT NOT NULL, `cancel_epoch` INTEGER NOT NULL DEFAULT 0, `state_revision` INTEGER NOT NULL DEFAULT 0, `route_revision` INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(`session_id`), FOREIGN KEY(`trip_id`) REFERENCES `trip`(`trip_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "session_id",
+            "columnName": "session_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "trip_id",
+            "columnName": "trip_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "started_at",
+            "columnName": "started_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "closed_at",
+            "columnName": "closed_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "cancel_epoch",
+            "columnName": "cancel_epoch",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "state_revision",
+            "columnName": "state_revision",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "route_revision",
+            "columnName": "route_revision",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "session_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_session_session_id_trip_id",
+            "unique": true,
+            "columnNames": [
+              "session_id",
+              "trip_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_session_session_id_trip_id` ON `${TABLE_NAME}` (`session_id`, `trip_id`)"
+          },
+          {
+            "name": "index_session_trip_id",
+            "unique": false,
+            "columnNames": [
+              "trip_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_session_trip_id` ON `${TABLE_NAME}` (`trip_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "trip",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "trip_id"
+            ],
+            "referencedColumns": [
+              "trip_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "recording_segment",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`segment_id` TEXT NOT NULL, `trip_id` TEXT NOT NULL, `session_id` TEXT NOT NULL, `started_at` INTEGER NOT NULL, `ended_at` INTEGER, `last_observed_at` INTEGER, `interruption_detected_at` INTEGER, `status` TEXT NOT NULL, `end_reason` TEXT, PRIMARY KEY(`segment_id`), FOREIGN KEY(`session_id`, `trip_id`) REFERENCES `session`(`session_id`, `trip_id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`trip_id`) REFERENCES `trip`(`trip_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "segment_id",
+            "columnName": "segment_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "trip_id",
+            "columnName": "trip_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "session_id",
+            "columnName": "session_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "started_at",
+            "columnName": "started_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ended_at",
+            "columnName": "ended_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "last_observed_at",
+            "columnName": "last_observed_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "interruption_detected_at",
+            "columnName": "interruption_detected_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "end_reason",
+            "columnName": "end_reason",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "segment_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_recording_segment_session_id_trip_id",
+            "unique": false,
+            "columnNames": [
+              "session_id",
+              "trip_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_recording_segment_session_id_trip_id` ON `${TABLE_NAME}` (`session_id`, `trip_id`)"
+          },
+          {
+            "name": "index_recording_segment_trip_id",
+            "unique": false,
+            "columnNames": [
+              "trip_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_recording_segment_trip_id` ON `${TABLE_NAME}` (`trip_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "session",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "session_id",
+              "trip_id"
+            ],
+            "referencedColumns": [
+              "session_id",
+              "trip_id"
+            ]
+          },
+          {
+            "table": "trip",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "trip_id"
+            ],
+            "referencedColumns": [
+              "trip_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "route_point",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`point_id` TEXT NOT NULL, `segment_id` TEXT NOT NULL, `sequence` INTEGER NOT NULL, `provider` TEXT NOT NULL, `provider_epoch` TEXT, `source_event_id` TEXT, `raw_timestamp` TEXT, `source_time_unit` TEXT NOT NULL, `observed_at` INTEGER, `received_at` INTEGER NOT NULL, `received_elapsed_ms` INTEGER NOT NULL, `clock_scope_id` TEXT NOT NULL, `latitude` REAL, `longitude` REAL, `raw_coordinates_json` TEXT NOT NULL, `accuracy_meters` REAL, `provider_confidence_json` TEXT, `quality_status` TEXT NOT NULL, `route_revision` INTEGER NOT NULL, PRIMARY KEY(`point_id`), FOREIGN KEY(`segment_id`) REFERENCES `recording_segment`(`segment_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "point_id",
+            "columnName": "point_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "segment_id",
+            "columnName": "segment_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sequence",
+            "columnName": "sequence",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "provider",
+            "columnName": "provider",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "provider_epoch",
+            "columnName": "provider_epoch",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "source_event_id",
+            "columnName": "source_event_id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "raw_timestamp",
+            "columnName": "raw_timestamp",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "source_time_unit",
+            "columnName": "source_time_unit",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "observed_at",
+            "columnName": "observed_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "received_at",
+            "columnName": "received_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "received_elapsed_ms",
+            "columnName": "received_elapsed_ms",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "clock_scope_id",
+            "columnName": "clock_scope_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "latitude",
+            "columnName": "latitude",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "longitude",
+            "columnName": "longitude",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "raw_coordinates_json",
+            "columnName": "raw_coordinates_json",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "accuracy_meters",
+            "columnName": "accuracy_meters",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "provider_confidence_json",
+            "columnName": "provider_confidence_json",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "quality_status",
+            "columnName": "quality_status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "route_revision",
+            "columnName": "route_revision",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "point_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "route_points_by_segment",
+            "unique": false,
+            "columnNames": [
+              "segment_id",
+              "sequence"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `route_points_by_segment` ON `${TABLE_NAME}` (`segment_id`, `sequence`)"
+          },
+          {
+            "name": "provider_event_once",
+            "unique": true,
+            "columnNames": [
+              "provider",
+              "provider_epoch",
+              "source_event_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `provider_event_once` ON `${TABLE_NAME}` (`provider`, `provider_epoch`, `source_event_id`)"
+          },
+          {
+            "name": "index_route_point_segment_id_sequence",
+            "unique": true,
+            "columnNames": [
+              "segment_id",
+              "sequence"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_route_point_segment_id_sequence` ON `${TABLE_NAME}` (`segment_id`, `sequence`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "recording_segment",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "segment_id"
+            ],
+            "referencedColumns": [
+              "segment_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "source_evidence",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`source_revision_id` TEXT NOT NULL, `source_id` TEXT NOT NULL, `provider` TEXT NOT NULL, `source_url` TEXT NOT NULL, `title` TEXT NOT NULL, `fetched_at` INTEGER NOT NULL, `source_updated_at` INTEGER, `source_updated_raw` TEXT, `verified_at` INTEGER, `content_hash` TEXT NOT NULL, `license_json` TEXT NOT NULL, `allowed_uses_json` TEXT NOT NULL, `attribution` TEXT NOT NULL, `review_status` TEXT NOT NULL, PRIMARY KEY(`source_revision_id`))",
+        "fields": [
+          {
+            "fieldPath": "source_revision_id",
+            "columnName": "source_revision_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "source_id",
+            "columnName": "source_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "provider",
+            "columnName": "provider",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "source_url",
+            "columnName": "source_url",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fetched_at",
+            "columnName": "fetched_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "source_updated_at",
+            "columnName": "source_updated_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "source_updated_raw",
+            "columnName": "source_updated_raw",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "verified_at",
+            "columnName": "verified_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "content_hash",
+            "columnName": "content_hash",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "license_json",
+            "columnName": "license_json",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "allowed_uses_json",
+            "columnName": "allowed_uses_json",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "attribution",
+            "columnName": "attribution",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "review_status",
+            "columnName": "review_status",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "source_revision_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_source_evidence_source_id_content_hash",
+            "unique": true,
+            "columnNames": [
+              "source_id",
+              "content_hash"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_source_evidence_source_id_content_hash` ON `${TABLE_NAME}` (`source_id`, `content_hash`)"
+          }
+        ]
+      },
+      {
+        "tableName": "region",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`region_id` TEXT NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY(`region_id`))",
+        "fields": [
+          {
+            "fieldPath": "region_id",
+            "columnName": "region_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "region_id"
+          ]
+        }
+      },
+      {
+        "tableName": "region_revision",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`region_revision_id` TEXT NOT NULL, `region_id` TEXT NOT NULL, `code` TEXT NOT NULL, `dataset_version` TEXT NOT NULL, `name` TEXT NOT NULL, `source_revision_id` TEXT NOT NULL, `policy_json` TEXT NOT NULL, `verified_at` INTEGER, PRIMARY KEY(`region_revision_id`), FOREIGN KEY(`source_revision_id`) REFERENCES `source_evidence`(`source_revision_id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`region_id`) REFERENCES `region`(`region_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "region_revision_id",
+            "columnName": "region_revision_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "region_id",
+            "columnName": "region_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "code",
+            "columnName": "code",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dataset_version",
+            "columnName": "dataset_version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "source_revision_id",
+            "columnName": "source_revision_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "policy_json",
+            "columnName": "policy_json",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "verified_at",
+            "columnName": "verified_at",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "region_revision_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_region_revision_code_dataset_version",
+            "unique": true,
+            "columnNames": [
+              "code",
+              "dataset_version"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_region_revision_code_dataset_version` ON `${TABLE_NAME}` (`code`, `dataset_version`)"
+          },
+          {
+            "name": "index_region_revision_source_revision_id",
+            "unique": false,
+            "columnNames": [
+              "source_revision_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_region_revision_source_revision_id` ON `${TABLE_NAME}` (`source_revision_id`)"
+          },
+          {
+            "name": "index_region_revision_region_id",
+            "unique": false,
+            "columnNames": [
+              "region_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_region_revision_region_id` ON `${TABLE_NAME}` (`region_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "source_evidence",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "source_revision_id"
+            ],
+            "referencedColumns": [
+              "source_revision_id"
+            ]
+          },
+          {
+            "table": "region",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "region_id"
+            ],
+            "referencedColumns": [
+              "region_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "place",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`place_id` TEXT NOT NULL, `region_id` TEXT, `name` TEXT NOT NULL, `aliases_json` TEXT NOT NULL DEFAULT '[]', `latitude` REAL, `longitude` REAL, `coordinate_source_revision_id` TEXT, `landmark_policy_json` TEXT, PRIMARY KEY(`place_id`), FOREIGN KEY(`coordinate_source_revision_id`) REFERENCES `source_evidence`(`source_revision_id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`region_id`) REFERENCES `region`(`region_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "place_id",
+            "columnName": "place_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "region_id",
+            "columnName": "region_id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "aliases_json",
+            "columnName": "aliases_json",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "'[]'"
+          },
+          {
+            "fieldPath": "latitude",
+            "columnName": "latitude",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "longitude",
+            "columnName": "longitude",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "coordinate_source_revision_id",
+            "columnName": "coordinate_source_revision_id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "landmark_policy_json",
+            "columnName": "landmark_policy_json",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "place_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_place_coordinate_source_revision_id",
+            "unique": false,
+            "columnNames": [
+              "coordinate_source_revision_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_place_coordinate_source_revision_id` ON `${TABLE_NAME}` (`coordinate_source_revision_id`)"
+          },
+          {
+            "name": "index_place_region_id",
+            "unique": false,
+            "columnNames": [
+              "region_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_place_region_id` ON `${TABLE_NAME}` (`region_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "source_evidence",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "coordinate_source_revision_id"
+            ],
+            "referencedColumns": [
+              "source_revision_id"
+            ]
+          },
+          {
+            "table": "region",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "region_id"
+            ],
+            "referencedColumns": [
+              "region_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "place_external_id",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`provider` TEXT NOT NULL, `external_id` TEXT NOT NULL, `place_id` TEXT NOT NULL, `verified_at` INTEGER NOT NULL, PRIMARY KEY(`provider`, `external_id`), FOREIGN KEY(`place_id`) REFERENCES `place`(`place_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "provider",
+            "columnName": "provider",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "external_id",
+            "columnName": "external_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "place_id",
+            "columnName": "place_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "verified_at",
+            "columnName": "verified_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "provider",
+            "external_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_place_external_id_place_id",
+            "unique": false,
+            "columnNames": [
+              "place_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_place_external_id_place_id` ON `${TABLE_NAME}` (`place_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "place",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "place_id"
+            ],
+            "referencedColumns": [
+              "place_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "fact_revision",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`fact_revision_id` TEXT NOT NULL, `fact_id` TEXT NOT NULL, `version` INTEGER NOT NULL, `statement` TEXT NOT NULL, `kind` TEXT NOT NULL, `verified_at` INTEGER NOT NULL, PRIMARY KEY(`fact_revision_id`))",
+        "fields": [
+          {
+            "fieldPath": "fact_revision_id",
+            "columnName": "fact_revision_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fact_id",
+            "columnName": "fact_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "version",
+            "columnName": "version",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "statement",
+            "columnName": "statement",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "kind",
+            "columnName": "kind",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "verified_at",
+            "columnName": "verified_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "fact_revision_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_fact_revision_fact_id_version",
+            "unique": true,
+            "columnNames": [
+              "fact_id",
+              "version"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_fact_revision_fact_id_version` ON `${TABLE_NAME}` (`fact_id`, `version`)"
+          }
+        ]
+      },
+      {
+        "tableName": "fact_source",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`fact_revision_id` TEXT NOT NULL, `source_revision_id` TEXT NOT NULL, PRIMARY KEY(`fact_revision_id`, `source_revision_id`), FOREIGN KEY(`source_revision_id`) REFERENCES `source_evidence`(`source_revision_id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`fact_revision_id`) REFERENCES `fact_revision`(`fact_revision_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "fact_revision_id",
+            "columnName": "fact_revision_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "source_revision_id",
+            "columnName": "source_revision_id",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "fact_revision_id",
+            "source_revision_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_fact_source_source_revision_id",
+            "unique": false,
+            "columnNames": [
+              "source_revision_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_fact_source_source_revision_id` ON `${TABLE_NAME}` (`source_revision_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "source_evidence",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "source_revision_id"
+            ],
+            "referencedColumns": [
+              "source_revision_id"
+            ]
+          },
+          {
+            "table": "fact_revision",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "fact_revision_id"
+            ],
+            "referencedColumns": [
+              "fact_revision_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "story",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`story_id` TEXT NOT NULL, `topic_id` TEXT NOT NULL, `title` TEXT NOT NULL, `core_question` TEXT NOT NULL, `interest_tags_json` TEXT NOT NULL DEFAULT '[]', `place_id` TEXT, `region_id` TEXT, PRIMARY KEY(`story_id`), FOREIGN KEY(`region_id`) REFERENCES `region`(`region_id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`place_id`) REFERENCES `place`(`place_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "story_id",
+            "columnName": "story_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "topic_id",
+            "columnName": "topic_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "core_question",
+            "columnName": "core_question",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "interest_tags_json",
+            "columnName": "interest_tags_json",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "'[]'"
+          },
+          {
+            "fieldPath": "place_id",
+            "columnName": "place_id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "region_id",
+            "columnName": "region_id",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "story_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_story_region_id",
+            "unique": false,
+            "columnNames": [
+              "region_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_story_region_id` ON `${TABLE_NAME}` (`region_id`)"
+          },
+          {
+            "name": "index_story_place_id",
+            "unique": false,
+            "columnNames": [
+              "place_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_story_place_id` ON `${TABLE_NAME}` (`place_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "region",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "region_id"
+            ],
+            "referencedColumns": [
+              "region_id"
+            ]
+          },
+          {
+            "table": "place",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "place_id"
+            ],
+            "referencedColumns": [
+              "place_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "story_version",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`story_version_id` TEXT NOT NULL, `story_id` TEXT NOT NULL, `version` INTEGER NOT NULL, `content_hash` TEXT NOT NULL, `created_at` INTEGER NOT NULL, `verified_at` INTEGER, `valid_until` INTEGER, `estimated_duration_ms` INTEGER NOT NULL, `status` TEXT NOT NULL, PRIMARY KEY(`story_version_id`), FOREIGN KEY(`story_id`) REFERENCES `story`(`story_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "story_version_id",
+            "columnName": "story_version_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "story_id",
+            "columnName": "story_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "version",
+            "columnName": "version",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "content_hash",
+            "columnName": "content_hash",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "created_at",
+            "columnName": "created_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "verified_at",
+            "columnName": "verified_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "valid_until",
+            "columnName": "valid_until",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "estimated_duration_ms",
+            "columnName": "estimated_duration_ms",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "story_version_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_story_version_story_version_id_story_id",
+            "unique": true,
+            "columnNames": [
+              "story_version_id",
+              "story_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_story_version_story_version_id_story_id` ON `${TABLE_NAME}` (`story_version_id`, `story_id`)"
+          },
+          {
+            "name": "index_story_version_story_id_version",
+            "unique": true,
+            "columnNames": [
+              "story_id",
+              "version"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_story_version_story_id_version` ON `${TABLE_NAME}` (`story_id`, `version`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "story",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "story_id"
+            ],
+            "referencedColumns": [
+              "story_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "paragraph",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`paragraph_id` TEXT NOT NULL, `story_version_id` TEXT NOT NULL, `ordinal` INTEGER NOT NULL, `required` INTEGER NOT NULL DEFAULT 1, `text` TEXT NOT NULL, `audio_ref` TEXT, `estimated_duration_ms` INTEGER NOT NULL, PRIMARY KEY(`paragraph_id`), FOREIGN KEY(`story_version_id`) REFERENCES `story_version`(`story_version_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "paragraph_id",
+            "columnName": "paragraph_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "story_version_id",
+            "columnName": "story_version_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ordinal",
+            "columnName": "ordinal",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "required",
+            "columnName": "required",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "1"
+          },
+          {
+            "fieldPath": "text",
+            "columnName": "text",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "audio_ref",
+            "columnName": "audio_ref",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "estimated_duration_ms",
+            "columnName": "estimated_duration_ms",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "paragraph_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_paragraph_story_version_id_ordinal",
+            "unique": true,
+            "columnNames": [
+              "story_version_id",
+              "ordinal"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_paragraph_story_version_id_ordinal` ON `${TABLE_NAME}` (`story_version_id`, `ordinal`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "story_version",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "story_version_id"
+            ],
+            "referencedColumns": [
+              "story_version_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "paragraph_fact",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`paragraph_id` TEXT NOT NULL, `fact_revision_id` TEXT NOT NULL, PRIMARY KEY(`paragraph_id`, `fact_revision_id`), FOREIGN KEY(`fact_revision_id`) REFERENCES `fact_revision`(`fact_revision_id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`paragraph_id`) REFERENCES `paragraph`(`paragraph_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "paragraph_id",
+            "columnName": "paragraph_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fact_revision_id",
+            "columnName": "fact_revision_id",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "paragraph_id",
+            "fact_revision_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_paragraph_fact_fact_revision_id",
+            "unique": false,
+            "columnNames": [
+              "fact_revision_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_paragraph_fact_fact_revision_id` ON `${TABLE_NAME}` (`fact_revision_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "fact_revision",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "fact_revision_id"
+            ],
+            "referencedColumns": [
+              "fact_revision_id"
+            ]
+          },
+          {
+            "table": "paragraph",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "paragraph_id"
+            ],
+            "referencedColumns": [
+              "paragraph_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "conversation_turn",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`turn_id` TEXT NOT NULL, `session_id` TEXT NOT NULL, `created_at` INTEGER NOT NULL, `utterance_finalized_at` INTEGER, `closed_at` INTEGER, `turn_version` INTEGER NOT NULL DEFAULT 1, `lifecycle` TEXT NOT NULL, `frozen` INTEGER NOT NULL DEFAULT 0, `summary_state` TEXT NOT NULL, `attempt_count` INTEGER NOT NULL DEFAULT 0, `retry_batch_count` INTEGER NOT NULL DEFAULT 0, `last_attempt_at` INTEGER, `next_retry_at` INTEGER, `summary_saved_at` INTEGER, `last_error_code` TEXT, PRIMARY KEY(`turn_id`), FOREIGN KEY(`session_id`) REFERENCES `session`(`session_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "turn_id",
+            "columnName": "turn_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "session_id",
+            "columnName": "session_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "created_at",
+            "columnName": "created_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "utterance_finalized_at",
+            "columnName": "utterance_finalized_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "closed_at",
+            "columnName": "closed_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "turn_version",
+            "columnName": "turn_version",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "1"
+          },
+          {
+            "fieldPath": "lifecycle",
+            "columnName": "lifecycle",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "frozen",
+            "columnName": "frozen",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "summary_state",
+            "columnName": "summary_state",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "attempt_count",
+            "columnName": "attempt_count",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "retry_batch_count",
+            "columnName": "retry_batch_count",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "last_attempt_at",
+            "columnName": "last_attempt_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "next_retry_at",
+            "columnName": "next_retry_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "summary_saved_at",
+            "columnName": "summary_saved_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "last_error_code",
+            "columnName": "last_error_code",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "turn_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_conversation_turn_turn_id_session_id",
+            "unique": true,
+            "columnNames": [
+              "turn_id",
+              "session_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_conversation_turn_turn_id_session_id` ON `${TABLE_NAME}` (`turn_id`, `session_id`)"
+          },
+          {
+            "name": "index_conversation_turn_turn_id_turn_version",
+            "unique": true,
+            "columnNames": [
+              "turn_id",
+              "turn_version"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_conversation_turn_turn_id_turn_version` ON `${TABLE_NAME}` (`turn_id`, `turn_version`)"
+          },
+          {
+            "name": "index_conversation_turn_session_id",
+            "unique": false,
+            "columnNames": [
+              "session_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_conversation_turn_session_id` ON `${TABLE_NAME}` (`session_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "session",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "session_id"
+            ],
+            "referencedColumns": [
+              "session_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "pending_conversation",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`turn_id` TEXT NOT NULL, `payload_version` INTEGER NOT NULL, `ciphertext` BLOB NOT NULL, `nonce` BLOB NOT NULL, `key_version` TEXT NOT NULL, `payload_hash` TEXT NOT NULL, `created_at` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, PRIMARY KEY(`turn_id`), FOREIGN KEY(`turn_id`) REFERENCES `conversation_turn`(`turn_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "turn_id",
+            "columnName": "turn_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "payload_version",
+            "columnName": "payload_version",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ciphertext",
+            "columnName": "ciphertext",
+            "affinity": "BLOB",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nonce",
+            "columnName": "nonce",
+            "affinity": "BLOB",
+            "notNull": true
+          },
+          {
+            "fieldPath": "key_version",
+            "columnName": "key_version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "payload_hash",
+            "columnName": "payload_hash",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "created_at",
+            "columnName": "created_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updated_at",
+            "columnName": "updated_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "turn_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_pending_conversation_key_version_nonce",
+            "unique": true,
+            "columnNames": [
+              "key_version",
+              "nonce"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_pending_conversation_key_version_nonce` ON `${TABLE_NAME}` (`key_version`, `nonce`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "conversation_turn",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "turn_id"
+            ],
+            "referencedColumns": [
+              "turn_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "conversation_summary",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`summary_id` TEXT NOT NULL, `turn_id` TEXT NOT NULL, `turn_version` INTEGER NOT NULL, `summary_text` TEXT NOT NULL, `provenance_json` TEXT NOT NULL, `summary_schema_version` TEXT NOT NULL, `model_id` TEXT NOT NULL, `prompt_version` TEXT NOT NULL, `created_at` INTEGER NOT NULL, PRIMARY KEY(`summary_id`), FOREIGN KEY(`turn_id`, `turn_version`) REFERENCES `conversation_turn`(`turn_id`, `turn_version`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "summary_id",
+            "columnName": "summary_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "turn_id",
+            "columnName": "turn_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "turn_version",
+            "columnName": "turn_version",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "summary_text",
+            "columnName": "summary_text",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "provenance_json",
+            "columnName": "provenance_json",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "summary_schema_version",
+            "columnName": "summary_schema_version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "model_id",
+            "columnName": "model_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "prompt_version",
+            "columnName": "prompt_version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "created_at",
+            "columnName": "created_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "summary_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_conversation_summary_turn_id",
+            "unique": true,
+            "columnNames": [
+              "turn_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_conversation_summary_turn_id` ON `${TABLE_NAME}` (`turn_id`)"
+          },
+          {
+            "name": "index_conversation_summary_turn_id_turn_version",
+            "unique": false,
+            "columnNames": [
+              "turn_id",
+              "turn_version"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_conversation_summary_turn_id_turn_version` ON `${TABLE_NAME}` (`turn_id`, `turn_version`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "conversation_turn",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "turn_id",
+              "turn_version"
+            ],
+            "referencedColumns": [
+              "turn_id",
+              "turn_version"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "playback_attempt",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`attempt_id` TEXT NOT NULL, `session_id` TEXT NOT NULL, `kind` TEXT NOT NULL, `paragraph_id` TEXT, `turn_id` TEXT, `transient_paragraph_key` TEXT, `asset_id` TEXT, `state` TEXT NOT NULL, `started_at` INTEGER, `completed_at` INTEGER, `interrupted_at` INTEGER, `ended_elapsed_ms` INTEGER, `started_elapsed_ms` INTEGER, `clock_scope_id` TEXT NOT NULL, `position_ms` INTEGER, `interruption_reason` TEXT, PRIMARY KEY(`attempt_id`), FOREIGN KEY(`turn_id`, `session_id`) REFERENCES `conversation_turn`(`turn_id`, `session_id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`turn_id`) REFERENCES `conversation_turn`(`turn_id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`paragraph_id`) REFERENCES `paragraph`(`paragraph_id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`session_id`) REFERENCES `session`(`session_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "attempt_id",
+            "columnName": "attempt_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "session_id",
+            "columnName": "session_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "kind",
+            "columnName": "kind",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "paragraph_id",
+            "columnName": "paragraph_id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "turn_id",
+            "columnName": "turn_id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "transient_paragraph_key",
+            "columnName": "transient_paragraph_key",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "asset_id",
+            "columnName": "asset_id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "state",
+            "columnName": "state",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "started_at",
+            "columnName": "started_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "completed_at",
+            "columnName": "completed_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "interrupted_at",
+            "columnName": "interrupted_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "ended_elapsed_ms",
+            "columnName": "ended_elapsed_ms",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "started_elapsed_ms",
+            "columnName": "started_elapsed_ms",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "clock_scope_id",
+            "columnName": "clock_scope_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "position_ms",
+            "columnName": "position_ms",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "interruption_reason",
+            "columnName": "interruption_reason",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "attempt_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "playback_by_turn",
+            "unique": false,
+            "columnNames": [
+              "turn_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `playback_by_turn` ON `${TABLE_NAME}` (`turn_id`)"
+          },
+          {
+            "name": "playback_by_paragraph",
+            "unique": false,
+            "columnNames": [
+              "paragraph_id",
+              "state"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `playback_by_paragraph` ON `${TABLE_NAME}` (`paragraph_id`, `state`)"
+          },
+          {
+            "name": "index_playback_attempt_turn_id_session_id",
+            "unique": false,
+            "columnNames": [
+              "turn_id",
+              "session_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_playback_attempt_turn_id_session_id` ON `${TABLE_NAME}` (`turn_id`, `session_id`)"
+          },
+          {
+            "name": "index_playback_attempt_session_id",
+            "unique": false,
+            "columnNames": [
+              "session_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_playback_attempt_session_id` ON `${TABLE_NAME}` (`session_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "conversation_turn",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "turn_id",
+              "session_id"
+            ],
+            "referencedColumns": [
+              "turn_id",
+              "session_id"
+            ]
+          },
+          {
+            "table": "conversation_turn",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "turn_id"
+            ],
+            "referencedColumns": [
+              "turn_id"
+            ]
+          },
+          {
+            "table": "paragraph",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "paragraph_id"
+            ],
+            "referencedColumns": [
+              "paragraph_id"
+            ]
+          },
+          {
+            "table": "session",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "session_id"
+            ],
+            "referencedColumns": [
+              "session_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "playback_checkpoint",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`trip_id` TEXT NOT NULL, `session_id` TEXT NOT NULL, `state_revision` INTEGER NOT NULL, `mode` TEXT NOT NULL, `paragraph_id` TEXT, `last_completed_paragraph_id` TEXT, `asset_id` TEXT, `music_position_ms` INTEGER, `play_intent` INTEGER NOT NULL, `blockers_json` TEXT NOT NULL, `updated_at` INTEGER NOT NULL, PRIMARY KEY(`trip_id`), FOREIGN KEY(`session_id`, `trip_id`) REFERENCES `session`(`session_id`, `trip_id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`last_completed_paragraph_id`) REFERENCES `paragraph`(`paragraph_id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`paragraph_id`) REFERENCES `paragraph`(`paragraph_id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`trip_id`) REFERENCES `trip`(`trip_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "trip_id",
+            "columnName": "trip_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "session_id",
+            "columnName": "session_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "state_revision",
+            "columnName": "state_revision",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mode",
+            "columnName": "mode",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "paragraph_id",
+            "columnName": "paragraph_id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "last_completed_paragraph_id",
+            "columnName": "last_completed_paragraph_id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "asset_id",
+            "columnName": "asset_id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "music_position_ms",
+            "columnName": "music_position_ms",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "play_intent",
+            "columnName": "play_intent",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "blockers_json",
+            "columnName": "blockers_json",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updated_at",
+            "columnName": "updated_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "trip_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_playback_checkpoint_session_id_trip_id",
+            "unique": false,
+            "columnNames": [
+              "session_id",
+              "trip_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_playback_checkpoint_session_id_trip_id` ON `${TABLE_NAME}` (`session_id`, `trip_id`)"
+          },
+          {
+            "name": "index_playback_checkpoint_last_completed_paragraph_id",
+            "unique": false,
+            "columnNames": [
+              "last_completed_paragraph_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_playback_checkpoint_last_completed_paragraph_id` ON `${TABLE_NAME}` (`last_completed_paragraph_id`)"
+          },
+          {
+            "name": "index_playback_checkpoint_paragraph_id",
+            "unique": false,
+            "columnNames": [
+              "paragraph_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_playback_checkpoint_paragraph_id` ON `${TABLE_NAME}` (`paragraph_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "session",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "session_id",
+              "trip_id"
+            ],
+            "referencedColumns": [
+              "session_id",
+              "trip_id"
+            ]
+          },
+          {
+            "table": "paragraph",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "last_completed_paragraph_id"
+            ],
+            "referencedColumns": [
+              "paragraph_id"
+            ]
+          },
+          {
+            "table": "paragraph",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "paragraph_id"
+            ],
+            "referencedColumns": [
+              "paragraph_id"
+            ]
+          },
+          {
+            "table": "trip",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "trip_id"
+            ],
+            "referencedColumns": [
+              "trip_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "collection_record",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`collection_id` TEXT NOT NULL, `collection_type` TEXT NOT NULL, `region_id` TEXT, `story_id` TEXT, `story_version_id` TEXT, `rule_version` TEXT NOT NULL, `earned_at` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, PRIMARY KEY(`collection_id`), FOREIGN KEY(`story_version_id`, `story_id`) REFERENCES `story_version`(`story_version_id`, `story_id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`story_id`) REFERENCES `story`(`story_id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`region_id`) REFERENCES `region`(`region_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "collection_id",
+            "columnName": "collection_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "collection_type",
+            "columnName": "collection_type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "region_id",
+            "columnName": "region_id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "story_id",
+            "columnName": "story_id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "story_version_id",
+            "columnName": "story_version_id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "rule_version",
+            "columnName": "rule_version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "earned_at",
+            "columnName": "earned_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "created_at",
+            "columnName": "created_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "collection_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "story_card_once",
+            "unique": true,
+            "columnNames": [
+              "story_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `story_card_once` ON `${TABLE_NAME}` (`story_id`)"
+          },
+          {
+            "name": "region_card_once",
+            "unique": true,
+            "columnNames": [
+              "region_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `region_card_once` ON `${TABLE_NAME}` (`region_id`)"
+          },
+          {
+            "name": "index_collection_record_story_version_id_story_id",
+            "unique": false,
+            "columnNames": [
+              "story_version_id",
+              "story_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_collection_record_story_version_id_story_id` ON `${TABLE_NAME}` (`story_version_id`, `story_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "story_version",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "story_version_id",
+              "story_id"
+            ],
+            "referencedColumns": [
+              "story_version_id",
+              "story_id"
+            ]
+          },
+          {
+            "table": "story",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "story_id"
+            ],
+            "referencedColumns": [
+              "story_id"
+            ]
+          },
+          {
+            "table": "region",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "region_id"
+            ],
+            "referencedColumns": [
+              "region_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "collection_proof",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`collection_id` TEXT NOT NULL, `proof_key` TEXT NOT NULL, `attempt_id` TEXT, `point_id` TEXT, `region_revision_id` TEXT, PRIMARY KEY(`collection_id`, `proof_key`), FOREIGN KEY(`region_revision_id`) REFERENCES `region_revision`(`region_revision_id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`point_id`) REFERENCES `route_point`(`point_id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`attempt_id`) REFERENCES `playback_attempt`(`attempt_id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`collection_id`) REFERENCES `collection_record`(`collection_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "collection_id",
+            "columnName": "collection_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "proof_key",
+            "columnName": "proof_key",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "attempt_id",
+            "columnName": "attempt_id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "point_id",
+            "columnName": "point_id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "region_revision_id",
+            "columnName": "region_revision_id",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "collection_id",
+            "proof_key"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_collection_proof_region_revision_id",
+            "unique": false,
+            "columnNames": [
+              "region_revision_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_collection_proof_region_revision_id` ON `${TABLE_NAME}` (`region_revision_id`)"
+          },
+          {
+            "name": "index_collection_proof_point_id",
+            "unique": false,
+            "columnNames": [
+              "point_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_collection_proof_point_id` ON `${TABLE_NAME}` (`point_id`)"
+          },
+          {
+            "name": "index_collection_proof_attempt_id",
+            "unique": false,
+            "columnNames": [
+              "attempt_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_collection_proof_attempt_id` ON `${TABLE_NAME}` (`attempt_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "region_revision",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "region_revision_id"
+            ],
+            "referencedColumns": [
+              "region_revision_id"
+            ]
+          },
+          {
+            "table": "route_point",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "point_id"
+            ],
+            "referencedColumns": [
+              "point_id"
+            ]
+          },
+          {
+            "table": "playback_attempt",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "attempt_id"
+            ],
+            "referencedColumns": [
+              "attempt_id"
+            ]
+          },
+          {
+            "table": "collection_record",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "collection_id"
+            ],
+            "referencedColumns": [
+              "collection_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "preference",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`scope_id` TEXT NOT NULL, `keywords_json` TEXT NOT NULL DEFAULT '[]', `voice_json` TEXT NOT NULL, `story_frequency_json` TEXT NOT NULL, `location_enabled` INTEGER NOT NULL, `version` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, PRIMARY KEY(`scope_id`))",
+        "fields": [
+          {
+            "fieldPath": "scope_id",
+            "columnName": "scope_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "keywords_json",
+            "columnName": "keywords_json",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "'[]'"
+          },
+          {
+            "fieldPath": "voice_json",
+            "columnName": "voice_json",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "story_frequency_json",
+            "columnName": "story_frequency_json",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "location_enabled",
+            "columnName": "location_enabled",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "version",
+            "columnName": "version",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updated_at",
+            "columnName": "updated_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "scope_id"
+          ]
+        }
+      },
+      {
+        "tableName": "generation_request",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`request_id` TEXT NOT NULL, `session_id` TEXT NOT NULL, `turn_id` TEXT, `task` TEXT NOT NULL, `input_hash` TEXT NOT NULL, `schema_version` TEXT NOT NULL, `cancel_epoch` INTEGER NOT NULL, `route_revision` INTEGER, `turn_version` INTEGER, `created_at` INTEGER NOT NULL, `finished_at` INTEGER, `status` TEXT NOT NULL, `attempt_count` INTEGER NOT NULL DEFAULT 0, `model_id` TEXT, `provider` TEXT, `prompt_version` TEXT NOT NULL, `error_code` TEXT, `usage_json` TEXT, PRIMARY KEY(`request_id`), FOREIGN KEY(`turn_id`, `session_id`) REFERENCES `conversation_turn`(`turn_id`, `session_id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`turn_id`) REFERENCES `conversation_turn`(`turn_id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`session_id`) REFERENCES `session`(`session_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "request_id",
+            "columnName": "request_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "session_id",
+            "columnName": "session_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "turn_id",
+            "columnName": "turn_id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "task",
+            "columnName": "task",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "input_hash",
+            "columnName": "input_hash",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "schema_version",
+            "columnName": "schema_version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "cancel_epoch",
+            "columnName": "cancel_epoch",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "route_revision",
+            "columnName": "route_revision",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "turn_version",
+            "columnName": "turn_version",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "created_at",
+            "columnName": "created_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "finished_at",
+            "columnName": "finished_at",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "attempt_count",
+            "columnName": "attempt_count",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "model_id",
+            "columnName": "model_id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "provider",
+            "columnName": "provider",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "prompt_version",
+            "columnName": "prompt_version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "error_code",
+            "columnName": "error_code",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "usage_json",
+            "columnName": "usage_json",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "request_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_generation_request_turn_id_session_id",
+            "unique": false,
+            "columnNames": [
+              "turn_id",
+              "session_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_generation_request_turn_id_session_id` ON `${TABLE_NAME}` (`turn_id`, `session_id`)"
+          },
+          {
+            "name": "index_generation_request_session_id",
+            "unique": false,
+            "columnNames": [
+              "session_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_generation_request_session_id` ON `${TABLE_NAME}` (`session_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "conversation_turn",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "turn_id",
+              "session_id"
+            ],
+            "referencedColumns": [
+              "turn_id",
+              "session_id"
+            ]
+          },
+          {
+            "table": "conversation_turn",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "turn_id"
+            ],
+            "referencedColumns": [
+              "turn_id"
+            ]
+          },
+          {
+            "table": "session",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "session_id"
+            ],
+            "referencedColumns": [
+              "session_id"
+            ]
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0f7664d45fa70cca66d75ac9b619b81e')"
+    ]
+  }
+}
