@@ -61,4 +61,6 @@ PETASOS_NAVER_MAPS_CLIENT_SECRET=
 
 최종 Debug JVM **964개/75 suite**(실패·오류·생략 0), privacy 앱·검증 APK 빌드, Lint와 APK 정적 감사가 통과했다. [JVM 집계](../../artifacts/milestone-26/jvm-test-summary.json), [빌드](../../artifacts/milestone-26/build.log), [Lint](../../artifacts/milestone-26/lint.log), [정적 감사](../../artifacts/milestone-26/client-dex-audit.json). 정적 감사는 별도 SpeechService의 동작·개인정보 안전성 검증을 대신하지 않는다.
 
+같은 최종 APK의 기기 probe 6종은 **5 PASS, 1 FAIL**이다. `auxiliary-route`, `navigation`, `automatic-planning`, `region-hierarchy`, `media-session`은 PASS다. `app-location-live`는 47,911ms 후 복귀한 새 segment의 live UPDATE를 확인하지 못했고 cleanup도 실패했다. 로그의 `returned_valid_11`은 세션 누적 11개이며 복귀 후 새 수신 11개를 뜻하지 않는다. [실패 결과](../../artifacts/milestone-26/app-location-live/app-location-live-privacy.json), [관측 기록](../../artifacts/milestone-26/app-location-live/app-location-live-privacy.txt)를 보존한다. 이후 같은 APK 설치·실행 smoke PASS는 이 위치 실패를 해결하거나 대체하지 않는다([smoke](../../artifacts/milestone-26/final-smoke/verification.txt)).
+
 **실제 Pleos 선택 목적지와 실제 유효 위치를 함께 사용하는 기기 전체 흐름은 아직 미검증**이다. 이번 공개 예제의 합성 앵커를 실제 주행이나 활성 Pleos 경로 일치로 표시하지 않는다. 방문 카드에는 기기에서 받은 유효 위치와 별도 검토된 지역 정책이 필요하며 현재 승인된 지역·랜드마크 정책은 없다.
