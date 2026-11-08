@@ -113,6 +113,15 @@ class LocalEnvTests(unittest.TestCase):
         self.assertEqual(values[KEY], "model-value")
         self.assertEqual(values["PETASOS_DATA_GO_KR_SERVICE_KEY"], "public-value")
 
+    def test_naver_maps_pair_is_literal_and_separate_from_other_keys(self):
+        client_id = "PETASOS_NAVER_MAPS_CLIENT_ID"
+        secret = "PETASOS_NAVER_MAPS_CLIENT_SECRET"
+        self.write(f"{client_id}=maps-id\n{secret}='literal-maps-secret'\n{KEY}=model-key\n")
+        values = load_environment(self.path, {client_id: "process-id"})
+        self.assertEqual(values[client_id], "process-id")
+        self.assertEqual(values[secret], "literal-maps-secret")
+        self.assertEqual(values[KEY], "model-key")
+
     def test_server_provider_receives_explicit_environment_mapping(self):
         from petasos_server.__main__ import build_app
 

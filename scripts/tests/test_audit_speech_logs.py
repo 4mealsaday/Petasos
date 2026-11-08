@@ -35,8 +35,9 @@ def service_text(client=100, server=200, user=10):
             f"      * Client AppBindRecord{{abc ProcessRecord{{abc {client}:{audit.APP}/u10a174}}}}\n")
 
 
-def complete_observation():
-    value = audit.Observation({APP_UID, APP_UID + 1}, {SERVICE_UID, 10142}, 100_000_000_000)
+def complete_observation(*, include_matched_tags=False):
+    value = audit.Observation({APP_UID, APP_UID + 1}, {SERVICE_UID, 10142}, 100_000_000_000,
+                              include_matched_tags=include_matched_tags)
     processes = audit.process_metadata(process_text(), value.allowed)
     bindings = audit.service_bindings(service_text(), processes, value.app_uids, value.service_uids)
     value.observe_processes(processes, bindings)
@@ -158,6 +159,103 @@ class ClassificationTest(unittest.TestCase):
         self.assertEqual(kinds, {"stacktrace_sink"})
         self.assertTrue(dropped)
         self.assertFalse(crash)
+
+
+class MatchedTagObservationTest(unittest.TestCase):
+    def test_default_report_does_not_retain_even_screened_tags(self):
+        value = complete_observation()
+        value.consume(SERVICE_UID, 200, 100_000_000_001, "SyntheticSpeechService", 'asrText="SYNTHETIC_BODY"')
+        report = value.report("stt-owned-pcm")
+        self.assertNotIn("matchedTagObservation", report)
+        self.assertEqual(value.matched_tags, {})
+        self.assertNotIn("SyntheticSpeechService", json.dumps(report))
+
+    def test_opt_in_keeps_exact_tag_and_category_counts_without_message(self):
+        value = complete_observation(include_matched_tags=True)
+        canary = 'asrText="지금 지나가는 지역의 이야기를 알려 주세요."'
+        value.consume(SERVICE_UID, 200, 100_000_000_001, "Synthetic.Speech:Service-2", canary)
+        value.consume(SERVICE_UID, 200, 100_000_000_002, "Synthetic.Speech:Service-2", 'asrText="SYNTHETIC_PRIVATE_BODY"')
+        value.consume(APP_UID, 100, 100_000_000_003, "Synthetic.Speech:Service-2", 'asrText="SYNTHETIC_PRIVATE_BODY"')
+        value.consume(SERVICE_UID, 200, 100_000_000_004, "UnmatchedTag", "SYNTHETIC_PRIVATE_BODY")
+        value.consume(SERVICE_UID, 200, 100_000_000_005, "StackOnlyTag", "java.lang.Exception: SYNTHETIC_PRIVATE_BODY")
+        report = value.report("stt-owned-eof")
+        tags = report["matchedTagObservation"]
+        self.assertEqual(tags["counts"], [
+            {"role": "app_client", "tag": "Synthetic.Speech:Service-2", "known_canary": 0, "recognition_payload_shape": 1},
+            {"role": "speech_service", "tag": "Synthetic.Speech:Service-2", "known_canary": 1, "recognition_payload_shape": 2},
+        ])
+        self.assertEqual(tags["rejectedTagCount"], 0)
+        self.assertIn("Fresh synthetic probe only", tags["scope"])
+        for raw in (canary, "SYNTHETIC_PRIVATE_BODY", "UnmatchedTag", "StackOnlyTag"):
+            self.assertNotIn(raw, json.dumps(report, ensure_ascii=False))
+
+    def test_sensitive_unicode_payload_and_non_property_tags_are_rejected_without_echo(self):
+        rejected = ("", "인식태그", "Tag\nOther", "Tag With Spaces", "[SpeechService]", "Tag/Path",
+                    "Tag.", "Tag..Other", "ApiKey_abcd", "Bearer_abcd", "Transcript", "TEST_PRIVATE_TAG",
+                    "tag.asrText", "AccessTokenValue", "PasswordValue", "Tag1234567890", "tag.deadbeef01234567",
+                    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefg", "T" * (audit.MAX_MATCHED_TAG_LENGTH + 1),
+                    'asrText="SYNTHETIC_PRIVATE_BODY"')
+        value = complete_observation(include_matched_tags=True)
+        for tag in rejected:
+            self.assertFalse(audit.safe_matched_tag(tag))
+            value.consume(SERVICE_UID, 200, 100_000_000_001, tag, 'asrText="SYNTHETIC_PRIVATE_BODY"')
+        report = value.report("stt-owned-pcm")
+        tags = report["matchedTagObservation"]
+        self.assertEqual(tags["counts"], [])
+        self.assertEqual(tags["rejectedTagCount"], len(rejected))
+        for text in ("PRIVATE", "abcd", "deadbeef", "인식태그", "asrText"):
+            self.assertNotIn(text, json.dumps(report, ensure_ascii=False))
+
+    def test_distinct_tag_limit_counts_rejections_once_per_matched_record(self):
+        value = complete_observation(include_matched_tags=True)
+        with patch.object(audit, "MAX_MATCHED_TAGS", 2):
+            for tag in ("FirstTag", "SecondTag", "ThirdTag", "FirstTag", "ThirdTag"):
+                value.consume(SERVICE_UID, 200, 100_000_000_001, tag,
+                              'asrText="지금 지나가는 지역의 이야기를 알려 주세요."')
+            tags = value.report("stt-owned-pcm")["matchedTagObservation"]
+        self.assertEqual([row["tag"] for row in tags["counts"]], ["FirstTag", "SecondTag"])
+        self.assertEqual(tags["counts"][0]["known_canary"], 2)
+        self.assertEqual(tags["counts"][0]["recognition_payload_shape"], 2)
+        self.assertEqual(tags["rejectedTagCount"], 2)
+        self.assertEqual(tags["rejectedTagReasonCounts"], {"tag_count_limit": 2})
+        self.assertNotIn("ThirdTag", json.dumps(tags))
+
+    def test_rejection_reason_counts_have_fixed_codes_and_never_rejected_names(self):
+        value = complete_observation(include_matched_tags=True)
+        tags = ("[SyntheticSpeech]", "[SyntheticSpeech]", "태그", "Synthetic..Tag", "TEST_PRIVATE_TAG", "Synthetic@Service",
+                "Synthetic12345678", "x" * 65)
+        for tag in tags:
+            value.consume(SERVICE_UID, 200, 100_000_000_001, tag, 'asrText="SYNTHETIC_PRIVATE_BODY"')
+        result = value.report("stt-owned-eof")["matchedTagObservation"]
+        self.assertEqual(result["rejectedTagReasonCounts"], {
+            "unsupported_tag_characters": 2, "non_ascii_tag": 1, "invalid_property_name": 1,
+            "sensitive_marker": 1, "opaque_identifier": 1, "tag_length_or_type": 1, "tag_identifier_shape": 1,
+        })
+        self.assertEqual(sum(result["rejectedTagReasonCounts"].values()), result["rejectedTagCount"])
+        for tag in tags:
+            self.assertNotIn(tag, json.dumps(result, ensure_ascii=False))
+
+    def test_unknown_pid_retains_unknown_role_and_invalid_probe_cannot_export_tags(self):
+        value = complete_observation(include_matched_tags=True)
+        value.consume(SERVICE_UID, 999, 100_000_000_001, "SyntheticService", 'asrText="SYNTHETIC_ONLY"')
+        tags = value.report("stt-owned-pcm")["matchedTagObservation"]
+        self.assertEqual(tags["counts"][0]["role"], "unknown_process")
+        with self.assertRaisesRegex(audit.AuditError, "^synthetic_probe_required$"):
+            value.report("stt-owned-listen")
+
+    def test_cli_flag_is_optional_and_available_only_to_synthetic_observe(self):
+        for opt_in in (False, True):
+            args = ["audit-speech-logs.py", "observe", "stt-owned-eof", "--output", "unused.json"]
+            if opt_in:
+                args.append("--include-matched-tags")
+            with patch("sys.argv", args), patch.object(audit, "observe", return_value=0) as observe:
+                self.assertEqual(audit.main(), 0)
+                self.assertEqual(observe.call_args.args[0].include_matched_tags, opt_in)
+        with patch("sys.argv", ["audit-speech-logs.py", "summarize-crashes", "--output", "unused.json", "--include-matched-tags"]), \
+                patch("sys.stderr"), patch.object(audit, "summarize_crashes") as summary:
+            with self.assertRaises(SystemExit):
+                audit.main()
+            summary.assert_not_called()
 
 
 class CoverageTest(unittest.TestCase):

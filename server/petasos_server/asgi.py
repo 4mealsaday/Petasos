@@ -3,14 +3,17 @@ import json
 import re
 
 from .contracts import Failure, ID, strict_json, validate_request
+from .naver_routes import MAX_REQUEST_BYTES, NaverRouteError, decode_naver_request
+from .auxiliary_routes import MAX_WIRE_BYTES
 
 MAX_BODY = 256 * 1024
 CANCEL = re.compile(r"/v1/generations/([A-Za-z0-9][A-Za-z0-9._:-]{0,127})/cancel\Z")
 
 
 class GenerationApp:
-    def __init__(self, tokens, service):
+    def __init__(self, tokens, service, route_service=None):
         self.tokens, self.service = tokens, service
+        self.route_service = route_service
 
     async def __call__(self, scope, receive, send):
         if scope["type"] == "lifespan":
@@ -20,6 +23,8 @@ class GenerationApp:
                     await send({"type": "lifespan.startup.complete"})
                 elif message["type"] == "lifespan.shutdown":
                     await self.service.close()
+                    if self.route_service is not None:
+                        await self.route_service.close()
                     await send({"type": "lifespan.shutdown.complete"})
                     return
         if scope["type"] != "http":
@@ -44,17 +49,19 @@ class GenerationApp:
                 raise Failure("UNAUTHORIZED", 401) from None
             owner = self.tokens.authenticate(authorization)
             cancel = CANCEL.fullmatch(path)
-            if method != "POST" or (path != "/v1/generations" and not cancel):
+            auxiliary = path == "/v1/routes/auxiliary"
+            if method != "POST" or (path != "/v1/generations" and not cancel and not auxiliary):
                 raise Failure("NOT_FOUND", 404)
+            maximum_body = MAX_REQUEST_BYTES if auxiliary else MAX_BODY
             if b"content-length" in headers:
                 try:
                     length = int(headers[b"content-length"])
-                    if length < 0 or length > MAX_BODY:
+                    if length < 0 or length > maximum_body:
                         raise ValueError()
                 except ValueError:
                     raise Failure("INVALID_REQUEST") from None
             async with asyncio.timeout(10):
-                raw = await self.read_body(receive)
+                raw = await self.read_body(receive, maximum_body)
             if cancel:
                 request_id = cancel.group(1)
                 if raw:
@@ -65,6 +72,18 @@ class GenerationApp:
             content_type = headers.get(b"content-type", b"").split(b";", 1)[0].strip().lower()
             if content_type != b"application/json":
                 raise Failure("INVALID_REQUEST")
+            if auxiliary:
+                try:
+                    request = decode_naver_request(raw)
+                except NaverRouteError:
+                    raise Failure("INVALID_REQUEST") from None
+                if self.route_service is None:
+                    raise Failure("AUXILIARY_ROUTE_UNAVAILABLE", 503)
+                encoded = await self.route_service.lookup(owner, request)
+                if type(encoded) is not bytes or len(encoded) > MAX_WIRE_BYTES:
+                    raise Failure("INVALID_ROUTE_RESPONSE", 502)
+                await self.respond(send, 200, None, encoded_body=encoded)
+                return
             value = strict_json(raw)
             if isinstance(value, dict) and isinstance(value.get("requestId"), str) and ID.fullmatch(value["requestId"]):
                 request_id = value["requestId"]
@@ -85,21 +104,21 @@ class GenerationApp:
             await self.respond(send, 503, Failure("UPSTREAM_UNAVAILABLE", 503, True).body(request_id))
 
     @staticmethod
-    async def read_body(receive):
+    async def read_body(receive, maximum_body=MAX_BODY):
         raw = bytearray()
         while True:
             message = await receive()
             if message["type"] == "http.disconnect":
                 raise ConnectionError()
             raw.extend(message.get("body", b""))
-            if len(raw) > MAX_BODY:
+            if len(raw) > maximum_body:
                 raise Failure("INVALID_REQUEST")
             if not message.get("more_body", False):
                 return bytes(raw)
 
     @staticmethod
-    async def respond(send, status, body):
-        raw = b"" if body is None else json.dumps(body, ensure_ascii=False, separators=(",", ":"), allow_nan=False).encode()
+    async def respond(send, status, body, *, encoded_body=None):
+        raw = encoded_body if encoded_body is not None else b"" if body is None else json.dumps(body, ensure_ascii=False, separators=(",", ":"), allow_nan=False).encode()
         headers = [(b"content-type", b"application/json; charset=utf-8"), (b"cache-control", b"no-store"),
                    (b"content-length", str(len(raw)).encode()), (b"x-content-type-options", b"nosniff")]
         if body and body.get("retryAfterMs") is not None:

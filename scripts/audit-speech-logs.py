@@ -27,6 +27,9 @@ ROLES = ("app_client", "speech_service", "unknown_process")
 MATCHES = ("known_canary", "recognition_payload_shape", "stacktrace_sink")
 MAX_RECORDS = 200_000
 MAX_BYTES = 32 * 1024 * 1024
+MAX_MATCHED_TAGS = 64
+MAX_MATCHED_TAG_LENGTH = 64
+TAG_MATCHES = ("known_canary", "recognition_payload_shape")
 
 
 class AuditError(Exception):
@@ -62,6 +65,38 @@ def classify(tag, message):
                re.search(r"\b(?:dropped|lost|skipped|expire[ds]?)\b", message, re.I) is not None)
     crash = bool(re.search(r"FATAL EXCEPTION|Fatal signal|Abort message", message))
     return kinds, dropped, crash
+
+
+def matched_tag_rejection_reason(tag):
+    """Conservative implementation identifiers for a fresh synthetic experiment only.
+
+    No normalization or truncation: the exact name is needed for log.tag.<TAG>.
+    This syntax/marker screen is not a proof that an arbitrary identifier is public.
+    """
+    if not isinstance(tag, str) or not 1 <= len(tag) <= MAX_MATCHED_TAG_LENGTH:
+        return "tag_length_or_type"
+    if not tag.isascii():
+        return "non_ascii_tag"
+    # Android property names permit @ and digits too; distinguish that platform
+    # limit from our deliberately narrower metadata-export grammar.
+    if re.search(r"[^A-Za-z0-9_.:@-]", tag, flags=re.ASCII):
+        return "unsupported_tag_characters"
+    if tag.endswith(".") or ".." in tag:
+        return "invalid_property_name"
+    if not re.fullmatch(r"[A-Za-z][A-Za-z0-9_.:-]*", tag, flags=re.ASCII):
+        return "tag_identifier_shape"
+    if re.search(r"secret|private|password|passwd|credential|authorization|bearer|token|api.?key|client.?key|access.?key|session.?id|transcript|asr.?text|alternatives|recognition.?results|payload", tag, re.I):
+        return "sensitive_marker"
+    # Reject likely numeric identifiers, encoded credentials, hashes and long opaque tokens.
+    if re.search(r"[0-9]{4,}|[a-fA-F0-9]{16,}|[A-Za-z0-9]{33,}", tag):
+        return "opaque_identifier"
+    if classify("", tag)[0]:
+        return "canary_or_payload_in_tag"
+    return None
+
+
+def safe_matched_tag(tag):
+    return matched_tag_rejection_reason(tag) is None
 
 
 class BinaryDecoder:
@@ -166,7 +201,7 @@ def service_version(text):
 
 
 class Observation:
-    def __init__(self, app_uids, service_uids, cursor_ns):
+    def __init__(self, app_uids, service_uids, cursor_ns, *, include_matched_tags=False):
         self.app_uids = set(app_uids)
         self.service_uids = set(service_uids)
         self.allowed = self.app_uids | self.service_uids
@@ -184,6 +219,11 @@ class Observation:
         self.durations = {}
         self.fixture = {}
         self.probe_outcome = None
+        self.include_matched_tags = include_matched_tags
+        self.matched_tags = collections.Counter()
+        self.accepted_tags = set()
+        self.rejected_tag_count = 0
+        self.rejected_tag_reasons = collections.Counter()
 
     def issue(self, code):
         with self.lock:
@@ -203,6 +243,17 @@ class Observation:
             self.counts[(uid, pid)] += 1
             kinds, dropped, crash = classify(tag, message)
             self.matches.update((uid, pid, kind) for kind in kinds)
+            tag_kinds = kinds.intersection(TAG_MATCHES)
+            if self.include_matched_tags and tag_kinds:
+                rejection = matched_tag_rejection_reason(tag)
+                if rejection is None and tag not in self.accepted_tags and len(self.accepted_tags) >= MAX_MATCHED_TAGS:
+                    rejection = "tag_count_limit"
+                if rejection is not None:
+                    self.rejected_tag_count += 1
+                    self.rejected_tag_reasons[rejection] += 1
+                else:
+                    self.accepted_tags.add(tag)
+                    self.matched_tags.update((uid, pid, tag, kind) for kind in tag_kinds)
             if dropped:
                 self.reasons.add("dropped_records_observed")
             self.crashes += int(crash)
@@ -260,6 +311,8 @@ class Observation:
 
     def report(self, probe):
         with self.lock:
+            if self.include_matched_tags and probe not in SYNTHETIC_PROBES:
+                raise AuditError("synthetic_probe_required")
             reasons = set(self.reasons)
             unknown = [(uid, pid) for uid, pid in self.counts if self.processes.get(pid, (None, None))[0] != uid]
             if unknown:
@@ -287,6 +340,21 @@ class Observation:
                 role = identity[1] if identity is not None and identity[0] == uid else "unknown_process"
                 matches_by_role[role][kind] += count
             matched = bool(self.matches)
+            tag_report = {}
+            if self.include_matched_tags:
+                tags_by_role = collections.defaultdict(collections.Counter)
+                for (uid, pid, tag, kind), count in self.matched_tags.items():
+                    identity = self.processes.get(pid)
+                    role = identity[1] if identity is not None and identity[0] == uid else "unknown_process"
+                    tags_by_role[(role, tag)][kind] += count
+                tag_report = {"matchedTagObservation": {
+                    "scope": "Fresh synthetic probe only; screened implementation identifiers, not a complete service tag inventory or privacy proof",
+                    "maximumTags": MAX_MATCHED_TAGS, "maximumTagLength": MAX_MATCHED_TAG_LENGTH,
+                    "rejectedTagCount": self.rejected_tag_count,
+                    "rejectedTagReasonCounts": dict(sorted(self.rejected_tag_reasons.items())),
+                    "counts": [{"role": role, "tag": tag, **{kind: counts[kind] for kind in TAG_MATCHES}}
+                               for (role, tag), counts in sorted(tags_by_role.items())],
+                }}
             return {
                 "outcome": "MATCH_FOUND" if matched else "INCONCLUSIVE" if reasons else "NO_MATCH_OBSERVED",
                 "reasonCodes": sorted(reasons), "pidCoverageComplete": not reasons,
@@ -300,6 +368,7 @@ class Observation:
                 "probeOutcome": self.probe_outcome,
                 "scope": "Synthetic exercised paths and bounded window only; not universal privacy or physical-microphone acceptance",
                 **(eof_checks or {}),
+                **tag_report,
             }
 
 
@@ -519,7 +588,8 @@ def observe(args):
         if not raw_cursor.isdecimal():
             raise AuditError("device_cursor_unresolved")
         report["startCursorEpochSeconds"] = int(raw_cursor)
-        observation = Observation(app_uids, service_uids, int(raw_cursor) * 1_000_000_000)
+        observation = Observation(app_uids, service_uids, int(raw_cursor) * 1_000_000_000,
+                                  include_matched_tags=getattr(args, "include_matched_tags", False))
         def snapshot():
             processes = process_metadata(adb("shell", "ps", "-A", "-o", "PID,UID,NAME"), observation.allowed)
             bindings = service_bindings(adb("shell", "dumpsys", "activity", "services", COMPONENT), processes, app_uids, service_uids)
@@ -629,6 +699,8 @@ def main():
     observe_parser.add_argument("probe", choices=SYNTHETIC_PROBES)
     observe_parser.add_argument("--serial", default="emulator-5554")
     observe_parser.add_argument("--output", type=Path, required=True)
+    observe_parser.add_argument("--include-matched-tags", action="store_true",
+                                help="Include bounded screened tag counts for this fresh synthetic probe only; never messages")
     summary_parser = commands.add_parser("summarize-crashes")
     summary_parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()

@@ -15,6 +15,7 @@ from .evidence import EvidenceRegistry, FileEvidenceRegistry
 from .local_env import load_environment
 from .provider import OpenRouterConfig, OpenRouterProvider, UnavailableProvider
 from .service import GenerationService
+from .auxiliary_routes import AuxiliaryRouteService, NaverDirectionsProvider
 
 
 def build_app(config_path, environment: Mapping[str, str] | None = None):
@@ -37,7 +38,16 @@ def build_app(config_path, environment: Mapping[str, str] | None = None):
             account_content_logging_disabled=p["accountContentLoggingDisabled"],
             max_output_tokens=p.get("maxOutputTokens", 4096),
             accepted_model_ids=tuple(accepted_model_ids)))
-    return GenerationApp(TokenRegistry(path=config["tokensFile"]), GenerationService(evidence, provider, key))
+    route_service = None
+    if "auxiliaryRoutes" in config:
+        route_config = config["auxiliaryRoutes"]
+        if (type(route_config) is not dict or set(route_config) != {"type"} or
+                route_config["type"] != "naver_maps"):
+            raise ValueError("INVALID_ROUTE_CONFIGURATION")
+        route_service = AuxiliaryRouteService(NaverDirectionsProvider(
+            environment.get("PETASOS_NAVER_MAPS_CLIENT_ID", ""),
+            environment.get("PETASOS_NAVER_MAPS_CLIENT_SECRET", "")))
+    return GenerationApp(TokenRegistry(path=config["tokensFile"]), GenerationService(evidence, provider, key), route_service)
 
 
 def main():

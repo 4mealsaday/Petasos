@@ -123,6 +123,8 @@ dev.10 Android 실제 연결의 최초 `INVALID_RESPONSE`를 진단하면서 HTT
 
 ## 공공데이터 조회
 
+별도 도로 경로 공급은 [네이버 보조 경로 준비](../docs/development/naver-route-setup.md)를 따른다. `naver_routes.py`와 `scripts/naver-routes.py`는 아직 제품 endpoint에 연결하지 않은 메모리 전용 조회이며, Pleos의 현재 선택 경로를 대신하지 않는다. 네이버 키도 서버 비공개 `.env`에만 둔다.
+
 `tourism_contract.py`는 보존한 공식 Swagger에서 오디 8개·KorService2 15개 operation과 입력·출력 계약을 읽는다. `tourism_api.py`는 해당 계약으로 검증한 한 번의 HTTPS GET, JSON/XML 성공·빈 결과·오류와 페이지 정보를 처리한다. `public_data.py`는 이 공통 클라이언트 위에서 후보를 정규화하며 아직 검토되지 않은 콘텐츠를 모델 근거로 승인하지 않는다. 배포 시 `docs/reference/public-data/*.openapi.json`도 프로젝트 상대 경로 그대로 포함해야 한다.
 
 [지원 API 전체·공식 입력/출력·CLI 사용법](../docs/reference/public-data/README.md)을 따른다. `scripts/public-data-api.py`의 `list`/`describe`는 키와 네트워크 없이 작동하고, `call`은 `.env`의 키로 실제 조회한다. 원자료는 명시한 비공개 파일에만 저장한다. 실제 23개 API×JSON/XML 조회와 발견한 `rnum` 타입 차이는 [실행 기록](../docs/development/2026-11-07-live-apis.md)에 남겼다.
