@@ -14,6 +14,8 @@ import com.petasos.app.location.RecordedLocation
 import com.petasos.app.planning.ReviewedRouteForecast
 import com.petasos.app.planning.auxiliary.*
 import com.petasos.app.platform.android.location.BundledRegionCatalog
+import com.petasos.app.platform.android.location.BundledRegionPolicyCatalog
+import com.petasos.app.storage.RoomRegionPolicyStore
 import com.petasos.app.storage.StorageDatabase
 import java.util.UUID
 import java.util.concurrent.CompletableFuture
@@ -65,7 +67,29 @@ object AuxiliaryRouteProbe {
             run {
                 val catalog = BundledRegionCatalog(context)
                 val manifest = catalog.readManifest()
-                catalog.loadVerified(database) // Disposable geometry/provenance and the pinned empty policy catalog.
+                val bundledPolicies = BundledRegionPolicyCatalog(context).readBundle()
+                val regionEntries = manifest.regions.associateBy { it.regionRevisionId }
+                requireProbe(bundledPolicies.reviews.size == 9 && bundledPolicies.reviews.map {
+                    regionEntries.getValue(it.regionRevisionId).code
+                }.toSet() == setOf("11140", "41461", "41463", "41465", "41550", "44131", "44133", "30110", "30200"),
+                    "auxiliary_packaged_policy_inventory_mismatch")
+                catalog.loadVerified(database) // Disposable geometry/provenance and the actual pinned policy inventory.
+                val sql = database.openHelper.writableDatabase
+                fun policySnapshot(): List<List<String?>> = sql.query(
+                    "SELECT region_revision_id,policy_json,verified_at FROM region_revision ORDER BY region_revision_id"
+                ).use { rows ->
+                    buildList {
+                        while (rows.moveToNext()) add(listOf(rows.getString(0), rows.getString(1),
+                            if (rows.isNull(2)) null else rows.getLong(2).toString()))
+                    }
+                }
+                val policyBefore = policySnapshot()
+                requireProbe(policyBefore.size == 264 && policyBefore.count { it[2] != null } == 9,
+                    "auxiliary_packaged_policy_bootstrap_mismatch")
+                val policyReader = RoomRegionPolicyStore(database)
+                requireProbe(bundledPolicies.reviews.all {
+                    policyReader.reviewedPolicy(it.regionRevisionId)?.policy == it.policy
+                }, "auxiliary_packaged_policy_values_mismatch")
                 val lookup = catalog.loadPolyline(database)
                 val projectionStart = SystemClock.elapsedRealtime()
                 val timeline = AuxiliaryRegionTimelineProjector(lookup).project(route)
@@ -100,7 +124,6 @@ object AuxiliaryRouteProbe {
                 val revocable = AuxiliaryRouteAnchor(ANCHOR_CONTEXT, route, timeline, 0, 60_000)
                 requireProbe(revocable.update(point, { authorized(timeline) }, SYNTHETIC_NOW) != null,
                     "auxiliary_revocation_fixture_invalid")
-                val sql = database.openHelper.writableDatabase
                 sql.execSQL("UPDATE source_evidence SET review_status='rejected' WHERE source_revision_id=?",
                     arrayOf(manifest.source.sourceRevisionId))
                 requireProbe(!authorized(timeline) && revocable.current(ANCHOR_CONTEXT, SYNTHETIC_NOW) == null,
@@ -118,11 +141,11 @@ object AuxiliaryRouteProbe {
                 }
                 requireProbe(listOf("trip", "session", "route_point", "collection_record", "collection_proof")
                     .all { count(it) == 0L }, "auxiliary_unexpected_durable_travel_records")
-                requireProbe(sql.query("SELECT count(*) FROM region_revision WHERE verified_at IS NOT NULL").use {
-                    it.moveToFirst() && it.getLong(0) == 0L
-                }, "auxiliary_unexpected_visit_policy")
+                requireProbe(policySnapshot() == policyBefore, "auxiliary_packaged_policy_mutated")
+                requireProbe(bundledPolicies.reviews.all { policyReader.reviewedPolicy(it.regionRevisionId) == null },
+                    "auxiliary_source_revocation_left_policy_current")
                 withinBudget()
-                mark("auxiliary_no_location_trip_collection_or_visit_policy_created")
+                mark("auxiliary_packaged_policies_unchanged_no_location_trip_or_collection_created")
             }
         } finally {
             database.close()

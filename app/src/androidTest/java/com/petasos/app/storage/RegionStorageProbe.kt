@@ -41,7 +41,7 @@ object RegionStorageProbe {
                 check(count("SELECT count(*) FROM preference") == 0L && count("SELECT count(*) FROM story") == 0L && count("SELECT count(*) FROM place") == 0L)
                 mark("region_official_packaged_manifest_pin_atomic_install_idempotence_no_policy_or_consent_grant")
 
-                val lookup = catalog.loadVerified(runtime.database)
+                val lookup = RegionGeometryProbeFixture.load(context, runtime.database)
                 // Public fixture coordinate; never the emulator/device position. Compiler cross-checks this point.
                 val latitude = 37.476967047424026
                 val longitude = 127.01367673629329

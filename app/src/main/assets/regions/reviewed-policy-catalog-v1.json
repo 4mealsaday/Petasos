@@ -1,5 +1,159 @@
 {
   "formatVersion": 1,
   "manifestSha256": "3e2117159aa65c6c8f69826f534a8065d1247497039827d1b638f77d580f1bf9",
-  "reviews": []
+  "reviews": [
+    {
+      "formatVersion": 1,
+      "regionRevisionId": "kr-sigungu-11140-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "manifestSha256": "3e2117159aa65c6c8f69826f534a8065d1247497039827d1b638f77d580f1bf9",
+      "geometrySha256": "7d30130051b57b22710b2a6cb4c3fb3d21cf08fe21162944c4cabae4a6e95d7e",
+      "policy": {
+        "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+        "consecutiveSamples": 2,
+        "minConfirmationDurationMs": 1000,
+        "boundaryMarginMeters": 5,
+        "qualityAdapterVersion": "android-location-v1",
+        "coordinateReferenceSystem": "EPSG:4326"
+      },
+      "verifiedAt": 1794160826875,
+      "reviewBasis": "Reviewed public NGII demo boundary cross-sections, stationary/invalid sequences and independent GEOS membership. N=2, 1000 ms, margin 5 m: full crossing 81/81, outside bounce 0/81, short passes 20/81; not real-driving accuracy or all-border coverage. See docs/development/data/region-policy-demo-review-v1.json. Only these nine exact leaf revisions are reviewed; consent, current Android quality and live source rights remain required.",
+      "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
+    },
+    {
+      "formatVersion": 1,
+      "regionRevisionId": "kr-sigungu-41461-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "manifestSha256": "3e2117159aa65c6c8f69826f534a8065d1247497039827d1b638f77d580f1bf9",
+      "geometrySha256": "0dd6d52bff78ba38746e811a356a27f5682c4510146d7963782bb0417a622a89",
+      "policy": {
+        "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+        "consecutiveSamples": 2,
+        "minConfirmationDurationMs": 1000,
+        "boundaryMarginMeters": 5,
+        "qualityAdapterVersion": "android-location-v1",
+        "coordinateReferenceSystem": "EPSG:4326"
+      },
+      "verifiedAt": 1794160826875,
+      "reviewBasis": "Reviewed public NGII demo boundary cross-sections, stationary/invalid sequences and independent GEOS membership. N=2, 1000 ms, margin 5 m: full crossing 81/81, outside bounce 0/81, short passes 20/81; not real-driving accuracy or all-border coverage. See docs/development/data/region-policy-demo-review-v1.json. Only these nine exact leaf revisions are reviewed; consent, current Android quality and live source rights remain required.",
+      "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
+    },
+    {
+      "formatVersion": 1,
+      "regionRevisionId": "kr-sigungu-41463-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "manifestSha256": "3e2117159aa65c6c8f69826f534a8065d1247497039827d1b638f77d580f1bf9",
+      "geometrySha256": "132444f65c5fad227e0f3cabeac59ba781577c97194b2fd3d6a0f8d472361ec0",
+      "policy": {
+        "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+        "consecutiveSamples": 2,
+        "minConfirmationDurationMs": 1000,
+        "boundaryMarginMeters": 5,
+        "qualityAdapterVersion": "android-location-v1",
+        "coordinateReferenceSystem": "EPSG:4326"
+      },
+      "verifiedAt": 1794160826875,
+      "reviewBasis": "Reviewed public NGII demo boundary cross-sections, stationary/invalid sequences and independent GEOS membership. N=2, 1000 ms, margin 5 m: full crossing 81/81, outside bounce 0/81, short passes 20/81; not real-driving accuracy or all-border coverage. See docs/development/data/region-policy-demo-review-v1.json. Only these nine exact leaf revisions are reviewed; consent, current Android quality and live source rights remain required.",
+      "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
+    },
+    {
+      "formatVersion": 1,
+      "regionRevisionId": "kr-sigungu-41465-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "manifestSha256": "3e2117159aa65c6c8f69826f534a8065d1247497039827d1b638f77d580f1bf9",
+      "geometrySha256": "ebb4c190eb9a3163a2dff8df2324482e8c7db4657c2a389dca2066feac42b0a4",
+      "policy": {
+        "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+        "consecutiveSamples": 2,
+        "minConfirmationDurationMs": 1000,
+        "boundaryMarginMeters": 5,
+        "qualityAdapterVersion": "android-location-v1",
+        "coordinateReferenceSystem": "EPSG:4326"
+      },
+      "verifiedAt": 1794160826875,
+      "reviewBasis": "Reviewed public NGII demo boundary cross-sections, stationary/invalid sequences and independent GEOS membership. N=2, 1000 ms, margin 5 m: full crossing 81/81, outside bounce 0/81, short passes 20/81; not real-driving accuracy or all-border coverage. See docs/development/data/region-policy-demo-review-v1.json. Only these nine exact leaf revisions are reviewed; consent, current Android quality and live source rights remain required.",
+      "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
+    },
+    {
+      "formatVersion": 1,
+      "regionRevisionId": "kr-sigungu-41550-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "manifestSha256": "3e2117159aa65c6c8f69826f534a8065d1247497039827d1b638f77d580f1bf9",
+      "geometrySha256": "606d522a21eca03ee969e8f6a3b38ed8bc6b8675729c61e276a76bfe121e48df",
+      "policy": {
+        "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+        "consecutiveSamples": 2,
+        "minConfirmationDurationMs": 1000,
+        "boundaryMarginMeters": 5,
+        "qualityAdapterVersion": "android-location-v1",
+        "coordinateReferenceSystem": "EPSG:4326"
+      },
+      "verifiedAt": 1794160826875,
+      "reviewBasis": "Reviewed public NGII demo boundary cross-sections, stationary/invalid sequences and independent GEOS membership. N=2, 1000 ms, margin 5 m: full crossing 81/81, outside bounce 0/81, short passes 20/81; not real-driving accuracy or all-border coverage. See docs/development/data/region-policy-demo-review-v1.json. Only these nine exact leaf revisions are reviewed; consent, current Android quality and live source rights remain required.",
+      "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
+    },
+    {
+      "formatVersion": 1,
+      "regionRevisionId": "kr-sigungu-44131-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "manifestSha256": "3e2117159aa65c6c8f69826f534a8065d1247497039827d1b638f77d580f1bf9",
+      "geometrySha256": "c2efe5b70febd824f5bf28395c8205b86931ec611dda8b2e41edb6c0c5225244",
+      "policy": {
+        "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+        "consecutiveSamples": 2,
+        "minConfirmationDurationMs": 1000,
+        "boundaryMarginMeters": 5,
+        "qualityAdapterVersion": "android-location-v1",
+        "coordinateReferenceSystem": "EPSG:4326"
+      },
+      "verifiedAt": 1794160826875,
+      "reviewBasis": "Reviewed public NGII demo boundary cross-sections, stationary/invalid sequences and independent GEOS membership. N=2, 1000 ms, margin 5 m: full crossing 81/81, outside bounce 0/81, short passes 20/81; not real-driving accuracy or all-border coverage. See docs/development/data/region-policy-demo-review-v1.json. Only these nine exact leaf revisions are reviewed; consent, current Android quality and live source rights remain required.",
+      "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
+    },
+    {
+      "formatVersion": 1,
+      "regionRevisionId": "kr-sigungu-44133-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "manifestSha256": "3e2117159aa65c6c8f69826f534a8065d1247497039827d1b638f77d580f1bf9",
+      "geometrySha256": "15d6bcac9f10bacb58d9b7a51364e017c6c5437ede14a0ef48dc7517886c724a",
+      "policy": {
+        "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+        "consecutiveSamples": 2,
+        "minConfirmationDurationMs": 1000,
+        "boundaryMarginMeters": 5,
+        "qualityAdapterVersion": "android-location-v1",
+        "coordinateReferenceSystem": "EPSG:4326"
+      },
+      "verifiedAt": 1794160826875,
+      "reviewBasis": "Reviewed public NGII demo boundary cross-sections, stationary/invalid sequences and independent GEOS membership. N=2, 1000 ms, margin 5 m: full crossing 81/81, outside bounce 0/81, short passes 20/81; not real-driving accuracy or all-border coverage. See docs/development/data/region-policy-demo-review-v1.json. Only these nine exact leaf revisions are reviewed; consent, current Android quality and live source rights remain required.",
+      "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
+    },
+    {
+      "formatVersion": 1,
+      "regionRevisionId": "kr-sigungu-30110-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "manifestSha256": "3e2117159aa65c6c8f69826f534a8065d1247497039827d1b638f77d580f1bf9",
+      "geometrySha256": "e8492947123c464fec182482a503df8a45bca563606e81e08f52413c65aa8a89",
+      "policy": {
+        "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+        "consecutiveSamples": 2,
+        "minConfirmationDurationMs": 1000,
+        "boundaryMarginMeters": 5,
+        "qualityAdapterVersion": "android-location-v1",
+        "coordinateReferenceSystem": "EPSG:4326"
+      },
+      "verifiedAt": 1794160826875,
+      "reviewBasis": "Reviewed public NGII demo boundary cross-sections, stationary/invalid sequences and independent GEOS membership. N=2, 1000 ms, margin 5 m: full crossing 81/81, outside bounce 0/81, short passes 20/81; not real-driving accuracy or all-border coverage. See docs/development/data/region-policy-demo-review-v1.json. Only these nine exact leaf revisions are reviewed; consent, current Android quality and live source rights remain required.",
+      "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
+    },
+    {
+      "formatVersion": 1,
+      "regionRevisionId": "kr-sigungu-30200-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "manifestSha256": "3e2117159aa65c6c8f69826f534a8065d1247497039827d1b638f77d580f1bf9",
+      "geometrySha256": "3ba915fd138f206f74cf6d58970d9079ee0b5ab1322fa2bd46c3fd7caa06331e",
+      "policy": {
+        "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+        "consecutiveSamples": 2,
+        "minConfirmationDurationMs": 1000,
+        "boundaryMarginMeters": 5,
+        "qualityAdapterVersion": "android-location-v1",
+        "coordinateReferenceSystem": "EPSG:4326"
+      },
+      "verifiedAt": 1794160826875,
+      "reviewBasis": "Reviewed public NGII demo boundary cross-sections, stationary/invalid sequences and independent GEOS membership. N=2, 1000 ms, margin 5 m: full crossing 81/81, outside bounce 0/81, short passes 20/81; not real-driving accuracy or all-border coverage. See docs/development/data/region-policy-demo-review-v1.json. Only these nine exact leaf revisions are reviewed; consent, current Android quality and live source rights remain required.",
+      "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
+    }
+  ]
 }

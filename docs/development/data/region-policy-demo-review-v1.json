@@ -1,0 +1,1929 @@
+{
+  "formatVersion": 1,
+  "reviewedAt": 1794160826875,
+  "status": "REVIEWED_FOR_NINE_EXACT_DEMO_LEAF_REVISIONS",
+  "selectedCodes": [
+    "11140",
+    "41461",
+    "41463",
+    "41465",
+    "41550",
+    "44131",
+    "44133",
+    "30110",
+    "30200"
+  ],
+  "policy": {
+    "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+    "consecutiveSamples": 2,
+    "minConfirmationDurationMs": 1000,
+    "boundaryMarginMeters": 5,
+    "qualityAdapterVersion": "android-location-v1",
+    "coordinateReferenceSystem": "EPSG:4326"
+  },
+  "rationale": [
+    "Retain a one-second temporal confirmation interval at all tested receipt rates; this uses 2/3/6 observations at 1/2/5 Hz.",
+    "Choose the lowest tested positive boundary margin with zero full-crossing misses and no false/premature/bounce confirmations in these fixtures.",
+    "N=3 adds delay without an observed error reduction; margin 10/20 m causes some full-crossing misses when a duration is required.",
+    "This is a reviewed demo operating choice, not a statistical claim that 1 second or 5 metres is safer than the other candidates."
+  ],
+  "limits": [
+    "One selected boundary cross-section per exact leaf revision; not all borders",
+    "Synthetic cross-sections are not roads, legal access paths or real-driving trajectories",
+    "Android accuracy is statistical; bounded synthetic errors are not a field guarantee",
+    "Receipt and measurement clocks coincide here; stale/gap/reversal tests remain in the companion harness",
+    "A miss or short-pass rejection is retained as a candidate tradeoff, not hidden by changing the trace",
+    "Room/source-rights races and actual callback quality remain separate acceptance checks",
+    "The selected short-pass acceptance is 20/81; 61 passages remain unconfirmed (1 Hz: 0/27 accepted, 2 Hz: 11/27, 5 Hz: 9/27).",
+    "No other region or neighboring revision is approved. Three quarantined geometries and city parent revisions remain pending.",
+    "No synthetic point is installed as an observed route point or a product visit/card. Actual collection still requires existing user consent, current valid Android samples, contiguous evidence and current source rights."
+  ],
+  "evidenceFiles": [
+    {
+      "path": "artifacts/milestone-29/moving-policy-candidates.json",
+      "sha256": "346735fd44b1b0fe03a8c003b755a5ad855ef219bf9bb7408d8c801a985875c7"
+    },
+    {
+      "path": "artifacts/milestone-29/stationary-policy-candidates.json",
+      "sha256": "4832c080bea231128f86b36288553719e18f2a46d1060b7147f6eada2b017171"
+    },
+    {
+      "path": "app/src/test/resources/regions/ngii-policy-crossings-v1.json",
+      "sha256": "08533135821e4adb969e4bf94ed6b68bc45f526f965b5b9f0840f5600449c8d3"
+    },
+    {
+      "path": "scripts/build-region-policy-traces.py",
+      "sha256": "0e98806d20dd5737cc65c7d9fa32b12aa3c2efee40c11614342675259c2e39bb"
+    },
+    {
+      "path": "app/src/test/java/com/petasos/app/location/RegionPolicyMovingTraceTest.kt",
+      "sha256": "2a4a4aa0ec71120a7f8b208b155850be22b184f1858f835050ff36c98fe94224"
+    },
+    {
+      "path": "app/src/test/java/com/petasos/app/location/RegionPolicyDemoHarnessTest.kt",
+      "sha256": "5c6553a059500221f07b8e09dd498898e8e8e7d3c2f3e9c7fd50bd557f26c059"
+    },
+    {
+      "path": "app/src/main/java/com/petasos/app/location/RegionConfirmation.kt",
+      "sha256": "287ef68d80e6e372a411506717d54ebbf49452b0959e7e61eb4376c0762a2fcf"
+    },
+    {
+      "path": "app/src/main/assets/regions/ngii-2026-09-21-v1/manifest.json",
+      "sha256": "3e2117159aa65c6c8f69826f534a8065d1247497039827d1b638f77d580f1bf9"
+    },
+    {
+      "path": "app/src/main/assets/regions/reviewed-hierarchy-v1.json",
+      "sha256": "cf428d289dd504b3b8d1d481ea4e80f789a1db7e531ebd06ba749422a3971e5b"
+    }
+  ],
+  "movingSelectedResult": {
+    "boundaryMarginMeters": 5,
+    "consecutiveSamples": 2,
+    "falseTargetCardCount": 0,
+    "minConfirmationDurationMs": 1000,
+    "movingDelayMs": {
+      "count": 81,
+      "max": 3000,
+      "min": 1000,
+      "p50": 1800,
+      "p95": 3000
+    },
+    "movingMissCount": 0,
+    "outsideBounceCardCount": 0,
+    "prematureTargetCardCount": 0,
+    "regions": [
+      {
+        "code": "11140",
+        "moving": [
+          [
+            1,
+            3,
+            1000,
+            2
+          ],
+          [
+            1,
+            10,
+            1000,
+            2
+          ],
+          [
+            1,
+            30,
+            3000,
+            2
+          ],
+          [
+            2,
+            3,
+            1000,
+            3
+          ],
+          [
+            2,
+            10,
+            2000,
+            3
+          ],
+          [
+            2,
+            30,
+            3000,
+            3
+          ],
+          [
+            5,
+            3,
+            1400,
+            6
+          ],
+          [
+            5,
+            10,
+            1800,
+            6
+          ],
+          [
+            5,
+            30,
+            3000,
+            6
+          ]
+        ],
+        "outsideBounceCardCount": 0,
+        "shortPass": [
+          [
+            1,
+            3,
+            null,
+            0
+          ],
+          [
+            1,
+            10,
+            null,
+            0
+          ],
+          [
+            1,
+            30,
+            null,
+            0
+          ],
+          [
+            2,
+            3,
+            1500,
+            3
+          ],
+          [
+            2,
+            10,
+            null,
+            0
+          ],
+          [
+            2,
+            30,
+            null,
+            0
+          ],
+          [
+            5,
+            3,
+            1400,
+            6
+          ],
+          [
+            5,
+            10,
+            null,
+            0
+          ],
+          [
+            5,
+            30,
+            null,
+            0
+          ]
+        ]
+      },
+      {
+        "code": "41461",
+        "moving": [
+          [
+            1,
+            3,
+            1000,
+            2
+          ],
+          [
+            1,
+            10,
+            1000,
+            2
+          ],
+          [
+            1,
+            30,
+            3000,
+            2
+          ],
+          [
+            2,
+            3,
+            1000,
+            3
+          ],
+          [
+            2,
+            10,
+            2000,
+            3
+          ],
+          [
+            2,
+            30,
+            3000,
+            3
+          ],
+          [
+            5,
+            3,
+            1400,
+            6
+          ],
+          [
+            5,
+            10,
+            1800,
+            6
+          ],
+          [
+            5,
+            30,
+            3000,
+            6
+          ]
+        ],
+        "outsideBounceCardCount": 0,
+        "shortPass": [
+          [
+            1,
+            3,
+            null,
+            0
+          ],
+          [
+            1,
+            10,
+            null,
+            0
+          ],
+          [
+            1,
+            30,
+            null,
+            0
+          ],
+          [
+            2,
+            3,
+            1500,
+            3
+          ],
+          [
+            2,
+            10,
+            null,
+            0
+          ],
+          [
+            2,
+            30,
+            null,
+            0
+          ],
+          [
+            5,
+            3,
+            1400,
+            6
+          ],
+          [
+            5,
+            10,
+            null,
+            0
+          ],
+          [
+            5,
+            30,
+            null,
+            0
+          ]
+        ]
+      },
+      {
+        "code": "41463",
+        "moving": [
+          [
+            1,
+            3,
+            1000,
+            2
+          ],
+          [
+            1,
+            10,
+            1000,
+            2
+          ],
+          [
+            1,
+            30,
+            3000,
+            2
+          ],
+          [
+            2,
+            3,
+            1000,
+            3
+          ],
+          [
+            2,
+            10,
+            2000,
+            3
+          ],
+          [
+            2,
+            30,
+            2500,
+            3
+          ],
+          [
+            5,
+            3,
+            1400,
+            6
+          ],
+          [
+            5,
+            10,
+            1800,
+            6
+          ],
+          [
+            5,
+            30,
+            3000,
+            6
+          ]
+        ],
+        "outsideBounceCardCount": 0,
+        "shortPass": [
+          [
+            1,
+            3,
+            null,
+            0
+          ],
+          [
+            1,
+            10,
+            null,
+            0
+          ],
+          [
+            1,
+            30,
+            null,
+            0
+          ],
+          [
+            2,
+            3,
+            1500,
+            3
+          ],
+          [
+            2,
+            10,
+            null,
+            0
+          ],
+          [
+            2,
+            30,
+            null,
+            0
+          ],
+          [
+            5,
+            3,
+            1400,
+            6
+          ],
+          [
+            5,
+            10,
+            null,
+            0
+          ],
+          [
+            5,
+            30,
+            null,
+            0
+          ]
+        ]
+      },
+      {
+        "code": "41465",
+        "moving": [
+          [
+            1,
+            3,
+            1000,
+            2
+          ],
+          [
+            1,
+            10,
+            1000,
+            2
+          ],
+          [
+            1,
+            30,
+            3000,
+            2
+          ],
+          [
+            2,
+            3,
+            1000,
+            3
+          ],
+          [
+            2,
+            10,
+            2000,
+            3
+          ],
+          [
+            2,
+            30,
+            2500,
+            3
+          ],
+          [
+            5,
+            3,
+            1400,
+            6
+          ],
+          [
+            5,
+            10,
+            1800,
+            6
+          ],
+          [
+            5,
+            30,
+            3000,
+            6
+          ]
+        ],
+        "outsideBounceCardCount": 0,
+        "shortPass": [
+          [
+            1,
+            3,
+            null,
+            0
+          ],
+          [
+            1,
+            10,
+            null,
+            0
+          ],
+          [
+            1,
+            30,
+            null,
+            0
+          ],
+          [
+            2,
+            3,
+            1500,
+            3
+          ],
+          [
+            2,
+            10,
+            null,
+            0
+          ],
+          [
+            2,
+            30,
+            null,
+            0
+          ],
+          [
+            5,
+            3,
+            1400,
+            6
+          ],
+          [
+            5,
+            10,
+            null,
+            0
+          ],
+          [
+            5,
+            30,
+            null,
+            0
+          ]
+        ]
+      },
+      {
+        "code": "41550",
+        "moving": [
+          [
+            1,
+            3,
+            1000,
+            2
+          ],
+          [
+            1,
+            10,
+            1000,
+            2
+          ],
+          [
+            1,
+            30,
+            3000,
+            2
+          ],
+          [
+            2,
+            3,
+            1000,
+            3
+          ],
+          [
+            2,
+            10,
+            2000,
+            3
+          ],
+          [
+            2,
+            30,
+            2500,
+            3
+          ],
+          [
+            5,
+            3,
+            1400,
+            6
+          ],
+          [
+            5,
+            10,
+            1800,
+            6
+          ],
+          [
+            5,
+            30,
+            3000,
+            6
+          ]
+        ],
+        "outsideBounceCardCount": 0,
+        "shortPass": [
+          [
+            1,
+            3,
+            null,
+            0
+          ],
+          [
+            1,
+            10,
+            null,
+            0
+          ],
+          [
+            1,
+            30,
+            null,
+            0
+          ],
+          [
+            2,
+            3,
+            1500,
+            3
+          ],
+          [
+            2,
+            10,
+            null,
+            0
+          ],
+          [
+            2,
+            30,
+            null,
+            0
+          ],
+          [
+            5,
+            3,
+            1400,
+            6
+          ],
+          [
+            5,
+            10,
+            null,
+            0
+          ],
+          [
+            5,
+            30,
+            null,
+            0
+          ]
+        ]
+      },
+      {
+        "code": "44131",
+        "moving": [
+          [
+            1,
+            3,
+            1000,
+            2
+          ],
+          [
+            1,
+            10,
+            1000,
+            2
+          ],
+          [
+            1,
+            30,
+            3000,
+            2
+          ],
+          [
+            2,
+            3,
+            1000,
+            3
+          ],
+          [
+            2,
+            10,
+            2000,
+            3
+          ],
+          [
+            2,
+            30,
+            2500,
+            3
+          ],
+          [
+            5,
+            3,
+            1400,
+            6
+          ],
+          [
+            5,
+            10,
+            1800,
+            6
+          ],
+          [
+            5,
+            30,
+            3000,
+            6
+          ]
+        ],
+        "outsideBounceCardCount": 0,
+        "shortPass": [
+          [
+            1,
+            3,
+            null,
+            0
+          ],
+          [
+            1,
+            10,
+            null,
+            0
+          ],
+          [
+            1,
+            30,
+            null,
+            0
+          ],
+          [
+            2,
+            3,
+            1500,
+            3
+          ],
+          [
+            2,
+            10,
+            1500,
+            3
+          ],
+          [
+            2,
+            30,
+            null,
+            0
+          ],
+          [
+            5,
+            3,
+            1400,
+            6
+          ],
+          [
+            5,
+            10,
+            null,
+            0
+          ],
+          [
+            5,
+            30,
+            null,
+            0
+          ]
+        ]
+      },
+      {
+        "code": "44133",
+        "moving": [
+          [
+            1,
+            3,
+            1000,
+            2
+          ],
+          [
+            1,
+            10,
+            1000,
+            2
+          ],
+          [
+            1,
+            30,
+            3000,
+            2
+          ],
+          [
+            2,
+            3,
+            1000,
+            3
+          ],
+          [
+            2,
+            10,
+            2000,
+            3
+          ],
+          [
+            2,
+            30,
+            2500,
+            3
+          ],
+          [
+            5,
+            3,
+            1400,
+            6
+          ],
+          [
+            5,
+            10,
+            1800,
+            6
+          ],
+          [
+            5,
+            30,
+            3000,
+            6
+          ]
+        ],
+        "outsideBounceCardCount": 0,
+        "shortPass": [
+          [
+            1,
+            3,
+            null,
+            0
+          ],
+          [
+            1,
+            10,
+            null,
+            0
+          ],
+          [
+            1,
+            30,
+            null,
+            0
+          ],
+          [
+            2,
+            3,
+            1500,
+            3
+          ],
+          [
+            2,
+            10,
+            1500,
+            3
+          ],
+          [
+            2,
+            30,
+            null,
+            0
+          ],
+          [
+            5,
+            3,
+            1400,
+            6
+          ],
+          [
+            5,
+            10,
+            null,
+            0
+          ],
+          [
+            5,
+            30,
+            null,
+            0
+          ]
+        ]
+      },
+      {
+        "code": "30110",
+        "moving": [
+          [
+            1,
+            3,
+            1000,
+            2
+          ],
+          [
+            1,
+            10,
+            1000,
+            2
+          ],
+          [
+            1,
+            30,
+            3000,
+            2
+          ],
+          [
+            2,
+            3,
+            1000,
+            3
+          ],
+          [
+            2,
+            10,
+            2000,
+            3
+          ],
+          [
+            2,
+            30,
+            2500,
+            3
+          ],
+          [
+            5,
+            3,
+            1400,
+            6
+          ],
+          [
+            5,
+            10,
+            1800,
+            6
+          ],
+          [
+            5,
+            30,
+            3000,
+            6
+          ]
+        ],
+        "outsideBounceCardCount": 0,
+        "shortPass": [
+          [
+            1,
+            3,
+            null,
+            0
+          ],
+          [
+            1,
+            10,
+            null,
+            0
+          ],
+          [
+            1,
+            30,
+            null,
+            0
+          ],
+          [
+            2,
+            3,
+            1500,
+            3
+          ],
+          [
+            2,
+            10,
+            null,
+            0
+          ],
+          [
+            2,
+            30,
+            null,
+            0
+          ],
+          [
+            5,
+            3,
+            1400,
+            6
+          ],
+          [
+            5,
+            10,
+            null,
+            0
+          ],
+          [
+            5,
+            30,
+            null,
+            0
+          ]
+        ]
+      },
+      {
+        "code": "30200",
+        "moving": [
+          [
+            1,
+            3,
+            1000,
+            2
+          ],
+          [
+            1,
+            10,
+            1000,
+            2
+          ],
+          [
+            1,
+            30,
+            3000,
+            2
+          ],
+          [
+            2,
+            3,
+            1000,
+            3
+          ],
+          [
+            2,
+            10,
+            2000,
+            3
+          ],
+          [
+            2,
+            30,
+            2500,
+            3
+          ],
+          [
+            5,
+            3,
+            1400,
+            6
+          ],
+          [
+            5,
+            10,
+            1800,
+            6
+          ],
+          [
+            5,
+            30,
+            3000,
+            6
+          ]
+        ],
+        "outsideBounceCardCount": 0,
+        "shortPass": [
+          [
+            1,
+            3,
+            null,
+            0
+          ],
+          [
+            1,
+            10,
+            null,
+            0
+          ],
+          [
+            1,
+            30,
+            null,
+            0
+          ],
+          [
+            2,
+            3,
+            1500,
+            3
+          ],
+          [
+            2,
+            10,
+            null,
+            0
+          ],
+          [
+            2,
+            30,
+            null,
+            0
+          ],
+          [
+            5,
+            3,
+            1400,
+            6
+          ],
+          [
+            5,
+            10,
+            null,
+            0
+          ],
+          [
+            5,
+            30,
+            null,
+            0
+          ]
+        ]
+      }
+    ],
+    "shortPassAcceptedCount": 20
+  },
+  "stationarySelectedResult": {
+    "boundaryMarginMeters": 5,
+    "consecutiveSamples": 2,
+    "failedNegativeCases": [],
+    "falseCardCount": 0,
+    "minConfirmationDurationMs": 1000,
+    "regions": [
+      {
+        "code": "11140",
+        "negativeCases": 11,
+        "rates": [
+          {
+            "confirmationDelayMs": 1000,
+            "fixedCountWindowDelayMs": 1000,
+            "fixedCountWindowMiss": false,
+            "hz": 1,
+            "miss": false,
+            "sampleCount": 7
+          },
+          {
+            "confirmationDelayMs": 1000,
+            "fixedCountWindowDelayMs": null,
+            "fixedCountWindowMiss": true,
+            "hz": 2,
+            "miss": false,
+            "sampleCount": 13
+          },
+          {
+            "confirmationDelayMs": 1000,
+            "fixedCountWindowDelayMs": null,
+            "fixedCountWindowMiss": true,
+            "hz": 5,
+            "miss": false,
+            "sampleCount": 31
+          }
+        ]
+      },
+      {
+        "code": "41461",
+        "negativeCases": 11,
+        "rates": [
+          {
+            "confirmationDelayMs": 1000,
+            "fixedCountWindowDelayMs": 1000,
+            "fixedCountWindowMiss": false,
+            "hz": 1,
+            "miss": false,
+            "sampleCount": 7
+          },
+          {
+            "confirmationDelayMs": 1000,
+            "fixedCountWindowDelayMs": null,
+            "fixedCountWindowMiss": true,
+            "hz": 2,
+            "miss": false,
+            "sampleCount": 13
+          },
+          {
+            "confirmationDelayMs": 1000,
+            "fixedCountWindowDelayMs": null,
+            "fixedCountWindowMiss": true,
+            "hz": 5,
+            "miss": false,
+            "sampleCount": 31
+          }
+        ]
+      },
+      {
+        "code": "41463",
+        "negativeCases": 11,
+        "rates": [
+          {
+            "confirmationDelayMs": 1000,
+            "fixedCountWindowDelayMs": 1000,
+            "fixedCountWindowMiss": false,
+            "hz": 1,
+            "miss": false,
+            "sampleCount": 7
+          },
+          {
+            "confirmationDelayMs": 1000,
+            "fixedCountWindowDelayMs": null,
+            "fixedCountWindowMiss": true,
+            "hz": 2,
+            "miss": false,
+            "sampleCount": 13
+          },
+          {
+            "confirmationDelayMs": 1000,
+            "fixedCountWindowDelayMs": null,
+            "fixedCountWindowMiss": true,
+            "hz": 5,
+            "miss": false,
+            "sampleCount": 31
+          }
+        ]
+      },
+      {
+        "code": "41465",
+        "negativeCases": 11,
+        "rates": [
+          {
+            "confirmationDelayMs": 1000,
+            "fixedCountWindowDelayMs": 1000,
+            "fixedCountWindowMiss": false,
+            "hz": 1,
+            "miss": false,
+            "sampleCount": 7
+          },
+          {
+            "confirmationDelayMs": 1000,
+            "fixedCountWindowDelayMs": null,
+            "fixedCountWindowMiss": true,
+            "hz": 2,
+            "miss": false,
+            "sampleCount": 13
+          },
+          {
+            "confirmationDelayMs": 1000,
+            "fixedCountWindowDelayMs": null,
+            "fixedCountWindowMiss": true,
+            "hz": 5,
+            "miss": false,
+            "sampleCount": 31
+          }
+        ]
+      },
+      {
+        "code": "41550",
+        "negativeCases": 11,
+        "rates": [
+          {
+            "confirmationDelayMs": 1000,
+            "fixedCountWindowDelayMs": 1000,
+            "fixedCountWindowMiss": false,
+            "hz": 1,
+            "miss": false,
+            "sampleCount": 7
+          },
+          {
+            "confirmationDelayMs": 1000,
+            "fixedCountWindowDelayMs": null,
+            "fixedCountWindowMiss": true,
+            "hz": 2,
+            "miss": false,
+            "sampleCount": 13
+          },
+          {
+            "confirmationDelayMs": 1000,
+            "fixedCountWindowDelayMs": null,
+            "fixedCountWindowMiss": true,
+            "hz": 5,
+            "miss": false,
+            "sampleCount": 31
+          }
+        ]
+      },
+      {
+        "code": "44131",
+        "negativeCases": 11,
+        "rates": [
+          {
+            "confirmationDelayMs": 1000,
+            "fixedCountWindowDelayMs": 1000,
+            "fixedCountWindowMiss": false,
+            "hz": 1,
+            "miss": false,
+            "sampleCount": 7
+          },
+          {
+            "confirmationDelayMs": 1000,
+            "fixedCountWindowDelayMs": null,
+            "fixedCountWindowMiss": true,
+            "hz": 2,
+            "miss": false,
+            "sampleCount": 13
+          },
+          {
+            "confirmationDelayMs": 1000,
+            "fixedCountWindowDelayMs": null,
+            "fixedCountWindowMiss": true,
+            "hz": 5,
+            "miss": false,
+            "sampleCount": 31
+          }
+        ]
+      },
+      {
+        "code": "44133",
+        "negativeCases": 11,
+        "rates": [
+          {
+            "confirmationDelayMs": 1000,
+            "fixedCountWindowDelayMs": 1000,
+            "fixedCountWindowMiss": false,
+            "hz": 1,
+            "miss": false,
+            "sampleCount": 7
+          },
+          {
+            "confirmationDelayMs": 1000,
+            "fixedCountWindowDelayMs": null,
+            "fixedCountWindowMiss": true,
+            "hz": 2,
+            "miss": false,
+            "sampleCount": 13
+          },
+          {
+            "confirmationDelayMs": 1000,
+            "fixedCountWindowDelayMs": null,
+            "fixedCountWindowMiss": true,
+            "hz": 5,
+            "miss": false,
+            "sampleCount": 31
+          }
+        ]
+      },
+      {
+        "code": "30110",
+        "negativeCases": 11,
+        "rates": [
+          {
+            "confirmationDelayMs": 1000,
+            "fixedCountWindowDelayMs": 1000,
+            "fixedCountWindowMiss": false,
+            "hz": 1,
+            "miss": false,
+            "sampleCount": 7
+          },
+          {
+            "confirmationDelayMs": 1000,
+            "fixedCountWindowDelayMs": null,
+            "fixedCountWindowMiss": true,
+            "hz": 2,
+            "miss": false,
+            "sampleCount": 13
+          },
+          {
+            "confirmationDelayMs": 1000,
+            "fixedCountWindowDelayMs": null,
+            "fixedCountWindowMiss": true,
+            "hz": 5,
+            "miss": false,
+            "sampleCount": 31
+          }
+        ]
+      },
+      {
+        "code": "30200",
+        "negativeCases": 11,
+        "rates": [
+          {
+            "confirmationDelayMs": 1000,
+            "fixedCountWindowDelayMs": 1000,
+            "fixedCountWindowMiss": false,
+            "hz": 1,
+            "miss": false,
+            "sampleCount": 7
+          },
+          {
+            "confirmationDelayMs": 1000,
+            "fixedCountWindowDelayMs": null,
+            "fixedCountWindowMiss": true,
+            "hz": 2,
+            "miss": false,
+            "sampleCount": 13
+          },
+          {
+            "confirmationDelayMs": 1000,
+            "fixedCountWindowDelayMs": null,
+            "fixedCountWindowMiss": true,
+            "hz": 5,
+            "miss": false,
+            "sampleCount": 31
+          }
+        ]
+      }
+    ]
+  },
+  "candidateComparison": [
+    {
+      "boundaryMarginMeters": 5,
+      "consecutiveSamples": 2,
+      "falseTargetCardCount": 0,
+      "minConfirmationDurationMs": 0,
+      "movingDelayMs": {
+        "count": 81,
+        "max": 3000,
+        "min": 500,
+        "p50": 1000,
+        "p95": 3000
+      },
+      "movingMissCount": 0,
+      "outsideBounceCardCount": 0,
+      "prematureTargetCardCount": 0,
+      "shortPassAcceptedCount": 36
+    },
+    {
+      "boundaryMarginMeters": 10,
+      "consecutiveSamples": 2,
+      "falseTargetCardCount": 0,
+      "minConfirmationDurationMs": 0,
+      "movingDelayMs": {
+        "count": 81,
+        "max": 4000,
+        "min": 800,
+        "p50": 1400,
+        "p95": 3000
+      },
+      "movingMissCount": 0,
+      "outsideBounceCardCount": 0,
+      "prematureTargetCardCount": 0,
+      "shortPassAcceptedCount": 34
+    },
+    {
+      "boundaryMarginMeters": 20,
+      "consecutiveSamples": 2,
+      "falseTargetCardCount": 0,
+      "minConfirmationDurationMs": 0,
+      "movingDelayMs": {
+        "count": 81,
+        "max": 4000,
+        "min": 1400,
+        "p50": 2000,
+        "p95": 3500
+      },
+      "movingMissCount": 0,
+      "outsideBounceCardCount": 0,
+      "prematureTargetCardCount": 0,
+      "shortPassAcceptedCount": 7
+    },
+    {
+      "boundaryMarginMeters": 5,
+      "consecutiveSamples": 2,
+      "falseTargetCardCount": 0,
+      "minConfirmationDurationMs": 1000,
+      "movingDelayMs": {
+        "count": 81,
+        "max": 3000,
+        "min": 1000,
+        "p50": 1800,
+        "p95": 3000
+      },
+      "movingMissCount": 0,
+      "outsideBounceCardCount": 0,
+      "prematureTargetCardCount": 0,
+      "shortPassAcceptedCount": 20
+    },
+    {
+      "boundaryMarginMeters": 10,
+      "consecutiveSamples": 2,
+      "falseTargetCardCount": 0,
+      "minConfirmationDurationMs": 1000,
+      "movingDelayMs": {
+        "count": 80,
+        "max": 4500,
+        "min": 1000,
+        "p50": 2000,
+        "p95": 4000
+      },
+      "movingMissCount": 1,
+      "outsideBounceCardCount": 0,
+      "prematureTargetCardCount": 0,
+      "shortPassAcceptedCount": 16
+    },
+    {
+      "boundaryMarginMeters": 20,
+      "consecutiveSamples": 2,
+      "falseTargetCardCount": 0,
+      "minConfirmationDurationMs": 1000,
+      "movingDelayMs": {
+        "count": 80,
+        "max": 4600,
+        "min": 2000,
+        "p50": 2500,
+        "p95": 4000
+      },
+      "movingMissCount": 1,
+      "outsideBounceCardCount": 0,
+      "prematureTargetCardCount": 0,
+      "shortPassAcceptedCount": 0
+    },
+    {
+      "boundaryMarginMeters": 5,
+      "consecutiveSamples": 2,
+      "falseTargetCardCount": 0,
+      "minConfirmationDurationMs": 2000,
+      "movingDelayMs": {
+        "count": 81,
+        "max": 4000,
+        "min": 2000,
+        "p50": 2800,
+        "p95": 4000
+      },
+      "movingMissCount": 0,
+      "outsideBounceCardCount": 0,
+      "prematureTargetCardCount": 0,
+      "shortPassAcceptedCount": 0
+    },
+    {
+      "boundaryMarginMeters": 10,
+      "consecutiveSamples": 2,
+      "falseTargetCardCount": 0,
+      "minConfirmationDurationMs": 2000,
+      "movingDelayMs": {
+        "count": 79,
+        "max": 5000,
+        "min": 2000,
+        "p50": 3000,
+        "p95": 4800
+      },
+      "movingMissCount": 2,
+      "outsideBounceCardCount": 0,
+      "prematureTargetCardCount": 0,
+      "shortPassAcceptedCount": 0
+    },
+    {
+      "boundaryMarginMeters": 20,
+      "consecutiveSamples": 2,
+      "falseTargetCardCount": 0,
+      "minConfirmationDurationMs": 2000,
+      "movingDelayMs": {
+        "count": 79,
+        "max": 5600,
+        "min": 3000,
+        "p50": 3500,
+        "p95": 5000
+      },
+      "movingMissCount": 2,
+      "outsideBounceCardCount": 0,
+      "prematureTargetCardCount": 0,
+      "shortPassAcceptedCount": 0
+    },
+    {
+      "boundaryMarginMeters": 5,
+      "consecutiveSamples": 3,
+      "falseTargetCardCount": 0,
+      "minConfirmationDurationMs": 0,
+      "movingDelayMs": {
+        "count": 81,
+        "max": 4000,
+        "min": 800,
+        "p50": 2000,
+        "p95": 4000
+      },
+      "movingMissCount": 0,
+      "outsideBounceCardCount": 0,
+      "prematureTargetCardCount": 0,
+      "shortPassAcceptedCount": 29
+    },
+    {
+      "boundaryMarginMeters": 10,
+      "consecutiveSamples": 3,
+      "falseTargetCardCount": 0,
+      "minConfirmationDurationMs": 0,
+      "movingDelayMs": {
+        "count": 81,
+        "max": 5000,
+        "min": 1000,
+        "p50": 2000,
+        "p95": 4000
+      },
+      "movingMissCount": 0,
+      "outsideBounceCardCount": 0,
+      "prematureTargetCardCount": 0,
+      "shortPassAcceptedCount": 27
+    },
+    {
+      "boundaryMarginMeters": 20,
+      "consecutiveSamples": 3,
+      "falseTargetCardCount": 0,
+      "minConfirmationDurationMs": 0,
+      "movingDelayMs": {
+        "count": 81,
+        "max": 5000,
+        "min": 1600,
+        "p50": 3000,
+        "p95": 4000
+      },
+      "movingMissCount": 0,
+      "outsideBounceCardCount": 0,
+      "prematureTargetCardCount": 0,
+      "shortPassAcceptedCount": 3
+    },
+    {
+      "boundaryMarginMeters": 5,
+      "consecutiveSamples": 3,
+      "falseTargetCardCount": 0,
+      "minConfirmationDurationMs": 1000,
+      "movingDelayMs": {
+        "count": 81,
+        "max": 4000,
+        "min": 1000,
+        "p50": 2000,
+        "p95": 4000
+      },
+      "movingMissCount": 0,
+      "outsideBounceCardCount": 0,
+      "prematureTargetCardCount": 0,
+      "shortPassAcceptedCount": 20
+    },
+    {
+      "boundaryMarginMeters": 10,
+      "consecutiveSamples": 3,
+      "falseTargetCardCount": 0,
+      "minConfirmationDurationMs": 1000,
+      "movingDelayMs": {
+        "count": 80,
+        "max": 5000,
+        "min": 1500,
+        "p50": 2000,
+        "p95": 4000
+      },
+      "movingMissCount": 1,
+      "outsideBounceCardCount": 0,
+      "prematureTargetCardCount": 0,
+      "shortPassAcceptedCount": 16
+    },
+    {
+      "boundaryMarginMeters": 20,
+      "consecutiveSamples": 3,
+      "falseTargetCardCount": 0,
+      "minConfirmationDurationMs": 1000,
+      "movingDelayMs": {
+        "count": 80,
+        "max": 5000,
+        "min": 2000,
+        "p50": 3000,
+        "p95": 4000
+      },
+      "movingMissCount": 1,
+      "outsideBounceCardCount": 0,
+      "prematureTargetCardCount": 0,
+      "shortPassAcceptedCount": 0
+    },
+    {
+      "boundaryMarginMeters": 5,
+      "consecutiveSamples": 3,
+      "falseTargetCardCount": 0,
+      "minConfirmationDurationMs": 2000,
+      "movingDelayMs": {
+        "count": 81,
+        "max": 4000,
+        "min": 2000,
+        "p50": 2800,
+        "p95": 4000
+      },
+      "movingMissCount": 0,
+      "outsideBounceCardCount": 0,
+      "prematureTargetCardCount": 0,
+      "shortPassAcceptedCount": 0
+    },
+    {
+      "boundaryMarginMeters": 10,
+      "consecutiveSamples": 3,
+      "falseTargetCardCount": 0,
+      "minConfirmationDurationMs": 2000,
+      "movingDelayMs": {
+        "count": 79,
+        "max": 5000,
+        "min": 2000,
+        "p50": 3000,
+        "p95": 4800
+      },
+      "movingMissCount": 2,
+      "outsideBounceCardCount": 0,
+      "prematureTargetCardCount": 0,
+      "shortPassAcceptedCount": 0
+    },
+    {
+      "boundaryMarginMeters": 20,
+      "consecutiveSamples": 3,
+      "falseTargetCardCount": 0,
+      "minConfirmationDurationMs": 2000,
+      "movingDelayMs": {
+        "count": 79,
+        "max": 5600,
+        "min": 3000,
+        "p50": 3500,
+        "p95": 5000
+      },
+      "movingMissCount": 2,
+      "outsideBounceCardCount": 0,
+      "prematureTargetCardCount": 0,
+      "shortPassAcceptedCount": 0
+    },
+    {
+      "boundaryMarginMeters": 5,
+      "consecutiveSamples": 5,
+      "falseTargetCardCount": 0,
+      "minConfirmationDurationMs": 0,
+      "movingDelayMs": {
+        "count": 81,
+        "max": 6000,
+        "min": 1200,
+        "p50": 3000,
+        "p95": 6000
+      },
+      "movingMissCount": 0,
+      "outsideBounceCardCount": 0,
+      "prematureTargetCardCount": 0,
+      "shortPassAcceptedCount": 9
+    },
+    {
+      "boundaryMarginMeters": 10,
+      "consecutiveSamples": 5,
+      "falseTargetCardCount": 0,
+      "minConfirmationDurationMs": 0,
+      "movingDelayMs": {
+        "count": 78,
+        "max": 6000,
+        "min": 1400,
+        "p50": 3600,
+        "p95": 6000
+      },
+      "movingMissCount": 3,
+      "outsideBounceCardCount": 0,
+      "prematureTargetCardCount": 0,
+      "shortPassAcceptedCount": 9
+    },
+    {
+      "boundaryMarginMeters": 20,
+      "consecutiveSamples": 5,
+      "falseTargetCardCount": 0,
+      "minConfirmationDurationMs": 0,
+      "movingDelayMs": {
+        "count": 78,
+        "max": 6000,
+        "min": 2000,
+        "p50": 3600,
+        "p95": 6000
+      },
+      "movingMissCount": 3,
+      "outsideBounceCardCount": 0,
+      "prematureTargetCardCount": 0,
+      "shortPassAcceptedCount": 0
+    },
+    {
+      "boundaryMarginMeters": 5,
+      "consecutiveSamples": 5,
+      "falseTargetCardCount": 0,
+      "minConfirmationDurationMs": 1000,
+      "movingDelayMs": {
+        "count": 81,
+        "max": 6000,
+        "min": 1400,
+        "p50": 3000,
+        "p95": 6000
+      },
+      "movingMissCount": 0,
+      "outsideBounceCardCount": 0,
+      "prematureTargetCardCount": 0,
+      "shortPassAcceptedCount": 9
+    },
+    {
+      "boundaryMarginMeters": 10,
+      "consecutiveSamples": 5,
+      "falseTargetCardCount": 0,
+      "minConfirmationDurationMs": 1000,
+      "movingDelayMs": {
+        "count": 78,
+        "max": 6000,
+        "min": 1600,
+        "p50": 3800,
+        "p95": 6000
+      },
+      "movingMissCount": 3,
+      "outsideBounceCardCount": 0,
+      "prematureTargetCardCount": 0,
+      "shortPassAcceptedCount": 7
+    },
+    {
+      "boundaryMarginMeters": 20,
+      "consecutiveSamples": 5,
+      "falseTargetCardCount": 0,
+      "minConfirmationDurationMs": 1000,
+      "movingDelayMs": {
+        "count": 78,
+        "max": 6000,
+        "min": 2200,
+        "p50": 3800,
+        "p95": 6000
+      },
+      "movingMissCount": 3,
+      "outsideBounceCardCount": 0,
+      "prematureTargetCardCount": 0,
+      "shortPassAcceptedCount": 0
+    },
+    {
+      "boundaryMarginMeters": 5,
+      "consecutiveSamples": 5,
+      "falseTargetCardCount": 0,
+      "minConfirmationDurationMs": 2000,
+      "movingDelayMs": {
+        "count": 81,
+        "max": 6000,
+        "min": 2000,
+        "p50": 3500,
+        "p95": 6000
+      },
+      "movingMissCount": 0,
+      "outsideBounceCardCount": 0,
+      "prematureTargetCardCount": 0,
+      "shortPassAcceptedCount": 0
+    },
+    {
+      "boundaryMarginMeters": 10,
+      "consecutiveSamples": 5,
+      "falseTargetCardCount": 0,
+      "minConfirmationDurationMs": 2000,
+      "movingDelayMs": {
+        "count": 78,
+        "max": 6000,
+        "min": 2500,
+        "p50": 4000,
+        "p95": 6000
+      },
+      "movingMissCount": 3,
+      "outsideBounceCardCount": 0,
+      "prematureTargetCardCount": 0,
+      "shortPassAcceptedCount": 0
+    },
+    {
+      "boundaryMarginMeters": 20,
+      "consecutiveSamples": 5,
+      "falseTargetCardCount": 0,
+      "minConfirmationDurationMs": 2000,
+      "movingDelayMs": {
+        "count": 78,
+        "max": 6000,
+        "min": 3000,
+        "p50": 4800,
+        "p95": 6000
+      },
+      "movingMissCount": 3,
+      "outsideBounceCardCount": 0,
+      "prematureTargetCardCount": 0,
+      "shortPassAcceptedCount": 0
+    }
+  ],
+  "geometryRevisions": [
+    {
+      "code": "11140",
+      "regionRevisionId": "kr-sigungu-11140-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "geometrySha256": "7d30130051b57b22710b2a6cb4c3fb3d21cf08fe21162944c4cabae4a6e95d7e"
+    },
+    {
+      "code": "41461",
+      "regionRevisionId": "kr-sigungu-41461-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "geometrySha256": "0dd6d52bff78ba38746e811a356a27f5682c4510146d7963782bb0417a622a89"
+    },
+    {
+      "code": "41463",
+      "regionRevisionId": "kr-sigungu-41463-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "geometrySha256": "132444f65c5fad227e0f3cabeac59ba781577c97194b2fd3d6a0f8d472361ec0"
+    },
+    {
+      "code": "41465",
+      "regionRevisionId": "kr-sigungu-41465-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "geometrySha256": "ebb4c190eb9a3163a2dff8df2324482e8c7db4657c2a389dca2066feac42b0a4"
+    },
+    {
+      "code": "41550",
+      "regionRevisionId": "kr-sigungu-41550-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "geometrySha256": "606d522a21eca03ee969e8f6a3b38ed8bc6b8675729c61e276a76bfe121e48df"
+    },
+    {
+      "code": "44131",
+      "regionRevisionId": "kr-sigungu-44131-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "geometrySha256": "c2efe5b70febd824f5bf28395c8205b86931ec611dda8b2e41edb6c0c5225244"
+    },
+    {
+      "code": "44133",
+      "regionRevisionId": "kr-sigungu-44133-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "geometrySha256": "15d6bcac9f10bacb58d9b7a51364e017c6c5437ede14a0ef48dc7517886c724a"
+    },
+    {
+      "code": "30110",
+      "regionRevisionId": "kr-sigungu-30110-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "geometrySha256": "e8492947123c464fec182482a503df8a45bca563606e81e08f52413c65aa8a89"
+    },
+    {
+      "code": "30200",
+      "regionRevisionId": "kr-sigungu-30200-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "geometrySha256": "3ba915fd138f206f74cf6d58970d9079ee0b5ab1322fa2bd46c3fd7caa06331e"
+    }
+  ]
+}

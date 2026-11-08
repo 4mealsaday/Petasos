@@ -8,7 +8,6 @@ import com.petasos.app.capability.location.LocationSample
 import com.petasos.app.generation.StrictJson
 import com.petasos.app.location.*
 import com.petasos.app.platform.android.location.BundledRegionCatalog
-import com.petasos.app.platform.android.location.BundledRegionPolicyCatalog
 import java.util.UUID
 
 /** Disposable Room DB, packaged geometry and explicitly synthetic reviews/points. No product approval. */
@@ -55,16 +54,13 @@ object RegionPolicyStorageProbe {
                 geometry.install(manifest)
                 check(reader.reviewedPolicy(first.regionRevisionId) == null)
                 check(count("SELECT count(*) FROM region_revision WHERE verified_at IS NOT NULL") == 0L)
-                val bundledPolicies = BundledRegionPolicyCatalog(context, { now })
-                check(bundledPolicies.readBundle().reviews.isEmpty())
                 check(manifest.regions.size == 264)
                 val pendingBefore = manifest.regions.associate { entry -> entry.regionRevisionId to
                     text("SELECT policy_json FROM region_revision WHERE region_revision_id=?", entry.regionRevisionId) }
                 check(pendingBefore.all { (id, json) -> json == RegionGeometryMetadata.pendingPolicyJson(
                     manifest, manifest.regions.single { it.regionRevisionId == id }) })
                 repeat(2) {
-                    val emptyInstall = bundledPolicies.install(runtime.database, manifest)
-                    check(emptyInstall.newReviews == 0 && emptyInstall.unchangedReviews == 0)
+                    RegionGeometryProbeFixture.load(context, runtime.database)
                 }
                 check(count("SELECT count(*) FROM region_revision") == 264L)
                 check(count("SELECT count(*) FROM region_revision WHERE verified_at IS NOT NULL") == 0L)
@@ -72,7 +68,7 @@ object RegionPolicyStorageProbe {
                     text("SELECT policy_json FROM region_revision WHERE region_revision_id=?", id) == json })
                 check(count("SELECT count(*) FROM preference") == 0L && count("SELECT count(*) FROM session") == 0L &&
                     count("SELECT count(*) FROM collection_proof") == 0L)
-                mark("region_policy_pinned_empty_product_catalog_noop_all_264_regions_remain_pending")
+                mark("region_policy_geometry_only_reload_all_264_regions_remain_pending")
 
                 // A failure after the first legitimate update must roll back the whole review list.
                 reject { installer.install(manifest, listOf(firstReview, secondReview.copy(geometrySha256 = "b".repeat(64)))) }
@@ -105,7 +101,7 @@ object RegionPolicyStorageProbe {
                 mark("region_policy_first_finalization_exact_reinstall_noop_and_reviewed_payload_immutable")
 
                 // Asset reload must preserve the approved policy instead of comparing it with pending JSON.
-                val lookup = catalog.loadVerified(runtime.database)
+                val lookup = RegionGeometryProbeFixture.load(context, runtime.database)
                 val latitude = 37.476967047424026
                 val longitude = 127.01367673629329
                 check(lookup.containing(latitude, longitude).single().regionRevisionId == first.regionRevisionId)
@@ -151,14 +147,14 @@ object RegionPolicyStorageProbe {
                     check(!locations.isConfirmedRegionCurrent(confirmation) && !policyPermit.recheck(locations::isConfirmedRegionCurrent))
                     reject { installer.install(manifest, listOf(firstReview)) }
                     check(geometry.install(manifest).newRevisions == 0)
-                    val reloaded = catalog.loadVerified(runtime.database)
+                    val reloaded = RegionGeometryProbeFixture.load(context, runtime.database)
                     check(reloaded.containing(latitude, longitude).single().regionRevisionId == first.regionRevisionId)
                     check(count("SELECT count(*) FROM region_revision WHERE region_revision_id=? AND verified_at IS NULL", first.regionRevisionId) == 1L)
                     check(text("SELECT policy_json FROM region_revision WHERE region_revision_id=?", first.regionRevisionId) == originalJson)
                     check(locations.append("region-policy-segment", listOf(point(3))).confirmedRegionId == null)
                     check(count("SELECT count(*) FROM collection_proof") == proofCount)
                     locations.finishSegment("region-policy-segment", "explicit_stop", interrupted = false)
-                    mark("region_policy_catalog_reload_preserves_approval_then_revocation_existing_cards_and_proofs")
+                    mark("region_policy_geometry_reload_preserves_synthetic_approval_revocation_cards_and_proofs")
                     mark("region_policy_committed_confirmation_policy_source_rights_and_metadata_revocation_is_terminal")
 
                     // Corrupting a revoked row back to exact pending cannot erase the proof history guard.
@@ -270,5 +266,7 @@ object RegionPolicyStorageProbe {
                 mark("region_policy_invalid_cutoff_latest_identity_all_raw_rows_and_earned_proof_preserved")
             }
         } finally { SyntheticStorageFixture.cleanup(context, name) }
+        // Independent database: the packaged reviews never collide with the synthetic regressions above.
+        BundledRegionPolicyProbe.run(instrumentation, mark)
     }
 }

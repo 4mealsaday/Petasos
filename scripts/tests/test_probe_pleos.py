@@ -106,6 +106,12 @@ class OwnedPcmEofProbeTest(unittest.TestCase):
 
 
 class PackagedRegionalProbeTest(unittest.TestCase):
+    def test_bundled_story_scope_includes_existing_selected_policy_inventory(self):
+        scope = probe.probe_evidence_metadata("bundled-stories")["scope"]
+        self.assertIn("selected 9-region policy inventory", scope)
+        self.assertIn("preserve exact policy payloads", scope)
+        self.assertIn("no product records, trip, collection, audio or network", scope)
+
     def test_packaged_regional_checks_reject_external_data_before_adb(self):
         for name in ("region-hierarchy", "bundled-stories"):
             self.assertEqual(probe.PROBES.count(name), 1)
@@ -142,6 +148,7 @@ class AuxiliaryRouteProbeTest(unittest.TestCase):
         for required in ("one actual Android HTTPS request", "official public NAVER example",
                          "existing encrypted device configuration", "NGII/hierarchy projection in disposable Room",
                          "explicitly synthetic Android point/clock anchor", "source expiry and revocation",
+                         "selected packaged policy payloads unchanged",
                          "60-second probe budget", "no observed location", "active Pleos route proof",
                          "raw route file", "coordinate output", "configuration change"):
             self.assertIn(required, report["scope"])
@@ -399,6 +406,9 @@ class RegionPolicyStorageProbeTest(unittest.TestCase):
         report = probe.probe_evidence_metadata(name)
         self.assertEqual(report["fixture"], "official_packaged_geometry_disposable_database_public_synthetic_coordinates")
         self.assertIn("explicitly synthetic region policy reviews", report["scope"])
+        self.assertIn("actual selected 9-region catalog in a separate database", report["scope"])
+        self.assertIn("255 pending regions", report["scope"])
+        self.assertIn("exact selected-value Android proofs", report["scope"])
         self.assertIn("no product policy approval, consent change, location subscription, audio or model", report["scope"])
         for variant in ("debug", "privacy"):
             self.assertEqual(probe.evidence_stem(name, variant), name + ("-privacy" if variant == "privacy" else ""))

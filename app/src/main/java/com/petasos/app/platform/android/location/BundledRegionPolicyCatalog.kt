@@ -46,6 +46,6 @@ internal class BundledRegionPolicyCatalog(
         const val MANIFEST_ASSET = "regions/reviewed-policy-catalog-v1.json"
         // Change only after offline review of the exact catalog and evidence artifacts. Neither this
         // hash nor evidenceSha256 means the app has independently verified an evidence file's truth.
-        const val MANIFEST_SHA256 = "b1438f26ca72e27e847bad2809ca1ce21936c3f9d0c1cb6539cb7a6aecc37edd"
+        const val MANIFEST_SHA256 = "426d66669f5687215d03b4bcefa83a4b305b77da00bd941481bbf48ef6168568"
     }
 }

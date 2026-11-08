@@ -50,3 +50,11 @@ dev21의 관측 JSON은 canary·payload 구조별 개수만 보존했다. 과거
 태그는 16개 매치 레코드 모두 `unsupported_tag_characters`로 거절되었고 출력 목록은 비어 있다. 이는 단순히 추가한 출력 문법이 보수적이어서 거절된 `tag_identifier_shape`와 다르며, 실제 Android 속성명에 허용하지 않는 문자를 포함한 경우다. 원래 태그를 그대로 사용하는 `log.tag.<TAG>`를 공개 `setprop` 명령으로 구성할 수 없으므로 이 이미지에서 관측한 경로의 정확한 태그별 차단은 적용하지 않았다. 태그 문자열을 치환하거나 wildcard/prefix가 적용된다고 추측하지 않는다.
 
 이 결과로 이번 공개 태그 설정 조사는 종료한다. 전역 로그 억제, 서비스/이미지 변경, 숨겨진 API, 실제 마이크 입력, 제품 마이크 게이트 활성화는 수행하지 않았다. 기능 PASS와 음성 원문 로그 MATCH_FOUND는 별개로 유지하며, 배포 가능한 원문 로그 차단 근거는 확보되지 않았다.
+
+## 2026-11-09 공개 대안 재검토
+
+[공식 SDK 릴리즈](https://document.pleos.ai/docs/pleos-only/release-note/sdk-release-note)의 최신 공개 STT/TTS는 3.3.1(2026-10-19)이다. Log 유틸의 공개 노출 종료는 별도 SpeechService에서 원문 로그가 제거됐다는 근거가 아니다. 공개 API/설정에서 새 원문 로그 OFF 경로는 확인하지 못했다.
+
+[Android SpeechRecognizer](https://developer.android.com/reference/android/speech/SpeechRecognizer)의 on-device 인식기는 현재 기기에서 지원되지 않는다. [EXTRA_PREFER_OFFLINE](https://developer.android.com/reference/android/speech/RecognizerIntent#EXTRA_PREFER_OFFLINE)은 구현체가 무시할 수 있으며, 기본 recognizer의 존재가 무로그 보장을 뜻하지 않는다. 표준 TTS의 기존 초기화 ERROR도 그대로다. 이 재검토에서는 실제 인식·마이크·기기/계정 설정을 실행하지 않았다.
+
+사용자에게 다른 제공사의 공식 STT·개인 대화용 TTS를 보관 조건과 함께 검토해 연결할지, 음성 대화를 보류하고 UI·데모를 계속할지 선택을 요청했다. 답변 전에는 새로운 음성 제공자를 선정하거나 실제 발화를 전송하지 않는다. STT만 바꾸고 개인 답변을 현재 Pleos TTS로 보내는 것은 출력 원문 로그 문제를 해결하지 않는다. 독립적인 지역·콘텐츠 개발은 계속한다.

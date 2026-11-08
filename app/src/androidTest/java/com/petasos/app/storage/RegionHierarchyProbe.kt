@@ -77,7 +77,7 @@ object RegionHierarchyProbe {
                 check(RoomRegionPolicyInstaller(runtime.database, { now }).install(manifest, listOf(policyReview)).newReviews == 1)
                 check(count("SELECT count(*) FROM region_revision WHERE verified_at IS NOT NULL") == 1L)
                 check(count("SELECT count(*) FROM region_revision WHERE region_revision_id=? AND verified_at IS NULL", parent.regionRevisionId) == 1L)
-                val lookup = catalog.loadVerified(runtime.database)
+                val lookup = RegionGeometryProbeFixture.load(context, runtime.database)
                 check(lookup.selectionKey == hierarchy.fingerprint)
                 check(lookup.containing(latitude, longitude).single().regionRevisionId == leaf.regionRevisionId)
 

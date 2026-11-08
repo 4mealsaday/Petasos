@@ -18,6 +18,9 @@ import com.petasos.app.content.ContentBundleCodec
 import com.petasos.app.content.ContentVersion
 import com.petasos.app.generation.StrictJson
 import com.petasos.app.platform.android.content.BundledStoryCatalog
+import com.petasos.app.platform.android.location.BundledRegionCatalog
+import com.petasos.app.platform.android.location.BundledRegionPolicyCatalog
+import com.petasos.app.location.ReviewedRegionPolicyCodec
 import com.petasos.app.platform.android.runtime.PetasosSessionHost
 import com.petasos.app.platform.automotive.CarPolicySource
 import com.petasos.app.platform.automotive.VehiclePowerPolicy
@@ -25,6 +28,7 @@ import com.petasos.app.platform.media.PetasosMediaService
 import com.petasos.app.playback.AdapterPhase
 import com.petasos.app.playback.PlaybackBlocker
 import com.petasos.app.storage.StorageDatabase
+import com.petasos.app.storage.RoomRegionPolicyStore
 import java.io.ByteArrayOutputStream
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
@@ -153,6 +157,19 @@ object ProductPlaybackProbe {
             }
             val entries = await(children, "APP_PLAYBACK_CATALOG_UNAVAILABLE").value
                 ?: throw ProbeFailure("APP_PLAYBACK_CATALOG_UNAVAILABLE")
+            // Observe the real Host bootstrap; never install/repair reviews from this probe.
+            val regionManifest = BundledRegionCatalog(context).readManifest()
+            val regionReviews = BundledRegionPolicyCatalog(context).readBundle().reviews
+            val regionPolicies = RoomRegionPolicyStore(database, System::currentTimeMillis)
+            for (review in regionReviews) {
+                val entry = regionManifest.regions.single { it.regionRevisionId == review.regionRevisionId }
+                val expected = ReviewedRegionPolicyCodec.storedPolicyJson(regionManifest, entry, review)
+                if (count("SELECT count(*) FROM region_revision WHERE region_revision_id=? AND verified_at=? AND policy_json=?",
+                        review.regionRevisionId, review.verifiedAt, expected) != 1L ||
+                    regionPolicies.reviewedPolicy(review.regionRevisionId)?.policy != review.policy)
+                    throw ProbeFailure("APP_PLAYBACK_PRODUCT_REGION_POLICY_NOT_CURRENT")
+            }
+            mark("app_playback_product_current_packaged_region_policies_${regionReviews.size}")
             val selected: MediaItem = entries.firstOrNull { item ->
                 (bundledVersion == null || item.mediaId == bundledVersion.storyVersionId) &&
                 item.localConfiguration == null && item.mediaMetadata.isPlayable == true && count("""

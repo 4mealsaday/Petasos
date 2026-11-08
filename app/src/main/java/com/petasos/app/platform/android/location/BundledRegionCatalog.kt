@@ -38,7 +38,7 @@ internal class BundledRegionCatalog(context: Context) {
         val installer = RoomRegionInstaller(database)
         installer.install(manifest)
         // Only APK-pinned, explicitly reviewed policies may finalize initial pending revisions.
-        // The current catalog is empty; geometry installation alone never grants visit authority.
+        // Geometry installation alone never grants visit authority; only exact catalog revisions do.
         BundledRegionPolicyCatalog(app).install(database, manifest)
         val packed = packed(manifest, installer)
         // Deduct the CRS operation's stated expected accuracy. It is not a hard bound or a visit policy.

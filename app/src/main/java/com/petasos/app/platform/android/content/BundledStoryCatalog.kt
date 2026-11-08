@@ -31,7 +31,8 @@ internal class BundledStoryCatalog(context: Context) {
         }
         if (ContentBundleCodec.sha256(bytes) != SHA256) throw ContentException("SOURCE_HASH_MISMATCH")
         ContentBundleCodec.decode(bytes, System.currentTimeMillis())
-        // Exact v2 region bindings require the official revisions first. This grants no visit policy.
+        // Exact v2 bindings require official revisions first. Only the separate reviewed catalog
+        // can grant visit policy; the content bundle itself grants none.
         BundledRegionCatalog(app).loadVerified(database)
         return RoomContentInstaller(database, System::currentTimeMillis, ownsDatabase = false).use { it.install(bytes) }
     }
