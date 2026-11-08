@@ -7,6 +7,9 @@ import com.petasos.app.location.RegionBoundaryLookup
 import com.petasos.app.location.RegionDatasetException
 import com.petasos.app.location.RegionDatasetManifest
 import com.petasos.app.location.RegionDatasetManifestCodec
+import com.petasos.app.location.HierarchicalRegionBoundaryLookup
+import com.petasos.app.location.ReviewedRegionHierarchy
+import com.petasos.app.location.ReviewedRegionHierarchyCodec
 import com.petasos.app.storage.RoomRegionInstaller
 import com.petasos.app.storage.StorageDatabase
 import java.io.ByteArrayOutputStream
@@ -28,6 +31,7 @@ internal class BundledRegionCatalog(context: Context) {
     /** Exposed internally for isolated verification: unlike product load, a bad installation fails. */
     fun loadVerified(database: StorageDatabase): RegionBoundaryLookup {
         val manifest = readManifest()
+        val hierarchy = readHierarchy(manifest)
         val installer = RoomRegionInstaller(database)
         installer.install(manifest)
         // Only APK-pinned, explicitly reviewed policies may finalize initial pending revisions.
@@ -42,9 +46,25 @@ internal class BundledRegionCatalog(context: Context) {
             isAuthorized = { installer.isAuthorized(manifest, it.regionRevisionId) },
             quarantinedBounds = manifest.regions.filter { it.status == "quarantined" }.map { it.bounds })
         // Deduct the CRS operation's stated expected accuracy. It is not a hard bound or a visit policy.
-        return RegionBoundaryLookup { latitude, longitude -> packed.containing(latitude, longitude).map {
+        val adjusted = RegionBoundaryLookup { latitude, longitude -> packed.containing(latitude, longitude).map {
             it.copy(interiorDistanceMeters = max(0.0, it.interiorDistanceMeters - manifest.transform.expectedAccuracyMeters))
         } }
+        return HierarchicalRegionBoundaryLookup(adjusted, hierarchy) { installer.isAuthorized(manifest, it) }
+    }
+
+    fun readHierarchy(manifest: RegionDatasetManifest = readManifest()): ReviewedRegionHierarchy {
+        val bytes = app.assets.open(HIERARCHY_ASSET).use { input ->
+            val output = ByteArrayOutputStream()
+            val buffer = ByteArray(4096)
+            while (true) {
+                val count = input.read(buffer)
+                if (count < 0) break
+                if (count == 0 || output.size() + count > 65_536) throw RegionDatasetException("INVALID_REGION_HIERARCHY")
+                output.write(buffer, 0, count)
+            }
+            output.toByteArray()
+        }
+        return ReviewedRegionHierarchyCodec.decode(bytes, HIERARCHY_SHA256, manifest)
     }
 
     fun readManifest(): RegionDatasetManifest {
@@ -67,5 +87,7 @@ internal class BundledRegionCatalog(context: Context) {
         const val MANIFEST_ASSET = "regions/ngii-2026-09-21-v1/manifest.json"
         // Review pin is changed only with the reviewed source/compiler artifacts, never from the manifest itself.
         const val MANIFEST_SHA256 = "3e2117159aa65c6c8f69826f534a8065d1247497039827d1b638f77d580f1bf9"
+        const val HIERARCHY_ASSET = "regions/reviewed-hierarchy-v1.json"
+        const val HIERARCHY_SHA256 = "cf428d289dd504b3b8d1d481ea4e80f789a1db7e531ebd06ba749422a3971e5b"
     }
 }

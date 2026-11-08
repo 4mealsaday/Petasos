@@ -11,6 +11,7 @@ import com.google.common.util.concurrent.SettableFuture
 import com.petasos.app.generation.*
 import com.petasos.app.platform.android.summary.SummaryBackground
 import com.petasos.app.platform.android.music.BundledMusicCatalog
+import com.petasos.app.platform.android.content.BundledStoryCatalog
 import com.petasos.app.platform.android.location.BundledRegionCatalog
 import com.petasos.app.platform.android.location.AndroidLocationSource
 import com.petasos.app.platform.android.location.LocationAccess
@@ -387,14 +388,15 @@ class PetasosSessionHost(
         val tripId = candidate?.tripId ?: UUID.randomUUID().toString()
         val sessionId = UUID.randomUUID().toString()
         clockScopeId = UUID.randomUUID().toString()
-        regionalPlanner = RegionalStoryPlanner(sessionId, clockScopeId)
+        val hierarchy = try { regionCatalog.readHierarchy() } catch (_: Exception) { ReviewedRegionHierarchy.NONE }
+        regionalPlanner = RegionalStoryPlanner(sessionId, clockScopeId, hierarchy = hierarchy)
         lookahead = PlaybackLookahead()
         planningBoundary = PlanningBoundaryMemory()
         storyTiming = RoomStoryTimingStore(persistence)
         val locations = RoomLocationStore(persistence.database, regionCatalog.load(persistence.database), System::currentTimeMillis, ownsDatabase = false)
         locationStore = locations
         navigationStore = RoomNavigationStore(persistence.database, ownsDatabase = false)
-        val automaticStories = RoomAutomaticStoryStore(persistence.database, System::currentTimeMillis)
+        val automaticStories = RoomAutomaticStoryStore(persistence.database, System::currentTimeMillis, hierarchy = hierarchy)
         val landmarkStories = RoomLandmarkCandidates(persistence.database)
         val contentPlanner = ContentPlanner(clockScopeId)
         val landmarkSession = LandmarkCandidateSession(contentPlanner, sessionId, clockScopeId)
@@ -404,7 +406,7 @@ class PetasosSessionHost(
             val seed = available.firstOrNull { it.reason == CandidateReason.CURRENT_REGION }
             val plan = if (target != null && seed != null) AutomaticGenerationPlan(
                 "${target.sessionId}:${target.planningRevision}:${seed.story.storyId}", seed.story.versionId,
-                target.regionId, target.routeDependency,
+                seed.regionId!!, target.routeDependency, target.regionId, target.storyScope?.hierarchyKey,
             ) else null
             automaticGenerationPlan = plan
             automaticGeneration?.update(plan)
@@ -471,7 +473,7 @@ class PetasosSessionHost(
                 val state = runtime?.snapshot()
                 val request = state?.let { OperationToken(it.sessionId, it.cancelEpoch, UUID.randomUUID().toString()) }
                 val storage = persistence.storyGenerationStore()
-                val seed = automaticStories.candidates(plan.regionId).firstOrNull { it.story.versionId == plan.seedVersionId }
+                val seed = automaticStories.candidates(plan.passageRegionId).firstOrNull { it.story.versionId == plan.seedVersionId && it.regionId == plan.regionId }
                 val prepared = if (request != null && seed != null && authorized())
                     storage.prepare(request, plan.seedVersionId, emptyList(), plan.routeRevision, authorized) else null
                 if (prepared == null || prepared.context.regionId != plan.regionId) {
@@ -480,7 +482,7 @@ class PetasosSessionHost(
                 } else client.submitStory(request!!, prepared.context) { result ->
                     queue.execute {
                         val installed = try {
-                            if (!authorized() || !automaticStories.isCurrent(seed!!, plan.regionId)) null
+                            if (!authorized() || !automaticStories.isCurrent(seed!!, plan.passageRegionId)) null
                             else (result as? GenerationOutcome.Success)?.value?.let { storage.install(prepared, it) }
                         } catch (_: Exception) { null }
                         if (installed != null) catalog = RoomMediaCatalog(persistence).items()
@@ -495,7 +497,9 @@ class PetasosSessionHost(
                 !disposed && !isEndingTrip() && storyPreparation.get() == null &&
                     automaticGenerationPlan == plan && state?.playIntent == true &&
                     !state.interactionIntent && state.blockers.isEmpty() && !state.closed &&
-                    target != null && regionalPlanner?.isCurrent(target, SystemClock.elapsedRealtime()) == true &&
+                    target != null && target.regionId == plan.passageRegionId && target.allowsStoryRegion(plan.regionId) &&
+                    target.storyScope?.hierarchyKey == plan.hierarchyKey &&
+                    regionalPlanner?.isCurrent(target, SystemClock.elapsedRealtime()) == true &&
                     currentRegionEvidence(target)
             },
             onChanged = { queue.execute { refreshPlanning(); changed() } },
@@ -575,6 +579,9 @@ class PetasosSessionHost(
         check(!disposed)
         SummaryBackground.ensureRecovered(context)
         return store ?: RoomRuntimePersistence(context, musicCatalog = musicCatalog).also {
+            // Install reviewed public seeds once on the worker, before any catalog read. A rejected
+            // bundle leaves existing content/settings available and grants no trip or location consent.
+            BundledStoryCatalog(context).load(it.database)
             store = it
             musicTracks = try { musicCatalog.credits().map { credit -> credit.track } } catch (_: Exception) { emptyList() }
         }

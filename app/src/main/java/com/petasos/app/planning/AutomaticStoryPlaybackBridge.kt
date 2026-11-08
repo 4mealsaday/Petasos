@@ -71,7 +71,7 @@ class AutomaticStoryPlaybackBridge(
             // Starts and explicit skips are session exclusions, applied before the store's result cap.
             candidates(region, excluded).filter { candidate ->
                 candidate.story.storyId !in excludedStoryIds &&
-                    (candidate.reason == CandidateReason.INTEREST || candidate.regionId == region)
+                    (candidate.reason == CandidateReason.INTEREST || eligibleRegion(context, candidate.regionId))
             }.sortedBy { if (it.reason == CandidateReason.CURRENT_REGION) 0 else 1 }
                 .distinctBy { it.story.storyId }
         } catch (failure: Exception) {
@@ -199,7 +199,7 @@ class AutomaticStoryPlaybackBridge(
             entry.story.versionId != reference.versionId || reference.paragraphId !in entry.story.paragraphIds) return false
         return when (entry) {
             is Entry.Ordinary -> entry.candidate.reason == CandidateReason.INTEREST ||
-                entry.candidate.regionId == selectionRegion(current.context) &&
+                eligibleRegion(current.context, entry.candidate.regionId) &&
                 (current.context.regionalTarget?.let { try { targetPlayable(it) } catch (_: Exception) { false } } ?: true)
             is Entry.Landmark -> freshLocation(current.context) && landmarkSession?.isCurrent(entry.offer) == true
         }
@@ -210,6 +210,13 @@ class AutomaticStoryPlaybackBridge(
         val target = context.regionalTarget ?: return freshRegion(context)
         if (target.routeDependency == null && !regionAuthorized(context)) return null
         return target.regionId.takeIf { try { targetCurrent(target) } catch (_: Exception) { false } }
+    }
+
+    private fun eligibleRegion(context: PlanningContext, storyRegionId: String?): Boolean {
+        val selected = selectionRegion(context) ?: return false
+        val target = context.regionalTarget
+        return if (target != null && target.regionId == selected) target.allowsStoryRegion(storyRegionId)
+        else selected == storyRegionId
     }
 
     private fun freshRegion(context: PlanningContext): String? {

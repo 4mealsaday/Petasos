@@ -1,6 +1,8 @@
 package com.petasos.app.planning
 
 import com.petasos.app.location.LocationFreshness
+import com.petasos.app.location.ReviewedRegionHierarchy
+import com.petasos.app.location.RegionalStoryScope
 import java.util.Collections
 import java.util.concurrent.atomic.AtomicReference
 
@@ -88,7 +90,12 @@ data class RegionalStoryTarget(
     val expiresAtElapsedMs: Long?,
     /** A changed confirmation policy must create a new planning revision even for the same region. */
     val regionPolicyKey: String? = null,
-)
+    /** The passage stays a leaf/forecast identity; stories retain their independently bound region. */
+    val storyScope: RegionalStoryScope? = null,
+) {
+    init { require(storyScope == null || storyScope.passageRegionId == regionId) }
+    fun allowsStoryRegion(storyRegionId: String?): Boolean = storyScope?.allows(storyRegionId) ?: (regionId == storyRegionId)
+}
 
 /**
  * Chooses a generation target, not a playback command or an assertion that the car arrived.
@@ -102,6 +109,7 @@ class RegionalStoryPlanner(
     private val maximumPlanningHorizonMs: Long = 600_000,
     /** A preparation/playback allowance for a soon-upcoming region, not an assertion of arrival. */
     private val maximumApproachLeadMs: Long = 30_000,
+    private val hierarchy: ReviewedRegionHierarchy = ReviewedRegionHierarchy.NONE,
 ) {
     init {
         require(sessionId.isNotBlank() && clockScopeId.isNotBlank())
@@ -135,12 +143,14 @@ class RegionalStoryPlanner(
                 passage.entersAtElapsedMs - earliest > maximumApproachLeadMs) return withdraw()
             if (maxOf(earliest, passage.entersAtElapsedMs) - input.elapsedMs > maximumPlanningHorizonMs) return withdraw()
             RegionalStoryTarget(sessionId, clockScopeId, 0, passage.regionId, forecast.routeRevision,
-                passage.visitId, earliest, minOf(passage.exitsAtElapsedMs, forecast.validUntilElapsedMs))
+                passage.visitId, earliest, minOf(passage.exitsAtElapsedMs, forecast.validUntilElapsedMs),
+                storyScope = hierarchy.scope(passage.regionId))
         } else {
             // No reviewed projection: prepare only the actually confirmed current region.
             // This does not predict that the car will remain here until earliestStartElapsedMs.
             val region = input.currentRegionId?.takeIf { regionAuthorized(input) } ?: return withdraw()
-            RegionalStoryTarget(sessionId, clockScopeId, 0, region, null, null, earliest, null, input.currentRegionPolicyKey)
+            RegionalStoryTarget(sessionId, clockScopeId, 0, region, null, null, earliest, null, input.currentRegionPolicyKey,
+                hierarchy.scope(region))
         }
         val previous = latest.get()?.target
         val nextRevision = if (previous != null && sameDestination(previous, selected)) {
@@ -211,13 +221,13 @@ class RegionalStoryPlanner(
         val expectedNow = forecast.passages.firstOrNull {
             it.entersAtElapsedMs <= input.elapsedMs && input.elapsedMs < it.exitsAtElapsedMs
         } ?: return true
-        return expectedNow.regionId == actualRegion
+        return hierarchy.agrees(actualRegion, expectedNow.regionId)
     }
 
     private fun sameDestination(first: RegionalStoryTarget, second: RegionalStoryTarget): Boolean =
         first.sessionId == second.sessionId && first.clockScopeId == second.clockScopeId &&
             first.regionId == second.regionId && first.routeDependency == second.routeDependency &&
-            first.visitId == second.visitId && first.regionPolicyKey == second.regionPolicyKey
+            first.visitId == second.visitId && first.regionPolicyKey == second.regionPolicyKey && first.storyScope == second.storyScope
 
     private fun regionAuthorized(input: RegionalPlanningInput): Boolean =
         try { input.currentRegionAuthority() } catch (_: Exception) { false }

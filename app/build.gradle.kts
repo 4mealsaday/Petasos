@@ -15,8 +15,8 @@ android {
         applicationId = "com.petasos.app"
         minSdk = 28
         targetSdk = 34
-        versionCode = 24
-        versionName = "0.8.0-dev.24"
+        versionCode = 25
+        versionName = "0.8.0-dev.25"
         testInstrumentationRunner = "com.petasos.app.diagnostics.SdkProbeInstrumentation"
         // The current verified Pleos target is ARM64. Do not package untested host ABIs.
         ndk { abiFilters += "arm64-v8a" }

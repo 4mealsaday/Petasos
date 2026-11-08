@@ -82,9 +82,12 @@ class ContentPlanner(private val clockScopeId: String) {
         if (context.userSpeaking || context.clockScopeId != clockScopeId) return null
         return candidates.values.firstOrNull { it.reason == CandidateReason.LANDMARK } ?:
             candidates.values.firstOrNull { it.reason == CandidateReason.CHECKPOINT } ?:
-            candidates.values.firstOrNull { freshLocation(context) &&
+            candidates.values.filter { freshLocation(context) &&
                 (context.regionalTarget?.routeDependency != null || regionAuthorized(context)) && it.reason == CandidateReason.UPCOMING_REGION &&
-                it.regionId == context.regionalTarget?.regionId } ?:
+                context.regionalTarget?.allowsStoryRegion(it.regionId) == true }
+                .minWithOrNull(compareBy<StoryCandidate> {
+                    context.regionalTarget?.storyScope?.eligibleStoryRegionIds?.indexOf(it.regionId) ?: 0
+                }.thenBy { it.story.storyId }) ?:
             candidates.values.firstOrNull { freshLocation(context) && regionAuthorized(context) && it.reason == CandidateReason.CURRENT_REGION &&
                 it.regionId != null && it.regionId == context.currentRegionId } ?:
             candidates.values.firstOrNull { it.reason == CandidateReason.INTEREST }

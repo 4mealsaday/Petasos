@@ -7,6 +7,8 @@ import com.petasos.app.content.ContentBundleCodec
 import com.petasos.app.generation.StrictJson
 import com.petasos.app.planning.AutomaticStoryCandidate
 import com.petasos.app.planning.CandidateReason
+import com.petasos.app.location.ReviewedRegionHierarchy
+import com.petasos.app.location.RegionalStoryScope
 import java.util.concurrent.Callable
 
 /** Read-only RUN-07 eligibility. An offered handle never replaces the same checks before output. */
@@ -14,6 +16,7 @@ class RoomAutomaticStoryStore internal constructor(
     private val database: StorageDatabase,
     private val wallTime: () -> Long = System::currentTimeMillis,
     private val ownsDatabase: Boolean = false,
+    private val hierarchy: ReviewedRegionHierarchy = ReviewedRegionHierarchy.NONE,
 ) : AutoCloseable {
     constructor(context: Context, databaseName: String = "petasos.db") : this(
         StorageDatabase.open(context, databaseName), System::currentTimeMillis, true,
@@ -27,20 +30,21 @@ class RoomAutomaticStoryStore internal constructor(
     /** Region first, then exact explicit-interest tags; no keyword inference or implicit preference writes. */
     fun candidates(currentRegionId: String?, excludedStoryIds: Set<String> = emptySet()): List<AutomaticStoryCandidate> = read(emptyList()) {
         val region = currentRegionId?.takeIf { it.isNotBlank() }
+        val scope = region?.let(hierarchy::scope)
         val excluded = excludedStoryIds.toSet()
         val interest = readInterest()
         val result = mutableListOf<AutomaticStoryCandidate>()
         // Apply reviewed regional eligibility before priority and the result cap. Raw region_id
         // alone could otherwise put 64 unreviewed interest rows ahead of a valid regional story.
-        val reasons = if (region == null) listOf(CandidateReason.INTEREST)
-            else listOf(CandidateReason.CURRENT_REGION, CandidateReason.INTEREST)
-        for (reason in reasons) {
-            val statement = "${RoomAutomaticStoryEligibility.SELECT}" + (if (reason == CandidateReason.CURRENT_REGION) " AND s.region_id=?" else "") + " ORDER BY s.story_id"
-            val arguments = if (reason == CandidateReason.CURRENT_REGION) arrayOf<Any?>(region) else emptyArray()
+        val searches = (scope?.eligibleStoryRegionIds ?: emptyList()).map { CandidateReason.CURRENT_REGION to it } +
+            listOf(CandidateReason.INTEREST to null)
+        for ((reason, storyRegion) in searches) {
+            val statement = "${RoomAutomaticStoryEligibility.SELECT}" + (if (storyRegion != null) " AND s.region_id=?" else "") + " ORDER BY s.story_id"
+            val arguments = if (storyRegion != null) arrayOf<Any?>(storyRegion) else emptyArray()
             query(statement, *arguments).use { rows ->
                 while (result.size < MAX_CANDIDATES && rows.moveToNext()) {
                     if (rows.getString(rows.getColumnIndexOrThrow("story_id")) in excluded) continue
-                    readCandidate(rows, region, interest)?.takeIf { it.reason == reason }?.let(result::add)
+                    readCandidate(rows, scope, interest)?.takeIf { it.reason == reason }?.let(result::add)
                 }
             }
         }
@@ -52,7 +56,7 @@ class RoomAutomaticStoryStore internal constructor(
         val region = currentRegionId?.takeIf { it.isNotBlank() }
         query("${RoomAutomaticStoryEligibility.SELECT} AND v.story_version_id=?", candidate.story.versionId).use { rows ->
             if (!rows.moveToFirst()) return@use false
-            val current = readCandidate(rows, region, readInterest()) ?: return@use false
+            val current = readCandidate(rows, region?.let(hierarchy::scope), readInterest()) ?: return@use false
             current.story == candidate.story && current.reason == candidate.reason &&
                 current.regionId == candidate.regionId && current.eligibilityKey == candidate.eligibilityKey
         }
@@ -70,11 +74,12 @@ class RoomAutomaticStoryStore internal constructor(
         null
     }
 
-    private fun readCandidate(row: Cursor, currentRegionId: String?, interest: Interest?): AutomaticStoryCandidate? {
+    private fun readCandidate(row: Cursor, scope: RegionalStoryScope?, interest: Interest?): AutomaticStoryCandidate? {
         val record = eligibility.read(row) ?: return null
         val tags = record.interestTags
         val storyRegion = record.regionId
-        val regionBindingKey = if (currentRegionId != null && storyRegion == currentRegionId)
+        val regionBindingKey = if (scope?.allows(storyRegion) == true && storyRegion != null &&
+            matchesHierarchyRevision(record.storyId, storyRegion))
             regionBindings.currentKey(record.storyId, storyRegion) else null
         val reason = when {
             regionBindingKey != null -> CandidateReason.CURRENT_REGION
@@ -86,12 +91,20 @@ class RoomAutomaticStoryStore internal constructor(
         val key = ContentBundleCodec.sha256(StrictJson.encode(linkedMapOf(
             "metadata" to record.metadata, "reason" to reason.name,
             "regionBinding" to if (reason == CandidateReason.CURRENT_REGION) regionBindingKey else null,
+            "regionScope" to if (reason == CandidateReason.CURRENT_REGION) listOf(scope!!.passageRegionId,
+                scope.eligibleStoryRegionIds, scope.hierarchyKey) else null,
             "preference" to if (reason == CandidateReason.INTEREST) mapOf(
                 "version" to interest!!.version, "keywords" to interest.keywords,
             ) else null,
         )))
         return AutomaticStoryCandidate(prepared, reason,
             if (reason == CandidateReason.CURRENT_REGION) storyRegion else null, key)
+    }
+
+    private fun matchesHierarchyRevision(storyId: String, regionId: String): Boolean {
+        val revision = hierarchy.reviewedRevision(regionId) ?: return true
+        return query("SELECT 1 FROM story_region_binding WHERE story_id=? AND region_id=? AND region_revision_id=?",
+            storyId, regionId, revision).use { it.moveToFirst() }
     }
 
     private fun query(statement: String, vararg arguments: Any?): Cursor = sql.query(SimpleSQLiteQuery(statement, arguments))

@@ -49,6 +49,7 @@ class SdkProbeInstrumentation : Instrumentation() {
             when (probe) {
                 "location" -> location()
                 "android-location-contract" -> com.petasos.app.storage.AndroidLocationContractProbe.run(this, ::mark)
+                "android-speech-capability" -> AndroidSpeechCapabilityProbe.run(this, ::mark)
                 "tts-connect", "tts-speak", "tts-stop", "tts-close" -> speechOutput()
                 "stt-connect", "stt-ready", "stt-listen", "stt-cancel", "stt-close" -> speechInput()
                 "stt-pcm" -> SttPcmProbe.run(this, ::mark)
@@ -65,6 +66,8 @@ class SdkProbeInstrumentation : Instrumentation() {
                 "location-storage" -> com.petasos.app.storage.LocationStorageProbe.run(this, ::mark)
                 "region-storage" -> com.petasos.app.storage.RegionStorageProbe.run(this, ::mark)
                 "region-policy-storage" -> com.petasos.app.storage.RegionPolicyStorageProbe.run(this, ::mark)
+                "region-hierarchy" -> com.petasos.app.storage.RegionHierarchyProbe.run(this, ::mark)
+                "bundled-stories" -> com.petasos.app.storage.BundledStoryCatalogProbe.run(this, ::mark)
                 "regional-content" -> com.petasos.app.storage.RegionalContentProbe.run(this, ::mark)
                 "landmark-storage" -> com.petasos.app.storage.LandmarkStorageProbe.run(this, ::mark)
                 "automatic-planning" -> com.petasos.app.storage.AutomaticPlanningProbe.run(this, ::mark)
@@ -105,6 +108,9 @@ class SdkProbeInstrumentation : Instrumentation() {
         } catch (failure: ProductLocationProbe.Failure) {
             outcome = failure.outcome
             reason = failure.code
+        } catch (failure: AndroidSpeechCapabilityProbe.Failure) {
+            outcome = "BLOCKED"
+            reason = failure.code
         } catch (failure: com.petasos.app.storage.ExplicitPlaybackCommandProbe.Failure) {
             outcome = "FAIL"
             reason = failure.code
@@ -140,8 +146,11 @@ class SdkProbeInstrumentation : Instrumentation() {
                 "app-location-live" -> "actual_product_existing_location_consent_observed_Activity_onStop_return_or_explicit_close_reopen_fallback_Room_counts_no_inferred_Home_background_acceptance_coordinate_output_permission_change_VirtualConsole_or_model"
                 "location-storage" -> "actual_Room_location_and_region_proof_with_synthetic_coordinates_and_boundary"
                 "android-location-contract" -> "public_Android_provider_metadata_synthetic_Location_mapping_and_Room_no_location_subscription_or_permission_change"
+                "android-speech-capability" -> "public_Android_speech_availability_Korean_support_and_TTS_voice_metadata_no_recognition_capture_PCM_synthesis_download_or_product_database_not_privacy_or_speech_acceptance"
                 "region-storage" -> "actual_packaged_NGII_geometry_Room_provenance_synthetic_coordinates_pending_policy_no_capture"
                 "region-policy-storage" -> "disposable_Room_packaged_geometry_synthetic_policy_review_atomic_install_revocation_proof_preservation_no_product_policy_or_consent_change_or_capture"
+                "region-hierarchy" -> "disposable_Room_reviewed_hierarchy_leaf_card_parent_story_revocation_no_product_policy_or_capture"
+                "bundled-stories" -> "disposable_Room_packaged_public_stories_exact_bindings_no_trip_policy_audio_or_network"
                 "regional-content" -> "actual_Room_v1_v2_migration_reviewed_region_binding_synthetic_content_no_location_audio_or_model"
                 "recovery-music-gap" -> "actual_Room_durable_music_boundary_recovery_synthetic_scripted_no_capture_audio_or_model"
                 "landmark-storage" -> "actual_Room_reviewed_landmark_policy_coordinate_and_association_synthetic_content_no_location_audio_consent_change_or_model"

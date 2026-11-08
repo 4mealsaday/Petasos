@@ -105,6 +105,25 @@ class OwnedPcmEofProbeTest(unittest.TestCase):
         self.assertIn("unchanged product 5s/500ms timing", report["scope"])
 
 
+class PackagedRegionalProbeTest(unittest.TestCase):
+    def test_packaged_regional_checks_reject_external_data_before_adb(self):
+        for name in ("region-hierarchy", "bundled-stories"):
+            self.assertEqual(probe.PROBES.count(name), 1)
+            self.assertNotIn(name, probe.RUN_AS_PROBES)
+            self.assertEqual(probe.probe_timeout(name), 90)
+            self.assertIn("disposable Room", probe.probe_evidence_metadata(name)["scope"])
+            for option in ("--content-bundle", "--device-token-file", "--development-server-ready"):
+                with self.subTest(probe=name, option=option), \
+                        patch("sys.argv", ["probe-pleos.py", name, "--build-type", "privacy", option, "/private/not-an-input"]), \
+                        patch.object(probe.subprocess, "run") as run, \
+                        patch.object(probe, "private_bytes") as private_read, patch("sys.stderr"):
+                    with self.assertRaises(SystemExit) as error:
+                        probe.main()
+                    self.assertEqual(error.exception.code, 2)
+                    private_read.assert_not_called()
+                    run.assert_not_called()
+
+
 class AutomaticPlanningProbeTest(unittest.TestCase):
     def test_scripted_planning_supports_both_variants_without_run_as(self):
         name = "automatic-planning"
@@ -268,6 +287,39 @@ class RecoveryMusicGapProbeTest(unittest.TestCase):
                 self.assertEqual(error.exception.code, 2)
                 run.assert_not_called()
                 read.assert_not_called()
+
+
+class AndroidSpeechCapabilityProbeTest(unittest.TestCase):
+    def test_capability_is_bounded_metadata_without_capture_or_fixture(self):
+        name = "android-speech-capability"
+        self.assertEqual(probe.PROBES.count(name), 1)
+        self.assertNotIn(name, probe.RUN_AS_PROBES)
+        self.assertEqual(probe.probe_timeout(name), 50)
+        self.assertEqual(probe.read_development_server(name, None), (None, None))
+        self.assertIsNone(probe.read_content_bundle(name, None))
+        report = probe.probe_evidence_metadata(name)
+        self.assertIsNone(report["fixture"])
+        for boundary in ("on-device Korean support", "TTS voice metadata only",
+                         "no recognition, microphone, PCM transmission, synthesis, model download",
+                         "consent change or product database access",
+                         "does not prove audio-source handling, engine binding identity, privacy or speech acceptance"):
+            self.assertIn(boundary, report["scope"])
+        for variant in ("debug", "privacy"):
+            self.assertEqual(probe.evidence_stem(name, variant), name + ("-privacy" if variant == "privacy" else ""))
+
+    def test_capability_rejects_external_inputs_before_file_read_or_adb(self):
+        for variant in ("debug", "privacy"):
+            for option in ("--https-fixture-ready", "--development-server-ready", "--device-token-file", "--content-bundle"):
+                with self.subTest(variant=variant, option=option), \
+                        patch("sys.argv", ["probe-pleos.py", "android-speech-capability", "--build-type", variant,
+                                           option, "/private-input"]), \
+                        patch.object(probe.subprocess, "run") as run, \
+                        patch.object(probe, "private_bytes") as read, patch("sys.stderr"):
+                    with self.assertRaises(SystemExit) as error:
+                        probe.main()
+                    self.assertEqual(error.exception.code, 2)
+                    run.assert_not_called()
+                    read.assert_not_called()
 
 
 class RegionPolicyStorageProbeTest(unittest.TestCase):

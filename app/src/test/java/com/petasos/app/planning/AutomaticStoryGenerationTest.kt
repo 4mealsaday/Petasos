@@ -294,6 +294,22 @@ class AutomaticStoryGenerationTest {
         listOf(plan.key, plan.seedVersionId, plan.regionId).forEach { assertFalse(diagnostic.contains(it)) }
     }
 
+    @Test fun sameParentContentWithDifferentPassageOrHierarchyCannotReuseOldGenerationAuthority() {
+        val h = Harness()
+        val parent = plan.copy(regionId = "parent-city", passageRegionId = "first-leaf", hierarchyKey = "review-1")
+        h.controller.update(parent)
+        val first = h.calls.single()
+        h.controller.update(parent.copy(passageRegionId = "second-leaf"))
+        assertFalse(first.current())
+        assertEquals(1, first.cancellations)
+        val second = h.calls.last()
+        h.controller.update(parent.copy(passageRegionId = "second-leaf", hierarchyKey = "review-2"))
+        assertFalse(second.current())
+        assertEquals(1, second.cancellations)
+        assertEquals(3, h.calls.size)
+        assertEquals("parent-city", parent.regionId)
+    }
+
     @Test fun policyRevocationRejectsInFlightRegionalGenerationAndDoesNotRestartFromTheStaleRegion() {
         val proof = ConfirmedRegionAuthority(ConfirmedRegion("region", "revision", "a".repeat(64), "point"))
         var evidence = true

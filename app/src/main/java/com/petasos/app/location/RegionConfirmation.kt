@@ -27,6 +27,9 @@ data class RegionContainment(
 
 fun interface RegionBoundaryLookup {
     fun containing(latitude: Double, longitude: Double): List<RegionContainment>
+    /** Optional reviewed selection identity; raw geometry callers retain exact-only semantics. */
+    val selectionKey: String? get() = null
+    fun isSelectionCurrent(regionRevisionId: String): Boolean = true
 
     companion object {
         /** Unknown boundaries never become an approximate administrative region or an earned card. */
@@ -60,9 +63,10 @@ object RegionConfirmation {
                 (previous != null && (location.receivedAtElapsedMs <= previous.receivedAtElapsedMs ||
                     previous.observedAtEpochMs == null || location.observedAtEpochMs <= previous.observedAtEpochMs))) return@all false
             val regions = try { boundary.containing(location.latitude, location.longitude) } catch (_: Exception) { emptyList() }
-            // Overlaps/ambiguous matches cannot be resolved by choosing whichever row happens to come first.
+            // A reviewed hierarchy wrapper may resolve a parent/child chain; raw ambiguity still fails.
             val region = regions.singleOrNull() ?: return@all false
-            region.regionRevisionId == regionRevisionId && region.datasetVersion == policy.datasetVersion &&
+            (try { boundary.isSelectionCurrent(regionRevisionId) } catch (_: Exception) { false }) &&
+                region.regionRevisionId == regionRevisionId && region.datasetVersion == policy.datasetVersion &&
                 region.coordinateReferenceSystem == policy.coordinateReferenceSystem && region.interiorDistanceMeters.isFinite() &&
                 // A shared edge or roundoff-uncertain point is never a proven interior, even for zero thresholds.
                 region.interiorDistanceMeters > 0 &&

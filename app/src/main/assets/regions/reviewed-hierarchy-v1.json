@@ -1,0 +1,129 @@
+{
+  "formatVersion": 1,
+  "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+  "manifestSha256": "3e2117159aa65c6c8f69826f534a8065d1247497039827d1b638f77d580f1bf9",
+  "reviewedOn": "2026-11-09",
+  "evidence": [
+    {
+      "id": "yongin-history",
+      "url": "https://www.yongin.go.kr/home/yiIf/yiIfProd/yiIfProd02.jsp",
+      "basis": "용인시 공식 연혁은 2005-10-31 처인구·기흥구·수지구 설치를 명시하며 이후 3구 체제를 확인한다. 행정구역 관계만 검토하며 위치 품질 정책을 승인하지 않는다.",
+      "access": "direct"
+    },
+    {
+      "id": "yongin-status",
+      "url": "https://www.yongin.go.kr/home/yiIf/yiIfCurSta/yiIfCurSta01/yiIfCurSta01_01.jsp",
+      "basis": "용인시 2026년 9월 기본현황은 일반구 3개를 명시한다.",
+      "access": "direct"
+    },
+    {
+      "id": "cheonan-nec-history",
+      "url": "https://law.go.kr/LSW/lsRvsRsnListP.do?chrClsCd=010202&lsId=006046&lsRvsGubun=all",
+      "basis": "중앙선거관리위원회 제공 2008-07-01 시행 개정이유는 천안시 구 설치 조례에 따른 동남구·서북구 분구를 명시한다.",
+      "access": "direct"
+    },
+    {
+      "id": "cheonan-organization",
+      "url": "https://www.law.go.kr/LSW/ordinInfoP.do?ordinSeq=1589417",
+      "basis": "천안시 행정기구 및 정원 조례 2021-04-15 연혁의 공식 검색 본문은 동남구·서북구를 천안시 하부행정기관으로 명시한다. 직접 페이지의 동적 조문과 별표는 미회수.",
+      "access": "official_search_excerpt"
+    }
+  ],
+  "relations": [
+    {
+      "child": {
+        "regionId": "kr-sigungu-41461",
+        "regionRevisionId": "kr-sigungu-41461-ngii-d7a3751bd89f-wgs84-stream-v1",
+        "code": "41461",
+        "name": "처인구"
+      },
+      "parent": {
+        "regionId": "kr-sigungu-41460",
+        "regionRevisionId": "kr-sigungu-41460-ngii-d7a3751bd89f-wgs84-stream-v1",
+        "code": "41460",
+        "name": "용인시"
+      },
+      "relation": "non_autonomous_district_of_city",
+      "evidenceIds": [
+        "yongin-history",
+        "yongin-status"
+      ]
+    },
+    {
+      "child": {
+        "regionId": "kr-sigungu-41463",
+        "regionRevisionId": "kr-sigungu-41463-ngii-d7a3751bd89f-wgs84-stream-v1",
+        "code": "41463",
+        "name": "기흥구"
+      },
+      "parent": {
+        "regionId": "kr-sigungu-41460",
+        "regionRevisionId": "kr-sigungu-41460-ngii-d7a3751bd89f-wgs84-stream-v1",
+        "code": "41460",
+        "name": "용인시"
+      },
+      "relation": "non_autonomous_district_of_city",
+      "evidenceIds": [
+        "yongin-history",
+        "yongin-status"
+      ]
+    },
+    {
+      "child": {
+        "regionId": "kr-sigungu-41465",
+        "regionRevisionId": "kr-sigungu-41465-ngii-d7a3751bd89f-wgs84-stream-v1",
+        "code": "41465",
+        "name": "수지구"
+      },
+      "parent": {
+        "regionId": "kr-sigungu-41460",
+        "regionRevisionId": "kr-sigungu-41460-ngii-d7a3751bd89f-wgs84-stream-v1",
+        "code": "41460",
+        "name": "용인시"
+      },
+      "relation": "non_autonomous_district_of_city",
+      "evidenceIds": [
+        "yongin-history",
+        "yongin-status"
+      ]
+    },
+    {
+      "child": {
+        "regionId": "kr-sigungu-44131",
+        "regionRevisionId": "kr-sigungu-44131-ngii-d7a3751bd89f-wgs84-stream-v1",
+        "code": "44131",
+        "name": "동남구"
+      },
+      "parent": {
+        "regionId": "kr-sigungu-44130",
+        "regionRevisionId": "kr-sigungu-44130-ngii-d7a3751bd89f-wgs84-stream-v1",
+        "code": "44130",
+        "name": "천안시"
+      },
+      "relation": "non_autonomous_district_of_city",
+      "evidenceIds": [
+        "cheonan-nec-history",
+        "cheonan-organization"
+      ]
+    },
+    {
+      "child": {
+        "regionId": "kr-sigungu-44133",
+        "regionRevisionId": "kr-sigungu-44133-ngii-d7a3751bd89f-wgs84-stream-v1",
+        "code": "44133",
+        "name": "서북구"
+      },
+      "parent": {
+        "regionId": "kr-sigungu-44130",
+        "regionRevisionId": "kr-sigungu-44130-ngii-d7a3751bd89f-wgs84-stream-v1",
+        "code": "44130",
+        "name": "천안시"
+      },
+      "relation": "non_autonomous_district_of_city",
+      "evidenceIds": [
+        "cheonan-nec-history",
+        "cheonan-organization"
+      ]
+    }
+  ]
+}

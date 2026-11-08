@@ -77,14 +77,16 @@ class RoomLocationStore internal constructor(
 
     /** Metadata lookup only; this does not prove current presence or authorize automatic playback. */
     internal fun currentRegionStories(regionId: String): List<PreparedStory> =
-        RoomAutomaticStoryStore(database, wallTime, ownsDatabase = false).candidates(regionId)
+        RoomAutomaticStoryStore(database, wallTime, ownsDatabase = false,
+            hierarchy = (boundary as? HierarchicalRegionBoundaryLookup)?.hierarchy ?: ReviewedRegionHierarchy.NONE).candidates(regionId)
             .filter { it.reason == CandidateReason.CURRENT_REGION }.map { it.story }
 
     /** Worker/network evidence read. The SDK/main thread must use the separately captured atomic permit. */
     fun isConfirmedRegionCurrent(confirmation: ConfirmedRegion): Boolean = transaction {
         val current = regionPolicies.reviewedPolicy(confirmation.regionRevisionId)
         current != null && current.regionId == confirmation.regionId &&
-            current.regionRevisionId == confirmation.regionRevisionId && current.eligibilityKey == confirmation.policySourceKey
+            current.regionRevisionId == confirmation.regionRevisionId && policySelectionKey(current.eligibilityKey) == confirmation.policySourceKey &&
+            boundary.isSelectionCurrent(confirmation.regionRevisionId)
     }
 
     private fun confirmAndCollect(segment: String, sequence: Long, point: RecordedLocation, acquired: MutableSet<String>): ConfirmedRegion? {
@@ -102,15 +104,19 @@ class RoomLocationStore internal constructor(
         if (number("SELECT count(*) FROM collection_record WHERE collection_type='region' AND region_id=?", region.regionId) == 0L) {
             val collection = UUID.randomUUID().toString()
             exec("INSERT INTO collection_record(collection_id,collection_type,region_id,rule_version,earned_at,created_at) VALUES (?,'region',?,?,?,?)",
-                collection, region.regionId, "region-confirmation-v1", point.observedAtEpochMs, wallTime())
+                collection, region.regionId, if (boundary.selectionKey == null) "region-confirmation-v1" else "region-confirmation-hierarchy-v1", point.observedAtEpochMs, wallTime())
             recent.forEach { proof ->
                 exec("INSERT INTO collection_proof(collection_id,proof_key,point_id,region_revision_id) VALUES (?,?,?,?)", collection,
                     "point:${proof.location.pointId}", proof.location.pointId, region.regionRevisionId)
             }
             acquired += region.regionId
         }
-        return ConfirmedRegion(region.regionId, region.regionRevisionId, region.eligibilityKey, point.pointId)
+        return ConfirmedRegion(region.regionId, region.regionRevisionId, policySelectionKey(region.eligibilityKey), point.pointId)
     }
+
+    private fun policySelectionKey(policyKey: String): String = boundary.selectionKey?.let {
+        com.petasos.app.content.ContentBundleCodec.sha256(StrictJson.encode(listOf(policyKey, it)))
+    } ?: policyKey
 
     private fun values(segment: String, sequence: Long, p: RecordedLocation): Map<String, Any?> = linkedMapOf(
         "point_id" to p.pointId, "segment_id" to segment, "sequence" to sequence, "provider" to p.provider,

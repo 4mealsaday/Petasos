@@ -15,7 +15,7 @@ import time
 ROOT = Path(__file__).resolve().parent.parent
 PROBES = ("vehicle-preferences", "trip-results", "trip-lifecycle", "app-trip-lifecycle", "app-location-live", "location", "tts-connect", "tts-speak", "tts-stop", "tts-close", "stt-connect", "stt-ready",
           "stt-listen", "stt-cancel", "stt-close", "stt-pcm", "stt-owned-pcm", "stt-owned-listen", "stt-owned-stream", "stt-owned-delayed", "stt-owned-eof",
-          "location-storage", "android-location-contract", "region-storage", "region-policy-storage", "regional-content", "landmark-storage", "automatic-planning", "local-commands", "session-recovery", "recovery-music-gap", "navigation", "music-runtime", "media-session", "app-playback", "app-music", "car-policy-ui",
+          "location-storage", "android-location-contract", "android-speech-capability", "region-storage", "region-policy-storage", "region-hierarchy", "bundled-stories", "regional-content", "landmark-storage", "automatic-planning", "local-commands", "session-recovery", "recovery-music-gap", "navigation", "music-runtime", "media-session", "app-playback", "app-music", "car-policy-ui",
           "storage", "runtime-scripted", "runtime-tts", "runtime-tts-stop", "story-generation-storage", "resume-context", "app-story-generation",
           "summary-storage", "summary-work", "summary-rights", "generation-https", "generation-provision", "generation-live",
           "content-install", "content-install-local", "content-runtime", "generation-planning-live")
@@ -107,7 +107,7 @@ def probe_timeout(probe):
         return 120
     # Multi-database Keystore rights checks also need headroom on a loaded emulator.
     # These are host process limits, not product speech or generation deadlines.
-    if probe in ("generation-https", "stt-listen", "stt-owned-listen", "stt-owned-stream", "stt-owned-delayed", "stt-owned-eof", "app-playback", "summary-rights", "automatic-planning", "landmark-storage", "region-policy-storage", "recovery-music-gap", "local-commands"):
+    if probe in ("generation-https", "stt-listen", "stt-owned-listen", "stt-owned-stream", "stt-owned-delayed", "stt-owned-eof", "app-playback", "summary-rights", "automatic-planning", "landmark-storage", "region-policy-storage", "region-hierarchy", "bundled-stories", "recovery-music-gap", "local-commands"):
         return 90
     return 50
 
@@ -115,7 +115,7 @@ def probe_timeout(probe):
 def probe_evidence_metadata(probe, has_https_fixture=False):
     """Describe fixture boundaries identically in the report and host regressions."""
     return {
-        "fixture": "official_packaged_geometry_disposable_database_public_synthetic_coordinates" if probe in ("region-storage", "region-policy-storage") else "two_synthetic_coordinates" if probe == "location" else (
+        "fixture": "official_packaged_geometry_disposable_database_public_synthetic_coordinates" if probe in ("region-storage", "region-policy-storage", "region-hierarchy", "bundled-stories") else "two_synthetic_coordinates" if probe == "location" else (
             "synthetic_korean_pcm" if probe in ("stt-pcm", "stt-owned-pcm", "stt-owned-stream", "stt-owned-delayed", "stt-owned-eof") else (
                 "disposable_database_and_synthetic_test_content" if probe in ("vehicle-preferences", "trip-results", "trip-lifecycle", "regional-content", "landmark-storage", "recovery-music-gap", "storage", "runtime-scripted", "runtime-tts", "runtime-tts-stop", "story-generation-storage", "resume-context", "automatic-planning", "local-commands", "summary-storage", "summary-work") else (
                     "local_https_synthetic_provider_one_day_ca_ephemeral_device_token" if has_https_fixture else None))),
@@ -132,10 +132,13 @@ def probe_evidence_metadata(probe, has_https_fixture=False):
             "app-location-live": "actual product with existing saved location consent and permissions; real Activity onStop/return using Home or moveTaskToBack, or explicitly marked Activity close/reopen fallback with observed onStop and onDestroy; close/reopen does not prove Home/background acceptance; session-scoped Room counts/quality; media stopped after opening a session; history retained; no coordinate output, permission grant, consent change, Virtual Console or model call; storage quiescence is not a vendor unregister acknowledgment",
             "location-storage": "actual Room with synthetic coordinates, boundary policies, region proofs and heard-fact filtering; no location SDK or movement",
             "android-location-contract": "public Android provider metadata and synthetic Location/Room mapping, monotonic freshness and corrupt evidence rejection; no real coordinate read, subscription or permission change",
+            "android-speech-capability": "public Android recognition availability, on-device Korean support and requested-engine TTS voice metadata only; no recognition, microphone, PCM transmission, synthesis, model download, consent change or product database access; support does not prove audio-source handling, engine binding identity, privacy or speech acceptance",
             "region-storage": "actual packaged official NGII geometry and Room provenance, synthetic public coordinate and pending-policy rejection; no location SDK, microphone, consent change or model",
             "region-policy-storage": "disposable Room with packaged official geometry, explicitly synthetic region policy reviews and public synthetic coordinates; atomic first finalization, exact no-op, immutable conflicts, catalog reload, terminal current-authority revocation and existing-proof preservation; no product policy approval, consent change, location subscription, audio or model",
             "recovery-music-gap": "actual Room durable story/music completion recovery with synthetic content and scripted outputs; no location, microphone, audio or external model",
             "landmark-storage": "actual Room reviewed landmark policy, coordinate and story association with synthetic content; no location, audio, consent change or model",
+            "region-hierarchy": "disposable Room with reviewed hierarchy and public synthetic points; leaf-only card and parent story scope; no product policy, microphone or network",
+            "bundled-stories": "disposable Room with ten packaged public stories and exact bindings; no product records, visit policy, audio or network",
             "regional-content": "actual Room v1-to-v2 migration and reviewed textual region bindings with synthetic content; no location, audio, consent change or model",
             "local-commands": "actual Room/Keystore explicit playback commands with scripted input, output and generation; durable final input, stop ACK, user-only frozen turns and recovery; no microphone, audio playback, location or external model",
             "automatic-planning": "actual Room with synthetic installed content and scripted runtime for region/explicit-interest planning, repeat filtering and playback boundaries; no microphone, model, location SDK or actual audio playback",

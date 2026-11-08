@@ -13,6 +13,42 @@ import org.junit.Test
  * Geometry remains on disk throughout this test, including Shinan's 2.4 million coordinates.
  */
 class NgiiPackedRegionDatasetTest {
+    @Test fun reviewedFiveDistrictsSelectOneLeafWithoutDeletingRawCityGeometry() {
+        val manifest = manifest()
+        val hierarchy = ReviewedRegionHierarchyCodec.decode(File(assetsRoot, "regions/reviewed-hierarchy-v1.json").readBytes(),
+            "cf428d289dd504b3b8d1d481ea4e80f789a1db7e531ebd06ba749422a3971e5b", manifest)
+        val lookup = catalogLookup(manifest)
+        val wrapped = HierarchicalRegionBoundaryLookup(lookup, hierarchy)
+        val oracle = oracle()
+        val expected = mapOf("41461" to "41460", "41463" to "41460", "41465" to "41460", "44131" to "44130", "44133" to "44130")
+        for ((child, parent) in expected) {
+            val point = oracle.getValue(child)
+            val childEntry = manifest.regions.single { it.code == child }
+            val parentEntry = manifest.regions.single { it.code == parent }
+            val raw = lookup.containing(point.latitude, point.longitude)
+            assertEquals(child, setOf(childEntry.regionRevisionId, parentEntry.regionRevisionId), raw.map { it.regionRevisionId }.toSet())
+            assertEquals(child, childEntry.regionRevisionId, wrapped.containing(point.latitude, point.longitude).single().regionRevisionId)
+            assertEquals(listOf(childEntry.regionId, parentEntry.regionId), hierarchy.scope(childEntry.regionId).eligibleStoryRegionIds)
+        }
+        val unknown = oracle.getValue("41111")
+        assertTrue(wrapped.containing(unknown.latitude, unknown.longitude).isEmpty()) // Suwon is deliberately not reviewed here.
+    }
+
+    @Test fun hierarchyCatalogRejectsWrongPinsNamesAndUnreadyRevision() {
+        val manifest = manifest()
+        val bytes = File(assetsRoot, "regions/reviewed-hierarchy-v1.json").readBytes()
+        assertThrows(RegionDatasetException::class.java) { ReviewedRegionHierarchyCodec.decode(bytes, "0".repeat(64), manifest) }
+        val changed = bytes.toString(Charsets.UTF_8).replace("\"처인구\"", "\"다른구\"").toByteArray()
+        assertThrows(RegionDatasetException::class.java) {
+            ReviewedRegionHierarchyCodec.decode(changed, RegionDatasetManifestCodec.sha256(changed), manifest)
+        }
+        val unready = RegionDatasetManifest(manifest.fingerprint, manifest.datasetVersion, manifest.source, manifest.transform,
+            manifest.regions.map { if (it.code == "41461") it.copy(status = "quarantined", reasonCode = "INVALID_TOPOLOGY") else it })
+        assertThrows(RegionDatasetException::class.java) {
+            ReviewedRegionHierarchyCodec.decode(bytes, RegionDatasetManifestCodec.sha256(bytes), unready)
+        }
+    }
+
     @Test fun reviewedNationalInventoryRetainsEveryCodeAndThreeQuarantines() {
         val manifest = manifest()
         val oracle = oracle()

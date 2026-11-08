@@ -11,10 +11,14 @@ data class AutomaticGenerationPlan(
     val seedVersionId: String,
     val regionId: String,
     val routeRevision: Long?,
+    /** Location/ETA target that authorized this content's original regional association. */
+    val passageRegionId: String = regionId,
+    val hierarchyKey: String? = null,
 ) {
     init {
         require(key.isNotBlank() && seedVersionId.isNotBlank() && regionId.isNotBlank())
         require(routeRevision == null || routeRevision >= 0)
+        require(passageRegionId.isNotBlank() && (hierarchyKey == null || hierarchyKey.isNotBlank()))
     }
 
     override fun toString() = "AutomaticGenerationPlan([redacted])"
@@ -73,7 +77,8 @@ class AutomaticStoryGeneration(
         fun accepts(value: AutomaticGenerationPlan): Boolean {
             val existing = plan.get()
             return existing.key == value.key && existing.regionId == value.regionId &&
-                existing.routeRevision == value.routeRevision &&
+                existing.routeRevision == value.routeRevision && existing.passageRegionId == value.passageRegionId &&
+                existing.hierarchyKey == value.hierarchyKey &&
                 (value.seedVersionId == originalSeed || value.seedVersionId == completion?.versionId ||
                     value.seedVersionId == receivedResult.get()?.versionId)
         }
