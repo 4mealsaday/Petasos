@@ -29,6 +29,7 @@ class TripControls(private val activity: Activity) {
     private val end = activity.findViewById<Button>(R.id.records_end_trip)
     private val result = activity.findViewById<TextView>(R.id.records_result)
     private val formatter = TripResultsFormatter(activity)
+    private val renderer = TripControlsRenderer(activity.window.decorView)
     private var host: PetasosSessionHost? = null
     private var available = false
     private var epoch = 0L
@@ -239,16 +240,20 @@ class TripControls(private val activity: Activity) {
     private fun permissionGranted() = LocationAccess.hasRequiredPermissions(activity)
     private fun render() {
         val current = host
-        val enabled = available && !saving && recording != null && current?.isEndingTrip() != true
-        location.isEnabled = available && !saving && recording != null && (current?.isEndingTrip() != true || recording?.locationEnabled == true)
-        location.setText(if (recording?.locationEnabled == true) R.string.records_location_disable else R.string.records_location_enable)
-        permission.visibility = if (available && recording?.locationEnabled == true && !permissionGranted()) View.VISIBLE else View.GONE
-        permission.setText(if (LocationAccess.hasPleosPermission(activity)) R.string.records_permission_android else R.string.records_permission)
-        permission.isEnabled = enabled && !requestingPermission
-        keywords.isEnabled = enabled; saveKeywords.isEnabled = enabled
-        refresh.isEnabled = available; selection.isEnabled = available && trips.isNotEmpty()
-        end.isEnabled = available && !saving && current?.isTripEndPending() != true &&
-            trips.getOrNull(selection.selectedItemPosition)?.tripId?.let { it == current?.endableTripId() } == true
+        renderer.render(TripPresentationMapper.map(TripPresentationInput(
+            available = available,
+            saving = saving,
+            locationEnabled = recording?.locationEnabled,
+            hasLocationPermission = permissionGranted(),
+            hasPleosPermission = LocationAccess.hasPleosPermission(activity),
+            endingTrip = current?.isEndingTrip() == true,
+            requestingPermission = requestingPermission,
+            hasTrips = trips.isNotEmpty(),
+            tripEndPending = current?.isTripEndPending() == true,
+            selectedTripIsEndable = trips.getOrNull(selection.selectedItemPosition)?.tripId?.let {
+                it == current?.endableTripId()
+            } == true,
+        )))
     }
 
     companion object { const val LOCATION_REQUEST = 4802 }

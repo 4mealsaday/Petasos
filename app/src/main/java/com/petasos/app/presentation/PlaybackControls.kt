@@ -27,10 +27,7 @@ import com.petasos.app.playback.PlaybackMode
 /** Presentation binding only: MediaBrowser commands, parked visibility, and explicit microphone consent. */
 @androidx.annotation.OptIn(UnstableApi::class)
 class PlaybackControls(private val activity: Activity) {
-    private val content = activity.findViewById<View>(R.id.preview_content)
-    private val vehicleNotice = activity.findViewById<TextView>(R.id.vehicle_policy_notice)
-    private val status = activity.findViewById<TextView>(R.id.playback_status)
-    private val notice = activity.findViewById<TextView>(R.id.playback_notice)
+    private val renderer = PlaybackPresentationRenderer(activity.findViewById<View>(android.R.id.content))
     private val selection = activity.findViewById<Spinner>(R.id.story_selection)
     private val play = activity.findViewById<Button>(R.id.playback_play)
     private val stop = activity.findViewById<Button>(R.id.playback_stop)
@@ -54,7 +51,7 @@ class PlaybackControls(private val activity: Activity) {
     private var items = emptyList<MediaItem>()
     private var loaded = false
     private var connectionFailed = false
-    private var noticeResource = R.string.ready_description
+    private var presentationNotice = PlaybackPresentationNotice.READY
     private var requestingMicrophone = false
     private val uiListener: () -> Unit = { if (started) render() }
     private val playerListener = object : Player.Listener {
@@ -147,7 +144,7 @@ class PlaybackControls(private val activity: Activity) {
         if (tripControls.permissionResult(requestCode, granted)) return true
         if (requestCode != MICROPHONE_REQUEST) return false
         requestingMicrophone = false
-        noticeResource = if (granted) R.string.microphone_permission_granted else R.string.microphone_permission_denied
+        presentationNotice = if (granted) PlaybackPresentationNotice.MICROPHONE_PERMISSION_GRANTED else PlaybackPresentationNotice.MICROPHONE_PERMISSION_DENIED
         render()
         return true
     }
@@ -182,8 +179,8 @@ class PlaybackControls(private val activity: Activity) {
         if (!mayInteract()) return
         val connected = browser ?: return
         if (!connected.isCommandAvailable(command)) return
-        noticeResource = R.string.ready_description
-        try { action(connected) } catch (_: Exception) { noticeResource = R.string.playback_operation_unavailable }
+        presentationNotice = PlaybackPresentationNotice.READY
+        try { action(connected) } catch (_: Exception) { presentationNotice = PlaybackPresentationNotice.OPERATION_UNAVAILABLE }
         render()
     }
 
@@ -193,7 +190,7 @@ class PlaybackControls(private val activity: Activity) {
         if (!current.supportsLiveInput()) return
         if (activity.checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             requestingMicrophone = true
-            noticeResource = R.string.microphone_permission_needed
+            presentationNotice = PlaybackPresentationNotice.MICROPHONE_PERMISSION_NEEDED
             render()
             activity.requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), MICROPHONE_REQUEST)
             return
@@ -202,10 +199,10 @@ class PlaybackControls(private val activity: Activity) {
             val request = current.talk()
             request.addListener({
                 if (!started || host !== current) return@addListener
-                try { request.get() } catch (_: Exception) { noticeResource = R.string.playback_operation_unavailable }
+                try { request.get() } catch (_: Exception) { presentationNotice = PlaybackPresentationNotice.OPERATION_UNAVAILABLE }
                 render()
             }, activity.mainExecutor)
-        } catch (_: Exception) { noticeResource = R.string.playback_operation_unavailable; render() }
+        } catch (_: Exception) { presentationNotice = PlaybackPresentationNotice.OPERATION_UNAVAILABLE; render() }
     }
 
     private fun requestNewStory() {
@@ -213,15 +210,15 @@ class PlaybackControls(private val activity: Activity) {
         val current = host ?: return
         val selected = items.getOrNull(selection.selectedItemPosition - 1) ?: return
         if (!current.canPrepareStory()) return
-        noticeResource = R.string.playback_preparing_story_description
+        presentationNotice = PlaybackPresentationNotice.PREPARING_STORY
         val request = current.generateAndPlayStory(selected.mediaId)
         request.addListener({
             if (!started || host !== current) return@addListener
             try {
                 request.get()
-                noticeResource = R.string.ready_description
+                presentationNotice = PlaybackPresentationNotice.READY
                 browser?.let { loadCatalog(it, generation) }
-            } catch (_: Exception) { noticeResource = R.string.playback_story_preparation_failed }
+            } catch (_: Exception) { presentationNotice = PlaybackPresentationNotice.STORY_PREPARATION_FAILED }
             render()
         }, activity.mainExecutor)
         render()
@@ -242,46 +239,53 @@ class PlaybackControls(private val activity: Activity) {
     private fun mayInteract() = started && resumed && policy.permitsParkedPreview && browser != null
 
     private fun render() {
-        ParkedPreviewVisibility.apply(content, vehicleNotice, policy)
+        val gate = parkedPresentationGate(policy)
+        renderer.renderGate(gate) // Hide first even if a later Host/control refresh throws.
         val available = mayInteract()
         if (hostVisible != available) { hostVisible = available; host?.setTalkUiVisible(available) }
         val connected = browser
-        val snapshot = host?.snapshot()
-        val preparing = host?.isPreparingStory() == true || host?.isEndingTrip() == true
-        tripControls.update(host, available)
-        musicCredits.update(host, available)
-        val hasContent = items.isNotEmpty() || host?.hasMusic() == true
-        selection.isEnabled = available && !preparing && items.isNotEmpty()
-        play.isEnabled = available && !preparing && hasContent && connected?.isCommandAvailable(Player.COMMAND_PLAY_PAUSE) == true
-        stop.isEnabled = available && connected?.isCommandAvailable(Player.COMMAND_STOP) == true
-        next.isEnabled = available && !preparing && snapshot != null && connected?.isCommandAvailable(Player.COMMAND_SEEK_TO_NEXT) == true
-        previous.isEnabled = available && !preparing && snapshot != null && connected?.isCommandAvailable(Player.COMMAND_SEEK_TO_PREVIOUS) == true
-        newStory.isEnabled = available && items.getOrNull(selection.selectedItemPosition - 1) != null && host?.canPrepareStory() == true
-        talk.isEnabled = available && host?.supportsLiveInput() == true && !requestingMicrophone && snapshot?.closed != true && snapshot?.blockers?.isNotEmpty() != true &&
-            (snapshot == null || snapshot.mode in setOf(PlaybackMode.IDLE, PlaybackMode.PAUSED, PlaybackMode.STORY, PlaybackMode.MUSIC,
-                PlaybackMode.TALK_PENDING, PlaybackMode.PROMPT, PlaybackMode.LISTENING))
-        status.setText(when {
-            connectionFailed -> R.string.playback_unavailable
-            connected == null -> R.string.ready_title
-            snapshot?.blockers?.isNotEmpty() == true -> R.string.playback_blocked
-            host?.isEndingTrip() == true -> if (host?.isTripEndPending() == true) R.string.records_ending_trip else R.string.records_end_unconfirmed
-            preparing -> R.string.playback_preparing_story
-            loaded && !hasContent && (snapshot == null || snapshot.mode == PlaybackMode.IDLE) -> R.string.playback_no_content
-            else -> when (snapshot?.mode) {
-                PlaybackMode.STORY -> R.string.playback_story
-                PlaybackMode.MUSIC -> R.string.playback_music
-                PlaybackMode.TALK_PENDING -> R.string.playback_talk_pending
-                PlaybackMode.PROMPT -> R.string.playback_prompt
-                PlaybackMode.LISTENING -> R.string.playback_listening
-                PlaybackMode.GENERATING -> R.string.playback_generating
-                PlaybackMode.ANSWERING -> R.string.playback_answering
-                PlaybackMode.RESUMING -> R.string.playback_resuming
-                PlaybackMode.PAUSED -> R.string.playback_paused
-                else -> R.string.playback_idle
-            }
-        })
-        notice.setText(if (host?.supportsLiveInput() == false && noticeResource == R.string.ready_description)
-            R.string.microphone_verification_pending else noticeResource)
+        val current = host
+        val snapshot = current?.snapshot()
+        tripControls.update(current, available)
+        musicCredits.update(current, available)
+        // Capture live dependencies here. The mapper/renderer cannot grant permission or issue commands.
+        renderer.render(PlaybackPresentationMapper.map(PlaybackPresentationInput(
+            vehicleGate = gate,
+            interactionAvailable = available,
+            connected = connected != null,
+            connectionFailed = connectionFailed,
+            session = snapshot?.let { PlaybackPresentationSession(it.mode.presentationMode(), it.closed, it.blockers.isNotEmpty()) },
+            preparingStory = current?.isPreparingStory() == true,
+            endingTrip = current?.isEndingTrip() == true,
+            tripEndPending = current?.isTripEndPending() == true,
+            catalogLoaded = loaded,
+            hasStories = items.isNotEmpty(),
+            hasMusic = current?.hasMusic() == true,
+            hasSelectedStory = items.getOrNull(selection.selectedItemPosition - 1) != null,
+            canPrepareStory = current?.canPrepareStory() == true,
+            liveInputSupported = current?.supportsLiveInput(),
+            requestingMicrophone = requestingMicrophone,
+            commands = PlaybackPresentationCommands(
+                play = connected?.isCommandAvailable(Player.COMMAND_PLAY_PAUSE) == true,
+                stop = connected?.isCommandAvailable(Player.COMMAND_STOP) == true,
+                next = connected?.isCommandAvailable(Player.COMMAND_SEEK_TO_NEXT) == true,
+                previous = connected?.isCommandAvailable(Player.COMMAND_SEEK_TO_PREVIOUS) == true,
+            ),
+            notice = presentationNotice,
+        )))
+    }
+
+    private fun PlaybackMode.presentationMode(): PlaybackPresentationMode = when (this) {
+        PlaybackMode.IDLE -> PlaybackPresentationMode.IDLE
+        PlaybackMode.STORY -> PlaybackPresentationMode.STORY
+        PlaybackMode.MUSIC -> PlaybackPresentationMode.MUSIC
+        PlaybackMode.TALK_PENDING -> PlaybackPresentationMode.TALK_PENDING
+        PlaybackMode.PROMPT -> PlaybackPresentationMode.PROMPT
+        PlaybackMode.LISTENING -> PlaybackPresentationMode.LISTENING
+        PlaybackMode.GENERATING -> PlaybackPresentationMode.GENERATING
+        PlaybackMode.ANSWERING -> PlaybackPresentationMode.ANSWERING
+        PlaybackMode.RESUMING -> PlaybackPresentationMode.RESUMING
+        PlaybackMode.PAUSED -> PlaybackPresentationMode.PAUSED
     }
 
     companion object { const val MICROPHONE_REQUEST = 4801 }
@@ -290,8 +294,12 @@ class PlaybackControls(private val activity: Activity) {
 /** Separately testable view gate; neither service connection nor absence of flags implies parked. */
 object ParkedPreviewVisibility {
     fun apply(content: View, message: TextView, policy: VehicleUxPolicy) {
-        content.visibility = if (policy.permitsParkedPreview) View.VISIBLE else View.GONE
-        message.visibility = if (policy.permitsParkedPreview) View.GONE else View.VISIBLE
-        message.setText(if (policy.available) R.string.vehicle_policy_restricted else R.string.vehicle_policy_waiting)
+        PlaybackPresentationRenderer.renderGate(content, message, parkedPresentationGate(policy))
     }
+}
+
+private fun parkedPresentationGate(policy: VehicleUxPolicy): ParkedPresentationGate = when {
+    policy.permitsParkedPreview -> ParkedPresentationGate.PARKED
+    policy.available -> ParkedPresentationGate.RESTRICTED
+    else -> ParkedPresentationGate.UNKNOWN
 }

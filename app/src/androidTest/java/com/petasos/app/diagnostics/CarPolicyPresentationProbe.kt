@@ -16,6 +16,7 @@ import java.util.concurrent.atomic.AtomicReference
 /** Actual Car UX read/close plus deterministic view gating. No car-state changes, playback, or microphone. */
 object CarPolicyPresentationProbe {
     fun run(instrumentation: Instrumentation, mark: (String) -> Unit) {
+        PresentationRendererProbe.run(instrumentation, mark)
         instrumentation.runOnMainSync {
             val themed = ContextThemeWrapper(instrumentation.targetContext, R.style.Theme_Petasos)
             val root = LayoutInflater.from(themed).inflate(R.layout.activity_main, android.widget.FrameLayout(themed), true)

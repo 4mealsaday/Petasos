@@ -1,5 +1,7 @@
 # 코드 구조와 UI 교체 경계
 
+dev.31: [UI 표시 계층 분리](./presentation-separation.md). 재생·기록 설정을 순수 입력/상태 mapper와 View renderer로 분리했다. 실제 명령·동의·권한·수명주기는 기존 Controls에 남는다. XML·색상·문구는 유지하며 최종 UI 방향을 기다린다. [격리 데모](./isolated-ui-demo-plan.md)는 설계이며 아직 구현하지 않았다.
+
 dev.24 추가: [검토 지역 정책 설치와 현재 권한](./2026-11-08-reviewed-region-policy.md). `location/ReviewedRegionPolicy*`는 Android 독립 형식 검증을, `RegionGeometryMetadata`는 원본 기하 동일성을, `storage/RoomRegionPolicyInstaller/Store`는 최초 확정과 현재 근거 조회를 담당한다. `platform/android/location/BundledRegionPolicyCatalog`는 고정 APK 자산을 worker에서 읽어 설치한다. 현재 빈 승인 목록은 실제 지역을 활성화하지 않는다.
 
 `ConfirmedRegionAuthority`는 원시 위치 권한과 분리된 원자적 지역 권한이다. 저장소에서 얻은 판정 revision·정책/출처 fingerprint를 편성·생성·최종 출력에 전달하고, DB 재검사는 worker에서 실행한다. UI/main은 메모리의 철회 상태만 읽는다. Room schema 2와 기존 proof를 유지하며 UI 파일은 수정하지 않는다. 공식 Android 위치 연결과 실제 전면 수신은 [dev.23 기록](./2026-11-08-android-location-integration.md)을 따른다. 아래 이전 단계의 구조 설명과 당시 검증 수치는 해당 시점 기록으로 보존한다.

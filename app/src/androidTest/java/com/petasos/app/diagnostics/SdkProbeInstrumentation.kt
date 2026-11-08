@@ -180,7 +180,7 @@ class SdkProbeInstrumentation : Instrumentation() {
                 "auxiliary-route" -> "one_actual_HTTPS_public_official_route_example_disposable_NGII_hierarchy_projection_unchanged_packaged_policies_synthetic_Android_anchor_no_real_location_navigation_audio_model_or_product_records"
                 "music-runtime" -> "actual_Media3_and_Room_with_synthetic_test_tone_no_microphone_or_model"
                 "media-session" -> "actual_MediaController_commands_and_product_browse_no_audio_or_microphone"
-                "car-policy-ui" -> "actual_CarUx_observation_and_synthetic_visibility_gates_no_vehicle_mutation"
+                "car-policy-ui" -> "actual_CarUx_observation_detached_synthetic_mapper_renderer_gates_no_vehicle_mutation_normal_target_startup"
                 "generation-provision" -> "private_debug_localhost_TLS_device_configuration_install_no_model_call"
                 "generation-live" -> "actual_Android_HTTPS_OpenRouter_fixed_nonpersonal_input_no_microphone"
                 "storage" -> "actual_Room_SQLite_Keystore_with_synthetic_test_data"
