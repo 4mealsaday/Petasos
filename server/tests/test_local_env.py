@@ -105,6 +105,14 @@ class LocalEnvTests(unittest.TestCase):
         with patch.dict(os.environ, {KEY: "process-value"}, clear=True):
             self.assertEqual(load_environment(None), {KEY: "process-value"})
 
+    def test_optional_routing_key_does_not_replace_other_service_credentials(self):
+        routing = "PETASOS_KAKAO_MOBILITY_REST_API_KEY"
+        self.write(f"{routing}=\n{KEY}=model-value\nPETASOS_DATA_GO_KR_SERVICE_KEY=public-value\n")
+        values = load_environment(self.path, {routing: "routing-process-value"})
+        self.assertEqual(values[routing], "routing-process-value")
+        self.assertEqual(values[KEY], "model-value")
+        self.assertEqual(values["PETASOS_DATA_GO_KR_SERVICE_KEY"], "public-value")
+
     def test_server_provider_receives_explicit_environment_mapping(self):
         from petasos_server.__main__ import build_app
 
