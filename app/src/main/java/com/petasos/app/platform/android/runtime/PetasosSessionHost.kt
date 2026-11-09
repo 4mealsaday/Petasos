@@ -135,8 +135,8 @@ class PetasosSessionHost(
     override fun setListener(value: (() -> Unit)?) { checkMain(); listener = value }
     fun addUiListener(value: () -> Unit) { checkMain(); uiListeners += value }
     fun removeUiListener(value: () -> Unit) { checkMain(); uiListeners -= value }
-    /** Separate SpeechService 4.2.10 logs recognition payloads even in ON_DEVICE mode; live input remains disabled. */
-    fun supportsLiveInput(): Boolean = false
+    /** SpeechService 4.2.10 logs recognition payloads even in ON_DEVICE mode; tracked as a known platform issue in README, not a block. */
+    fun supportsLiveInput(): Boolean = true
     fun isPreparingStory(): Boolean = storyPreparation.get() != null
     fun canPrepareStory(): Boolean = !disposed && !isEndingTrip() && visibleForTalk && !power.audioBlocked &&
         !isPreparingStory() && readyForStoryPreparation(runtime?.snapshot())

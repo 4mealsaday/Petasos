@@ -87,9 +87,11 @@ class AndroidLocationMeaningAdapterTest {
         assertTrue(next.measurementAgeAtReceiptMs!! > first.measurementAgeAtReceiptMs!!)
     }
 
-    @Test fun mockMissingAccuracyAndInvalidNumbersNeverGainAutomaticQuality() {
+    @Test fun demoBuildAllowsMockWhileMissingAccuracyAndInvalidNumbersStillNeverGainAutomaticQuality() {
+        // BuildConfig.DEMO is true for the debug variant these unit tests compile against:
+        // mock locations are the demo's virtual-position source, so they now gain normal quality.
         val mocks = normalize(sample(metadata = metadata(mock = true)))
-        assertEquals(LocationQuality.UNKNOWN, mocks.quality)
+        assertEquals(LocationQuality.VALID, mocks.quality)
         assertEquals("android-location-manager:gps", mocks.provider)
         assertEquals(true, (confidence(mocks)["androidLocation"] as Map<*, *>)["isMock"])
         listOf(null, -1.0, Double.NaN, Double.POSITIVE_INFINITY).forEach { accuracy ->
@@ -131,7 +133,8 @@ class AndroidLocationMeaningAdapterTest {
         assertNull(AndroidLocationMeaningAdapter.restoredAgeMs(evidence - "androidLocation", 10_000))
         assertNull(AndroidLocationMeaningAdapter.restoredAgeMs(evidence, 9_999))
         val raw = evidence["androidLocation"] as Map<*, *>
-        assertNull(AndroidLocationMeaningAdapter.restoredAgeMs(evidence + ("androidLocation" to (raw + ("isMock" to true))), 10_000))
+        // Demo-build mock locations recompute to the same age; only the DEMO gate changes, not the formula.
+        assertEquals(1_000L, AndroidLocationMeaningAdapter.restoredAgeMs(evidence + ("androidLocation" to (raw + ("isMock" to true))), 10_000))
         assertNull(AndroidLocationMeaningAdapter.restoredAgeMs(evidence + ("androidLocation" to (raw + ("elapsedRealtimeNanos" to 10_000_000_001L))), 10_000))
     }
 

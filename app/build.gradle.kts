@@ -5,14 +5,6 @@ plugins {
     id("androidx.room")
 }
 
-// The permissionless demo shares compiled, unused product speech adapters. Keep
-// their four file-specific exceptions confined to an explicitly requested demo
-// Lint invocation; product Lint and mixed task invocations must never use them.
-val demoLint = providers.gradleProperty("petasosDemoLint").orNull == "true"
-require(!demoLint || gradle.startParameter.taskNames.singleOrNull() in setOf("lintDemo", ":app:lintDemo")) {
-    "petasosDemoLint requires only :app:lintDemo"
-}
-
 // Only these public Android identifiers may enter an APK. Do not load server credentials.
 val publicMapKeyNames = listOf("PETASOS_NAVER_MAPS_ANDROID_KEY_ID", "PETASOS_NAVER_MAPS_CLIENT_ID")
 val localPublicMapKeys = rootProject.file(".env").takeIf { it.isFile }?.useLines { lines ->
@@ -42,9 +34,6 @@ android {
         targetSdk = 34
         versionCode = 36
         versionName = "0.8.0-dev.36"
-        testInstrumentationRunner = if (providers.gradleProperty("petasosTestBuildType").orNull == "demo")
-            "com.petasos.app.demo.DemoScenarioInstrumentation"
-        else "com.petasos.app.diagnostics.SdkProbeInstrumentation"
         // The current verified Pleos target is ARM64. Do not package untested host ABIs.
         ndk { abiFilters += "arm64-v8a" }
     }
@@ -57,49 +46,23 @@ android {
     }
 
     buildTypes {
-        create("privacy") {
-            // Opt-in diagnostic build with the existing app data/signature. AGP disables
-            // R8 optimization for debuggable apps; run-as fixtures are unavailable here.
-            initWith(getByName("debug"))
-            isDebuggable = false
-            isMinifyEnabled = true
-            isShrinkResources = false
-            signingConfig = signingConfigs.getByName("debug")
-            matchingFallbacks += listOf("debug")
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "privacy-rules.pro",
-            )
-            testProguardFiles("privacy-test-rules.pro")
+        getByName("debug") {
+            buildConfigField("boolean", "DEMO", "true")
+        }
+        getByName("release") {
+            buildConfigField("boolean", "DEMO", "false")
         }
     }
 
-    buildTypes.create("demo") {
-        // Separate UID/data sandbox, with main core but no product Application/services/permissions.
-        initWith(buildTypes.getByName("privacy"))
-        applicationIdSuffix = ".demo"
-        matchingFallbacks += listOf("release")
+    buildFeatures {
+        buildConfig = true
     }
 
-    sourceSets.getByName("privacy") {
-        // initWith copies options, not source sets. This diagnostic variant explicitly
-        // shares debug's localhost-only CA domain config; ordinary release does not.
-        manifest.srcFile("src/debug/AndroidManifest.xml")
-        res.srcDirs("src/debug/res")
-    }
-
-    // initWith does not copy sources/dependencies. The demo has a separate offline factory,
-    // and never packages the Naver SDK or its public key resource.
-    listOf("debug", "privacy", "release").forEach { type ->
+    listOf("debug", "release").forEach { type ->
         sourceSets.getByName(type).java.srcDir("src/productMap/java")
         buildTypes.getByName(type).resValue("string", "petasos_naver_map_key_id", naverMapPublicKeyId)
         buildTypes.getByName(type).proguardFile("naver-map-rules.pro")
     }
-
-    val requestedTestBuildType = providers.gradleProperty("petasosTestBuildType").orElse("debug").get()
-    require(requestedTestBuildType in setOf("debug", "privacy", "demo")) { "Unsupported Petasos test build type" }
-    testBuildType = requestedTestBuildType
-    sourceSets.getByName("androidTest").assets.srcDir("schemas")
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -107,7 +70,7 @@ android {
     }
 
     lint {
-        lintConfig = file(if (demoLint) "lint-demo.xml" else "lint.xml")
+        lintConfig = file("lint.xml")
         // Deliberately pin the documented toolchain and the Pleos API 34 target.
         // Revisit these version notices before upgrading the image or distributing.
         disable += setOf("ExpiredTargetSdkVersion", "OldTargetApi", "AndroidGradlePluginVersion")
@@ -116,14 +79,13 @@ android {
 }
 
 dependencies {
-    listOf("debugImplementation", "privacyImplementation", "releaseImplementation").forEach { variant ->
+    listOf("debugImplementation", "releaseImplementation").forEach { variant ->
         add(variant, "com.naver.maps:map-sdk:3.24.0")
     }
     testImplementation("junit:junit:4.13.2")
     implementation("androidx.room:room-runtime:2.8.5")
     ksp("androidx.room:room-compiler:2.8.5")
     implementation("androidx.work:work-runtime:2.12.0")
-    androidTestImplementation("androidx.work:work-testing:2.12.0")
     implementation("ai.pleos.playground:FusedLocation:1.1.3")
     implementation("ai.pleos.playground:TextToSpeech:3.3.1")
     implementation("ai.pleos.playground:SpeechToText:3.3.1")

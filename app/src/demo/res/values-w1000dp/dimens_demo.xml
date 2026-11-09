@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <dimen name="demo_screen_horizontal">40dp</dimen>
-    <dimen name="demo_screen_vertical">28dp</dimen>
-    <dimen name="demo_title_size">40sp</dimen>
-</resources>

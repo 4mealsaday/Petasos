@@ -1,5 +1,6 @@
 package com.petasos.app.location
 
+import com.petasos.app.BuildConfig
 import com.petasos.app.capability.location.AndroidLocationMetadata
 import com.petasos.app.capability.location.LocationSample
 import kotlin.math.ceil
@@ -31,7 +32,7 @@ class AndroidLocationMeaningAdapter(private val maximumAccuracyMeters: Double) :
         /** Fixed measurement-millisecond origin includes any supplied elapsed timestamp uncertainty. */
         fun measurementAgeMs(metadata: AndroidLocationMetadata): Long? {
             val provider = metadata.provider ?: return null
-            if (provider.isBlank() || provider.length > 200 || metadata.isMock ||
+            if (provider.isBlank() || provider.length > 200 || (metadata.isMock && !BuildConfig.DEMO) ||
                 metadata.elapsedRealtimeNanos < 0 || metadata.receivedAtElapsedRealtimeNanos < metadata.elapsedRealtimeNanos) return null
             val uncertainty = metadata.elapsedRealtimeUncertaintyNanos
             if (uncertainty != null && (!uncertainty.isFinite() || uncertainty < 0 || uncertainty > Long.MAX_VALUE.toDouble())) return null

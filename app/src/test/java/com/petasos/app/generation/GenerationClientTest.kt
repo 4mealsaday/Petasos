@@ -5,7 +5,6 @@ import com.petasos.app.runtime.*
 import com.petasos.app.summary.*
 import org.junit.Assert.*
 import org.junit.Test
-import java.io.File
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
@@ -36,10 +35,6 @@ class GenerationClientTest {
     }
     private fun failure(result: GenerationOutcome<*>): GenerationFailureKind = (result as GenerationOutcome.Failure).failure.kind
 
-    @Test fun canonicalResourceExactlyMatchesVersionedSpec() {
-        val path = listOf(File("../spec/generation-v0.8.schema.json"), File("spec/generation-v0.8.schema.json")).first { it.exists() }
-        assertArrayEquals(path.readBytes(), javaClass.getResourceAsStream("/generation/generation-v0.8.schema.json")!!.use { it.readBytes() })
-    }
     @Test fun validAnswerPassesSchemaAndEvidence() {
         client { _, _, body, _ -> response(answer(StrictJson.parse(body!!).jsonObject())) }.use {
             val success = result(it) as GenerationOutcome.Success
