@@ -25,11 +25,6 @@ class RoomLocationStore internal constructor(
     private val sql: SupportSQLiteDatabase get() = database.openHelper.writableDatabase
     private val regionPolicies = RoomRegionPolicyStore(database, wallTime)
 
-    /** Missing preference is not consent. Browsing/Media Play must not write this setting implicitly. */
-    fun isExplicitlyEnabled(): Boolean = transaction {
-        number("SELECT count(*) FROM preference WHERE scope_id='vehicle' AND location_enabled=1") == 1L
-    }
-
     override fun openSegment(tripId: String, sessionId: String, segmentId: String) = transaction {
         requireSafe(tripId.isNotBlank() && sessionId.isNotBlank() && segmentId.isNotBlank())
         requireSafe(number("SELECT count(*) FROM session s JOIN trip t ON t.trip_id=s.trip_id WHERE s.session_id=? AND s.trip_id=? AND s.status='active' AND t.status='active'", sessionId, tripId) == 1L)

@@ -409,11 +409,7 @@ class PetasosSessionHost(
         val setup = work {
             check(visiblePlaybackCurrent(job))
             if (job.requiresCompanion) {
-                val recording = RoomVehiclePreferenceStore(persistence().database).readRecordingSettings()
-                // A never-set preference (version == null) defaults consent off everywhere except DEMO
-                // builds, which skip the first-run Settings trip so a fresh install can run the GPS
-                // demo without a manual toggle; an explicit row (version != null) is never overridden.
-                locationConsentEnabled = recording.locationEnabled || (BuildConfig.DEMO && recording.version == null)
+                locationConsentEnabled = currentLocationConsentEnabled()
                 check(locationConsentEnabled && !locationConsentAuthority.isWithdrawn())
                 check(LocationAccess.hasRequiredPermissions(context))
                 // Companion ON must itself carry play intent -- there is no separate Play affordance
@@ -1150,10 +1146,22 @@ class PetasosSessionHost(
         updateLocationRecording(tripId, sessionId)
     }
 
+    /**
+     * A never-set preference (version == null) defaults consent off everywhere except DEMO builds,
+     * which skip the first-run Settings trip so a fresh install can run the GPS demo without a manual
+     * toggle; an explicit row (version != null) is never overridden. Every live re-check of consent
+     * (session start, the recording tick, mid-session changes) must apply this same carve-out --
+     * RoomLocationStore.isExplicitlyEnabled()'s raw `location_enabled=1` check does not know about it.
+     */
+    private fun currentLocationConsentEnabled(): Boolean {
+        val recording = RoomVehiclePreferenceStore(persistence().database).readRecordingSettings()
+        return recording.locationEnabled || (BuildConfig.DEMO && recording.version == null)
+    }
+
     private fun updateLocationRecording(tripId: String, sessionId: String) {
         val locations = locationStore ?: return
         val leaseCurrent = sourceLeaseCurrent
-        locationConsentEnabled = locations.isExplicitlyEnabled()
+        locationConsentEnabled = currentLocationConsentEnabled()
         val enabled = leaseCurrent() && locationAccessAllowed()
         if (!enabled) {
             if (!locationConsentEnabled || !LocationAccess.hasRequiredPermissions(context)) {
@@ -1255,7 +1263,7 @@ class PetasosSessionHost(
             if (disposed || sourceSessionId != sessionId || recorder == null) return@schedule
             try {
                 if (!sourceLeaseCurrent()) { stopLocationRecording(); return@schedule }
-                if (locationStore?.isExplicitlyEnabled() != true || !locationAccessAllowed()) {
+                if (!currentLocationConsentEnabled() || !locationAccessAllowed()) {
                     revokeCompanion()
                     stopLocationRecording()
                     return@schedule
