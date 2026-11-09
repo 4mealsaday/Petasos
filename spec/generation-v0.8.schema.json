@@ -1,0 +1,1436 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:petasos:generation:0.8",
+  "title": "Petasos generation transport contract v0.8",
+  "$defs": {
+    "Request": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "schemaVersion": {
+              "const": "0.8"
+            },
+            "requestId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+            },
+            "sessionId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+            },
+            "cancelEpoch": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "routeDependency": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "routeRevision": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "routeRevision"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "turnId": {
+              "type": "null"
+            },
+            "turnVersion": {
+              "type": "null"
+            },
+            "task": {
+              "const": "story"
+            },
+            "inputHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "payload": {
+              "type": "object",
+              "properties": {
+                "storyId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128,
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+                },
+                "topicId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128,
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+                },
+                "regionId": {
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128,
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "sourceRevisionIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128,
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+                  },
+                  "minItems": 1,
+                  "maxItems": 50,
+                  "uniqueItems": true
+                },
+                "excludedFactIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128,
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+                  },
+                  "minItems": 0,
+                  "maxItems": 50,
+                  "uniqueItems": true
+                },
+                "interestTags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "minItems": 0,
+                  "maxItems": 20,
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "storyId",
+                "topicId",
+                "regionId",
+                "sourceRevisionIds",
+                "excludedFactIds",
+                "interestTags"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "schemaVersion",
+            "requestId",
+            "sessionId",
+            "cancelEpoch",
+            "routeDependency",
+            "turnId",
+            "turnVersion",
+            "task",
+            "inputHash",
+            "payload"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "schemaVersion": {
+              "const": "0.8"
+            },
+            "requestId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+            },
+            "sessionId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+            },
+            "cancelEpoch": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "routeDependency": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "routeRevision": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "routeRevision"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "turnId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+            },
+            "turnVersion": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "task": {
+              "const": "answer"
+            },
+            "inputHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "payload": {
+              "type": "object",
+              "properties": {
+                "userText": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4000
+                },
+                "contextSummary": {
+                  "type": "string",
+                  "maxLength": 4000
+                },
+                "heardParagraphIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128,
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+                  },
+                  "minItems": 0,
+                  "maxItems": 64,
+                  "uniqueItems": true
+                },
+                "sourceRevisionIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128,
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+                  },
+                  "minItems": 0,
+                  "maxItems": 50,
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "userText",
+                "contextSummary",
+                "heardParagraphIds",
+                "sourceRevisionIds"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "schemaVersion",
+            "requestId",
+            "sessionId",
+            "cancelEpoch",
+            "routeDependency",
+            "turnId",
+            "turnVersion",
+            "task",
+            "inputHash",
+            "payload"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "schemaVersion": {
+              "const": "0.8"
+            },
+            "requestId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+            },
+            "sessionId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+            },
+            "cancelEpoch": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "routeDependency": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "routeRevision": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "routeRevision"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "turnId": {
+              "type": "null"
+            },
+            "turnVersion": {
+              "type": "null"
+            },
+            "task": {
+              "const": "resume"
+            },
+            "inputHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "payload": {
+              "type": "object",
+              "properties": {
+                "contextSummary": {
+                  "type": "string",
+                  "maxLength": 2000
+                },
+                "candidates": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "contentId": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 128,
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+                      },
+                      "paragraphId": {
+                        "oneOf": [
+                          {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 128,
+                            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "kind": {
+                        "enum": [
+                          "story",
+                          "music"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "contentId",
+                      "paragraphId",
+                      "kind"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "minItems": 0,
+                  "maxItems": 20,
+                  "uniqueItems": false
+                }
+              },
+              "required": [
+                "contextSummary",
+                "candidates"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "schemaVersion",
+            "requestId",
+            "sessionId",
+            "cancelEpoch",
+            "routeDependency",
+            "turnId",
+            "turnVersion",
+            "task",
+            "inputHash",
+            "payload"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "schemaVersion": {
+              "const": "0.8"
+            },
+            "requestId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+            },
+            "sessionId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+            },
+            "cancelEpoch": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "routeDependency": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "routeRevision": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "routeRevision"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "turnId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+            },
+            "turnVersion": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "task": {
+              "const": "summary"
+            },
+            "inputHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "payload": {
+              "type": "object",
+              "properties": {
+                "userText": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4000
+                },
+                "completedResponses": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "paragraphKey": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 128,
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+                      },
+                      "text": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 4000
+                      },
+                      "sourceRevisionIds": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 128,
+                          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+                        },
+                        "minItems": 0,
+                        "maxItems": 50,
+                        "uniqueItems": true
+                      }
+                    },
+                    "required": [
+                      "paragraphKey",
+                      "text",
+                      "sourceRevisionIds"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "minItems": 0,
+                  "maxItems": 32,
+                  "uniqueItems": false
+                },
+                "partialUnknownKeys": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128,
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+                  },
+                  "minItems": 0,
+                  "maxItems": 50,
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "userText",
+                "completedResponses",
+                "partialUnknownKeys"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "schemaVersion",
+            "requestId",
+            "sessionId",
+            "cancelEpoch",
+            "routeDependency",
+            "turnId",
+            "turnVersion",
+            "task",
+            "inputHash",
+            "payload"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "SuccessResponse": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "schemaVersion": {
+              "const": "0.8"
+            },
+            "requestId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+            },
+            "sessionId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+            },
+            "cancelEpoch": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "routeDependency": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "routeRevision": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "routeRevision"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "turnId": {
+              "type": "null"
+            },
+            "turnVersion": {
+              "type": "null"
+            },
+            "task": {
+              "const": "story"
+            },
+            "status": {
+              "const": "ok"
+            },
+            "result": {
+              "type": "object",
+              "properties": {
+                "storyId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128,
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+                },
+                "storyVersionId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128,
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+                },
+                "paragraphs": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "paragraphKey": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 128,
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+                      },
+                      "text": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 240
+                      },
+                      "kind": {
+                        "enum": [
+                          "fact",
+                          "tradition",
+                          "personal",
+                          "transition"
+                        ]
+                      },
+                      "sourceRevisionIds": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 128,
+                          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+                        },
+                        "minItems": 0,
+                        "maxItems": 50,
+                        "uniqueItems": true
+                      },
+                      "factRevisionIds": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 128,
+                          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+                        },
+                        "minItems": 0,
+                        "maxItems": 50,
+                        "uniqueItems": true
+                      }
+                    },
+                    "required": [
+                      "paragraphKey",
+                      "text",
+                      "kind",
+                      "sourceRevisionIds",
+                      "factRevisionIds"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "minItems": 1,
+                  "maxItems": 12,
+                  "uniqueItems": false
+                },
+                "estimatedDurationMs": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "required": [
+                "storyId",
+                "storyVersionId",
+                "paragraphs",
+                "estimatedDurationMs"
+              ],
+              "additionalProperties": false
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "modelId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                "provider": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                "promptVersion": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                "inputTokens": {
+                  "oneOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "outputTokens": {
+                  "oneOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "modelId",
+                "provider",
+                "promptVersion",
+                "inputTokens",
+                "outputTokens"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "schemaVersion",
+            "requestId",
+            "sessionId",
+            "cancelEpoch",
+            "routeDependency",
+            "turnId",
+            "turnVersion",
+            "task",
+            "status",
+            "result",
+            "metadata"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "schemaVersion": {
+              "const": "0.8"
+            },
+            "requestId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+            },
+            "sessionId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+            },
+            "cancelEpoch": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "routeDependency": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "routeRevision": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "routeRevision"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "turnId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+            },
+            "turnVersion": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "task": {
+              "const": "answer"
+            },
+            "status": {
+              "const": "ok"
+            },
+            "result": {
+              "type": "object",
+              "properties": {
+                "paragraphs": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "paragraphKey": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 128,
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+                      },
+                      "text": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 240
+                      },
+                      "kind": {
+                        "enum": [
+                          "fact",
+                          "tradition",
+                          "personal",
+                          "transition"
+                        ]
+                      },
+                      "sourceRevisionIds": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 128,
+                          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+                        },
+                        "minItems": 0,
+                        "maxItems": 50,
+                        "uniqueItems": true
+                      },
+                      "factRevisionIds": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 128,
+                          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+                        },
+                        "minItems": 0,
+                        "maxItems": 50,
+                        "uniqueItems": true
+                      }
+                    },
+                    "required": [
+                      "paragraphKey",
+                      "text",
+                      "kind",
+                      "sourceRevisionIds",
+                      "factRevisionIds"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "minItems": 1,
+                  "maxItems": 8,
+                  "uniqueItems": false
+                },
+                "action": {
+                  "enum": [
+                    "continue",
+                    "next",
+                    "music",
+                    "stop",
+                    "replay",
+                    "unsupported"
+                  ]
+                },
+                "targetContentId": {
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128,
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "paragraphs",
+                "action",
+                "targetContentId"
+              ],
+              "additionalProperties": false
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "modelId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                "provider": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                "promptVersion": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                "inputTokens": {
+                  "oneOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "outputTokens": {
+                  "oneOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "modelId",
+                "provider",
+                "promptVersion",
+                "inputTokens",
+                "outputTokens"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "schemaVersion",
+            "requestId",
+            "sessionId",
+            "cancelEpoch",
+            "routeDependency",
+            "turnId",
+            "turnVersion",
+            "task",
+            "status",
+            "result",
+            "metadata"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "schemaVersion": {
+              "const": "0.8"
+            },
+            "requestId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+            },
+            "sessionId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+            },
+            "cancelEpoch": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "routeDependency": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "routeRevision": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "routeRevision"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "turnId": {
+              "type": "null"
+            },
+            "turnVersion": {
+              "type": "null"
+            },
+            "task": {
+              "const": "resume"
+            },
+            "status": {
+              "const": "ok"
+            },
+            "result": {
+              "type": "object",
+              "properties": {
+                "action": {
+                  "enum": [
+                    "resume",
+                    "skip",
+                    "switch",
+                    "wait"
+                  ]
+                },
+                "targetContentId": {
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128,
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "paragraphId": {
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128,
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "transitionText": {
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 240
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                }
+              },
+              "required": [
+                "action",
+                "targetContentId",
+                "paragraphId",
+                "transitionText",
+                "reason"
+              ],
+              "additionalProperties": false
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "modelId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                "provider": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                "promptVersion": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                "inputTokens": {
+                  "oneOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "outputTokens": {
+                  "oneOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "modelId",
+                "provider",
+                "promptVersion",
+                "inputTokens",
+                "outputTokens"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "schemaVersion",
+            "requestId",
+            "sessionId",
+            "cancelEpoch",
+            "routeDependency",
+            "turnId",
+            "turnVersion",
+            "task",
+            "status",
+            "result",
+            "metadata"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "schemaVersion": {
+              "const": "0.8"
+            },
+            "requestId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+            },
+            "sessionId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+            },
+            "cancelEpoch": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "routeDependency": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "routeRevision": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "routeRevision"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "turnId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+            },
+            "turnVersion": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "task": {
+              "const": "summary"
+            },
+            "status": {
+              "const": "ok"
+            },
+            "result": {
+              "type": "object",
+              "properties": {
+                "summaryText": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4000
+                },
+                "userClaims": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4000
+                  },
+                  "minItems": 0,
+                  "maxItems": 20,
+                  "uniqueItems": false
+                },
+                "verifiedFactRevisionIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128,
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+                  },
+                  "minItems": 0,
+                  "maxItems": 50,
+                  "uniqueItems": true
+                },
+                "unresolvedQuestions": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "minItems": 0,
+                  "maxItems": 20,
+                  "uniqueItems": false
+                },
+                "completedResponseKeys": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128,
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+                  },
+                  "minItems": 0,
+                  "maxItems": 50,
+                  "uniqueItems": true
+                },
+                "partialUnknownKeys": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128,
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+                  },
+                  "minItems": 0,
+                  "maxItems": 50,
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "summaryText",
+                "userClaims",
+                "verifiedFactRevisionIds",
+                "unresolvedQuestions",
+                "completedResponseKeys",
+                "partialUnknownKeys"
+              ],
+              "additionalProperties": false
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "modelId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                "provider": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                "promptVersion": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                "inputTokens": {
+                  "oneOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "outputTokens": {
+                  "oneOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "modelId",
+                "provider",
+                "promptVersion",
+                "inputTokens",
+                "outputTokens"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "schemaVersion",
+            "requestId",
+            "sessionId",
+            "cancelEpoch",
+            "routeDependency",
+            "turnId",
+            "turnVersion",
+            "task",
+            "status",
+            "result",
+            "metadata"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "0.8"
+        },
+        "requestId": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "const": "error"
+        },
+        "code": {
+          "enum": [
+            "INVALID_REQUEST",
+            "UNSUPPORTED_SCHEMA",
+            "UNAUTHORIZED",
+            "FORBIDDEN",
+            "NOT_FOUND",
+            "IDEMPOTENCY_CONFLICT",
+            "STALE_CONTEXT",
+            "NO_EVIDENCE",
+            "INVALID_MODEL_OUTPUT",
+            "RATE_LIMITED",
+            "UPSTREAM_UNAVAILABLE",
+            "GENERATION_TIMEOUT",
+            "CANCELLED"
+          ]
+        },
+        "retryable": {
+          "type": "boolean"
+        },
+        "retryAfterMs": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "requestId",
+        "status",
+        "code",
+        "retryable",
+        "retryAfterMs"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/Request"
+    },
+    {
+      "$ref": "#/$defs/SuccessResponse"
+    },
+    {
+      "$ref": "#/$defs/ErrorResponse"
+    }
+  ]
+}
