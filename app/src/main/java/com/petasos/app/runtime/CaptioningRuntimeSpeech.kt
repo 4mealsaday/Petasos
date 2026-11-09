@@ -36,13 +36,16 @@ class CaptioningRuntimeSpeech(
         if (changed) notifyChanged()
     }
 
-    /** Recheck a prepared output's cheap current-authority guard even after STARTED. */
+    /**
+     * The caption follows the output that actually STARTED. The prepared permit is a *start*
+     * authority: an automatic story's offer is consumed right after it starts, so rechecking it
+     * here blanked the card for the whole story while its audio kept playing.
+     */
     fun currentCaption(): RuntimeText? {
         var changed = false
         val value = synchronized(lock) {
             val slot = current
-            if (caption != null && (!visible || closed || slot == null || !slot.eligible ||
-                    (slot.prepared && slot.permit?.isCurrent() != true))) {
+            if (caption != null && (!visible || closed || slot == null || !slot.eligible)) {
                 slot?.discard()
                 changed = clearCaption()
             }
@@ -96,12 +99,22 @@ class CaptioningRuntimeSpeech(
 
     override fun cancelFocusRecovery() = delegate.cancelFocusRecovery()
 
-    override fun requestInput(input: OperationToken, callback: (RuntimeInputEvent) -> Unit) = delegate.requestInput(input, callback)
+    /** Memory-only last recognized utterance, shown once on the overlay card while the answer is generated. */
+    @Volatile var lastHeard: RuntimeText? = null
+        private set
+
+    override fun requestInput(input: OperationToken, callback: (RuntimeInputEvent) -> Unit) {
+        lastHeard = null
+        delegate.requestInput(input) { event ->
+            if (event is RuntimeInputEvent.Final) { lastHeard = event.text; notifyChanged() }
+            callback(event)
+        }
+    }
     override fun stopInput(input: OperationToken) = delegate.stopInput(input)
 
     override fun close() {
         val changed = synchronized(lock) {
-            closed = true; visible = false; current?.discard(); current = null; clearCaption()
+            closed = true; visible = false; current?.discard(); current = null; lastHeard = null; clearCaption()
         }
         if (changed) notifyChanged()
         delegate.close()

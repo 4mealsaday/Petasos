@@ -73,7 +73,11 @@ class CompanionOverlay(private val context: Context, private val host: PetasosSe
         val text = card.findViewById<TextView>(R.id.overlay_card_text)
         val snapshot = host.snapshot()
         val caption = when (snapshot?.mode) {
+            PlaybackMode.TALK_PENDING -> context.getString(R.string.playback_talk_pending)
+            PlaybackMode.PROMPT -> context.getString(R.string.overlay_card_speak_now)
             PlaybackMode.LISTENING -> context.getString(R.string.playback_listening)
+            PlaybackMode.GENERATING -> host.lastHeardText()?.let { context.getString(R.string.overlay_card_heard, it) }
+                ?: context.getString(R.string.overlay_card_thinking)
             PlaybackMode.MUSIC -> snapshot.musicCheckpoint?.track?.assetId?.let { assetId ->
                 context.getString(R.string.journey_title_music, host.musicTitle(assetId), host.musicArtist(assetId))
             }

@@ -20,7 +20,10 @@
     <string name="playback_music">음악을 재생하고 있어요</string>
     <string name="playback_talk_pending">현재 문단을 마친 뒤 들을게요</string>
     <string name="playback_prompt">말하기를 준비하고 있어요</string>
-    <string name="playback_listening">말씀을 듣고 있어요</string>
+    <string name="playback_listening">듣는 중…</string>
+    <string name="overlay_card_speak_now">말씀해 주세요</string>
+    <string name="overlay_card_heard">“%1$s”\n답을 찾고 있어요</string>
+    <string name="overlay_card_thinking">답을 찾고 있어요</string>
     <string name="playback_generating">답변을 준비하고 있어요</string>
     <string name="playback_answering">답변을 들려드리고 있어요</string>
     <string name="playback_resuming">이야기로 돌아가고 있어요</string>

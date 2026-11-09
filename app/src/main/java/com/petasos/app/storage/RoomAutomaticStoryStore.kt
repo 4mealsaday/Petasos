@@ -44,7 +44,8 @@ class RoomAutomaticStoryStore internal constructor(
             val arguments = if (storyRegion != null) arrayOf<Any?>(storyRegion) else emptyArray()
             query(statement, *arguments).use { rows ->
                 while (result.size < MAX_CANDIDATES && rows.moveToNext()) {
-                    if (rows.getString(rows.getColumnIndexOrThrow("story_id")) in excluded) continue
+                    val storyId = rows.getString(rows.getColumnIndexOrThrow("story_id"))
+                    if (storyId in excluded || DemoVideoMode.excludes(storyId)) continue
                     readCandidate(rows, scope, interest)?.takeIf { it.reason == reason }?.let(result::add)
                 }
             }
@@ -68,7 +69,11 @@ class RoomAutomaticStoryStore internal constructor(
             query("${RoomAutomaticStoryEligibility.SELECT} ORDER BY s.story_id").use { rows ->
                 while (rows.moveToNext()) {
                     val record = eligibility.read(rows) ?: continue
-                    if (record.storyId in excludedStoryIds) continue
+                    if (record.storyId in excludedStoryIds || DemoVideoMode.excludes(record.storyId)) continue
+                    // Same city only (e.g. the Daejeon 동구 story while the route is in 유성구, or a
+                    // 천안 동남구 story while in 서북구). Never play another city's story here and use
+                    // it up before the car gets there.
+                    if (!sameCity(record.storyId, currentRegionId)) continue
                     val prepared = eligibility.prepare(record) ?: continue
                     val key = ContentBundleCodec.sha256(StrictJson.encode(linkedMapOf(
                         "demoFallback" to true, "metadata" to record.metadata, "currentRegionId" to currentRegionId,
@@ -78,6 +83,19 @@ class RoomAutomaticStoryStore internal constructor(
                 null
             }
         }
+    }
+
+    private fun sameCity(storyId: String, currentRegionId: String): Boolean {
+        val city = cityKey(currentRegionId) ?: return false
+        return query("SELECT region_id FROM story_region_binding WHERE story_id=?", storyId).use { rows ->
+            rows.moveToFirst() && cityKey(rows.getString(0)) == city
+        }
+    }
+
+    /** Metropolitan cities (codes 1x-3x) are one city by their first 2 digits; province cities by 4 (4146x 용인). */
+    private fun cityKey(regionId: String): String? {
+        val code = SIGUNGU.find(regionId)?.groupValues?.get(1) ?: return null
+        return if (code[0] in '1'..'3') code.take(2) else code.take(4)
     }
 
     /** Companion re-validation for [demoFallbackCandidate]: still published, still unplayed. No region scope check. */
@@ -150,5 +168,6 @@ class RoomAutomaticStoryStore internal constructor(
 
     private companion object {
         const val MAX_CANDIDATES = 64
+        val SIGUNGU = Regex("^kr-sigungu-(\\d{5})$")
     }
 }

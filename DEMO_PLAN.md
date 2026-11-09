@@ -79,10 +79,18 @@
 - 에뮬레이터: `Pleos_Connect_v2.1.0` AVD, `disk.dataPartition.size=6G`로 축소해둠(원래 10G는 12G 요구해서 디스크 부족 유발). 재부팅만 할 땐 `emulator -avd Pleos_Connect_v2.1.0 -no-snapshot-load -no-boot-anim`(wipe-data 불필요). 호스트 디스크가 부족해지면 `rm -rf app/build`로 회수.
 - 서버: `PYTHONPATH=server .local/server-venv/bin/python server/dev-local-https.py serve --port 8443` (인증서·토큰은 `.local/server/`에 이미 준비돼 있어 `prepare` 재실행 불필요) + `adb -s emulator-5554 reverse tcp:8443 tcp:8443`. 확인은 `curl -sk https://127.0.0.1:8443/v1/health`.
 - overlay 권한: `adb shell appops set --user 10 com.petasos.app SYSTEM_ALERT_WINDOW allow` **+** `adb shell pm grant --user 10 com.petasos.app android.permission.SYSTEM_ALERT_WINDOW` (이 이미지에서는 appops만으로는 안 붙을 때가 있음, 둘 다 실행).
-- 청취 이력 초기화(재시연용): `adb shell am broadcast -a com.petasos.app.debug.RESET_LISTENING_HISTORY` (debug 빌드 전용 `DemoResetReceiver`).
+- 청취 이력 초기화(재시연용): `adb shell am broadcast --user 10 -f 0x20 -p com.petasos.app -a com.petasos.app.debug.RESET_LISTENING_HISTORY` (debug 빌드 전용 `DemoResetReceiver`).
 - 홈 ON 탭이 "지금은 동행을 시작할 수 없어요"로 실패하면 — 897243f 이전 버그는 해결됐으니, 남은 원인은 보통 overlay 권한 둘 중 하나 누락이거나 RECORD_AUDIO/위치 권한 미승인.
 
-**4단계 — 대화·기록 마무리**: 실제 발화로 질문→답변→복귀 확인, 기록 화면에 데모 결과 표시 확인.
+**4단계 — 대화·기록 마무리** (진행: 대화 왕복·기록·영상 리허설 통과. 단, 발화는 Mac `say -v Yuna` 음성을 호스트 마이크로 넣은 것 — 사람 목소리 1회 확인 남음)
+- 마이크: `adb emu avd hostmicon`으로 켜짐(README). ON 첫 탭에 RECORD_AUDIO 대화상자 → 허용하면 같은 ON이 이어짐.
+- 대화 왕복(로그 태그 `PetasosTalk`): 질문 "서울역은 언제 지어졌어?" → 인식 동일 문장 → 답변 2.3~3.5초("일반적으로 알려진 바로는 … 1925년 완공") / 경험담 "어릴 때 기차 타고 대전 간 적이 있어" → 4.1초 / 음악 중 버튼 → 음악 즉시 정지 → 답변 4.5초 → 음악 같은 위치에서 재개. 지연은 전부 서버·모델(sonnet-4.6) 쪽, 5초 미만이라 모델 교체 안 함(`.local/server/config.json` `provider.model` 한 줄).
+- 카드: 현재 문단을 마친 뒤 들을게요 → 말씀해 주세요 → 듣는 중… → "인식 문장" + 답을 찾고 있어요 → 답변 자막 → 이야기/음악. DEMO 첫 발화 대기 9초.
+- 고친 끊김: 서버 연결 설정 없음(CONFIGURATION, debug `PROVISION_SERVER` 추가) / 근거 밖 질문 거절(프롬프트: 일반 지식은 표시하고 짧게 답) / 대화 후 복귀가 음악 우선(이야기 다음 문단 우선으로) / **내비가 앞에 있으면 마이크 무음**(FGS에 microphone 타입) / **자동 이야기가 운에 따라 안 시작**(에뮬레이터 1Hz 위치 반복이 위치 permit을 1초 만에 무효화 → DEMO에서 완화) / 이야기 자막이 시작 직후 사라짐 / DEMO 폴백이 다른 지역 이야기를 소비(같은 시·광역시로 제한) / 청취 이력 초기화가 FK로 실패·브로드캐스트 미도달.
+- 한계: 번들 이야기가 전부 1문단이라 "같은 이야기 다음 문단 복귀"는 현재 콘텐츠로는 발생하지 않음(대화 후 음악 → 다음 지역 이야기로 이어짐, 복귀 로직은 다문단이면 다음 문단 선택).
+- 기록: DEMO에서 OFF = 여정 종료. 나의 기록 > 지난 여정에 경로선·통과 지역 실루엣·지역 카드 17·이야기 카드 5·대화 요약 1줄 표시(요약 작업이 미검증 네트워크 제약으로 영원히 대기하던 것 DEMO에서 해제).
+- 영상: `SET_VIDEO_MODE` + `demo_route.py --video` → S01·S03·S05·S08·S10, 중간 대화 1회 포함 ON→도착→OFF→기록까지 5분 38초 무개입 1회 통과. 스크린샷은 `Claude outputs/step4-rehearsal/`.
+- 환경 이슈: 에뮬레이터 네트워크가 VALIDATED가 아니면 내비 자체 서버 호출 실패 → `requestRoute` CAUSE_SEARCH_ROUTE + 내비 "경로 탐색 오류" 대화상자(닫기로 진행, 앱 흐름엔 영향 없음).
 
 **5단계 — 제출물**: release APK(`apk/팀명_Petasos_release.apk`, 100MB 미만), README(실행 방법·서버·adb 명령), 시연 영상 녹화.
 
@@ -94,8 +102,8 @@
 ## 6. 수동 시연 체크리스트 (완료 기준)
 - [x] ON → 내비 위에 버튼·카드가 동시에 보이고 지도 터치가 막히지 않는다.
 - [x] GPS 재생 시 서울 중구에서 이야기가 시작되고 카드 자막이 문단과 맞다.
-- [ ] 버튼 → 질문 → AI 답변 → 같은 이야기 다음 문단으로 복귀.
+- [x] 버튼 → 질문 → AI 답변 → 복귀 (콘텐츠가 1문단이라 복귀 대상은 음악→다음 이야기; 사람 목소리 확인 1회 남음).
 - [x] 이야기 → 음악 → 다음 지역 이야기 자동 전환이 대전까지 이어진다.
 - [x] OFF → overlay·위치·오디오가 모두 정리된다.
-- [ ] 나의 기록에 경로선·통과 지역·들은 이야기가 표시된다.
+- [x] 나의 기록에 경로선·통과 지역·들은 이야기가 표시된다.
 - [ ] release APK 설치 후 위 흐름 재현.

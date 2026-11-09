@@ -204,6 +204,11 @@ class PleosRuntimeSpeech(
                 }
             }) { event ->
                 if (this.input !== slot || closed) return@PleosPcmSpeechInput
+                if (com.petasos.app.BuildConfig.DEBUG) android.util.Log.i("PetasosTalk", "stt " + when (event) {
+                    is SpeechInputEvent.Transcript -> "transcript final=${event.isFinal} '${event.text}'"
+                    is SpeechInputEvent.Failed -> "failed ${event.failure.code}"
+                    else -> event.toString()
+                })
                 when (event) {
                     SpeechInputEvent.Connected -> if (!slot.stopping) {
                         slot.submitted = true

@@ -27,6 +27,9 @@ class LocationInputAuthority {
     /** Doubtful samples, disconnects, permission changes and session teardown revoke pending work. */
     fun invalidate() { current.set(null) }
 
+    /** True while the latest callback was admissible (no doubtful sample, disconnect or teardown since). */
+    fun hasAdmissibleInput(): Boolean = current.get() != null
+
     /** An earlier batch must still belong to the exact latest admissible callback at use time. */
     fun canUse(permit: ReceiptPermit?, lastReceivedElapsedMs: Long): Boolean {
         val accepted = current.get() ?: return false

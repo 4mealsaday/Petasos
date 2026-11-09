@@ -8,9 +8,17 @@ polygon rule as the shipped PackedRegionBoundaryLookup, read directly from the p
 assets -- not a separate/divergent geometry implementation.
 
 Usage:
-    python3 scripts/demo_route.py [--serial emulator-5554] [--start-index N] [--pause] [--speed X]
+    python3 scripts/demo_route.py [--serial emulator-5554] [--start-index N] [--pause] [--speed X] [--video]
+
+--video: recording preset (~4-5 min total). Pair it with the app's DEMO video mode so each region
+plays one representative story (S01/S03/S05/S08/S10) + one 15 s music bridge:
+    adb shell am broadcast --user 10 -f 0x20 -p com.petasos.app -a com.petasos.app.debug.SET_VIDEO_MODE --ez enabled true
+Each story region is held ~45 s, pass-through stretches ~8 s, and points are thinned so every
+geo fix step is >= 1 s (one `adb emu geo fix` alone costs ~0.15-0.2 s).
+`kill -USR1 <pid>` toggles pause/resume as well as Enter (useful when stdin is not a terminal).
 """
 import argparse
+import signal
 import struct
 import sys
 import threading
@@ -138,9 +146,47 @@ def build_runs(points, index):
     return runs
 
 
-def run_interval(run, speed):
+VIDEO_STORY_TARGET_SECONDS = 45.0
+VIDEO_PASSTHROUGH_TARGET_SECONDS = 8.0
+VIDEO_MIN_STEP_S = 1.0
+
+
+def video_targets(runs):
+    """Per-run seconds: each story group gets 45 s in total, split over its fragments by point count."""
+    group_points = {}
+    for run in runs:
+        if run["key"][0] == "story":
+            group_points[run["key"][1]] = group_points.get(run["key"][1], 0) + len(run["items"])
+    for run in runs:
+        category, group = run["key"]
+        if category == "story":
+            run["target"] = VIDEO_STORY_TARGET_SECONDS * len(run["items"]) / group_points[group]
+        else:
+            run["target"] = min(VIDEO_PASSTHROUGH_TARGET_SECONDS, max(1.0, len(run["items"]) * VIDEO_MIN_STEP_S))
+    return runs
+
+
+def thin_run(run, video):
+    """Video preset: keep at most target/VIDEO_MIN_STEP_S evenly spread points (first and last kept)."""
+    if not video:
+        return run
+    target = run["target"]
+    keep = max(2, int(target / VIDEO_MIN_STEP_S) + 1)
+    items = run["items"]
+    if len(items) <= keep:
+        return run
+    step = (len(items) - 1) / (keep - 1)
+    picked = [items[round(i * step)] for i in range(keep)]
+    return {"key": run["key"], "items": picked, "target": target}
+
+
+def run_interval(run, speed, video=False):
     category, group = run["key"]
-    target = STORY_REGION_TARGET_SECONDS if category == "story" else PASSTHROUGH_TARGET_SECONDS
+    if video:
+        steps = max(1, len(run["items"]) - 1)
+        return run["target"] / steps / speed
+    else:
+        target = STORY_REGION_TARGET_SECONDS if category == "story" else PASSTHROUGH_TARGET_SECONDS
     steps = max(1, len(run["items"]) - 1)
     interval = target / steps
     interval = min(MAX_INTERVAL_S, max(MIN_INTERVAL_S, interval))
@@ -162,6 +208,14 @@ class PauseController:
 
     def start(self):
         self._thread.start()
+
+    def toggle(self, *_):
+        if self.paused.is_set():
+            self.paused.clear()
+            print("[resumed]", flush=True)
+        else:
+            self.paused.set()
+            print("[paused]", flush=True)
 
     def stop(self):
         self._stop.set()
@@ -197,6 +251,7 @@ def main():
     parser.add_argument("--start-index", type=int, default=0)
     parser.add_argument("--pause", action="store_true", help="Enter toggles pause/resume mid-run")
     parser.add_argument("--speed", type=float, default=1.0, help="Overall speed multiplier (default 1.0)")
+    parser.add_argument("--video", action="store_true", help="Recording preset: ~45 s per story region, ~4-5 min total")
     args = parser.parse_args()
 
     if args.speed <= 0:
@@ -214,8 +269,10 @@ def main():
 
     print("Classifying route points into region runs...")
     runs = build_runs(points, index)
+    if args.video:
+        runs = [thin_run(r, True) for r in video_targets(runs)]
 
-    total_seconds = sum(run_interval(run, args.speed) * max(1, len(run["items"]) - 1) for run in runs)
+    total_seconds = sum(run_interval(run, args.speed, args.video) * max(1, len(run["items"]) - 1) for run in runs)
     story_runs = [r for r in runs if r["key"][0] == "story"]
     found_groups = {r["key"][1] for r in story_runs}
     missing_groups = set(STORY_GROUPS) - found_groups
@@ -232,21 +289,22 @@ def main():
     pause_controller = PauseController()
     if args.pause:
         pause_controller.start()
+    signal.signal(signal.SIGUSR1, pause_controller.toggle)
 
     emitted = 0
     try:
         for run_item in runs:
-            interval = run_interval(run_item, args.speed)
+            interval = run_interval(run_item, args.speed, args.video)
             label = describe_run(run_item)
             print(f"-- entering run [{label}] ({len(run_item['items'])} points, ~{interval:.2f}s/point)")
             for lon, lat, code, name, category, group in run_item["items"]:
-                if args.pause:
-                    pause_controller.wait_while_paused()
+                pause_controller.wait_while_paused()
+                started = time.monotonic()
                 geo_fix(args.serial, lon, lat)
                 emitted += 1
                 if code:
                     print(f"  [{emitted}] ({lon:.5f},{lat:.5f}) in {name} ({code})")
-                time.sleep(interval)
+                time.sleep(max(0.0, interval - (time.monotonic() - started)))
     except KeyboardInterrupt:
         print("\nInterrupted.")
     finally:

@@ -25,7 +25,10 @@ class SummaryWorkScheduler(
 
     private fun request(schedule: SummarySchedule): OneTimeWorkRequest = OneTimeWorkRequest.Builder(SummaryWorker::class.java)
         .setInputData(Data.Builder().putString(TURN_ID, schedule.turnId).build())
-        .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
+        // DEMO talks to the local server over `adb reverse` (localhost); an emulator network that
+        // Android has not VALIDATED would otherwise keep every summary pending forever.
+        .setConstraints(Constraints.Builder().setRequiredNetworkType(
+            if (com.petasos.app.BuildConfig.DEMO) NetworkType.NOT_REQUIRED else NetworkType.CONNECTED).build())
         // DB retains the actual deadline. Wake periodically to re-evaluate UTC/OS changes;
         // do not pass an untrusted near-Long.MAX_VALUE Retry-After to WorkManager arithmetic.
         .setInitialDelay(delayUntil(schedule.notBeforeEpochMs, now()), TimeUnit.MILLISECONDS)

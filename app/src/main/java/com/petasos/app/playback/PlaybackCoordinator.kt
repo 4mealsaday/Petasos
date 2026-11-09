@@ -15,6 +15,8 @@ class PlaybackCoordinator(
     restoredCheckpoint: StoryCheckpoint? = null,
     restoredMusicCheckpoint: MusicCheckpoint? = null,
     restoredMusicRequiredBeforeAutomaticStory: Boolean = false,
+    /** Wait for the first spoken word after the mic opens. DEMO raises it for a human speaker. */
+    private val firstSpeechMs: Long = 5_000,
 ) {
     private enum class Purpose { STORY, MUSIC, PROMPT, ANSWER, FAILURE, COMMAND_NOTICE }
     private enum class Navigation { NEXT, PREVIOUS }
@@ -210,7 +212,7 @@ class PlaybackCoordinator(
                 active == null -> "stale_input"
                 active.ready || active.started || active.finalSeen || active.ended -> "duplicate_input_ready"
                 expired(TimerKind.INPUT_READY, now) -> { failInput(now); null }
-                else -> { active.ready = true; cancelTimer(TimerKind.INPUT_READY); schedule(TimerKind.FIRST_SPEECH, now + 5_000); null }
+                else -> { active.ready = true; cancelTimer(TimerKind.INPUT_READY); schedule(TimerKind.FIRST_SPEECH, now + firstSpeechMs); null }
             }
         }
         is PlaybackEvent.InputStarted -> {

@@ -12,6 +12,7 @@ class PetasosApplication : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
+        com.petasos.app.storage.DemoVideoMode.load(this)
         SummaryBackground.start(this)
     }
 }

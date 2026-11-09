@@ -113,6 +113,38 @@ adb shell pm grant --user 10 com.petasos.app android.permission.SYSTEM_ALERT_WIN
 
 이 Pleos 이미지에서는 `appops set`만으로는 부족할 수 있다 — `pm grant`까지 같이 실행해야 overlay가 확실히 뜬다.
 
+### 데모 실행: 마이크·로컬 서버·영상 프리셋
+
+**마이크.** 에뮬레이터는 기본적으로 호스트 마이크를 받지 않는다. 다음 명령으로 켠다(= Extended controls → Microphone → "Virtual microphone uses host audio input"). 에뮬레이터를 재부팅할 때마다 다시 실행한다. macOS가 처음 한 번 에뮬레이터의 마이크 접근 허용을 물을 수 있다.
+
+```sh
+adb emu avd hostmicon
+```
+
+RECORD_AUDIO는 홈의 ON을 처음 누를 때 요청되고, 허용하면 같은 ON이 그대로 이어진다.
+
+**로컬 답변 서버.** 서버를 띄우고 debug 앱에 서버 주소·기기 토큰을 한 번 넣는다(토큰은 run-as로 앱 cache에 넣고 debug 전용 receiver가 Keystore 암호문으로 옮긴 뒤 평문을 지운다).
+
+```sh
+PYTHONPATH=server .local/server-venv/bin/python server/dev-local-https.py serve --port 8443 &
+adb reverse tcp:8443 tcp:8443
+adb shell "run-as com.petasos.app --user 10 sh -c 'cat > cache/demo-server.token'" < .local/server/device-provisioning.token
+adb shell am broadcast --user 10 -f 0x20 -p com.petasos.app -a com.petasos.app.debug.PROVISION_SERVER
+```
+
+답변 모델은 `.local/server/config.json`의 `provider.model` 한 줄이다(현재 `anthropic/claude-sonnet-4.6`, 답변 2.5~4.5초). 바꾸면 `acceptedModelIds`도 OpenRouter가 돌려주는 모델 ID로 같이 바꾸고 서버를 재시작한다.
+
+**영상 프리셋(약 4~5분).** 지역당 대표 이야기 1편(S01·S03·S05·S08·S10) + 음악 15초로 서울역→대전을 한 번에 녹화한다.
+
+```sh
+adb shell am broadcast --user 10 -f 0x20 -p com.petasos.app -a com.petasos.app.debug.RESET_LISTENING_HISTORY
+adb shell am broadcast --user 10 -f 0x20 -p com.petasos.app -a com.petasos.app.debug.SET_VIDEO_MODE --ez enabled true
+# 홈에서 ON 후
+python3 scripts/demo_route.py --video --pause   # Enter로 GPS 일시정지/재개(대화하는 동안 멈춰 두기)
+```
+
+DEMO 빌드에서 OFF는 "도착"이다: 여정을 종료해 나의 기록 > 지난 여정에 이번 이동이 따로 남고, 다음 ON은 새 여정으로 시작한다.
+
 ## 위치·음성 SDK 검증
 
 ```sh

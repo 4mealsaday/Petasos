@@ -143,6 +143,15 @@ class CompanionLocationService : Service() {
 
     private fun promote(recording: Boolean) {
         // Updating an existing foreground notification does not need POST_NOTIFICATIONS consent.
+        if (Build.VERSION.SDK_INT >= 30 &&
+            checkSelfPermission(android.Manifest.permission.RECORD_AUDIO) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            // Microphone type keeps the talk button's capture alive while Navigation is in front.
+            try {
+                startForeground(NOTIFICATION_ID, notification(recording),
+                    ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION or ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE)
+                return
+            } catch (_: SecurityException) { /* Not eligible right now: keep location-only. */ }
+        }
         if (Build.VERSION.SDK_INT >= 29) {
             startForeground(NOTIFICATION_ID, notification(recording), ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION)
         } else startForeground(NOTIFICATION_ID, notification(recording))

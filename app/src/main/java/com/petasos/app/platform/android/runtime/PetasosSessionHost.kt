@@ -110,8 +110,8 @@ class PetasosSessionHost(
     @Volatile private var committedSessionId: String? = null
     private var clockScopeId = ""
     private var routeRevision = 0L
-    private var routeDependency: Long? = null
-    private var observedNavigationRouteState = NavigationRouteState.UNKNOWN
+    @Volatile private var routeDependency: Long? = null
+    @Volatile private var observedNavigationRouteState = NavigationRouteState.UNKNOWN
     private val navigationIngressRevision = AtomicLong()
     private var committedNavigationIngressRevision = 0L
     private var currentRegionId: String? = null
@@ -585,6 +585,26 @@ class PetasosSessionHost(
         }
     }
 
+    /** Memory-only last recognized question, for the overlay card's GENERATING line. */
+    fun lastHeardText(): String? = speech?.lastHeard?.value
+
+    private var talkStartedAt = 0L
+    private fun logTalkTransition(previous: PlaybackMode?, transition: PlaybackTransition) {
+        val state = transition.snapshot
+        val effects = transition.effects.joinToString(",") { it::class.simpleName ?: "?" }
+        if (state.mode != previous || transition.ignoredReason != null || transition.effects.any {
+                it is PlaybackEffect.GenerateAnswer || it is PlaybackEffect.PlanResume || it is PlaybackEffect.RequestInput }) {
+            val now = SystemClock.elapsedRealtime()
+            if (state.mode == PlaybackMode.TALK_PENDING && previous != PlaybackMode.TALK_PENDING) talkStartedAt = now
+            val since = if (talkStartedAt > 0) " t+${now - talkStartedAt}ms" else ""
+            android.util.Log.i("PetasosTalk", "mode $previous -> ${state.mode} in=${state.inputPhase} out=${state.outputPhase}" +
+                " ignored=${transition.ignoredReason} effects=[$effects]$since")
+            if (state.mode == PlaybackMode.GENERATING && previous != PlaybackMode.GENERATING) {
+                android.util.Log.i("PetasosTalk", "heard: ${speech?.lastHeard?.value}")
+            }
+        }
+    }
+
     fun talk(): ListenableFuture<Void?> {
         checkMain()
         revokeAutomaticPlanning()
@@ -789,14 +809,27 @@ class PetasosSessionHost(
         }
         val resume = object : RuntimeResumePlanner {
             override fun plan(effect: PlaybackEffect.PlanResume, callback: (RuntimeResumeSelection) -> Unit): RuntimeCancellation {
-                if (effect.afterInteraction) return apiResume.plan(effect, callback)
+                if (effect.afterInteraction) {
+                    // After a question, return to the same story's next paragraph deterministically
+                    // (the generic checkpoint fallback prefers music, and a model pick adds latency).
+                    val story = effect.candidates.firstOrNull { it.hasNext }
+                    if (BuildConfig.DEBUG) android.util.Log.i("PetasosTalk", "resume candidates story=${effect.candidates.size} " +
+                        "music=${effect.musicCandidates.size} pick=${story?.story?.storyId}#${story?.paragraphIndex}")
+                    if (story != null) {
+                        pendingResumeTurnId = null
+                        callback(RuntimeResumeSelection(checkpoint = story))
+                        return RuntimeCancellation { }
+                    }
+                    return apiResume.plan(effect, callback)
+                }
                 pendingResumeTurnId = null
                 return CheckpointRuntimeResumePlanner().plan(effect, callback)
             }
         }
         live = PlaybackRuntime(
             PlaybackCoordinator(tripId, sessionId, restoredCheckpoint = storyCheckpoint, restoredMusicCheckpoint = musicCheckpoint,
-                restoredMusicRequiredBeforeAutomaticStory = candidate?.requireMusicBeforeAutomaticStory == true),
+                restoredMusicRequiredBeforeAutomaticStory = candidate?.requireMusicBeforeAutomaticStory == true,
+                firstSpeechMs = if (BuildConfig.DEMO) DEMO_FIRST_SPEECH_MS else 5_000),
             queue, AndroidRuntimeClock, bridge, inputOutput,
             generation = ApiRuntimeGeneration(client) { request -> persistence.answerContext(request) { live.isGenerationCurrent(request) } },
             music = musicOutput,
@@ -808,7 +841,9 @@ class PetasosSessionHost(
             }),
             observer = object : RuntimeObserver {
                 override fun onTransition(transition: PlaybackTransition) {
+                    val previousMode = latest?.mode
                     latest = transition.snapshot
+                    if (BuildConfig.DEBUG) logTalkTransition(previousMode, transition)
                     lookahead?.onTransition(transition, SystemClock.elapsedRealtime())
                     musicPlanning?.onTransition(transition)
                     // Preserve the selected permit while the exact automatic start is being prepared.
@@ -1096,7 +1131,15 @@ class PetasosSessionHost(
                     }
                 }
                 source.start { event ->
-                    val changesAuthority = event is NavigationEvent.Changed || event is NavigationEvent.Failure ||
+                    // A guidance progress update (same route, same state) arrives on almost every GPS
+                    // fix while a route is active; only a real route/state change revokes planning,
+                    // otherwise no automatic story offer ever survives long enough to start.
+                    val routeChanged = event is NavigationEvent.Changed &&
+                        (event.snapshot.observedRouteDependency != routeDependency ||
+                            event.snapshot.observedRouteState != observedNavigationRouteState)
+                    if (BuildConfig.DEBUG && event is NavigationEvent.Changed) android.util.Log.i("PetasosTalk",
+                        "navi changed routeChanged=$routeChanged state=${event.snapshot.observedRouteState}")
+                    val changesAuthority = routeChanged || event is NavigationEvent.Failure ||
                         event is NavigationEvent.Availability && event.state != NavigationAvailability.READY &&
                         event.state != NavigationAvailability.CONNECTING
                     val ingressRevision = if (!disposed && leaseCurrent() && sourceSessionId == sessionId && navigationSource === source &&
@@ -1184,7 +1227,12 @@ class PetasosSessionHost(
                 val last = points.last()
                 val permit = pendingPermits[last.pointId]
                 val received = last.receivedAtElapsedMs
-                committedLocationAuthority = { inputAuthority.canUse(permit, received) }
+                // DEMO: the emulator re-emits the last fix ~1 Hz and identical repeats are not
+                // appended, so the strict "latest receipt" permit went stale within ~1 s and every
+                // automatic story offer was dropped before its music boundary. Freshness is still
+                // enforced by locationFreshUntil; doubtful samples/disconnects still invalidate.
+                committedLocationAuthority = if (BuildConfig.DEMO) { { permit != null && inputAuthority.hasAdmissibleInput() } }
+                    else { { inputAuthority.canUse(permit, received) } }
                 committedLocationElapsed = last.receivedAtElapsedMs
                 locationFreshUntilElapsedMs = LocationFreshness.deadlineElapsedMs(last)
                 locationValid = locationSource != null && last.quality == LocationQuality.VALID &&
@@ -1280,6 +1328,7 @@ class PetasosSessionHost(
         }
     }
 
+    private var lastPlanLog: String? = null
     private fun refreshPlanning() {
         val state = latest ?: return
         if (disposed || state.closed || sourceSessionId != state.sessionId) {
@@ -1336,6 +1385,11 @@ class PetasosSessionHost(
                 locationValid, state.interactionIntent, committedLocationElapsed, regionalTarget,
                 locationFreshUntilElapsedMs, planningInputAuthority, currentRegionAuthority = regionPermit,
                 currentRegionEvidenceCurrent = regionEvidence), committedLocation, landmarkRoute, allowOffer)
+            if (BuildConfig.DEBUG) {
+                val line = "plan playIntent=${state.playIntent} interaction=${state.interactionIntent} blockers=${state.blockers} " +
+                    "mode=${state.mode} locValid=$locationValid region=$currentRegionId target=${regionalTarget?.regionId} boundary=${boundary != null} forecast=${forecast?.passages?.map { it.regionId }} locAuth=${planningInputAuthority()} rawLoc=${locationAuthority()} nav=${navigationIngressRevision.get() == navigationRevision} regionAuth=${regionPermit()}"
+                if (line != lastPlanLog) { lastPlanLog = line; android.util.Log.i("PetasosTalk", line) }
+            }
         } catch (_: Exception) {
             automaticGenerationPlan = null; automaticGeneration?.update(null); regionalTarget = null
             locationValid = false
@@ -1459,5 +1513,6 @@ class PetasosSessionHost(
     companion object {
         /** Conservative development candidate aligned with LOC freshness; real movement validation remains pending. */
         private const val RECEIPT_GAP_CANDIDATE_MS = 10_000L
+        private const val DEMO_FIRST_SPEECH_MS = 9_000L
     }
 }

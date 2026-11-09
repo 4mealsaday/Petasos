@@ -410,14 +410,25 @@ class GenerationSummaryProvider(private val client: GenerationClient) : SummaryG
         }) }
 }
 
+private fun debugLog(message: String) {
+    if (com.petasos.app.BuildConfig.DEBUG) try { android.util.Log.i("PetasosTalk", message) } catch (_: RuntimeException) { }
+}
+
 class ApiRuntimeGeneration(
     private val client: GenerationClient,
     private val contextSupplier: (RuntimeGenerationRequest) -> AnswerGenerationContext?,
 ) : RuntimeGeneration {
     override fun generate(request: RuntimeGenerationRequest, callback: (RuntimeGenerationResult) -> Unit): RuntimeCancellation {
         val context = contextSupplier(request)
-        if (context == null) { callback(RuntimeGenerationResult.Failure(false)); return RuntimeCancellation { } }
+        if (context == null) { debugLog("answer context unavailable"); callback(RuntimeGenerationResult.Failure(false)); return RuntimeCancellation { } }
+        val startedAt = System.nanoTime()
         return client.submitAnswer(request, context) { outcome ->
+            val elapsedMs = (System.nanoTime() - startedAt) / 1_000_000
+            when (outcome) {
+                is GenerationOutcome.Failure -> debugLog("answer failed after ${elapsedMs}ms: ${outcome.failure.kind}")
+                is GenerationOutcome.Success -> debugLog("answer after ${elapsedMs}ms action=${outcome.value.action} " +
+                    "target=${outcome.value.targetContentId} text=${outcome.value.paragraphs.joinToString(" ") { it.text.value }}")
+            }
             callback(when (outcome) {
                 is GenerationOutcome.Failure -> RuntimeGenerationResult.Failure(outcome.failure.kind == GenerationFailureKind.RETRYABLE, outcome.failure.retryAfterMs)
                 is GenerationOutcome.Success -> {

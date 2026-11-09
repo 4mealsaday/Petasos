@@ -6,6 +6,8 @@
         <receiver android:name="com.petasos.app.debug.DemoResetReceiver" android:exported="true">
             <intent-filter>
                 <action android:name="com.petasos.app.debug.RESET_LISTENING_HISTORY" />
+                <action android:name="com.petasos.app.debug.PROVISION_SERVER" />
+                <action android:name="com.petasos.app.debug.SET_VIDEO_MODE" />
             </intent-filter>
         </receiver>
     </application>
