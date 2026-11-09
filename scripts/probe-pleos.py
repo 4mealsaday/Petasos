@@ -13,12 +13,12 @@ import subprocess
 import time
 
 ROOT = Path(__file__).resolve().parent.parent
-PROBES = ("vehicle-preferences", "trip-results", "trip-lifecycle", "app-trip-lifecycle", "app-location-live", "location", "tts-connect", "tts-speak", "tts-stop", "tts-close", "stt-connect", "stt-ready",
+PROBES = ("vehicle-preferences", "trip-results", "trip-lifecycle", "app-trip-lifecycle", "app-location-live", "app-companion", "audio-focus-recovery", "location", "tts-connect", "tts-speak", "tts-stop", "tts-close", "stt-connect", "stt-ready",
           "stt-listen", "stt-cancel", "stt-close", "stt-pcm", "stt-owned-pcm", "stt-owned-listen", "stt-owned-stream", "stt-owned-delayed", "stt-owned-eof",
           "location-storage", "android-location-contract", "android-speech-capability", "region-storage", "region-policy-storage", "region-hierarchy", "bundled-stories", "regional-content", "landmark-storage", "landmark-policy-storage", "automatic-planning", "local-commands", "session-recovery", "recovery-music-gap", "navigation", "music-runtime", "media-session", "app-playback", "app-music", "car-policy-ui",
           "storage", "runtime-scripted", "runtime-tts", "runtime-tts-stop", "story-generation-storage", "resume-context", "app-story-generation",
           "summary-storage", "summary-work", "summary-rights", "generation-https", "generation-provision", "generation-live",
-          "content-install", "content-install-local", "content-runtime", "generation-planning-live", "auxiliary-route", "bundled-playback", "representative-route-runtime")
+          "content-install", "content-install-local", "content-runtime", "generation-planning-live", "auxiliary-route", "bundled-playback", "representative-route-runtime", "journey-ui")
 CAAS = "ai.pleos.playground.caas"
 APP = "com.petasos.app"
 BUILD_TYPES = ("debug", "privacy")
@@ -115,6 +115,12 @@ def read_development_server(probe, path, token_path=None):
 
 
 def probe_timeout(probe):
+    if probe == "audio-focus-recovery":
+        return 30  # Synthetic AudioManager focus ownership only; no audio output.
+    if probe == "app-companion":
+        return 100  # 85s probe budget including foreground lease cleanup and Activity return.
+    if probe == "journey-ui":
+        return 90  # Actual parked UI/records, companion width checks and Activity teardown.
     if probe == "auxiliary-route":
         return 90  # Probe checks its own 60s budget; host permits bounded Android cleanup/reporting.
     if probe == "bundled-playback":
@@ -168,6 +174,9 @@ def probe_evidence_metadata(probe, has_https_fixture=False):
             "music-runtime": "actual Media3 playback and Room runtime using synthetic test tones; no licensed product music or microphone",
             "media-session": "actual MediaController command transport to synthetic target plus product browse and voice gate; no audio or microphone",
             "car-policy-ui": "actual CarUx observation plus detached synthetic mapper/renderer and visibility states; probe body does not access product Host/database or issue permissions/media commands; normal target Application startup remains unchanged and may recover product storage; no vehicle mutation",
+            "app-companion": "actual MainActivity same-event Play then Stop cancels pending preparation and is observed for six seconds without late play/foreground lease; subsequent UI Play with a SHA-pinned public bundled story, then immediate media Stop; existing saved location consent and permissions only; foreground location lease acknowledged; test-owned MediaBrowser released before native Navigation Foreground button; actual Activity onStop required, same Host/session and new valid Android UPDATE measured after onStop committed to Room; visible or multiwindow case explicitly deferred without hidden claim; aggregate counts only, no coordinate output; model/conversation counts and preference version unchanged; no route mutation, microphone or model command; cleanup stops foreground lease without ending user trip, releases browser, restores Activity and retains history",
+            "audio-focus-recovery": "actual AudioManager synthetic MEDIA versus NAV_GUIDANCE transient focus; actual TRANSIENT and GAIN after competitor abandon, cancelled request no GAIN, permanent LOSS no automatic GAIN; no player, TTS, speaker output, microphone, route, preferences or storage; does not prove real Navigation voice or physical speech stop",
+            "journey-ui": "dev36 actual MainActivity and CarUx; home two large actions, unsupported ON remains OFF; records-only settings gear, twelve interests, read-only product records and public 261-region silhouette album; layout-only 360/600/900dp control bounds; OFF leaves route samples/segments and preference version unchanged; no navigation-screen, preference, consent, permission, playback, microphone or model commands; no secret, coordinate or record text output; Activity finished without clear-data or uninstall",
             "app-playback": "actual product MediaBrowser/service/host, installed public story TTS and durable petasos.db completion; no microphone or model call",
             "bundled-playback": "one explicit SHA-pinned public bundled story selected by storyId-sorted index 0..9; actual product MediaBrowser/service/host and Pleos TTS; all required paragraphs completed in a new session with durable ended_elapsed_ms minus started_elapsed_ms per paragraph and sum; callback intervals are not acoustic speech duration; 70-second internal budget; history retained in product Room; no Activity, microphone, model, actual location, consent change or external fixture",
             "app-music": "actual product public story then licensed bundled music with attribution, Media3 Stop/resume/natural end and durable petasos.db commits; no microphone, model, synthetic tone or location opt-in",

@@ -105,6 +105,22 @@ val raw = """android.location.LocationManager and ${1 + 2}"""
                         'val s = "${"nested ${android.speech.SpeechRecognizer}"}"'):
             self.assertTrue(audit.source_checks(snippet.encode()))
 
+    def test_naver_sdk_references_fail_but_offline_map_factory_passes(self):
+        for snippet in (
+                "import com.naver.maps.map.MapView",
+                "import com.naver.maps.map.NaverMapSdk as PublicMap",
+                "import com.naver.maps.*",
+                "val map = com /* split */ . naver . maps . map . MapView(context)"):
+            with self.subTest(snippet=snippet):
+                self.assertIn("SOURCE_FORBIDDEN_PACKAGE", audit.source_checks(snippet.encode()))
+        offline = '''package com.petasos.app.presentation.map
+import android.content.Context
+internal object ProductMapBackendFactory {
+    fun create(context: Context, onReady: () -> Unit, onFailure: () -> Unit): JourneyMapBackend? = null
+}
+'''
+        self.assertEqual(audit.source_checks(offline.encode()), [])
+
     def test_malformed_oversized_entity_and_lexical_inputs_never_pass(self):
         for content, code in ((b"<manifest", "MANIFEST_XML_INVALID"),
                               (b'<!DOCTYPE x [<!ENTITY y "z">]><manifest/>', "XML_DECLARATION_FORBIDDEN"),

@@ -71,6 +71,8 @@ class SdkProbeInstrumentation : Instrumentation() {
                 "trip-lifecycle" -> com.petasos.app.storage.TripLifecycleProbe.run(this, ::mark)
                 "app-trip-lifecycle" -> ProductTripLifecycleProbe.run(this, ::mark)
                 "app-location-live" -> ProductLocationProbe.run(this, ::mark)
+                "app-companion" -> ProductCompanionProbe.run(this, ::mark)
+                "audio-focus-recovery" -> AudioFocusRecoveryProbe.run(this, ::mark)
                 "location-storage" -> com.petasos.app.storage.LocationStorageProbe.run(this, ::mark)
                 "region-storage" -> com.petasos.app.storage.RegionStorageProbe.run(this, ::mark)
                 "region-policy-storage" -> com.petasos.app.storage.RegionPolicyStorageProbe.run(this, ::mark)
@@ -99,6 +101,7 @@ class SdkProbeInstrumentation : Instrumentation() {
                 "resume-context" -> com.petasos.app.storage.ResumeContextProbe.run(this, ::mark)
                 "generation-planning-live" -> com.petasos.app.generation.PlanningGenerationProbe.run(this, ::mark)
                 "car-policy-ui" -> CarPolicyPresentationProbe.run(this, ::mark)
+                "journey-ui" -> ProductJourneyUiProbe.run(this, ::mark)
                 "generation-provision" -> com.petasos.app.generation.DevelopmentGenerationProbe.provision(this, ::mark, fixturePort)
                 "generation-live" -> com.petasos.app.generation.DevelopmentGenerationProbe.run(this, ::mark)
                 "storage" -> StorageIntegrationProbe.run(this, ::mark)
@@ -120,7 +123,16 @@ class SdkProbeInstrumentation : Instrumentation() {
         } catch (failure: SttPcmProbe.Failure) {
             outcome = "BLOCKED"
             reason = failure.code
+        } catch (failure: ProductCompanionProbe.Failure) {
+            outcome = failure.outcome
+            reason = failure.code
+        } catch (failure: AudioFocusRecoveryProbe.Failure) {
+            outcome = failure.outcome
+            reason = failure.code
         } catch (failure: ProductLocationProbe.Failure) {
+            outcome = failure.outcome
+            reason = failure.code
+        } catch (failure: ProductJourneyUiProbe.Failure) {
             outcome = failure.outcome
             reason = failure.code
         } catch (failure: AndroidSpeechCapabilityProbe.Failure) {
@@ -181,6 +193,9 @@ class SdkProbeInstrumentation : Instrumentation() {
                 "music-runtime" -> "actual_Media3_and_Room_with_synthetic_test_tone_no_microphone_or_model"
                 "media-session" -> "actual_MediaController_commands_and_product_browse_no_audio_or_microphone"
                 "car-policy-ui" -> "actual_CarUx_observation_detached_synthetic_mapper_renderer_gates_no_vehicle_mutation_normal_target_startup"
+                "journey-ui" -> "dev36_actual_MainActivity_CarUx_home_two_large_actions_unsupported_ON_remains_OFF_records_gear_12_interests_261_region_album_360_600_900dp_OFF_no_samples_segments_or_preference_changes_no_media_navigation_permissions_microphone_or_model_commands"
+                "app-companion" -> "actual_same_event_UI_Play_Stop_pending_cancel_six_seconds_no_late_start_then_UI_Play_public_bundled_story_then_media_Stop_foreground_location_lease_test_browser_released_native_navigation_Foreground_button_actual_Activity_onStop_same_Host_session_new_valid_post_stop_measured_UPDATE_Room_counts_only_hidden_case_deferred_if_visible_existing_consent_no_model_microphone_or_route_mutation_cleanup_releases_lease_retains_trip_and_restores_Activity"
+                "audio-focus-recovery" -> "actual_AudioManager_synthetic_MEDIA_versus_NAV_GUIDANCE_transient_focus_request_GAIN_after_abandon_cancelled_no_GAIN_permanent_LOSS_no_automatic_GAIN_no_player_TTS_speaker_output_mic_route_preferences_or_storage_not_real_navigation_voice"
                 "generation-provision" -> "private_debug_localhost_TLS_device_configuration_install_no_model_call"
                 "generation-live" -> "actual_Android_HTTPS_OpenRouter_fixed_nonpersonal_input_no_microphone"
                 "storage" -> "actual_Room_SQLite_Keystore_with_synthetic_test_data"
@@ -311,6 +326,7 @@ class SdkProbeInstrumentation : Instrumentation() {
                         mark("tts_speak_requested")
                     }
                     SpeechOutputEvent.Ready -> mark("tts_ready")
+                    SpeechOutputEvent.FocusGained -> Unit
                     SpeechOutputEvent.Started -> {
                         startedSeen = true
                         mark("tts_started")

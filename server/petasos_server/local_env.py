@@ -19,6 +19,7 @@ ALLOWED_KEYS = frozenset({
     "PETASOS_KAKAO_MOBILITY_REST_API_KEY",
     "PETASOS_NAVER_MAPS_CLIENT_ID",
     "PETASOS_NAVER_MAPS_CLIENT_SECRET",
+    "PETASOS_NAVER_MAPS_ANDROID_KEY_ID",  # Shared .env public Android setting; not a server secret.
 })
 MAX_ENV_BYTES = 64 * 1024
 

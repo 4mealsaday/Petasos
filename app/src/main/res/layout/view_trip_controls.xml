@@ -1,46 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/preview_card_margin_top"
-    android:background="@drawable/bg_card"
-    android:orientation="vertical"
-    android:padding="@dimen/preview_card_padding">
-
-    <TextView style="@style/Widget.Petasos.Preview.CardTitle"
-        android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:text="@string/records_title" />
-    <TextView android:id="@+id/records_notice" style="@style/Widget.Petasos.Preview.CardDescription"
-        android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/preview_card_description_margin_top"
-        android:text="@string/records_description" />
-    <Button android:id="@+id/records_location" style="@style/Widget.Petasos.Preview.CardDescription"
-        android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:minHeight="48dp" android:text="@string/records_location_enable" />
-    <Button android:id="@+id/records_permission" style="@style/Widget.Petasos.Preview.CardDescription"
-        android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:minHeight="48dp" android:text="@string/records_permission" android:visibility="gone" />
-    <TextView style="@style/Widget.Petasos.Preview.CardDescription"
-        android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:labelFor="@id/records_keywords" android:text="@string/records_keywords_label" />
-    <EditText android:id="@+id/records_keywords" style="@style/Widget.Petasos.Preview.CardDescription"
-        android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:minHeight="48dp" android:inputType="textCapSentences|textMultiLine|textNoSuggestions"
-        android:importantForAutofill="no" android:saveEnabled="false"
-        android:maxLength="5140" />
-    <Button android:id="@+id/records_save_keywords" style="@style/Widget.Petasos.Preview.CardDescription"
-        android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:minHeight="48dp" android:text="@string/records_keywords_save" />
-    <Button android:id="@+id/records_refresh" style="@style/Widget.Petasos.Preview.CardDescription"
-        android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:minHeight="48dp" android:text="@string/records_refresh" />
-    <Spinner android:id="@+id/records_trip_selection"
-        android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:minHeight="48dp" android:contentDescription="@string/records_trip_selection" />
-    <Button android:id="@+id/records_end_trip" style="@style/Widget.Petasos.Preview.CardDescription"
-        android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:minHeight="48dp" android:text="@string/records_end_trip" />
-    <TextView android:id="@+id/records_result" style="@style/Widget.Petasos.Preview.CardDescription"
-        android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:saveEnabled="false" android:text="@string/records_empty" />
+    android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+    <TextView android:id="@+id/records_notice" style="@style/Widget.Petasos.Preview.CardDescription" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="@string/records_description" />
+    <LinearLayout android:id="@+id/journey_location_settings" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_glass_surface" android:padding="20dp" android:layout_marginTop="16dp">
+        <TextView style="@style/Widget.Petasos.Preview.CardTitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/journey_location_heading" />
+        <Button android:id="@+id/records_location" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/records_location_enable" />
+        <Button android:id="@+id/records_permission" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/records_permission" android:visibility="gone" />
+    </LinearLayout>
+    <LinearLayout android:id="@+id/journey_interest_settings" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_glass_surface" android:padding="20dp" android:layout_marginTop="16dp">
+        <TextView style="@style/Widget.Petasos.Preview.CardTitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/journey_interests_heading" />
+        <TextView style="@style/Widget.Petasos.Preview.CardDescription" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/interests_hint" />
+        <com.petasos.app.presentation.interests.InterestGridView android:id="@+id/records_interest_grid" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" />
+        <TextView style="@style/Widget.Petasos.Preview.CardDescription" android:layout_width="match_parent" android:layout_height="wrap_content" android:labelFor="@id/records_keywords" android:text="@string/interests_custom_label" />
+        <EditText android:id="@+id/records_keywords" style="@style/Widget.Petasos.Preview.CardDescription" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="56dp" android:inputType="textCapSentences|textMultiLine|textNoSuggestions" android:importantForAutofill="no" android:saveEnabled="false" android:maxLength="5140" />
+        <Button android:id="@+id/records_save_keywords" style="@style/Widget.Petasos.Journey.Primary" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/records_keywords_save" />
+    </LinearLayout>
+    <LinearLayout android:id="@+id/journey_trip_settings" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_glass_surface" android:padding="20dp" android:layout_marginTop="16dp">
+        <TextView style="@style/Widget.Petasos.Preview.CardTitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/journey_end_trip" />
+        <Spinner android:id="@+id/records_trip_selection" android:layout_width="match_parent" android:layout_height="64dp" android:contentDescription="@string/records_trip_selection" />
+        <Button android:id="@+id/records_end_trip" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/records_end_trip" />
+        <Button android:id="@+id/records_refresh" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/records_refresh" />
+        <TextView android:id="@+id/records_result" style="@style/Widget.Petasos.Preview.CardDescription" android:layout_width="match_parent" android:layout_height="wrap_content" android:saveEnabled="false" android:text="@string/records_empty" />
+    </LinearLayout>
 </LinearLayout>

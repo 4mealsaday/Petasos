@@ -39,6 +39,8 @@ import java.util.concurrent.atomic.AtomicReference
 @androidx.annotation.OptIn(UnstableApi::class)
 object ProductLocationProbe {
     fun run(instrumentation: Instrumentation, mark: (String) -> Unit) {
+        if (!com.petasos.app.platform.pleos.navigation.PleosCompanionDisplaySupport.inspect(instrumentation.targetContext).navigationSurfaceAvailable)
+            throw Failure("BLOCKED", "app_location_dev36_explicit_companion_required_overlay_host_unavailable")
         val context = instrumentation.targetContext
         // These guards precede Activity creation and every source subscription caused by the probe.
         if (!LocationAccess.hasRequiredPermissions(context)) throw Failure("BLOCKED", "app_location_permissions_required")
@@ -186,6 +188,16 @@ object ProductLocationProbe {
                 })
             }
             requireCondition("app_location_activity_not_started", 8_000) { starts.get() > before && visible.get() }
+            // Location settings now live on their own page. Navigate through the actual UI;
+            // a disabled setting on the listening page is not evidence of a CarUx restriction.
+            if (!awaitCondition(10_000) {
+                    onMain("app_location_settings_navigation_unavailable") {
+                        activity.get()?.findViewById<View>(R.id.journey_nav_settings)?.let { it.isShown && it.isEnabled } == true
+                    }
+                }) throw Failure("BLOCKED", "app_location_parked_ui_unavailable")
+            onMain("app_location_settings_navigation_failed") {
+                check(activity.get()?.findViewById<View>(R.id.journey_nav_settings)?.performClick() == true)
+            }
             // This uses the real UI's parked + browser + settings gate, not a forged Host visibility flag.
             if (!awaitCondition(10_000) {
                     requireConsent()

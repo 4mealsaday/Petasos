@@ -67,6 +67,80 @@ class BuildVariantTest(unittest.TestCase):
         self.assertTrue({"stt-pcm", "stt-owned-pcm", "stt-owned-stream", "stt-owned-delayed", "stt-owned-eof", "tts-speak", "tts-stop"}.isdisjoint(probe.RUN_AS_PROBES))
 
 
+class CompanionAndFocusProbeTest(unittest.TestCase):
+    def test_actual_companion_probe_requires_hidden_observation_and_releases_test_binding(self):
+        name = "app-companion"
+        self.assertEqual(probe.PROBES.count(name), 1)
+        self.assertNotIn(name, probe.RUN_AS_PROBES)
+        self.assertEqual(probe.probe_timeout(name), 100)
+        self.assertEqual(probe.read_development_server(name, None), (None, None))
+        self.assertIsNone(probe.read_content_bundle(name, None))
+        scope = probe.probe_evidence_metadata(name)["scope"]
+        for text in ("same-event Play then Stop", "six seconds without late play/foreground lease",
+                     "test-owned MediaBrowser released", "actual Activity onStop required", "measured after onStop",
+                     "multiwindow case explicitly deferred", "without ending user trip", "no coordinate output"):
+            self.assertIn(text, scope)
+
+    def test_audio_focus_probe_claim_is_bounded_to_audio_manager_not_navigation_voice(self):
+        name = "audio-focus-recovery"
+        self.assertEqual(probe.PROBES.count(name), 1)
+        self.assertNotIn(name, probe.RUN_AS_PROBES)
+        self.assertEqual(probe.probe_timeout(name), 30)
+        self.assertEqual(probe.read_development_server(name, None), (None, None))
+        scope = probe.probe_evidence_metadata(name)["scope"]
+        for text in ("actual AudioManager", "cancelled request no GAIN", "permanent LOSS no automatic GAIN",
+                     "no player, TTS, speaker output", "does not prove real Navigation voice"):
+            self.assertIn(text, scope)
+
+    def test_companion_and_focus_cannot_accept_external_payloads(self):
+        for name in ("app-companion", "audio-focus-recovery"):
+            with self.subTest(probe=name), patch("sys.argv", ["probe-pleos.py", name, "--content-bundle", "/private-input"]), \
+                    patch.object(probe.subprocess, "run") as run, patch.object(probe, "private_bytes") as read, patch("sys.stderr"):
+                with self.assertRaises(SystemExit) as error:
+                    probe.main()
+                self.assertEqual(error.exception.code, 2)
+                run.assert_not_called()
+                read.assert_not_called()
+
+
+class JourneyUiProbeTest(unittest.TestCase):
+    def test_read_only_companion_ui_mode_supports_both_variants_without_navigation_commands(self):
+        name = "journey-ui"
+        self.assertEqual(probe.PROBES.count(name), 1)
+        self.assertNotIn(name, probe.RUN_AS_PROBES)
+        self.assertEqual(probe.probe_timeout(name), 90)
+        self.assertEqual(probe.read_development_server(name, None), (None, None))
+        self.assertIsNone(probe.read_content_bundle(name, None))
+        metadata = probe.probe_evidence_metadata(name)
+        self.assertIsNone(metadata["fixture"])
+        for phrase in ("actual MainActivity and CarUx", "read-only product records", "261-region silhouette album",
+                       "layout-only 360/600/900dp control bounds",
+                       "no navigation-screen, preference, consent, permission, playback, microphone or model commands",
+                       "no secret, coordinate or record text output", "unsupported ON remains OFF",
+                       "OFF leaves route samples/segments and preference version unchanged",
+                       "without clear-data or uninstall"):
+            self.assertIn(phrase, metadata["scope"])
+        for variant in ("debug", "privacy"):
+            self.assertEqual(probe.evidence_stem(name, variant), name + ("-privacy" if variant == "privacy" else ""))
+
+    def test_ui_probe_cannot_accept_private_fixtures_or_story_playback_arguments(self):
+        for variant in ("debug", "privacy"):
+            for option, value in (("--https-fixture-ready", "/private-input"),
+                                  ("--development-server-ready", "/private-input"),
+                                  ("--device-token-file", "/private-input"),
+                                  ("--content-bundle", "/private-input"),
+                                  ("--bundled-story-index", "0")):
+                with self.subTest(variant=variant, option=option), \
+                        patch("sys.argv", ["probe-pleos.py", "journey-ui", "--build-type", variant, option, value]), \
+                        patch.object(probe.subprocess, "run") as run, \
+                        patch.object(probe, "private_bytes") as private_read, patch("sys.stderr"):
+                    with self.assertRaises(SystemExit) as error:
+                        probe.main()
+                    self.assertEqual(error.exception.code, 2)
+                    private_read.assert_not_called()
+                    run.assert_not_called()
+
+
 class OwnedPcmEofProbeTest(unittest.TestCase):
     def test_finite_eof_probe_supports_privacy_without_run_as_or_external_inputs(self):
         name = "stt-owned-eof"

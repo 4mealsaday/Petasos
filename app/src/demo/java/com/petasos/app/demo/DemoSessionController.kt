@@ -53,6 +53,7 @@ internal class DemoSessionController(context: Context, onState: (DemoControllerS
     private var snapshot: DemoScenarioSnapshot? = null
     private var failure: DemoControllerFailure? = null
     private var resetFailed = false
+    private val timeline = DemoReplayTimeline()
 
     init {
         publishBusy()
@@ -99,11 +100,12 @@ internal class DemoSessionController(context: Context, onState: (DemoControllerS
                     if (!closing.get()) resetSession()
                 } else if (permit != null && authority.isCurrent(permit) && !closing.get()) {
                     val success = execute(command, permit)
+                    if (success && command !in ADVANCE_COMMANDS) timeline.record(command)
                     if (!success && authority.isCurrent(permit) && !closing.get()) {
                         authority.revoke()
                         failure = DemoControllerFailure.EXECUTION_FAILED
                     }
-                    if (!authority.isCurrent(permit)) session?.stop()
+                    if (!authority.isCurrent(permit)) stopAndRecord()
                 }
             } catch (_: Throwable) {
                 authority.revoke()
@@ -111,7 +113,46 @@ internal class DemoSessionController(context: Context, onState: (DemoControllerS
                     resetFailed = true
                     failure = DemoControllerFailure.RESET_FAILED
                 } else failure = DemoControllerFailure.EXECUTION_FAILED
-                try { session?.stop() } catch (_: Throwable) { /* Keep fixture for acknowledged cleanup. */ }
+                try { stopAndRecord() } catch (_: Throwable) { /* Keep fixture for acknowledged cleanup. */ }
+            } finally {
+                normalBusy.set(false)
+                publishWorker()
+            }
+        }
+        return true
+    }
+
+    /** Advances only this isolated scenario. The Activity's clock never owns output authority. */
+    fun advanceBy(deltaMs: Long): Boolean = submitTimed(deltaMs = deltaMs, seekToMs = null)
+
+    /** Rebuilds the demo's own fixture and action history, then stays paused at the new position. */
+    fun seekTo(positionMs: Long): Boolean = submitTimed(deltaMs = null, seekToMs = positionMs)
+
+    private fun submitTimed(deltaMs: Long?, seekToMs: Long?): Boolean {
+        if ((deltaMs != null && deltaMs !in 1..ADVANCE_CHUNK_MS) ||
+            (seekToMs != null && seekToMs !in 0..DemoReplayTimeline.DURATION_MS)) return false
+        if (closing.get() || !authority.isAllowed() || stopPending.get() ||
+            published.get().state.failure != null || !normalBusy.compareAndSet(false, true)) return false
+        val permit = authority.issue() ?: run { normalBusy.set(false); return false }
+        publishBusy()
+        if (closing.get()) { normalBusy.set(false); return false }
+        worker.execute {
+            try {
+                val success = if (seekToMs != null) replayTo(seekToMs, permit)
+                    else advanceBounded(checkNotNull(deltaMs), permit)
+                if (!success && authority.isCurrent(permit) && !closing.get()) {
+                    authority.revoke()
+                    failure = DemoControllerFailure.EXECUTION_FAILED
+                }
+                if (seekToMs != null) {
+                    session?.stop()
+                    updateTimelinePosition()
+                    timeline.pausedAfterSeek()
+                } else if (!authority.isCurrent(permit)) stopAndRecord()
+            } catch (_: Throwable) {
+                authority.revoke()
+                failure = DemoControllerFailure.EXECUTION_FAILED
+                try { stopAndRecord() } catch (_: Throwable) { /* Retain owned files. */ }
             } finally {
                 normalBusy.set(false)
                 publishWorker()
@@ -159,7 +200,7 @@ internal class DemoSessionController(context: Context, onState: (DemoControllerS
         if (closing.get()) { stopPending.set(false); return false }
         worker.execute {
             try {
-                if (session?.stop() == false && !closing.get()) failure = DemoControllerFailure.EXECUTION_FAILED
+                if (!stopAndRecord() && !closing.get()) failure = DemoControllerFailure.EXECUTION_FAILED
             } catch (_: Throwable) {
                 failure = DemoControllerFailure.EXECUTION_FAILED
             } finally {
@@ -168,6 +209,13 @@ internal class DemoSessionController(context: Context, onState: (DemoControllerS
             }
         }
         return true
+    }
+
+    private fun stopAndRecord(): Boolean {
+        val active = session ?: return true
+        val state = active.snapshot()
+        val position = (state.elapsedMs - DemoFixtureStore.START_MS).coerceIn(0, DemoReplayTimeline.DURATION_MS)
+        return timeline.stopAndRecord(position, state.playIntent, active::stop)
     }
 
     private fun execute(command: DemoControllerCommand, permit: DemoControllerAuthority.Permit): Boolean {
@@ -180,20 +228,64 @@ internal class DemoSessionController(context: Context, onState: (DemoControllerS
             DemoControllerCommand.ROUTE_YUSEONG -> active.changeRoute(DemoRouteChoice.YUSEONG)
             DemoControllerCommand.OBSERVATION_GAP -> active.changeRoute(DemoRouteChoice.OBSERVATION_GAP)
             DemoControllerCommand.ADVANCE_1, DemoControllerCommand.ADVANCE_10, DemoControllerCommand.ADVANCE_30 -> {
-                var remaining = when (command) {
+                val remaining = when (command) {
                     DemoControllerCommand.ADVANCE_1 -> 1_000L
                     DemoControllerCommand.ADVANCE_10 -> 10_000L
                     else -> 30_000L
                 }
-                while (remaining > 0) {
-                    if (closing.get() || !authority.isCurrent(permit)) return false
-                    val step = minOf(remaining, ADVANCE_CHUNK_MS)
-                    if (!active.advanceBy(step)) return false
-                    remaining -= step
-                }
-                authority.isCurrent(permit) && !closing.get()
+                advanceBounded(remaining, permit)
             }
             DemoControllerCommand.STOP, DemoControllerCommand.RESET -> false
+        }
+    }
+
+    private fun advanceBounded(deltaMs: Long, permit: DemoControllerAuthority.Permit): Boolean {
+        val active = session ?: return false
+        var remaining = minOf(deltaMs,
+            DemoReplayTimeline.DURATION_MS - (active.snapshot().elapsedMs - DemoFixtureStore.START_MS))
+        while (remaining > 0) {
+            if (closing.get() || !authority.isCurrent(permit)) return false
+            val step = minOf(remaining, ADVANCE_CHUNK_MS)
+            if (!active.advanceBy(step)) return false
+            remaining -= step
+        }
+        updateTimelinePosition()
+        if (timeline.positionMs == DemoReplayTimeline.DURATION_MS) active.stop()
+        return authority.isCurrent(permit) && !closing.get()
+    }
+
+    private fun replayTo(targetMs: Long, permit: DemoControllerAuthority.Permit): Boolean {
+        if (closing.get() || !authority.isCurrent(permit)) return false
+        val actions = timeline.through(targetMs)
+        if (!disposeAcknowledged()) {
+            resetFailed = true
+            failure = DemoControllerFailure.RESET_FAILED
+            return false
+        }
+        session = null
+        fixture = null
+        snapshot = null
+        // Durable close/deletion completes before any new session or synthetic output starts.
+        if (closing.get()) return false
+        createSession()
+        timeline.moveTo(0)
+        if (!authority.isCurrent(permit)) return false
+        for (entry in actions) {
+            if (!advanceBounded(entry.atMs - timeline.positionMs, permit)) return false
+            val active = session ?: return false
+            val success = if (entry.command == DemoControllerCommand.STOP) active.stop()
+                else execute(entry.command, permit)
+            if (!success || !authority.isCurrent(permit) || closing.get()) return false
+        }
+        if (!advanceBounded(targetMs - timeline.positionMs, permit)) return false
+        val paused = session?.stop() == true
+        if (paused) timeline.pausedAfterSeek()
+        return paused
+    }
+
+    private fun updateTimelinePosition() {
+        session?.snapshot()?.let {
+            timeline.moveTo((it.elapsedMs - DemoFixtureStore.START_MS).coerceIn(0, DemoReplayTimeline.DURATION_MS))
         }
     }
 
@@ -216,6 +308,7 @@ internal class DemoSessionController(context: Context, onState: (DemoControllerS
         snapshot = null
         failure = null
         resetFailed = false
+        timeline.clear()
         // An accepted reset may finish cleanup after gate loss, but never supplies a play permit.
         if (!closing.get()) createSession()
     }
@@ -243,7 +336,7 @@ internal class DemoSessionController(context: Context, onState: (DemoControllerS
                 authority.revoke()
                 generation = authority.generation()
                 failure = DemoControllerFailure.EXECUTION_FAILED
-                try { session?.stop() } catch (_: Throwable) { /* Preserve unconfirmed fixture. */ }
+                try { stopAndRecord() } catch (_: Throwable) { /* Preserve unconfirmed fixture. */ }
             }
         }
         val next = DemoControllerState(snapshot, normalBusy.get() || stopPending.get(), failure, resetFailed)
@@ -264,6 +357,8 @@ internal class DemoSessionController(context: Context, onState: (DemoControllerS
     private companion object {
         const val ADVANCE_CHUNK_MS = 1_000L
         const val MAX_CLOSE_CALLBACKS = 8
+        val ADVANCE_COMMANDS = setOf(DemoControllerCommand.ADVANCE_1,
+            DemoControllerCommand.ADVANCE_10, DemoControllerCommand.ADVANCE_30)
     }
 }
 

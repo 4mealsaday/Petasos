@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="records_ui_blue">#0756A6</color>
+    <color name="records_ui_text">#184D77</color>
+    <color name="records_ui_secondary">#506B85</color>
+    <color name="records_ui_selected_text">#FFFFFF</color>
+    <color name="records_map_water">#E6F1FA</color>
+    <color name="records_map_land">#F6FAFD</color>
+    <color name="records_map_border">#BFD5E7</color>
+    <color name="records_map_passage">#9BCFF6</color>
+    <color name="records_map_selected">#3D93DB</color>
+    <color name="records_map_route">#2279C3</color>
+    <color name="records_map_route_overview">#79BAE8</color>
+    <color name="records_map_uncollected">#4C5E71</color>
+</resources>

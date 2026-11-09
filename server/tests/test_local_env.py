@@ -35,6 +35,13 @@ class LocalEnvTests(unittest.TestCase):
         self.assertEqual(read_private_env(self.path)[KEY], value)
         self.assertFalse(sentinel.exists())
 
+    def test_shared_android_map_key_does_not_block_server_or_replace_secret(self):
+        self.write("PETASOS_NAVER_MAPS_ANDROID_KEY_ID=public-android-id\n"
+                   "PETASOS_NAVER_MAPS_CLIENT_SECRET=server-only-secret\n")
+        environment = load_environment(self.path, {})
+        self.assertEqual(environment["PETASOS_NAVER_MAPS_ANDROID_KEY_ID"], "public-android-id")
+        self.assertEqual(environment["PETASOS_NAVER_MAPS_CLIENT_SECRET"], "server-only-secret")
+
     def test_bad_format_unknown_and_duplicate_keys_have_sanitized_errors(self):
         cases = ["secret-value-without-equals", "export " + KEY + "=secret-value",
                  "UNKNOWN_SECRET=secret-value", f"{KEY}='secret-value\n", f'{KEY}=secret-value"',

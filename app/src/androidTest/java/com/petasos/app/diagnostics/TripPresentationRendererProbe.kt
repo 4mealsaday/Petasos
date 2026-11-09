@@ -25,6 +25,7 @@ internal object TripPresentationRendererProbe {
             val renderer = TripControlsRenderer(root)
             val location = root.findViewById<Button>(R.id.records_location)
             val permission = root.findViewById<Button>(R.id.records_permission)
+            val grid = root.findViewById<com.petasos.app.presentation.interests.InterestGridView>(R.id.records_interest_grid)
             val keywords = root.findViewById<EditText>(R.id.records_keywords)
             val save = root.findViewById<Button>(R.id.records_save_keywords)
             val refresh = root.findViewById<Button>(R.id.records_refresh)
@@ -57,7 +58,8 @@ internal object TripPresentationRendererProbe {
             }
             fun text(button: Button, resource: Int) { check(button.text.toString() == themed.getString(resource)) }
             fun allDisabled() {
-                check(listOf<View>(location, permission, keywords, save, refresh, selection, end).none { it.isEnabled })
+                check(listOf<View>(location, permission, keywords, grid, save, refresh, selection, end).none { it.isEnabled })
+                check((0 until grid.childCount).all { !grid.getChildAt(it).isEnabled })
             }
 
             render(ready.copy(available = false))

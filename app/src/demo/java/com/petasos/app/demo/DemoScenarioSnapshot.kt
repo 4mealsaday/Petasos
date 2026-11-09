@@ -39,4 +39,6 @@ internal data class DemoScenarioSnapshot(
     val currentRegionName: String? = null,
     val targetRegionName: String? = null,
     val offeredStoryTitle: String? = null,
+    /** Current public paragraph excerpt on the silent clock, not live TTS subtitles. */
+    val caption: String? = null,
 )

@@ -13,6 +13,23 @@ require(!demoLint || gradle.startParameter.taskNames.singleOrNull() in setOf("li
     "petasosDemoLint requires only :app:lintDemo"
 }
 
+// Only these public Android identifiers may enter an APK. Do not load server credentials.
+val publicMapKeyNames = listOf("PETASOS_NAVER_MAPS_ANDROID_KEY_ID", "PETASOS_NAVER_MAPS_CLIENT_ID")
+val localPublicMapKeys = rootProject.file(".env").takeIf { it.isFile }?.useLines { lines ->
+    lines.mapNotNull { line ->
+        val name = line.substringBefore('=', "").trim()
+        if (name !in publicMapKeyNames) null else name to line.substringAfter('=').trim()
+            .removeSurrounding("\"").removeSurrounding("'")
+    }.toMap()
+}.orEmpty()
+val naverMapPublicKeyId = publicMapKeyNames.asSequence().map { name ->
+    providers.environmentVariable(name).orNull?.trim()?.takeIf { it.isNotEmpty() }
+        ?: localPublicMapKeys[name].orEmpty()
+}.firstOrNull { it.isNotEmpty() }.orEmpty()
+require(naverMapPublicKeyId.isEmpty() || naverMapPublicKeyId.matches(Regex("[A-Za-z0-9_-]{1,128}"))) {
+    "Invalid public Naver Android map identifier format"
+}
+
 android {
     namespace = "com.petasos.app"
     compileSdk = 36
@@ -23,8 +40,8 @@ android {
         applicationId = "com.petasos.app"
         minSdk = 28
         targetSdk = 34
-        versionCode = 33
-        versionName = "0.8.0-dev.33"
+        versionCode = 36
+        versionName = "0.8.0-dev.36"
         testInstrumentationRunner = if (providers.gradleProperty("petasosTestBuildType").orNull == "demo")
             "com.petasos.app.demo.DemoScenarioInstrumentation"
         else "com.petasos.app.diagnostics.SdkProbeInstrumentation"
@@ -71,6 +88,14 @@ android {
         res.srcDirs("src/debug/res")
     }
 
+    // initWith does not copy sources/dependencies. The demo has a separate offline factory,
+    // and never packages the Naver SDK or its public key resource.
+    listOf("debug", "privacy", "release").forEach { type ->
+        sourceSets.getByName(type).java.srcDir("src/productMap/java")
+        buildTypes.getByName(type).resValue("string", "petasos_naver_map_key_id", naverMapPublicKeyId)
+        buildTypes.getByName(type).proguardFile("naver-map-rules.pro")
+    }
+
     val requestedTestBuildType = providers.gradleProperty("petasosTestBuildType").orElse("debug").get()
     require(requestedTestBuildType in setOf("debug", "privacy", "demo")) { "Unsupported Petasos test build type" }
     testBuildType = requestedTestBuildType
@@ -91,6 +116,9 @@ android {
 }
 
 dependencies {
+    listOf("debugImplementation", "privacyImplementation", "releaseImplementation").forEach { variant ->
+        add(variant, "com.naver.maps:map-sdk:3.24.0")
+    }
     testImplementation("junit:junit:4.13.2")
     implementation("androidx.room:room-runtime:2.8.5")
     ksp("androidx.room:room-compiler:2.8.5")

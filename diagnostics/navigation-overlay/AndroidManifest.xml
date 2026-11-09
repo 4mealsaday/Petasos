@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.petasos.diagnostics.overlay"
+    android:versionCode="1"
+    android:versionName="1.0">
+    <uses-sdk android:minSdkVersion="30" android:targetSdkVersion="34" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <application
+        android:allowBackup="false"
+        android:debuggable="false"
+        android:hasCode="true"
+        android:label="Petasos overlay diagnostic"
+        android:supportsRtl="true"
+        android:theme="@android:style/Theme.Translucent.NoTitleBar">
+        <activity
+            android:name=".OverlayDiagnosticActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:taskAffinity="com.petasos.diagnostics.overlay" />
+    </application>
+</manifest>

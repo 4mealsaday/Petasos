@@ -1,185 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
-
-    <ScrollView
-        android:id="@+id/preview_content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        android:fillViewport="true">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="@dimen/preview_screen_padding_horizontal"
-        android:paddingVertical="@dimen/preview_screen_padding_vertical">
-
-        <!-- Framework Activity/TextView on API 28+ supports native vector compound drawables. -->
-        <TextView
-            style="@style/Widget.Petasos.Preview.Brand"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_petasos"
-            tools:ignore="UseCompatTextViewDrawableXml"
-            android:drawablePadding="@dimen/preview_brand_mark_gap"
-            android:gravity="center_vertical"
-            android:text="@string/app_name" />
-
-        <TextView
-            style="@style/Widget.Petasos.Preview.Caption"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/preview_caption_margin_top"
-            android:text="@string/brand_caption" />
-
-        <TextView
-            style="@style/Widget.Petasos.Preview.HeroTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/preview_hero_title_margin_top"
-            android:text="@string/hero_title" />
-
-        <TextView
-            style="@style/Widget.Petasos.Preview.HeroDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/preview_hero_description_margin_top"
-            android:text="@string/hero_description" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/preview_card_margin_top"
-            android:background="@drawable/bg_card"
-            android:orientation="vertical"
-            android:padding="@dimen/preview_card_padding">
-
-            <TextView
-                style="@style/Widget.Petasos.Preview.Badge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_badge"
-                android:paddingHorizontal="@dimen/preview_badge_padding_horizontal"
-                android:paddingVertical="@dimen/preview_badge_padding_vertical"
-                android:text="@string/preview_badge" />
-
-            <TextView
-                android:id="@+id/playback_status"
-                style="@style/Widget.Petasos.Preview.CardTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/preview_card_title_margin_top"
-                android:text="@string/ready_title" />
-
-            <TextView
-                android:id="@+id/playback_notice"
-                style="@style/Widget.Petasos.Preview.CardDescription"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/preview_card_description_margin_top"
-                android:text="@string/ready_description" />
-
-            <Spinner
-                android:id="@+id/story_selection"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/preview_card_title_margin_top"
-                android:minHeight="48dp"
-                android:contentDescription="@string/story_selection_label" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/playback_previous"
-                    style="@style/Widget.Petasos.Preview.CardDescription"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:minHeight="48dp"
-                    android:text="@string/playback_previous" />
-
-                <Button
-                    android:id="@+id/playback_play"
-                    style="@style/Widget.Petasos.Preview.CardDescription"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:minHeight="48dp"
-                    android:text="@string/playback_play" />
-
-                <Button
-                    android:id="@+id/playback_next"
-                    style="@style/Widget.Petasos.Preview.CardDescription"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:minHeight="48dp"
-                    android:text="@string/playback_next" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/playback_stop"
-                    style="@style/Widget.Petasos.Preview.CardDescription"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:minHeight="48dp"
-                    android:text="@string/playback_stop" />
-
-                <Button
-                    android:id="@+id/playback_talk"
-                    style="@style/Widget.Petasos.Preview.CardDescription"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:minHeight="48dp"
-                    android:text="@string/playback_talk" />
-            </LinearLayout>
-            <Button
-                android:id="@+id/playback_new_story"
-                style="@style/Widget.Petasos.Preview.CardDescription"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="48dp"
-                android:text="@string/playback_new_story" />
-            <Button
-                android:id="@+id/music_credits"
-                style="@style/Widget.Petasos.Preview.CardDescription"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="48dp"
-                android:text="@string/music_credits_title" />
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+    <FrameLayout android:id="@+id/preview_content" android:layout_width="match_parent" android:layout_height="match_parent"
+        android:visibility="gone" android:background="@drawable/bg_glass_home">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:padding="@dimen/journey_page_padding">
+            <Button android:id="@+id/journey_nav_listen" style="@style/Widget.Petasos.Journey.Quiet"
+                android:layout_width="128dp" android:layout_height="64dp" android:text="@string/journey_home_back" android:visibility="gone" />
+            <FrameLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
+                <ScrollView android:id="@+id/journey_home_page" android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true">
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical"
+                        android:gravity="center_vertical" android:paddingBottom="96dp">
+                        <TextView style="@style/Widget.Petasos.Preview.Brand" android:layout_width="match_parent" android:layout_height="wrap_content"
+                            android:gravity="center" android:layout_marginBottom="32dp" android:text="@string/app_name" android:textSize="@dimen/journey_home_brand_text_size" />
+                        <include layout="@layout/view_home_actions" />
+                        <TextView android:id="@+id/journey_home_notice" style="@style/Widget.Petasos.Preview.CardDescription"
+                            android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center"
+                            android:layout_marginTop="24dp" android:saveEnabled="false" android:visibility="gone" />
+                    </LinearLayout>
+                </ScrollView>
+                <FrameLayout android:id="@+id/journey_records_container" android:layout_width="match_parent" android:layout_height="match_parent" android:paddingBottom="@dimen/journey_records_bottom_inset" android:visibility="gone" />
+                <ScrollView android:id="@+id/journey_settings_page" android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true" android:visibility="gone">
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingBottom="96dp">
+                        <TextView android:id="@+id/journey_settings_title" style="@style/Widget.Petasos.Journey.Title" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/journey_settings" />
+                        <include layout="@layout/view_trip_controls" />
+                        <LinearLayout android:id="@+id/journey_playback_settings" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginTop="20dp">
+                            <CheckBox android:id="@+id/journey_caption_switch" android:layout_width="match_parent" android:layout_height="64dp" android:text="@string/journey_caption_switch" android:textSize="20sp" />
+                            <Button android:id="@+id/journey_playback_options" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/journey_playback_options" />
+                            <LinearLayout android:id="@+id/journey_playback_options_body" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:visibility="gone">
+                                <include layout="@layout/view_advanced_playback" />
+                            </LinearLayout>
+                            <Button android:id="@+id/music_credits" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/music_credits_title" />
+                            <TextView style="@style/Widget.Petasos.Preview.CardTitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="20dp" android:text="@string/journey_privacy_heading" />
+                            <TextView style="@style/Widget.Petasos.Preview.CardDescription" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/journey_privacy_body" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </ScrollView>
+            </FrameLayout>
         </LinearLayout>
-
-        <include layout="@layout/view_trip_controls" />
-
-        <TextView
-            style="@style/Widget.Petasos.Preview.Footer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/preview_footer_margin_top"
-            android:text="@string/preview_footer" />
-    </LinearLayout>
-    </ScrollView>
-
-    <TextView
-        android:id="@+id/vehicle_policy_notice"
-        style="@style/Widget.Petasos.Preview.CardDescription"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:paddingHorizontal="@dimen/preview_screen_padding_horizontal"
-        android:paddingVertical="@dimen/preview_screen_padding_vertical"
-        android:text="@string/vehicle_policy_waiting" />
+        <ImageButton android:id="@+id/journey_nav_settings" android:layout_width="@dimen/journey_settings_button_size" android:layout_height="@dimen/journey_settings_button_size"
+            android:layout_gravity="bottom|end" android:layout_margin="20dp" android:background="@drawable/bg_glass_surface"
+            android:src="@drawable/ic_journey_settings" android:padding="20dp" android:elevation="6dp"
+            android:contentDescription="@string/journey_settings" />
+    </FrameLayout>
+    <TextView android:id="@+id/vehicle_policy_notice" style="@style/Widget.Petasos.Preview.CardDescription"
+        android:layout_width="match_parent" android:layout_height="match_parent" android:gravity="center" android:padding="32dp" android:text="@string/vehicle_policy_waiting" />
 </merge>

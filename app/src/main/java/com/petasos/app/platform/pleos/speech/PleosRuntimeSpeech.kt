@@ -35,6 +35,7 @@ class PleosRuntimeSpeech(
         var stopping = false
         var preparationRequested = false
         var preparationResolved = false
+        var recoveringFocus = false
     }
     private class InputSlot(
         val token: OperationToken,
@@ -45,6 +46,7 @@ class PleosRuntimeSpeech(
         var stopping = false
     }
     private var output: OutputSlot? = null
+    private var recoveringOutput: OutputSlot? = null
     private var lastQuiescentOutput: OutputSlot? = null
     private var input: InputSlot? = null
     private var inputStopUnknown = false
@@ -66,10 +68,25 @@ class PleosRuntimeSpeech(
                 callback(RuntimeOutputEvent.STOPPED) // This attempt never created an adapter/request.
                 return@post
             }
+            recoveringOutput?.adapter?.cancelFocusRecovery()
+            recoveringOutput = null
             val slot = OutputSlot(attempt, callback)
             output = slot
             slot.adapter = PleosSpeechOutput(context) { event ->
-                if (output !== slot || closed) return@PleosSpeechOutput
+                if (closed) return@PleosSpeechOutput
+                if (event == SpeechOutputEvent.FocusGained || event is SpeechOutputEvent.FocusLost) {
+                    if (output !== slot && recoveringOutput !== slot) return@PleosSpeechOutput
+                    if (event == SpeechOutputEvent.FocusGained) {
+                        slot.recoveringFocus = false
+                        callback(RuntimeOutputEvent.FOCUS_REGAINED)
+                        if (recoveringOutput === slot) { slot.adapter.cancelFocusRecovery(); recoveringOutput = null }
+                    } else if (event is SpeechOutputEvent.FocusLost) {
+                        slot.recoveringFocus = event.kind != SpeechFocusLoss.PERMANENT
+                        callback(if (slot.recoveringFocus) RuntimeOutputEvent.FOCUS_TRANSIENT else RuntimeOutputEvent.FOCUS_LOST)
+                    }
+                    return@PleosSpeechOutput
+                }
+                if (output !== slot) return@PleosSpeechOutput
                 when (event) {
                     SpeechOutputEvent.Connected -> if (!slot.stopping && !slot.preparationRequested) {
                         slot.preparationRequested = true
@@ -97,14 +114,11 @@ class PleosRuntimeSpeech(
                     SpeechOutputEvent.Started -> if (!slot.stopping) callback(RuntimeOutputEvent.STARTED)
                     SpeechOutputEvent.Completed -> finishOutput(slot, RuntimeOutputEvent.COMPLETED)
                     SpeechOutputEvent.Stopped -> finishOutput(slot, RuntimeOutputEvent.STOPPED)
-                    is SpeechOutputEvent.FocusLost -> callback(
-                        if (event.kind == SpeechFocusLoss.PERMANENT) RuntimeOutputEvent.FOCUS_LOST
-                        else RuntimeOutputEvent.FOCUS_TRANSIENT,
-                    )
+                    is SpeechOutputEvent.FocusLost, SpeechOutputEvent.FocusGained -> Unit // handled with retained identity above
                     is SpeechOutputEvent.Failed -> {
                         if (event.failure.code == SpeechFailureCode.AUDIO_FOCUS_DENIED) {
                             // The adapter never calls sdk.speak when AudioManager denies focus.
-                            callback(RuntimeOutputEvent.FOCUS_TRANSIENT)
+                            callback(RuntimeOutputEvent.FOCUS_LOST)
                             finishOutput(slot, RuntimeOutputEvent.STOPPED)
                         } else {
                             callback(RuntimeOutputEvent.FAILED)
@@ -151,8 +165,19 @@ class PleosRuntimeSpeech(
         if (output !== slot) return
         output = null
         lastQuiescentOutput = slot
-        slot.adapter.close()
+        if (slot.recoveringFocus && event == RuntimeOutputEvent.STOPPED) {
+            recoveringOutput = slot
+            slot.adapter.closeRetainingFocus()
+        } else slot.adapter.close()
         slot.callback(event)
+    }
+
+    override fun cancelFocusRecovery() {
+        main.post {
+            output?.takeIf { it.recoveringFocus }?.let { it.recoveringFocus = false; it.adapter.cancelFocusRecovery() }
+            recoveringOutput?.adapter?.cancelFocusRecovery()
+            recoveringOutput = null
+        }
     }
 
     override fun requestInput(input: OperationToken, callback: (RuntimeInputEvent) -> Unit) {
@@ -228,6 +253,8 @@ class PleosRuntimeSpeech(
         main.post {
             if (closed) return@post
             closed = true
+            recoveringOutput?.adapter?.cancelFocusRecovery()
+            recoveringOutput = null
             input?.adapter?.close()
             output?.adapter?.close()
             input = null

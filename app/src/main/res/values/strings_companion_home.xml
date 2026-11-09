@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="companion_display_unavailable">내비 위 Petasos 표시를 연결할 수 없어요. OFF 상태를 유지합니다.</string>
+    <string name="companion_navigation_surface_unavailable">내비와 함께 표시할 수 있는 환경이 아직 연결되지 않았어요. OFF 상태를 유지합니다.</string>
+    <string name="companion_stop_unavailable">동행을 껐어요. 재생 중지 상태를 다시 확인해 주세요.</string>
+</resources>

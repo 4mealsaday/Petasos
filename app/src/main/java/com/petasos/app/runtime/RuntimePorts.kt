@@ -74,7 +74,7 @@ interface RuntimePersistence {
     fun closeSession(sessionId: String)
 }
 
-enum class RuntimeOutputEvent { STARTED, COMPLETED, STOPPED, FAILED, FOCUS_LOST, FOCUS_TRANSIENT }
+enum class RuntimeOutputEvent { STARTED, COMPLETED, STOPPED, FAILED, FOCUS_LOST, FOCUS_TRANSIENT, FOCUS_REGAINED }
 
 sealed interface RuntimeInputEvent {
     data object Ready : RuntimeInputEvent
@@ -117,6 +117,8 @@ interface RuntimeSpeech {
         }
     }
     fun stopOutput(attempt: OperationToken)
+    /** Cancel only retained focus recovery; never manufacture output-stop evidence. */
+    fun cancelFocusRecovery() = Unit
     fun requestInput(input: OperationToken, callback: (RuntimeInputEvent) -> Unit)
     fun stopInput(input: OperationToken)
     /** Best-effort resource cleanup; this method is not a physical-stop acknowledgment. */
@@ -152,6 +154,7 @@ sealed interface RuntimeMusicEvent {
     data object Failed : RuntimeMusicEvent
     data object FocusLost : RuntimeMusicEvent
     data object FocusTransient : RuntimeMusicEvent
+    data object FocusRegained : RuntimeMusicEvent
 }
 
 interface RuntimeMusic {
@@ -184,6 +187,8 @@ interface RuntimeMusic {
         }
     }
     fun stopOutput(attempt: OperationToken)
+    /** Cancel only retained focus recovery; never manufacture output-stop evidence. */
+    fun cancelFocusRecovery() = Unit
     fun close()
 }
 

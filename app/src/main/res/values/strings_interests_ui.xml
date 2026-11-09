@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="interests_hint">여러 개를 골라도, 고르지 않아도 괜찮아요. 직접 추가한 관심사를 포함해 최대 20개까지 저장할 수 있어요.</string>
+    <string name="interests_custom_label">직접 추가 · 쉼표로 구분</string>
+    <string name="interests_history">역사</string>
+    <string name="interests_culture">문화·전통</string>
+    <string name="interests_architecture">건축</string>
+    <string name="interests_nature">자연·생태</string>
+    <string name="interests_place_names">지리·지명</string>
+    <string name="interests_science">과학·기술</string>
+    <string name="interests_food">음식</string>
+    <string name="interests_sports">스포츠</string>
+    <string name="interests_industry">기업·산업</string>
+    <string name="interests_art">예술</string>
+    <string name="interests_local_life">지역의 삶</string>
+    <string name="interests_people">인물</string>
+</resources>

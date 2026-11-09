@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="journey_page_padding">20dp</dimen>
+    <dimen name="journey_glass_radius">28dp</dimen>
+    <dimen name="journey_home_action_height">208dp</dimen>
+    <dimen name="journey_home_action_text_size">28sp</dimen>
+    <dimen name="journey_home_brand_text_size">30sp</dimen>
+    <dimen name="journey_home_icon_size">56dp</dimen>
+    <dimen name="journey_home_back_text_size">20sp</dimen>
+    <dimen name="journey_settings_button_size">72dp</dimen>
+    <dimen name="journey_records_bottom_inset">88dp</dimen>
+    <dimen name="journey_records_title_size">28sp</dimen>
+    <dimen name="journey_records_body_size">16sp</dimen>
+    <dimen name="journey_records_heading_size">21sp</dimen>
+    <dimen name="journey_records_button_text_size">17sp</dimen>
+    <dimen name="journey_records_tab_text_size">18sp</dimen>
+    <dimen name="journey_records_attribution_size">13sp</dimen>
+    <dimen name="journey_records_button_height">64dp</dimen>
+    <dimen name="journey_records_tab_height">72dp</dimen>
+    <dimen name="journey_records_map_height">340dp</dimen>
+</resources>

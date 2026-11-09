@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="records_title">이동 기록과 관심사</string>
-    <string name="records_description">위치 기록은 허용 후 앱이 보이는 동안 이동 중에 수집합니다. 미디어를 정지해도 앱이 보이면 기록을 계속합니다. 이동을 마치려면 이동 종료를 눌러주세요.</string>
+    <string name="records_description">위치 기록을 허용하고 홈에서 Petasos를 ON으로 켠 동안 이동 위치를 기록합니다. 현재 내비 동시 표시 연결이 준비되지 않아 ON과 새 위치 기록은 사용할 수 없어요. 기존 기록은 유지됩니다.</string>
     <string name="records_location_enable">위치 기록 켜기</string>
     <string name="records_location_disable">위치 기록 끄기</string>
     <string name="records_permission">Pleos 위치 권한 허용</string>
@@ -9,9 +8,8 @@
     <string name="records_permission_android_needed">Pleos 권한을 확인했어요. Android 위치 권한 허용을 눌러 다음 단계를 진행해주세요.</string>
     <string name="records_permission_needed">위치 기록 설정을 저장했어요. 수집하려면 위치 권한도 허용해주세요.</string>
     <string name="records_permission_denied">위치 권한을 확인하지 못했어요. 위치는 수집하지 않습니다.</string>
-    <string name="records_location_saved_on">위치 기록을 허용했어요. 앱이 보이고 열린 이동이 있을 때 기록합니다.</string>
+    <string name="records_location_saved_on">위치 기록 허용을 저장했어요. Petasos가 ON인 동안에만 기록하며, 지금은 내비 연결 준비 중이라 OFF를 유지합니다.</string>
     <string name="records_location_saved_off">위치 기록을 껐어요. 기존 기록은 유지됩니다.</string>
-    <string name="records_keywords_label">관심사 · 쉼표로 구분, 최대 20개</string>
     <string name="records_keywords_save">관심사 저장</string>
     <string name="records_keywords_saved">관심사를 저장했어요. 새 이야기 요청에 적용됩니다.</string>
     <string name="records_keywords_invalid">관심사는 중복 없이 최대 20개, 각 1~256자로 입력해주세요.</string>

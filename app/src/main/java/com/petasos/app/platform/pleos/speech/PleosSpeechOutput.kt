@@ -7,8 +7,6 @@ import ai.pleos.playground.tts.listener.EventListener
 import ai.pleos.playground.tts.listener.OnInitializeListener
 import android.content.Context
 import android.media.AudioAttributes
-import android.media.AudioFocusRequest
-import android.media.AudioManager
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
@@ -17,6 +15,7 @@ import com.petasos.app.capability.speech.SpeechFailureCode
 import com.petasos.app.capability.speech.SpeechFocusLoss
 import com.petasos.app.capability.speech.SpeechOutput
 import com.petasos.app.capability.speech.SpeechOutputEvent
+import com.petasos.app.platform.android.audio.AndroidOutputAudioFocus
 import java.util.Locale
 
 /** A single-utterance, on-device Pleos connection. No speech content is logged or stored. */
@@ -26,30 +25,29 @@ class PleosSpeechOutput(
 ) : SpeechOutput {
     private val appContext = context.applicationContext
     private val main = Handler(Looper.getMainLooper())
-    private val audioManager = requireNotNull(appContext.getSystemService(AudioManager::class.java))
     private val attributes = AudioAttributes.Builder()
         .setUsage(AudioAttributes.USAGE_MEDIA)
         .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
         .build()
-    private val focusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
-        .setAudioAttributes(attributes)
-        .setWillPauseWhenDucked(true)
-        .setOnAudioFocusChangeListener({ change ->
-            dispatch {
-                val loss = when (change) {
-                    AudioManager.AUDIOFOCUS_LOSS -> SpeechFocusLoss.PERMANENT
-                    AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> SpeechFocusLoss.TRANSIENT
-                    AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> SpeechFocusLoss.DUCK
-                    else -> null
+    private val focus = AndroidOutputAudioFocus(appContext, attributes, pauseWhenDucked = true) { change ->
+        if (!closed || retainingFocus) {
+            when (change) {
+                AndroidOutputAudioFocus.Change.GAINED -> onEvent(SpeechOutputEvent.FocusGained)
+                AndroidOutputAudioFocus.Change.LOST -> {
+                    if (!closed) stop()
+                    onEvent(SpeechOutputEvent.FocusLost(SpeechFocusLoss.PERMANENT))
                 }
-                if (hasFocus && requestUsed && !terminal && !canceled && loss != null) {
-                    // Submit this instance's stop before exposing a callback that may close it.
-                    stop()
-                    if (!closed) onEvent(SpeechOutputEvent.FocusLost(loss))
+                AndroidOutputAudioFocus.Change.TRANSIENT, AndroidOutputAudioFocus.Change.DUCK -> {
+                    if (!closed && requestUsed && !terminal && !canceled) {
+                        // Stop is submitted before the runtime observes the focus interruption.
+                        stop()
+                        onEvent(SpeechOutputEvent.FocusLost(SpeechFocusLoss.TRANSIENT))
+                    }
                 }
             }
-        }, main)
-        .build()
+        }
+    }
+    private var retainingFocus = false
     private var sdk: TextToSpeech? = null
     private var connectionAttempted = false
     private var connecting = false
@@ -58,7 +56,6 @@ class PleosSpeechOutput(
     private var canceled = false
     private val callbacks = SpeechOutputCallbacks()
     private val terminal: Boolean get() = callbacks.terminal
-    private var hasFocus = false
     private var closed = false
     private val cleanup = SpeechRequestCleanup()
 
@@ -82,7 +79,7 @@ class PleosSpeechOutput(
         override fun onDone() = dispatch {
             if (requestUsed && callbacks.acceptCompleted(canceled)) {
                 cleanup.confirmOutputIdle()
-                abandonFocus()
+                focus.outputFinished()
                 onEvent(SpeechOutputEvent.Completed)
             }
         }
@@ -90,7 +87,7 @@ class PleosSpeechOutput(
         override fun onStop() = dispatch {
             if (requestUsed) {
                 cleanup.confirmOutputIdle()
-                abandonFocus()
+                focus.outputFinished()
                 if (callbacks.acceptStopped()) {
                     onEvent(SpeechOutputEvent.Stopped)
                 }
@@ -179,8 +176,7 @@ class PleosSpeechOutput(
         }
         requestUsed = true
         try {
-            hasFocus = audioManager.requestAudioFocus(focusRequest) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
-            if (!hasFocus) {
+            if (!focus.acquire()) {
                 callbacks.acceptFailure()
                 fail(SpeechFailureCode.AUDIO_FOCUS_DENIED)
                 return
@@ -220,6 +216,19 @@ class PleosSpeechOutput(
     }
 
     override fun close() {
+        retainingFocus = false
+        if (closed) focus.close() else closeConnection()
+    }
+
+    /** Called only after physical stop; the old SDK connection is never reused to resume. */
+    fun closeRetainingFocus() {
+        retainingFocus = true
+        closeConnection()
+    }
+
+    fun cancelFocusRecovery() { retainingFocus = false; focus.close() }
+
+    private fun closeConnection() {
         requireSpeechMainThread()
         if (closed) return
         closed = true
@@ -243,23 +252,12 @@ class PleosSpeechOutput(
     }
 
     private fun releaseSdk() {
-        abandonFocus()
+        if (retainingFocus) focus.outputFinished() else focus.close()
         val connection = sdk ?: return
         sdk = null
         connected = false
         try { connection.removeEventListener(events) } catch (_: RuntimeException) { /* Best effort. */ }
         try { connection.release() } catch (_: RuntimeException) { /* Best effort. */ }
-    }
-
-    private fun abandonFocus() {
-        if (hasFocus) {
-            hasFocus = false
-            try {
-                audioManager.abandonAudioFocusRequest(focusRequest)
-            } catch (_: RuntimeException) {
-                // Local ownership is cleared even if AudioManager is already unavailable.
-            }
-        }
     }
 
     private fun fail(code: SpeechFailureCode, vendorCode: String? = null) {

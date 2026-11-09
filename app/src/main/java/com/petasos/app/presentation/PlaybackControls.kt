@@ -33,11 +33,13 @@ class PlaybackControls(private val activity: Activity) {
     private val stop = activity.findViewById<Button>(R.id.playback_stop)
     private val next = activity.findViewById<Button>(R.id.playback_next)
     private val previous = activity.findViewById<Button>(R.id.playback_previous)
-    private val talk = activity.findViewById<Button>(R.id.playback_talk)
+    private val talk = activity.findViewById<View>(R.id.playback_talk)
     private val newStory = activity.findViewById<Button>(R.id.playback_new_story)
     private val tripControls = TripControls(activity)
     private val musicCredits = MusicCreditsControls(activity)
     private val selectionIntent = StorySelectionIntent()
+    private val shell = JourneyShell(activity) { render() }
+    private val companion = CompanionControls(activity) { render() }
     private var updatingSelection = false
     private var source: CarPolicySource? = null
     private var policy = VehicleUxPolicy.unavailable()
@@ -53,16 +55,20 @@ class PlaybackControls(private val activity: Activity) {
     private var connectionFailed = false
     private var presentationNotice = PlaybackPresentationNotice.READY
     private var requestingMicrophone = false
+    private var preparingPlayback = false
+    private var playbackCommandGeneration = 0L
     private val uiListener: () -> Unit = { if (started) render() }
     private val playerListener = object : Player.Listener {
         override fun onEvents(player: Player, events: Player.Events) { if (started) render() }
     }
 
     init {
-        play.setOnClickListener { mediaCommand(Player.COMMAND_PLAY_PAUSE) { connected ->
+        shell.onCompanionToggle = companion::toggle
+        tripControls.onInterestsSaved = shell::interestsSaved
+        play.setOnClickListener { visiblePlayback { connected ->
             val selectedId = selectionIntent.storyForPlay(host?.snapshot()?.closed == false)
             if (selectedId != null) {
-                val selected = items.firstOrNull { it.mediaId == selectedId } ?: return@mediaCommand
+                val selected = items.firstOrNull { it.mediaId == selectedId } ?: return@visiblePlayback
                 connected.setMediaItem(selected)
             }
             connected.prepare()
@@ -127,6 +133,9 @@ class PlaybackControls(private val activity: Activity) {
     fun stop() {
         if (!started) return
         started = false; resumed = false; generation++
+        playbackCommandGeneration++
+        host?.cancelVisiblePlaybackPreparation()
+        preparingPlayback = false
         policy = VehicleUxPolicy.unavailable()
         attachHost(null) // Cancels an input interaction before releasing the Activity's controller.
         source?.close(); source = null
@@ -138,6 +147,10 @@ class PlaybackControls(private val activity: Activity) {
         selectionIntent.replaceCatalogSelection(null)
         render()
     }
+
+    fun destroy() { shell.dispose() }
+    fun onLowMemory() { shell.onLowMemory() }
+    fun saveTransientState() { shell.saveTransientState() }
 
     /** Permission completion is informational only. A new explicit Talk click is always required. */
     fun permissionResult(requestCode: Int, granted: Boolean): Boolean {
@@ -179,8 +192,40 @@ class PlaybackControls(private val activity: Activity) {
         if (!mayInteract()) return
         val connected = browser ?: return
         if (!connected.isCommandAvailable(command)) return
+        playbackCommandGeneration++
+        preparingPlayback = false
+        host?.cancelVisiblePlaybackPreparation()
         presentationNotice = PlaybackPresentationNotice.READY
         try { action(connected) } catch (_: Exception) { presentationNotice = PlaybackPresentationNotice.OPERATION_UNAVAILABLE }
+        render()
+    }
+
+    private fun visiblePlayback(action: (MediaBrowser) -> Unit) {
+        if (!mayInteract() || preparingPlayback) return
+        val connected = browser ?: return
+        val current = host ?: return
+        if (!connected.isCommandAvailable(Player.COMMAND_PLAY_PAUSE)) return
+        val epoch = generation
+        val commandGeneration = ++playbackCommandGeneration
+        preparingPlayback = true
+        val request = current.prepareVisiblePlayback()
+        request.addListener({
+            if (generation != epoch || commandGeneration != playbackCommandGeneration ||
+                host !== current || browser !== connected) return@addListener
+            preparingPlayback = false
+            if (!mayInteract()) {
+                render(); return@addListener
+            }
+            try {
+                check(request.get())
+                check(current.consumeVisiblePlaybackPreparation(request))
+                action(connected)
+                presentationNotice = PlaybackPresentationNotice.READY
+            } catch (_: Exception) {
+                presentationNotice = PlaybackPresentationNotice.OPERATION_UNAVAILABLE
+            }
+            render()
+        }, activity.mainExecutor)
         render()
     }
 
@@ -210,6 +255,9 @@ class PlaybackControls(private val activity: Activity) {
         val current = host ?: return
         val selected = items.getOrNull(selection.selectedItemPosition - 1) ?: return
         if (!current.canPrepareStory()) return
+        playbackCommandGeneration++
+        preparingPlayback = false
+        current.cancelVisiblePlaybackPreparation()
         presentationNotice = PlaybackPresentationNotice.PREPARING_STORY
         val request = current.generateAndPlayStory(selected.mediaId)
         request.addListener({
@@ -239,15 +287,17 @@ class PlaybackControls(private val activity: Activity) {
     private fun mayInteract() = started && resumed && policy.permitsParkedPreview && browser != null
 
     private fun render() {
-        val gate = parkedPresentationGate(policy)
+        val gate = if (started && resumed) parkedPresentationGate(policy) else ParkedPresentationGate.UNKNOWN
         renderer.renderGate(gate) // Hide first even if a later Host/control refresh throws.
         val available = mayInteract()
         if (hostVisible != available) { hostVisible = available; host?.setTalkUiVisible(available) }
         val connected = browser
         val current = host
         val snapshot = current?.snapshot()
-        tripControls.update(current, available)
-        musicCredits.update(current, available)
+        shell.update(current, available, ::storyTitle, ::replayStory)
+        companion.update(current, available, shell)
+        tripControls.update(current, shell.settingsVisible)
+        musicCredits.update(current, available && shell.settingsVisible)
         // Capture live dependencies here. The mapper/renderer cannot grant permission or issue commands.
         renderer.render(PlaybackPresentationMapper.map(PlaybackPresentationInput(
             vehicleGate = gate,
@@ -273,6 +323,24 @@ class PlaybackControls(private val activity: Activity) {
             ),
             notice = presentationNotice,
         )))
+        if (preparingPlayback) {
+            play.isEnabled = false
+            stop.isEnabled = available && connected?.isCommandAvailable(Player.COMMAND_STOP) == true
+        }
+    }
+
+    private fun storyTitle(versionId: String): String? = items.firstOrNull { it.mediaId == versionId }
+        ?.mediaMetadata?.title?.toString()?.take(120)
+
+    private fun replayStory(versionId: String) {
+        val selected = items.firstOrNull { it.mediaId == versionId } ?: return
+        visiblePlayback { connected ->
+            if (!connected.isCommandAvailable(Player.COMMAND_SET_MEDIA_ITEM)) return@visiblePlayback
+            connected.setMediaItem(selected)
+            connected.prepare()
+            connected.play()
+            selectionIntent.playRequested()
+        }
     }
 
     private fun PlaybackMode.presentationMode(): PlaybackPresentationMode = when (this) {

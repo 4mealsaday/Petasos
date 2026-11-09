@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="journey_settings">설정</string>
+    <string name="journey_location_heading">지금 지나는 곳을 알려 주세요</string>
+    <string name="journey_interests_heading">어떤 이야기가 끌리나요?</string>
+    <string name="journey_playback_options">고급 재생 도구</string>
+    <string name="journey_playback_options_hide">고급 재생 도구 접기</string>
+    <string name="journey_caption_idle">재생을 누르면 지나는 지역의 이야기를 들려드려요.</string>
+    <string name="journey_caption_switch">이야기 자막 표시</string>
+    <string name="journey_caption_hidden">자막이 꺼져 있어요</string>
+    <string name="journey_title_music">%1$s · %2$s</string>
+    <string name="journey_talk_description">말걸기</string>
+    <string name="journey_talk_unavailable">말걸기는 준비 중이에요</string>
+    <string name="journey_privacy_heading">기록과 개인정보</string>
+    <string name="journey_privacy_body">이동 경로·청취·대화 요약은 기기에 보관해요. 대화 시 입력과 필요한 맥락을 AI 서비스로 전송하며, 대화 원문은 요약 저장 전 임시 보관해요.</string>
+    <string name="journey_end_trip">여정 마치기</string>
+    <string name="journey_pause">일시정지</string>
+    <string name="journey_resume">이어 듣기</string>
+    <string name="journey_music_caption">음악을 들으며 잠시 풍경을 즐겨 보세요.</string>
+    <string name="journey_paused_caption">이어서 들을 준비가 되면 재생을 눌러 주세요.</string>
+</resources>

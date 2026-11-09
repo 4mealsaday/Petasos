@@ -1,7 +1,10 @@
 package com.petasos.app.demo
 
+import android.os.Handler
+import android.os.Looper
 import android.view.View
-import android.widget.ProgressBar
+import android.widget.FrameLayout
+import android.widget.SeekBar
 import android.widget.TextView
 import com.petasos.app.R
 import com.petasos.app.presentation.ParkedPresentationGate
@@ -11,36 +14,77 @@ import com.petasos.app.presentation.PlaybackPresentationMapper
 import com.petasos.app.presentation.PlaybackPresentationMode
 import com.petasos.app.presentation.PlaybackPresentationRenderer
 import com.petasos.app.presentation.PlaybackPresentationSession
+import com.petasos.app.presentation.records.DisplayRegionShape
+import com.petasos.app.presentation.records.RecordsGeometryCatalog
+import com.petasos.app.presentation.records.RegionalMapView
+import java.util.concurrent.Executors
 
-/** Read-only view binding; strings/styles/layout remain exclusively in demo resources. */
+/** Only current public state crosses this UI boundary. Future planner candidates stay internal. */
 internal class DemoPresentation(private val root: View) {
     private val playback = PlaybackPresentationRenderer(root)
+    private val map = RegionalMapView(root.context)
+    private val main = Handler(Looper.getMainLooper())
+    private val mapWorker = Executors.newSingleThreadExecutor { task ->
+        Thread(task, "PetasosDemoMap").apply { isDaemon = true }
+    }
+    private var geometry = emptyList<DisplayRegionShape>()
+    private var currentRegionId: String? = null
+    private var closed = false
+    private var talkNotice = false
+    var seeking = false
+
+    init {
+        (root.findViewById<FrameLayout>(R.id.demo_map_container).parent as View).clipToOutline = true
+        map.contentDescription = string(R.string.demo_map_description)
+        root.findViewById<FrameLayout>(R.id.demo_map_container).addView(map,
+            FrameLayout.LayoutParams(-1, -1))
+        val app = root.context.applicationContext
+        mapWorker.execute {
+            val loaded = try { RecordsGeometryCatalog.load(app) } catch (_: Exception) { emptyList() }
+            main.post {
+                if (!closed) {
+                    geometry = loaded
+                    renderMap()
+                    if (loaded.isEmpty()) map.contentDescription = string(R.string.demo_map_unavailable)
+                }
+            }
+        }
+    }
+
+    fun close() { closed = true; mapWorker.shutdownNow(); main.removeCallbacksAndMessages(null) }
     fun renderGate(gate: ParkedPresentationGate) = playback.renderGate(gate)
+    fun dismissTalkNotice() { talkNotice = false }
+    fun showTalkUnavailable() { talkNotice = true; text(R.id.playback_notice, string(R.string.demo_talk_unavailable)) }
+
+    fun previewSeek(seconds: Int) {
+        text(R.id.demo_seek_label, string(R.string.demo_timeline_value, seconds / 60, seconds % 60))
+    }
 
     fun render(value: DemoControllerState, gate: ParkedPresentationGate, resumed: Boolean) {
         val snapshot = value.snapshot
         val visibleGate = if (resumed) gate else ParkedPresentationGate.UNKNOWN
         val ready = snapshot != null && !snapshot.closed && snapshot.failure == null && value.failure == null
-        val enabled = ready && !value.busy
+        val enabled = ready && !value.busy && !seeking
+        val elapsedMs = ((snapshot?.elapsedMs ?: DemoFixtureStore.START_MS) - DemoFixtureStore.START_MS)
+            .coerceIn(0, DemoReplayTimeline.DURATION_MS)
         playback.render(PlaybackPresentationMapper.map(PlaybackPresentationInput(
-            vehicleGate = visibleGate,
-            interactionAvailable = resumed,
-            connected = snapshot != null,
-            connectionFailed = value.failure != null,
+            vehicleGate = visibleGate, interactionAvailable = resumed,
+            connected = snapshot != null, connectionFailed = value.failure != null,
             session = snapshot?.let { PlaybackPresentationSession(
                 PlaybackPresentationMode.valueOf(it.mode.name), it.closed, it.failure != null) },
-            catalogLoaded = snapshot != null,
-            hasStories = snapshot != null,
-            hasMusic = snapshot != null,
-            commands = PlaybackPresentationCommands(play = enabled && snapshot?.playIntent != true,
-                stop = ready, next = enabled, previous = enabled),
+            catalogLoaded = snapshot != null, hasStories = snapshot != null, hasMusic = snapshot != null,
+            commands = PlaybackPresentationCommands(
+                play = enabled && snapshot?.playIntent != true && elapsedMs < DemoReplayTimeline.DURATION_MS,
+                stop = ready, next = enabled, previous = false),
         )))
         val controlsEnabled = enabled && visibleGate == ParkedPresentationGate.PARKED
-        listOf(R.id.demo_advance_1, R.id.demo_advance_10, R.id.demo_advance_30,
-            R.id.demo_route_anseong, R.id.demo_route_yuseong, R.id.demo_route_gap).forEach {
-            root.findViewById<View>(it).isEnabled = controlsEnabled
+        listOf(R.id.demo_route_anseong, R.id.demo_route_yuseong, R.id.demo_route_gap,
+            R.id.playback_talk).forEach { root.findViewById<View>(it).isEnabled = controlsEnabled }
+        root.findViewById<SeekBar>(R.id.demo_timeline).apply {
+            isEnabled = (controlsEnabled || seeking) && visibleGate == ParkedPresentationGate.PARKED
+            if (!seeking) { progress = (elapsedMs / 1_000).toInt(); previewSeek(progress) }
         }
-        root.findViewById<View>(R.id.demo_reset).isEnabled = !value.busy && snapshot != null &&
+        root.findViewById<View>(R.id.demo_reset).isEnabled = !value.busy && !seeking && snapshot != null &&
             visibleGate == ParkedPresentationGate.PARKED
         root.findViewById<View>(R.id.demo_route_anseong).isSelected = snapshot?.route == DemoRouteChoice.ANSEONG
         root.findViewById<View>(R.id.demo_route_yuseong).isSelected = snapshot?.route == DemoRouteChoice.YUSEONG
@@ -50,25 +94,29 @@ internal class DemoPresentation(private val root: View) {
             snapshot?.activeStoryTitle != null -> snapshot.activeStoryTitle
             else -> string(R.string.demo_idle_title)
         })
+        text(R.id.demo_caption, snapshot?.caption ?: if (snapshot?.musicPositionMs != null)
+            string(R.string.demo_caption_gap) else string(R.string.demo_caption_ready))
         text(R.id.demo_region, snapshot?.currentRegionName?.let { string(R.string.demo_region_value, it) }
             ?: string(R.string.demo_region_waiting))
-        text(R.id.demo_next_title, when {
-            snapshot?.offeredStoryTitle != null -> string(R.string.demo_next_value,
-                snapshot.targetRegionName ?: "", snapshot.offeredStoryTitle)
-            snapshot?.targetRegionName != null -> string(R.string.demo_target_value, snapshot.targetRegionName)
-            else -> string(R.string.demo_next_waiting)
-        })
-        val elapsed = ((snapshot?.elapsedMs ?: DemoFixtureStore.START_MS) - DemoFixtureStore.START_MS) / 1_000L
-        text(R.id.demo_clock, string(R.string.demo_clock_value, elapsed / 60, elapsed % 60))
-        text(R.id.demo_completed, string(R.string.demo_completed_value,
-            snapshot?.completedStoryCount ?: 0L, snapshot?.completedMusicCount ?: 0L))
-        root.findViewById<ProgressBar>(R.id.demo_music_progress).apply {
-            visibility = if (snapshot?.musicPositionMs != null) View.VISIBLE else View.GONE
-            progress = (snapshot?.musicPositionMs ?: 0L).coerceIn(0, 10_000).toInt()
+        if (currentRegionId != snapshot?.currentRegionId) {
+            currentRegionId = snapshot?.currentRegionId
+            renderMap()
         }
-        if (value.failure != null || snapshot?.failure != null || value.resetFailed) {
-            text(R.id.playback_notice, string(R.string.demo_operation_failed))
-        } else if (value.busy) text(R.id.playback_notice, string(R.string.demo_working))
+        val seconds = elapsedMs / 1_000
+        text(R.id.demo_clock, string(R.string.demo_clock_value, seconds / 60, seconds % 60))
+        text(R.id.playback_notice, when {
+            value.failure != null || snapshot?.failure != null || value.resetFailed -> string(R.string.demo_operation_failed)
+            seeking -> string(R.string.demo_working)
+            talkNotice -> string(R.string.demo_talk_unavailable)
+            elapsedMs == DemoReplayTimeline.DURATION_MS -> string(R.string.demo_end_notice)
+            snapshot?.caption != null -> string(R.string.demo_caption_source)
+            else -> string(R.string.ready_description)
+        })
+    }
+
+    private fun renderMap() {
+        map.submit(geometry, highlightedRegionIds = setOfNotNull(currentRegionId),
+            selectedRegionId = currentRegionId, focusOnPaths = currentRegionId != null)
     }
 
     private fun text(id: Int, value: String) { root.findViewById<TextView>(id).text = value }

@@ -40,6 +40,8 @@ class PlaybackRuntime(
     private class GenerationJob(val request: OperationToken, val attempt: Int) {
         var cancellation: RuntimeCancellation? = null
     }
+    private data class FocusRecovery(val attempt: OperationToken, val fence: Long, val epoch: Long)
+    private var focusRecovery: FocusRecovery? = null
     private class ResumeJob { var cancellation: RuntimeCancellation? = null }
     private data class GenerationAuthority(val request: OperationToken, val turnId: String, val attempt: Int, val fence: Long)
     private data class ResumeAuthority(val request: OperationToken, val fence: Long)
@@ -112,6 +114,7 @@ class PlaybackRuntime(
         require(versionId.isNotBlank())
         val fence = startsFence.get()
         queue.execute {
+            if (startsFence.get() == fence) allowExplicitFocusRetry()
             if (!mayPrepareStory(fence)) return@execute
             // An explicit Play can follow an already ingressed Stop whose epoch update is still
             // queued. Capture that new session epoch on the worker, while retaining Play's ingress
@@ -161,6 +164,7 @@ class PlaybackRuntime(
         require(assetId.isNotBlank())
         val fence = startsFence.get()
         queue.execute {
+            if (startsFence.get() == fence) allowExplicitFocusRetry()
             if (!mayPrepareStory(fence)) return@execute
             val track = when (val read = contentRead { persistence.prepareMusic(assetId) }) {
                 is ContentRead.Value -> read.value
@@ -211,7 +215,25 @@ class PlaybackRuntime(
             state.mode in setOf(PlaybackMode.STORY, PlaybackMode.MUSIC) && state.outputPhase == AdapterPhase.ACTIVE && state.blockers.isEmpty()
         val cancelStopsInteraction = event == PlaybackEvent.CancelInteraction && state.interactionIntent && state.mode != PlaybackMode.TALK_PENDING
         if (event == PlaybackEvent.Stop || event == PlaybackEvent.Suspend || event is PlaybackEvent.Block || navigationStopsOutput || cancelStopsInteraction) startsFence.incrementAndGet()
-        queue.execute { if (!disposed && !closing) process(event) }
+        queue.execute {
+            if (!disposed && !closing) {
+                if (event == PlaybackEvent.Play) allowExplicitFocusRetry()
+                process(event)
+            }
+        }
+    }
+
+    /** Only a fresh, explicit Play may retry a permanent loss/denied request. */
+    private fun allowExplicitFocusRetry() {
+        val state = latest
+        if (disposed || closing || storageFailed || state.closed ||
+            state.blockers != setOf(PlaybackBlocker.FOCUS_LOST) ||
+            state.mode !in setOf(PlaybackMode.IDLE, PlaybackMode.PAUSED) ||
+            state.outputPhase != AdapterPhase.READY || state.inputPhase != AdapterPhase.READY ||
+            state.pendingPlaybackCommits != 0) return
+        // Clear intent before unblocking so the explicit caller alone selects what to play.
+        process(PlaybackEvent.Stop)
+        process(PlaybackEvent.Unblock(PlaybackBlocker.FOCUS_LOST))
     }
 
     /**
@@ -274,7 +296,14 @@ class PlaybackRuntime(
     }
 
     private fun process(event: PlaybackEvent, expectedStartFence: Long? = null) {
+        val cancelsRecovery = event == PlaybackEvent.Stop || event == PlaybackEvent.Suspend ||
+            (event is PlaybackEvent.Block && event.blocker != PlaybackBlocker.FOCUS_TRANSIENT)
+        val canceledRecovery = cancelsRecovery && focusRecovery != null
+        if (canceledRecovery) cancelFocusRecovery()
         processOne(event, expectedStartFence)
+        // The old registration is gone. Stop retains false playIntent; other blockers remain in
+        // force. Their eventual recovery will request fresh focus rather than trust a stale GAIN.
+        if (canceledRecovery) processOne(PlaybackEvent.Unblock(PlaybackBlocker.FOCUS_TRANSIENT))
         // A rejected reference must be removed before a queued Stop/Suspend can save it.
         // Drain after this effect batch, on the same serial worker, without reentrant effects.
         while (!disposed) {
@@ -408,7 +437,16 @@ class PlaybackRuntime(
                     queue.execute { callback(prepareSpeechOutput(effect, fence, permission)) }
                 }) { result ->
                     queue.execute outputCallback@ {
-                        if (disposed || effect.attempt !in liveOutputs) return@outputCallback
+                        if (disposed) return@outputCallback
+                        if (result == RuntimeOutputEvent.FOCUS_REGAINED) {
+                            focusRegained(effect.attempt)
+                            return@outputCallback
+                        }
+                        if (result == RuntimeOutputEvent.FOCUS_LOST || result == RuntimeOutputEvent.FOCUS_TRANSIENT) {
+                            focusInterrupted(effect.attempt, result == RuntimeOutputEvent.FOCUS_TRANSIENT, fence)
+                            return@outputCallback
+                        }
+                        if (effect.attempt !in liveOutputs) return@outputCallback
                         if (startsFence.get() != fence && (result == RuntimeOutputEvent.COMPLETED || result == RuntimeOutputEvent.STARTED)) return@outputCallback
                         if (result == RuntimeOutputEvent.STARTED) {
                             if (startAcknowledged || storageFailed || closing || effect.attempt in stoppingOutputs ||
@@ -428,10 +466,6 @@ class PlaybackRuntime(
                                 else observer.onStoryStarted(effect.reference.storyId, effect.reference.versionId)
                             }
                             process(PlaybackEvent.OutputStarted(effect.attempt), fence)
-                            return@outputCallback
-                        }
-                        if (result == RuntimeOutputEvent.FOCUS_LOST || result == RuntimeOutputEvent.FOCUS_TRANSIENT) {
-                            process(PlaybackEvent.Block(if (result == RuntimeOutputEvent.FOCUS_LOST) PlaybackBlocker.FOCUS_LOST else PlaybackBlocker.FOCUS_TRANSIENT))
                             return@outputCallback
                         }
                         val event = when (result) {
@@ -518,7 +552,13 @@ class PlaybackRuntime(
                 queue.execute { callback(prepareMusicOutput(attempt, reference, fence, permission)) }
             }) { result ->
                 queue.execute musicCallback@ {
-                    if (disposed || attempt !in liveOutputs) return@musicCallback
+                    if (disposed) return@musicCallback
+                    if (result == RuntimeMusicEvent.FocusRegained) { focusRegained(attempt); return@musicCallback }
+                    if (result == RuntimeMusicEvent.FocusLost || result == RuntimeMusicEvent.FocusTransient) {
+                        focusInterrupted(attempt, result == RuntimeMusicEvent.FocusTransient, fence)
+                        return@musicCallback
+                    }
+                    if (attempt !in liveOutputs) return@musicCallback
                     if (startsFence.get() != fence && (result is RuntimeMusicEvent.Completed || result == RuntimeMusicEvent.Started)) return@musicCallback
                     when (result) {
                         RuntimeMusicEvent.Started -> {
@@ -554,8 +594,7 @@ class PlaybackRuntime(
                             observer.onIssue(RuntimeIssue.MUSIC_UNAVAILABLE)
                             process(PlaybackEvent.OutputFailed(attempt))
                         }
-                        RuntimeMusicEvent.FocusLost -> process(PlaybackEvent.Block(PlaybackBlocker.FOCUS_LOST))
-                        RuntimeMusicEvent.FocusTransient -> process(PlaybackEvent.Block(PlaybackBlocker.FOCUS_TRANSIENT))
+                        RuntimeMusicEvent.FocusLost, RuntimeMusicEvent.FocusTransient, RuntimeMusicEvent.FocusRegained -> Unit // handled above
                     }
                 }
             }
@@ -563,6 +602,39 @@ class PlaybackRuntime(
             observer.onIssue(RuntimeIssue.MUSIC_UNAVAILABLE)
             enqueue(PlaybackEvent.OutputFailed(attempt))
         }
+    }
+
+    /** Audio callbacks retain their exact output/session identity even after physical STOPPED. */
+    private fun focusInterrupted(attempt: OperationToken, transient: Boolean, fence: Long) {
+        if (closing || storageFailed || latest.closed || startsFence.get() != fence ||
+            (attempt !in liveOutputs && focusRecovery?.attempt != attempt)) return
+        if (transient) {
+            // A duplicate loss cannot replace another attempt's recovery authority.
+            if (focusRecovery != null) return
+            process(PlaybackEvent.Block(PlaybackBlocker.FOCUS_TRANSIENT))
+            if (closing || storageFailed || latest.closed) {
+                cancelFocusRecovery()
+                process(PlaybackEvent.Unblock(PlaybackBlocker.FOCUS_TRANSIENT))
+            } else focusRecovery = FocusRecovery(attempt, fence, latest.cancelEpoch)
+        } else process(PlaybackEvent.Block(PlaybackBlocker.FOCUS_LOST))
+    }
+
+    private fun focusRegained(attempt: OperationToken) {
+        val recovery = focusRecovery ?: return
+        if (recovery.attempt != attempt) return
+        val state = latest
+        val current = !closing && !storageFailed && !state.closed &&
+            state.sessionId == attempt.sessionId && state.cancelEpoch == recovery.epoch &&
+            startsFence.get() == recovery.fence && PlaybackBlocker.FOCUS_TRANSIENT in state.blockers
+        if (!current) return // A queued Stop/Suspend owns invalidation; it must also clear the blocker.
+        cancelFocusRecovery()
+        process(PlaybackEvent.Unblock(PlaybackBlocker.FOCUS_TRANSIENT))
+    }
+
+    private fun cancelFocusRecovery() {
+        focusRecovery = null
+        try { speech.cancelFocusRecovery() } catch (_: Exception) { observer.onIssue(RuntimeIssue.SPEECH_UNAVAILABLE) }
+        try { music.cancelFocusRecovery() } catch (_: Exception) { observer.onIssue(RuntimeIssue.MUSIC_UNAVAILABLE) }
     }
 
     private fun prepareMusicOutput(

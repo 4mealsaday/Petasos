@@ -177,5 +177,6 @@ object TripResultsProbe {
                 }
             }
         } finally { SyntheticStorageFixture.cleanup(context, name) }
+        RecordsAtlasProjectionProbe.run(instrumentation, mark)
     }
 }

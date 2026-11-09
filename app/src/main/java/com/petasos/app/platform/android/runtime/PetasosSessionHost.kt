@@ -21,11 +21,13 @@ import com.petasos.app.platform.automotive.CarPolicySource
 import com.petasos.app.platform.automotive.VehiclePowerPolicy
 import com.petasos.app.platform.media.Media3RuntimeMusic
 import com.petasos.app.platform.media.CoordinatorSessionCommands
+import com.petasos.app.platform.media.CompanionLocationService
 import com.petasos.app.platform.pleos.speech.PleosRuntimeSpeech
 import com.petasos.app.playback.*
 import com.petasos.app.runtime.*
 import com.petasos.app.storage.*
 import com.petasos.app.records.*
+import com.petasos.app.presentation.records.*
 import com.petasos.app.capability.location.LocationEvent
 import com.petasos.app.capability.location.LocationOperation
 import com.petasos.app.capability.location.LocationSource
@@ -64,7 +66,10 @@ class PetasosSessionHost(
     private val storyPreparation = AtomicReference<StoryPreparation?>(null)
     private val tripEnding = AtomicReference<TripEnding?>(null)
     @Volatile private var recoverableTripId: String? = null
-    private var speech: PleosRuntimeSpeech? = null
+    @Volatile private var speech: CaptioningRuntimeSpeech? = null
+    @Volatile private var captionVisible = false
+    private val captionLock = Any()
+    private val captionVisibility = CaptionVisibilityAuthority()
     private var music: Media3RuntimeMusic? = null
     @Volatile private var selected: String? = null
     private var pendingSelection = false // Worker-owned explicit setMediaItem intent, distinct from retained metadata.
@@ -75,6 +80,9 @@ class PetasosSessionHost(
     @Volatile private var visibleForLocation = false
     @Volatile private var locationConsentEnabled = false
     private val locationConsentAuthority = LocationConsentAuthority()
+    private val companionAuthority = CompanionSessionAuthority()
+    @Volatile private var locationUiGeneration = 0L
+    private val pendingVisiblePlayback = AtomicReference<VisiblePlaybackStart?>(null)
     @Volatile private var power = VehiclePowerPolicy.unavailable()
     @Volatile private var latest: PlaybackSnapshot? = null
     private var listener: (() -> Unit)? = null
@@ -96,6 +104,8 @@ class PetasosSessionHost(
     @Volatile private var automaticGeneration: AutomaticStoryGeneration? = null
     @Volatile private var automaticGenerationPlan: AutomaticGenerationPlan? = null
     @Volatile private var sourceSessionId: String? = null
+    @Volatile private var sourceLeaseCurrent: () -> Boolean = { false }
+    @Volatile private var committedSessionId: String? = null
     private var clockScopeId = ""
     private var routeRevision = 0L
     private var routeDependency: Long? = null
@@ -179,6 +189,7 @@ class PetasosSessionHost(
 
     override fun stop(): ListenableFuture<Void?> {
         fence.incrementAndGet()
+        cancelVisiblePlaybackPreparation()
         auxiliaryRoutes?.revoke()
         val cancelledPreparation = cancelStoryPreparation()
         // Stop ingress invalidates queued SDK starts before the worker handles another command.
@@ -187,11 +198,13 @@ class PetasosSessionHost(
     }
     override fun next(): ListenableFuture<Void?> {
         if (isEndingTrip()) return unavailableRecords()
+        cancelVisiblePlaybackPreparation()
         cancelStoryPreparation()
         return work { if (!isEndingTrip()) runtime?.dispatch(PlaybackEvent.Next); null }
     }
     override fun previous(): ListenableFuture<Void?> {
         if (isEndingTrip()) return unavailableRecords()
+        cancelVisiblePlaybackPreparation()
         cancelStoryPreparation()
         return work { if (!isEndingTrip()) runtime?.dispatch(PlaybackEvent.Previous); null }
     }
@@ -296,7 +309,8 @@ class PetasosSessionHost(
         @Synchronized fun finish(success: Boolean) {
             if (finished) return
             finished = true
-            val active = handle; handle = null
+            val active = handle
+            handle = null
             if (!success) { try { active?.cancel() } catch (_: Exception) { } }
             if (success) future.set(null)
             else future.setException(IllegalStateException("STORY_PREPARATION_UNAVAILABLE"))
@@ -307,21 +321,27 @@ class PetasosSessionHost(
     fun setTalkUiVisible(visible: Boolean) {
         checkMain()
         visibleForTalk = visible
-        if (!visible) { cancelStoryPreparation(); cancelVisibleInput() }
+        if (!visible) {
+            setCaptionVisible(false)
+            cancelVisiblePlaybackPreparation()
+            if (isPreparingStory()) cancelStoryPreparation()
+            cancelVisibleInput()
+        }
     }
 
-    /** Activity visibility is independent of parked UI restrictions and microphone eligibility.
-     * This stage has no location foreground service or background-location permission. */
+    /** Activity visibility permits an explicit start; it never grants recording by itself. */
     fun setLocationUiVisible(visible: Boolean) {
         checkMain()
         if (visibleForLocation == visible || disposed) return
         visibleForLocation = visible
-        if (!visible) revokeLocationCapture()
+        locationUiGeneration++
+        if (!visible) cancelVisiblePlaybackPreparation()
+        if (!visible) companionAuthority.cancelPending()
+        if (!companionAuthority.isActive()) revokeLocationCapture()
         queue.execute {
             if (disposed) return@execute
-            if (!visible) {
-                // Visibility loss is an observed reception gap, not a vehicle suspend or trip end.
-                try { recorder?.receive(LocationEvent.Failure(LocationOperation.UPDATES, "ActivityNotVisible")) }
+            if (!locationAccessAllowed()) {
+                try { recorder?.receive(LocationEvent.Failure(LocationOperation.UPDATES, "CompanionInactive")) }
                 finally { stopLocationRecording() }
             } else {
                 val state = latest
@@ -338,11 +358,198 @@ class PetasosSessionHost(
         revokeAutomaticPlanning()
         val source = locationSource
         locationSource = null
-        source?.close()
+        if (Looper.myLooper() == Looper.getMainLooper()) source?.close()
+        else main.post { source?.close() }
     }
 
-    private fun locationAccessAllowed(): Boolean = !disposed && visibleForLocation && !locationConsentAuthority.isWithdrawn() && locationConsentEnabled &&
-        LocationAccess.hasRequiredPermissions(context)
+    private fun locationAccessAllowed(): Boolean = !disposed && !isEndingTrip() && companionSessionReady() &&
+        CompanionCapturePolicy.mayRecord(companionAuthority.isActive(), locationConsentEnabled,
+            locationConsentAuthority.isWithdrawn(), LocationAccess.hasRequiredPermissions(context))
+
+    /** An ordinary Play prepares audio only; it never turns the Home companion switch on. */
+    fun prepareVisiblePlayback(): ListenableFuture<Boolean> = prepareVisibleStart(requiresCompanion = false)
+
+    /** The explicit Home ON action requires existing location consent and a real foreground owner. */
+    fun prepareVisibleCompanion(): ListenableFuture<Boolean> = prepareVisibleStart(requiresCompanion = true)
+
+    private fun prepareVisibleStart(requiresCompanion: Boolean): ListenableFuture<Boolean> {
+        checkMain()
+        cancelVisiblePlaybackPreparation()
+        val job = VisiblePlaybackStart(fence.get(), locationUiGeneration, requiresCompanion)
+        pendingVisiblePlayback.set(job)
+        if (!visiblePlaybackCurrent(job)) { finishVisiblePlayback(job, false); return job.result }
+        val setup = work {
+            check(visiblePlaybackCurrent(job))
+            if (job.requiresCompanion) {
+                locationConsentEnabled = RoomVehiclePreferenceStore(persistence().database).readRecordingSettings().locationEnabled
+                check(locationConsentEnabled && !locationConsentAuthority.isWithdrawn())
+                check(LocationAccess.hasRequiredPermissions(context))
+                if (runtime == null) createRuntime(job.epoch, play = false)
+            }
+            Unit
+        }
+        setup.addListener({
+            if (!visiblePlaybackCurrent(job)) { finishVisiblePlayback(job, false); return@addListener }
+            try {
+                setup.get()
+                // openSession is queued by construction. Observe it after its durable commit.
+                queue.execute { main.post { startVisibleCompanion(job) } }
+            } catch (_: Exception) { finishVisiblePlayback(job, false) }
+        }, context.mainExecutor)
+        return job.result
+    }
+
+    private fun startVisibleCompanion(job: VisiblePlaybackStart) {
+        if (!visiblePlaybackCurrent(job)) { finishVisiblePlayback(job, false); return }
+        if (!job.requiresCompanion || companionAuthority.isActive()) { finishVisiblePlayback(job, true); return }
+        val ticket = companionAuthority.request(visibleForLocation && visibleForTalk,
+            locationConsentEnabled && !locationConsentAuthority.isWithdrawn(),
+            LocationAccess.hasRequiredPermissions(context), companionSessionReady())
+        if (ticket == null) { finishVisiblePlayback(job, false); return }
+        job.ticket = ticket
+        val request = CompanionLocationService.start(context, this, ticket)
+        request.addListener({
+            val accepted = try { request.get() && visiblePlaybackCurrent(job) && companionSessionReady() }
+                catch (_: Exception) { false }
+            finishVisiblePlayback(job, accepted)
+        }, context.mainExecutor)
+    }
+
+    private fun visiblePlaybackCurrent(job: VisiblePlaybackStart): Boolean =
+        pendingVisiblePlayback.get() === job && !disposed && visibleForTalk && visibleForLocation &&
+            job.uiGeneration == locationUiGeneration && job.epoch == fence.get() && !isEndingTrip()
+
+    private fun finishVisiblePlayback(job: VisiblePlaybackStart, accepted: Boolean) {
+        if (accepted && visiblePlaybackCurrent(job)) {
+            // Retain the exact operation until the UI consumes it. An external MediaSession Stop
+            // can arrive after this future completes but before the UI's queued continuation.
+            job.result.set(true)
+            return
+        }
+        pendingVisiblePlayback.compareAndSet(job, null)
+        job.ticket?.let { ticket ->
+            companionAuthority.cancel(ticket)
+            CompanionLocationService.stop(context, this, ticket)
+        }
+        job.result.set(false)
+    }
+
+    fun consumeVisiblePlaybackPreparation(request: ListenableFuture<Boolean>): Boolean =
+        consumeVisiblePreparation(request, requiresCompanion = false)
+
+    fun consumeVisibleCompanionPreparation(request: ListenableFuture<Boolean>): Boolean =
+        consumeVisiblePreparation(request, requiresCompanion = true)
+
+    private fun consumeVisiblePreparation(request: ListenableFuture<Boolean>, requiresCompanion: Boolean): Boolean {
+        checkMain()
+        val job = pendingVisiblePlayback.get() ?: return false
+        if (job.result !== request || job.requiresCompanion != requiresCompanion) return false
+        val accepted = visiblePlaybackCurrent(job) && job.result.isDone &&
+            (!job.requiresCompanion || (companionAuthority.isActive() && companionSessionReady() &&
+                locationConsentEnabled && !locationConsentAuthority.isWithdrawn() && LocationAccess.hasRequiredPermissions(context))) &&
+            try { job.result.get() } catch (_: Exception) { false }
+        if (!accepted) { finishVisiblePlayback(job, false); return false }
+        return pendingVisiblePlayback.compareAndSet(job, null)
+    }
+
+    fun cancelVisiblePlaybackPreparation() {
+        pendingVisiblePlayback.getAndSet(null)?.let { job ->
+            job.ticket?.let { ticket ->
+                companionAuthority.cancel(ticket)
+                CompanionLocationService.stop(context, this, ticket)
+            }
+            job.result.set(false)
+        }
+    }
+
+    private class VisiblePlaybackStart(val epoch: Long, val uiGeneration: Long, val requiresCompanion: Boolean) {
+        val result: SettableFuture<Boolean> = SettableFuture.create()
+        @Volatile var ticket: CompanionSessionAuthority.Ticket? = null
+    }
+
+    fun isCompanionActive(): Boolean = companionAuthority.isActive()
+    fun isCompanionPending(ticket: CompanionSessionAuthority.Ticket): Boolean = companionAuthority.isPending(ticket)
+
+    fun acknowledgeCompanion(ticket: CompanionSessionAuthority.Ticket, serviceOwner: Any): Boolean {
+        checkMain()
+        val accepted = companionAuthority.acknowledge(ticket, serviceOwner,
+            visibleForLocation && visibleForTalk && pendingVisiblePlayback.get()?.let {
+                it.ticket === ticket && visiblePlaybackCurrent(it)
+            } == true,
+            locationConsentEnabled && !locationConsentAuthority.isWithdrawn(),
+            LocationAccess.hasRequiredPermissions(context), companionSessionReady(), foregroundStarted = true)
+        val leaseCurrent = { companionAuthority.owns(ticket, serviceOwner) }
+        if (accepted) queue.execute {
+            if (leaseCurrent() && locationAccessAllowed()) {
+                try {
+                    val state = latest
+                    if (state != null && !state.closed) {
+                        if (sourceSessionId != state.sessionId || !sourceLeaseCurrent())
+                            startSessionSources(state.tripId, state.sessionId, leaseCurrent)
+                        else updateLocationRecording(state.tripId, state.sessionId)
+                    }
+                } catch (_: Exception) { revokeCompanion(); changed() }
+            }
+        }
+        changed()
+        return accepted
+    }
+
+    fun cancelCompanion(ticket: CompanionSessionAuthority.Ticket) {
+        checkMain()
+        if (companionAuthority.cancel(ticket)) companionReleased()
+    }
+
+    fun releaseCompanion(ticket: CompanionSessionAuthority.Ticket, serviceOwner: Any) {
+        checkMain()
+        if (companionAuthority.release(ticket, serviceOwner)) companionReleased()
+    }
+
+    private fun companionSessionReady(): Boolean = !disposed && !isEndingTrip() &&
+        latest?.let { !it.closed && committedSessionId == it.sessionId } == true
+
+    private fun companionReleased() {
+        suspendCompanionSources()
+        changed()
+    }
+
+    private fun revokeCompanion() {
+        cancelVisiblePlaybackPreparation()
+        companionAuthority.revoke()
+        suspendCompanionSources()
+        CompanionLocationService.stop(context, this)
+    }
+
+    /** OFF preserves consent, trip history and the open trip, but removes every live companion lease. */
+    fun disableCompanion(): ListenableFuture<Void?> {
+        checkMain()
+        fence.incrementAndGet()
+        revokeCompanion()
+        if (!cancelStoryPreparation()) runtime?.dispatch(PlaybackEvent.Stop)
+        return work {
+            // A later explicit ON may already have acknowledged its own foreground owner.
+            if (!companionAuthority.isActive()) stopSessionSources()
+            changed()
+            null
+        }
+    }
+
+    private fun suspendCompanionSources() {
+        sourceSessionId = null
+        sourceLeaseCurrent = { false }
+        navigationIngressRevision.incrementAndGet()
+        revokeLocationCapture()
+        val navigation = navigationSource
+        navigationSource = null
+        main.post { navigation?.close() }
+        synchronized(captionLock) {
+            captionVisibility.clear()
+            refreshCaptionVisibilityLocked()
+        }
+        if (!disposed) queue.execute {
+            if (!companionAuthority.isActive()) stopSessionSources()
+        }
+    }
 
     fun talk(): ListenableFuture<Void?> {
         checkMain()
@@ -448,12 +655,9 @@ class PetasosSessionHost(
             override fun openSession(tripId: String, sessionId: String) {
                 if (candidate == null) persistence.openSession(tripId, sessionId)
                 else recovery.openResumedSession(candidate, sessionId)
-                // The session row is committed before any location/navigation callback can arrive.
-                try { startSessionSources(tripId, sessionId) }
-                catch (_: Exception) {
-                    // An optional sensor/lookup failure must not falsely report that the session insert failed.
-                    try { stopSessionSources() } catch (_: Exception) { invalidateLocation() }
-                }
+                committedSessionId = sessionId
+                // Ordinary audio playback commits a trip but starts no navigation/location inputs.
+                // Only the exact foreground ACK starts them after this identity is committed.
             }
             override fun commitPlayback(effect: PlaybackEffect.CommitPlayback, snapshot: PlaybackSnapshot) {
                 persistence.commitPlayback(effect, snapshot)
@@ -467,8 +671,10 @@ class PetasosSessionHost(
                 if (effect.hasCommittedUtterance) SummaryBackground.enqueueFrozen(context, effect.turnId)
             }
             override fun closeSession(sessionId: String) {
+                revokeCompanion()
                 stopSessionSources()
                 persistence.closeSession(sessionId)
+                if (committedSessionId == sessionId) committedSessionId = null
                 if (disposed) queue.execute { releaseResources() }
             }
         }
@@ -525,8 +731,8 @@ class PetasosSessionHost(
             },
             onChanged = { queue.execute { refreshPlanning(); changed() } },
         )
-        val inputOutput = PleosRuntimeSpeech(context, inputAllowed = ::mayCapture)
-        speech = inputOutput
+        val inputOutput = CaptioningRuntimeSpeech(PleosRuntimeSpeech(context, inputAllowed = ::mayCapture), onCaptionChanged = ::changed)
+        synchronized(captionLock) { speech = inputOutput; refreshCaptionVisibilityLocked() }
         val musicOutput = Media3RuntimeMusic(context)
         music = musicOutput
         lateinit var live: PlaybackRuntime
@@ -624,7 +830,7 @@ class PetasosSessionHost(
         if (!visibleForTalk) return unavailableRecords()
         revokeAutomaticPlanning()
         val consentRequest = locationConsentAuthority.request(enabled)
-        if (!enabled) { locationConsentEnabled = false; revokeLocationCapture() }
+        if (!enabled) { locationConsentEnabled = false; revokeCompanion(); revokeLocationCapture() }
         return work {
             try {
                 check(visibleForTalk && (!enabled || !isEndingTrip()))
@@ -661,6 +867,74 @@ class PetasosSessionHost(
         RoomTripResultsStore(persistence().database).readTrip(tripId)
     }
 
+    fun readRecordsAtlas(tripOffset: Int = 0): ListenableFuture<RecordsAtlasSnapshot> = work {
+        RoomRecordsAtlasStore(persistence().database).readAtlas(tripOffset)
+    }
+
+    fun readRecordsRegion(regionId: String): ListenableFuture<RecordsRegionSnapshot> = work {
+        RoomRecordsAtlasStore(persistence().database).readRegion(regionId)
+    }
+
+    fun readRecordsTripMap(tripId: String): ListenableFuture<RecordsTripSnapshot> = work {
+        RoomRecordsAtlasStore(persistence().database).readTrip(tripId)
+    }
+
+    /** Read-only UI projection of the same fresh, committed fix used by the runtime. */
+    fun readDisplayPosition(): ListenableFuture<com.petasos.app.presentation.DisplayPosition?> = work {
+        val point = committedLocation
+        val deadline = locationFreshUntilElapsedMs
+        if (!visibleForLocation || latest?.closed != false || !locationValid || point == null ||
+            deadline == null || SystemClock.elapsedRealtime() >= deadline || !locationAccessAllowed() ||
+            !committedLocationAuthority()) null
+        else {
+            val latitude = point.latitude
+            val longitude = point.longitude
+            if (latitude == null || longitude == null) null else {
+                val authority = committedLocationAuthority
+                com.petasos.app.presentation.DisplayPosition(MapCoordinate(latitude, longitude), deadline) {
+                    latest?.closed == false && locationAccessAllowed() && authority()
+                }
+            }
+        }
+    }
+
+    fun setCaptionVisible(visible: Boolean) {
+        checkMain()
+        synchronized(captionLock) {
+            captionVisibility.setActivityVisible(visible && visibleForTalk && !disposed)
+            refreshCaptionVisibilityLocked()
+        }
+    }
+
+    /** Only the actual attached overlay owner may expose or hide its caption surface. */
+    fun setOverlayCaptionVisible(owner: Any, visible: Boolean): Boolean {
+        checkMain()
+        return synchronized(captionLock) {
+            val accepted = captionVisibility.setOverlayVisible(owner, visible, overlayCaptionAllowed())
+            refreshCaptionVisibilityLocked()
+            accepted
+        }
+    }
+
+    /** Activity reads cannot borrow an overlay's independent visibility authorization. */
+    fun currentCaption(): RuntimeText? = synchronized(captionLock) {
+        refreshCaptionVisibilityLocked()
+        if (captionVisibility.mayReadActivity()) speech?.currentCaption() else null
+    }
+
+    fun currentOverlayCaption(owner: Any): RuntimeText? = synchronized(captionLock) {
+        refreshCaptionVisibilityLocked()
+        if (captionVisibility.mayReadOverlay(owner, overlayCaptionAllowed())) speech?.currentCaption() else null
+    }
+
+    private fun overlayCaptionAllowed(): Boolean = locationAccessAllowed()
+
+    /** Caller holds captionLock, including when runtime construction installs a new speech wrapper. */
+    private fun refreshCaptionVisibilityLocked() {
+        captionVisible = !disposed && captionVisibility.hasVisibleSurface(overlayCaptionAllowed())
+        speech?.setVisible(captionVisible)
+    }
+
     fun endableTripId(): String? = runtime?.snapshot()?.tripId ?: recoverableTripId
     fun isEndingTrip(): Boolean = tripEnding.get() != null
     fun isTripEndPending(): Boolean = tripEnding.get()?.future?.isDone == false
@@ -674,6 +948,7 @@ class PetasosSessionHost(
             return unavailableRecords()
         val ending = TripEnding(tripId)
         if (!tripEnding.compareAndSet(previous, ending)) return unavailableRecords()
+        revokeCompanion()
         fence.incrementAndGet()
         cancelStoryPreparation()
         sourceSessionId = null // End intent immediately fences both sensor streams, even before an audio ACK.
@@ -717,7 +992,7 @@ class PetasosSessionHost(
             navigationStore?.close(); navigationStore = null
             planning = null; pendingResumeTurnId = null
             musicPlanning?.clear(); musicPlanning = null
-            runtime = null; latest = null; recoverableTripId = null
+            runtime = null; latest = null; recoverableTripId = null; committedSessionId = null
             pendingSelection = false
             tripEnding.compareAndSet(ending, null)
             ending.future.set(closed)
@@ -738,6 +1013,7 @@ class PetasosSessionHost(
     fun locationSettingsChanged(): ListenableFuture<Void?> {
         revokeAutomaticPlanning()
         if (!LocationAccess.hasRequiredPermissions(context)) {
+            revokeCompanion()
             locationInputAuthority?.invalidate()
         }
         return work {
@@ -749,9 +1025,16 @@ class PetasosSessionHost(
         }
     }
 
-    private fun startSessionSources(tripId: String, sessionId: String) {
-        if (disposed || isEndingTrip()) return
+    private fun startSessionSources(tripId: String, sessionId: String, leaseCurrent: () -> Boolean) {
+        if (disposed || isEndingTrip() || !leaseCurrent()) return
+        // Replacing an older lease closes only its captured adapters, never a later ON's sources.
+        stopLocationRecording()
+        val previousNavigation = navigationSource
+        navigationSource = null
+        main.post { previousNavigation?.close() }
+        if (!leaseCurrent()) return
         sourceSessionId = sessionId
+        sourceLeaseCurrent = leaseCurrent
         routeRevision = navigationStore?.readRevision(sessionId) ?: 0
         routeDependency = null
         observedNavigationRouteState = NavigationRouteState.UNKNOWN
@@ -760,23 +1043,28 @@ class PetasosSessionHost(
         val source = PleosNavigationSource(context, routeRevision)
         navigationSource = source
         main.post {
-            if (!disposed && sourceSessionId == sessionId && navigationSource === source) {
+            if (!disposed && leaseCurrent() && sourceLeaseCurrent === leaseCurrent &&
+                sourceSessionId == sessionId && navigationSource === source) {
                 source.setAuxiliaryInputSink {
-                    auxiliaryRoutes?.revoke()
-                    revokeAutomaticPlanning()
-                    queue.execute { if (sourceSessionId == sessionId && navigationSource === source) refreshPlanning() }
+                    if (leaseCurrent() && sourceSessionId == sessionId && navigationSource === source) {
+                        auxiliaryRoutes?.revoke()
+                        revokeAutomaticPlanning()
+                        queue.execute {
+                            if (leaseCurrent() && sourceSessionId == sessionId && navigationSource === source) refreshPlanning()
+                        }
+                    }
                 }
                 source.start { event ->
                     val changesAuthority = event is NavigationEvent.Changed || event is NavigationEvent.Failure ||
                         event is NavigationEvent.Availability && event.state != NavigationAvailability.READY &&
                         event.state != NavigationAvailability.CONNECTING
-                    val ingressRevision = if (!disposed && sourceSessionId == sessionId && navigationSource === source &&
+                    val ingressRevision = if (!disposed && leaseCurrent() && sourceSessionId == sessionId && navigationSource === source &&
                         changesAuthority) navigationIngressRevision.incrementAndGet().also {
                             auxiliaryRoutes?.revoke(); revokeAutomaticPlanning()
                         }
                     else null
                     queue.execute {
-                        if (!disposed && sourceSessionId == sessionId && navigationSource === source) {
+                        if (!disposed && leaseCurrent() && sourceSessionId == sessionId && navigationSource === source) {
                             if (ingressRevision != null) committedNavigationIngressRevision = ingressRevision
                             try {
                                 when (event) {
@@ -819,9 +1107,16 @@ class PetasosSessionHost(
 
     private fun updateLocationRecording(tripId: String, sessionId: String) {
         val locations = locationStore ?: return
+        val leaseCurrent = sourceLeaseCurrent
         locationConsentEnabled = locations.isExplicitlyEnabled()
-        val enabled = locationAccessAllowed()
-        if (!enabled) { stopLocationRecording(); return }
+        val enabled = leaseCurrent() && locationAccessAllowed()
+        if (!enabled) {
+            if (!locationConsentEnabled || !LocationAccess.hasRequiredPermissions(context)) {
+                revokeCompanion()
+            }
+            stopLocationRecording()
+            return
+        }
         if (recorder != null && locationSource != null) return
         locationInputAuthority?.invalidate()
         recorder?.stop()
@@ -866,7 +1161,7 @@ class PetasosSessionHost(
             measurementSourceFactory = { access ->
                 AndroidLocationSource(context, AndroidLocationSource.preferredProvider(context) ?: "fused", access)
             },
-            externalAccessAllowed = { locationAccessAllowed() && sourceSessionId == sessionId },
+            externalAccessAllowed = { leaseCurrent() && locationAccessAllowed() && sourceSessionId == sessionId },
             elapsedMs = SystemClock::elapsedRealtime,
             schedule = { delay, action ->
                 val task = Runnable(action)
@@ -878,7 +1173,7 @@ class PetasosSessionHost(
         )
         locationSource = source
         main.post {
-            if (locationAccessAllowed() && sourceSessionId == sessionId && locationSource === source) source.start { event ->
+            if (leaseCurrent() && locationAccessAllowed() && sourceSessionId == sessionId && locationSource === source) source.start { event ->
                 val doubtful = when (event) {
                     is LocationEvent.SampleReceived -> try {
                         locationNormalizer.normalize(event.sample, event.kind, "quality-check", "android-location-manager", clockScopeId)
@@ -894,7 +1189,7 @@ class PetasosSessionHost(
                 if (doubtful && !disposed && sourceSessionId == sessionId && locationSource === source && recorder === recording)
                     { auxiliaryRoutes?.revoke(); revokeAutomaticPlanning() }
                 queue.execute {
-                    if (locationAccessAllowed() && sourceSessionId == sessionId && recorder === recording && locationSource === source) {
+                    if (leaseCurrent() && locationAccessAllowed() && sourceSessionId == sessionId && recorder === recording && locationSource === source) {
                         if (event is LocationEvent.SampleReceived) latestReceivedElapsed = event.sample.receivedAtElapsedRealtimeMillis
                         // A fresh doubtful/no-location event revokes the old automatic offer immediately.
                         if (doubtful) invalidateLocation()
@@ -914,7 +1209,9 @@ class PetasosSessionHost(
         locationTimer = queue.schedule(LocationRecorder.BATCH_MILLIS) {
             if (disposed || sourceSessionId != sessionId || recorder == null) return@schedule
             try {
+                if (!sourceLeaseCurrent()) { stopLocationRecording(); return@schedule }
                 if (locationStore?.isExplicitlyEnabled() != true || !locationAccessAllowed()) {
+                    revokeCompanion()
                     stopLocationRecording()
                     return@schedule
                 }
@@ -1053,6 +1350,7 @@ class PetasosSessionHost(
         navigationIngressRevision.incrementAndGet()
         revokeAutomaticPlanning()
         sourceSessionId = null // Fence both SDK streams before flush or main-thread teardown.
+        sourceLeaseCurrent = { false }
         val navigation = navigationSource
         navigationSource = null
         main.post { navigation?.close() }
@@ -1075,6 +1373,7 @@ class PetasosSessionHost(
         checkMain()
         if (disposed) return
         disposed = true
+        revokeCompanion()
         auxiliaryRoutes?.revoke()
         tripEnding.get()?.future?.setException(IllegalStateException("TRIP_END_UNCONFIRMED"))
         cancelStoryPreparation()

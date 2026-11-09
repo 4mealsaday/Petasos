@@ -29,7 +29,7 @@ SCOPE = "Static demo manifest and direct source-reference inspection; not runtim
 # Exact package boundaries and type names. Pure RuntimeSpeech/RuntimeMusic, planners,
 # location models, public bundled catalogs and Room stores remain usable.
 FORBIDDEN_PACKAGES = (
-    "ai.pleos", "com.petasos.app.platform.pleos", "com.petasos.app.platform.media",
+    "ai.pleos", "com.naver.maps", "com.petasos.app.platform.pleos", "com.petasos.app.platform.media",
     "com.petasos.app.platform.android.summary", "android.speech", "android.location",
     "android.media", "android.webkit", "androidx.media3", "androidx.work",
     "java.net", "javax.net", "okhttp3", "retrofit2", "io.ktor.client",

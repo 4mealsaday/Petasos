@@ -20,16 +20,23 @@ internal class DemoSilentSpeech(
     private class Slot(
         val attempt: OperationToken,
         val callback: (RuntimeOutputEvent) -> Unit,
+        val startedAtMs: Long,
+        val durationMs: Long,
         var completion: RuntimeCancellation? = null,
     )
     private var active: Slot? = null
+
+    /** Display timing of a silent public script; never presented as measured TTS word alignment. */
+    fun progress(): Pair<Long, Long>? = active?.let {
+        (time.now - it.startedAtMs).coerceIn(0, it.durationMs) to it.durationMs
+    }
 
     override fun startOutput(attempt: OperationToken, text: RuntimeText, callback: (RuntimeOutputEvent) -> Unit) {
         check(active == null) { "DEMO_OUTPUT_BUSY" }
         if (!allowed()) { callback(RuntimeOutputEvent.STOPPED); gateLost(); return }
         val duration = durationMs(attempt)
         check(duration in 1..3_600_000L) { "DEMO_DURATION_UNAVAILABLE" }
-        val slot = Slot(attempt, callback)
+        val slot = Slot(attempt, callback, time.now, duration)
         active = slot
         slot.completion = time.scheduleAt(Math.addExact(time.now, duration), DemoEventPriority.OUTPUT) {
             if (active === slot) {

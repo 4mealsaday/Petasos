@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <application android:networkSecurityConfig="@xml/debug_network_security_config" />
+    <application android:networkSecurityConfig="@xml/debug_network_security_config">
+        <meta-data android:name="com.naver.maps.map.NCP_KEY_ID" android:value="@string/petasos_naver_map_key_id" />
+        <meta-data android:name="com.naver.maps.map.CACHE_LOCATION" android:value="cache" />
+    </application>
 </manifest>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="records_ui_title">내 여행</string>
+    <string name="records_ui_intro">지나온 길에서 만난 지역과 이야기를 다시 펼쳐보세요.</string>
+    <string name="records_ui_map">나의 지도</string>
+    <string name="records_ui_album">지역 앨범</string>
+    <string name="records_ui_trips">지난 여정</string>
+    <string name="records_ui_refresh">새로고침</string>
+    <string name="records_ui_loading">기록을 불러오고 있어요.</string>
+    <string name="records_ui_failed">기록을 불러오지 못했어요. 새로고침으로 다시 시도해 주세요.</string>
+    <string name="records_ui_unavailable">정차 중에 내 기록을 볼 수 있어요.</string>
+    <string name="records_ui_empty_routes">아직 표시할 위치 기록이 없어요.</string>
+    <string name="records_ui_map_description">기록된 이동 경로와 지역 지도. 지역은 지역 앨범의 버튼으로도 선택할 수 있습니다.</string>
+    <string name="records_ui_map_caption">파란 선은 기록된 이동 구간입니다. 기록이 끊긴 곳은 이어 그리지 않습니다.</string>
+    <string name="records_ui_map_limited">지도에는 최근 위치 표본 30,000개까지 표시됩니다. 저장된 기록은 그대로 보관됩니다.</string>
+    <string name="records_ui_attribution">지도: 국토지리정보원·브이월드 · CC BY 2.0 KR\n화면용 경계 단순화·일부 소도서 생략. 도로 안내 지도가 아닙니다.</string>
+    <string name="records_ui_collected_count">지나온 지역 %1$d곳</string>
+    <string name="records_ui_no_regions">아직 통과가 확인된 지역이 없어요.</string>
+    <string name="records_ui_album_note">밝은 파랑은 통과가 확인된 지역입니다. 어두운 그림은 지역 모양을 보여주는 도감이며, 모든 지역의 자동 수집이 지원되는 것은 아닙니다.</string>
+    <string name="records_ui_collected">지나온 기록 있음</string>
+    <string name="records_ui_not_collected">지나온 기록 없음</string>
+    <string name="records_ui_all_regions">전체 지역</string>
+    <string name="records_ui_only_collected">지나온 지역</string>
+    <string name="records_ui_collected_shape">%1$s 지역 모양 · 통과 확인</string>
+    <string name="records_ui_uncollected_shape">%1$s 지역 모양 · 아직 통과 기록 없음</string>
+    <string name="records_ui_previous">이전</string>
+    <string name="records_ui_next">다음</string>
+    <string name="records_ui_page">%1$d / %2$d</string>
+    <string name="records_ui_back">목록으로</string>
+    <string name="records_ui_region_stories">끝까지 들은 지역 이야기</string>
+    <string name="records_ui_region_stories_note">끝까지 들은 이야기를 지역별로 모았습니다. 지역의 통과 여부와 이야기 완료는 각각 기록됩니다.</string>
+    <string name="records_ui_no_stories">아직 끝까지 들은 이야기가 없어요.</string>
+    <string name="records_ui_story_unavailable">완료한 이야기 · 현재 재생 불가</string>
+    <string name="records_ui_replay">%1$s · 다시 듣기</string>
+    <string name="records_ui_completed_on">%1$s에 청취 완료</string>
+    <string name="records_ui_linked_trips">이 지역이 처음 기록된 여정</string>
+    <string name="records_ui_no_trips">아직 연결된 여정 기록이 없어요.</string>
+    <string name="records_ui_trips_count">저장된 여정 %1$d개</string>
+    <string name="records_ui_trip_active">이동 중</string>
+    <string name="records_ui_trip_interrupted">이동 중단</string>
+    <string name="records_ui_trip_closed">이동 종료</string>
+    <string name="records_ui_trip_title">%1$s · %2$s</string>
+    <string name="records_ui_trip_collections">연결된 지역 카드 %1$d개 · 이야기 카드 %2$d개</string>
+    <string name="records_ui_summaries">저장된 대화 요약</string>
+    <string name="records_ui_no_summaries">이 여정에 저장된 대화 요약이 없어요.</string>
+    <string name="records_ui_more_details">최근 기록 일부를 표시하고 있습니다.</string>
+</resources>

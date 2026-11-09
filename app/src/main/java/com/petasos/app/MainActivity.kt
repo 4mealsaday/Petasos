@@ -21,6 +21,9 @@ class MainActivity : Activity() {
     override fun onResume() { super.onResume(); controls.setResumed(true) }
     override fun onPause() { controls.setResumed(false); super.onPause() }
     override fun onStop() { controls.stop(); super.onStop() }
+    override fun onLowMemory() { controls.onLowMemory(); super.onLowMemory() }
+    override fun onSaveInstanceState(outState: Bundle) { controls.saveTransientState(); super.onSaveInstanceState(outState) }
+    override fun onDestroy() { controls.destroy(); super.onDestroy() }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)

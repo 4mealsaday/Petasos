@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="journey_open_navigation">내비 열기</string>
+    <string name="journey_search_destination">목적지 찾기</string>
+    <string name="journey_show_route">현재 경로</string>
+    <string name="journey_navigation_hint">Pleos 내비에서 목적지를 선택하거나 현재 경로를 확인할 수 있어요.</string>
+    <string name="journey_navigation_connecting">Pleos 내비에 연결하고 있어요.</string>
+    <string name="journey_navigation_requested">Pleos 내비에 화면 열기를 요청했어요.</string>
+    <string name="journey_navigation_unavailable">내비를 열지 못했어요. 잠시 뒤 다시 눌러 주세요.</string>
+    <string name="journey_navigation_permission">내비 화면 연결 권한을 확인해야 해요.</string>
+    <string name="journey_destination_hint">장소나 주소 입력</string>
+    <string name="journey_destination_explanation">검색어를 Pleos 내비로 보내요. 검색 결과에서 목적지를 직접 선택해 주세요.</string>
+    <string name="journey_destination_search">내비에서 찾기</string>
+    <string name="journey_destination_required">찾을 장소나 주소를 입력해 주세요.</string>
+</resources>

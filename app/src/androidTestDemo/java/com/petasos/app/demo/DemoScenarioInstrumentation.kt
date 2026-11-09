@@ -203,39 +203,59 @@ class DemoScenarioInstrumentation : Instrumentation() {
                 runOnMainSync { parked = activity.currentGate == ParkedPresentationGate.PARKED }
                 parked && state()?.snapshot != null && state()?.busy == false
             }
+            check(state()?.snapshot?.elapsedMs == DemoFixtureStore.START_MS)
+            SystemClock.sleep(1_100)
+            check(state()?.snapshot?.elapsedMs == DemoFixtureStore.START_MS)
             click(R.id.playback_play)
             check(state()?.snapshot?.activeStoryId == FIRST)
-            click(R.id.demo_advance_30)
-            repeat(4) { click(R.id.demo_advance_1) }
-            check(state()?.snapshot?.mode == PlaybackMode.MUSIC)
-            repeat(2) { click(R.id.demo_advance_1) }
-            click(R.id.playback_stop)
-            check(state()?.snapshot?.musicPositionMs == 2_000L && state()?.snapshot?.playIntent == false)
+            waitFor { (state()?.snapshot?.elapsedMs ?: 0) >= DemoFixtureStore.START_MS + 1_000 }
+            fun seek(seconds: Int) {
+                waitFor { state()?.busy == false }
+                runOnMainSync { activity.seekTo(seconds * 1_000L) }
+                waitFor { state()?.busy == false && state()?.snapshot?.elapsedMs == DemoFixtureStore.START_MS + seconds * 1_000L }
+                check(state()?.snapshot?.playIntent == false)
+            }
+            seek(36)
+            check(state()?.snapshot?.musicPositionMs == 2_000L)
             click(R.id.demo_route_yuseong)
-            click(R.id.demo_advance_1)
+            // A seek pause becomes a replay event on this new branch. Time can move while music stays paused.
+            seek(37)
+            check(state()?.snapshot?.musicPositionMs == 2_000L)
             click(R.id.playback_play)
-            repeat(8) { click(R.id.demo_advance_1) }
+            seek(45)
             check(state()?.snapshot?.activeStoryId == FINAL)
             check(state()?.snapshot?.completedMusicCount == 1L)
             check(state()?.snapshot?.automaticStartedStoryIds == listOf(FINAL))
             runOnMainSync {
                 check(activity.findViewById<TextView>(R.id.demo_story_title).text ==
                     activity.latestState?.snapshot?.activeStoryTitle)
-                check(activity.findViewById<View>(R.id.playback_talk).visibility == View.GONE)
+                check(activity.findViewById<View>(R.id.playback_talk).visibility == View.VISIBLE)
+                check(activity.findViewById<View>(R.id.playback_talk).performClick())
+                check(activity.findViewById<TextView>(R.id.playback_notice).text ==
+                    targetContext.getString(R.string.demo_talk_unavailable))
                 callActivityOnPause(activity)
                 check(activity.findViewById<View>(R.id.preview_content).visibility == View.GONE)
             }
             waitFor { state()?.snapshot?.playIntent == false && state()?.busy == false }
+            val beforeReturn = state()?.snapshot?.elapsedMs
             runOnMainSync { callActivityOnResume(activity) }
             waitFor { state()?.busy == false }
-            check(state()?.snapshot?.playIntent == false)
+            SystemClock.sleep(1_100)
+            check(state()?.snapshot?.playIntent == false && state()?.snapshot?.elapsedMs == beforeReturn)
+            // Rewind rebuilds only the owned fixture; its completed records cannot survive in the past.
+            seek(10)
+            check(state()?.snapshot?.completedStoryCount == 0L && state()?.snapshot?.completedMusicCount == 0L)
+            click(R.id.demo_route_anseong)
+            click(R.id.playback_play)
+            seek(54)
+            check(state()?.snapshot?.activeStoryId == OLD)
+            check(state()?.snapshot?.automaticStartedStoryIds == listOf(OLD))
             click(R.id.demo_reset)
             check(state()?.snapshot?.elapsedMs == DemoFixtureStore.START_MS)
             check(state()?.snapshot?.completedStoryCount == 0L && state()?.snapshot?.playIntent == false)
             click(R.id.playback_play)
             runOnMainSync {
-                check(activity.findViewById<View>(R.id.demo_advance_30).performClick())
-                // Cancellation is submitted in the same main turn, even if the worker is running.
+                activity.seekTo(170_000L)
                 callActivityOnPause(activity)
                 check(activity.findViewById<View>(R.id.preview_content).visibility == View.GONE)
             }
@@ -245,8 +265,8 @@ class DemoScenarioInstrumentation : Instrumentation() {
             click(R.id.demo_reset)
             check(state()?.snapshot?.elapsedMs == DemoFixtureStore.START_MS)
             check(state()?.snapshot?.completedStoryCount == 0L && state()?.snapshot?.playIntent == false)
-            marks += "demo_actual_parked_ui_buttons_reroute_pause_resume_no_autoplay_reset_pass"
-            marks += "demo_pending_advance_revoked_on_pause_and_return_remains_stopped"
+            marks += "demo_actual_parked_realtime_seek_reroute_rewind_branch_reset_pass"
+            marks += "demo_pending_seek_revoked_on_pause_return_stopped_no_canned_talk_pass"
         } finally {
             runOnMainSync { activity.finish() }
             waitFor { activity.closeAcknowledged != null }

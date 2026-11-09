@@ -40,7 +40,7 @@ internal object PresentationRendererProbe {
             val next = root.findViewById<Button>(R.id.playback_next)
             val previous = root.findViewById<Button>(R.id.playback_previous)
             val newStory = root.findViewById<Button>(R.id.playback_new_story)
-            val talk = root.findViewById<Button>(R.id.playback_talk)
+            val talk = root.findViewById<View>(R.id.playback_talk)
             val controls = listOf<View>(selection, play, stop, next, previous, newStory, talk)
             check(!root.isAttachedToWindow && content.visibility == View.GONE && vehicleNotice.visibility == View.VISIBLE)
             val renderer = PlaybackPresentationRenderer(root)

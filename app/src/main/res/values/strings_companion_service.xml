@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="companion_service_channel">주행 청취</string>
+    <string name="companion_service_connecting">주행 청취 연결 중</string>
+    <string name="companion_service_recording">위치 기록 중 · Petasos에서 주행 청취를 종료할 수 있어요</string>
+</resources>

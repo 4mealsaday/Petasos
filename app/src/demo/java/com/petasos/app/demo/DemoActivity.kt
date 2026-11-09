@@ -2,7 +2,11 @@ package com.petasos.app.demo
 
 import android.app.Activity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.SystemClock
 import android.view.View
+import android.widget.SeekBar
 import com.petasos.app.R
 import com.petasos.app.platform.automotive.CarPolicySource
 import com.petasos.app.platform.automotive.VehicleUxPolicy
@@ -17,6 +21,18 @@ class DemoActivity : Activity() {
     private var resumed = false
     private var destroyed = false
     private var ux = VehicleUxPolicy.unavailable()
+    private val main = Handler(Looper.getMainLooper())
+    private val realtime = DemoRealtimeClock()
+    private var pendingSeekMs: Long? = null
+    private var seekInFlight = false
+    private val tick = object : Runnable {
+        override fun run() {
+            if (!realtime.running || destroyed || !resumed || !ux.permitsParkedPreview) return
+            val delta = realtime.pending(SystemClock.elapsedRealtime())
+            if (delta >= 1_000 && controller.advanceBy(delta)) realtime.accepted(delta)
+            if (realtime.running) main.postDelayed(this, 100)
+        }
+    }
     internal var latestState: DemoControllerState? = null
         private set
     internal var currentGate = ParkedPresentationGate.UNKNOWN
@@ -32,7 +48,16 @@ class DemoActivity : Activity() {
         controller = DemoSessionController(applicationContext) { state ->
             if (!destroyed) {
                 latestState = state
+                if (state.failure != null || state.snapshot?.failure != null ||
+                    (state.snapshot?.elapsedMs ?: 0) >= DemoFixtureStore.START_MS + DemoReplayTimeline.DURATION_MS) {
+                    stopClock()
+                }
+                if (!state.busy && seekInFlight) {
+                    seekInFlight = false
+                    presentation.seeking = false
+                }
                 presentation.render(state, currentGate, resumed)
+                if (!state.busy) dispatchPendingSeek()
             }
         }
         listOf(
@@ -40,9 +65,6 @@ class DemoActivity : Activity() {
             R.id.playback_stop to DemoControllerCommand.STOP,
             R.id.playback_next to DemoControllerCommand.NEXT,
             R.id.playback_previous to DemoControllerCommand.PREVIOUS,
-            R.id.demo_advance_1 to DemoControllerCommand.ADVANCE_1,
-            R.id.demo_advance_10 to DemoControllerCommand.ADVANCE_10,
-            R.id.demo_advance_30 to DemoControllerCommand.ADVANCE_30,
             R.id.demo_route_anseong to DemoControllerCommand.ROUTE_ANSEONG,
             R.id.demo_route_yuseong to DemoControllerCommand.ROUTE_YUSEONG,
             R.id.demo_route_gap to DemoControllerCommand.OBSERVATION_GAP,
@@ -51,9 +73,31 @@ class DemoActivity : Activity() {
             findViewById<View>(id).setOnClickListener {
                 // Display state never grants command authority; the worker rechecks this gate.
                 if (command == DemoControllerCommand.STOP ||
-                    (!destroyed && resumed && ux.permitsParkedPreview)) controller.submit(command)
+                    (!destroyed && resumed && ux.permitsParkedPreview)) {
+                    presentation.dismissTalkNotice()
+                    if (command == DemoControllerCommand.STOP || command == DemoControllerCommand.RESET) stopClock()
+                    if (controller.submit(command) && command == DemoControllerCommand.PLAY) {
+                        realtime.start(SystemClock.elapsedRealtime())
+                        main.removeCallbacks(tick)
+                        main.postDelayed(tick, 100)
+                    }
+                }
             }
         }
+        findViewById<View>(R.id.playback_talk).setOnClickListener {
+            if (!destroyed && resumed && ux.permitsParkedPreview) presentation.showTalkUnavailable()
+        }
+        findViewById<SeekBar>(R.id.demo_timeline).setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+                stopClock()
+                presentation.seeking = true
+                presentation.dismissTalkNotice()
+            }
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                if (fromUser) presentation.previewSeek(progress)
+            }
+            override fun onStopTrackingTouch(seekBar: SeekBar) { seekTo(seekBar.progress * 1_000L) }
+        })
     }
 
     override fun onStart() {
@@ -82,6 +126,8 @@ class DemoActivity : Activity() {
         destroyed = true
         resumed = false
         ++subscription
+        stopClock()
+        presentation.close()
         controller.setAllowed(false)
         car?.close()
         car = null
@@ -97,7 +143,38 @@ class DemoActivity : Activity() {
         }
         // Hide first; neither a delayed worker result nor failed subscription can reveal content.
         presentation.renderGate(if (resumed) currentGate else ParkedPresentationGate.UNKNOWN)
+        if (destroyed || !resumed || !ux.permitsParkedPreview) {
+            stopClock()
+            pendingSeekMs = null
+            presentation.seeking = false
+        }
         controller.setAllowed(!destroyed && resumed && ux.permitsParkedPreview)
         latestState?.let { presentation.render(it, currentGate, resumed) }
     }
+
+    /** Package-local instrumentation uses the same seek path as the public SeekBar listener. */
+    internal fun seekTo(positionMs: Long) {
+        stopClock()
+        if (destroyed || !resumed || !ux.permitsParkedPreview || positionMs !in 0..DemoReplayTimeline.DURATION_MS) {
+            presentation.seeking = false
+            return
+        }
+        presentation.seeking = true
+        pendingSeekMs = positionMs
+        dispatchPendingSeek()
+    }
+
+    private fun dispatchPendingSeek() {
+        val target = pendingSeekMs ?: return
+        if (latestState?.busy != false || seekInFlight) return
+        pendingSeekMs = null
+        seekInFlight = true
+        if (!controller.seekTo(target)) {
+            seekInFlight = false
+            presentation.seeking = false
+            latestState?.let { presentation.render(it, currentGate, resumed) }
+        }
+    }
+
+    private fun stopClock() { realtime.stop(); main.removeCallbacks(tick) }
 }

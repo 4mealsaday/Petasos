@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="journey_home_back">‹ 홈</string>
+    <string name="journey_home_off">동행 켜기\nOFF</string>
+    <string name="journey_home_on">동행 끄기\nON</string>
+    <string name="journey_home_stopping">끄는 중</string>
+    <string name="journey_home_records">나의 기록</string>
+</resources>

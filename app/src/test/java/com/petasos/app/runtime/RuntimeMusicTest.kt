@@ -233,6 +233,57 @@ class RuntimeMusicTest {
         assertTrue(h.startedOffers.isEmpty())
     }
 
+    @Test fun transientMusicFocusResumesOnlyAfterGainAndConfirmedPosition() {
+        val h = Harness(); h.play()
+        val first = h.music.outputs.single()
+        first.callback(RuntimeMusicEvent.Started); h.queue.drain()
+        first.callback(RuntimeMusicEvent.FocusTransient); h.queue.drain()
+        first.callback(RuntimeMusicEvent.FocusRegained); h.queue.drain()
+        assertEquals(1, h.music.outputs.size)
+        first.callback(RuntimeMusicEvent.Stopped(2345)); h.queue.drain()
+        assertEquals(2, h.music.outputs.size)
+        assertEquals(2345L, h.music.outputs.last().position)
+        assertNotEquals(first.attempt, h.music.outputs.last().attempt)
+    }
+
+    @Test fun gainAfterReleasedMusicRetainsCheckpointWithoutCompletingSong() {
+        val h = Harness(); h.play()
+        val first = h.music.outputs.single()
+        first.callback(RuntimeMusicEvent.Started); h.queue.drain()
+        first.callback(RuntimeMusicEvent.FocusTransient); h.queue.drain()
+        first.callback(RuntimeMusicEvent.Stopped(3456)); h.queue.drain()
+        assertEquals(1, h.music.outputs.size)
+        first.callback(RuntimeMusicEvent.FocusRegained); h.queue.drain()
+        assertEquals(3456L, h.music.outputs.last().position)
+        assertEquals(2, h.music.outputs.size)
+        first.callback(RuntimeMusicEvent.FocusRegained); h.queue.drain()
+        assertEquals(2, h.music.outputs.size)
+    }
+
+    @Test fun manualStopDiscardsMusicFocusGain() {
+        val h = Harness(); h.play()
+        val first = h.music.outputs.single()
+        first.callback(RuntimeMusicEvent.FocusTransient); h.queue.drain()
+        first.callback(RuntimeMusicEvent.Stopped(1234)); h.queue.drain()
+        first.callback(RuntimeMusicEvent.FocusRegained)
+        h.runtime.dispatch(PlaybackEvent.Stop); h.queue.drain()
+        assertEquals(1, h.music.outputs.size)
+        assertFalse(h.runtime.snapshot().playIntent)
+        assertTrue(h.runtime.snapshot().blockers.isEmpty())
+    }
+
+    @Test fun deniedMusicFocusNeedsExplicitRetry() {
+        val h = Harness(); h.play()
+        val first = h.music.outputs.single()
+        first.callback(RuntimeMusicEvent.FocusLost); h.queue.drain()
+        first.callback(RuntimeMusicEvent.Stopped(0)); h.queue.drain()
+        first.callback(RuntimeMusicEvent.FocusRegained); h.queue.drain()
+        assertEquals(1, h.music.outputs.size)
+        h.runtime.playInstalledMusic("song-2"); h.queue.drain()
+        assertEquals(2, h.music.outputs.size)
+        assertEquals("song-2", h.music.outputs.last().source.assetId)
+    }
+
     private class Harness(useUnavailable: Boolean = false, planner: RuntimeResumePlanner = CheckpointRuntimeResumePlanner(),
                           authority: RuntimeContentAuthority = RuntimeContentAuthority { _, _ -> false }) {
         val log = mutableListOf<String>()

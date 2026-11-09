@@ -211,7 +211,10 @@ internal class DemoScenarioSession(
             count("SELECT count(*) FROM playback_attempt WHERE kind='music' AND state='interrupted'"),
             Collections.unmodifiableList(starts.toList()), Collections.unmodifiableList(automaticStarts.toList()), failure,
             observationRegion.takeIf { observationFresh() }?.let(::publicRegionName),
-            currentTarget?.regionId?.let(::publicRegionName), offeredStoryId?.let(::publicTitle))
+            currentTarget?.regionId?.let(::publicRegionName), offeredStoryId?.let(::publicTitle),
+            state.checkpoint?.takeIf { storyId != null }?.let { checkpoint ->
+                checkpoint.story.paragraphIds.getOrNull(checkpoint.paragraphIndex)?.let(::publicCaption)
+            })
     }
 
     /** Does not close/delete the Room fixture. False must preserve its database and encryption keys. */
@@ -354,6 +357,17 @@ internal class DemoScenarioSession(
     private fun publicRegionName(regionId: String): String? = store.database.openHelper.readableDatabase.query(
         SimpleSQLiteQuery("SELECT name FROM region WHERE region_id=?", arrayOf(regionId)),
     ).use { if (it.moveToFirst()) it.getString(0) else null }
+
+    private fun publicCaption(paragraphId: String): String? = store.database.openHelper.readableDatabase.query(
+        SimpleSQLiteQuery("SELECT text FROM paragraph WHERE paragraph_id=?", arrayOf(paragraphId)),
+    ).use { row ->
+        if (!row.moveToFirst()) return@use null
+        val sentences = row.getString(0).split(Regex("(?<=[.!?。])\\s+")).filter { it.isNotBlank() }
+        if (sentences.isEmpty()) return@use null
+        val progress = speech.progress()
+        val index = progress?.let { (it.first * sentences.size / it.second).toInt() } ?: 0
+        sentences[index.coerceIn(0, sentences.lastIndex)]
+    }
 
     private fun count(statement: String): Long = store.database.openHelper.readableDatabase.query(statement)
         .use { check(it.moveToFirst()); it.getLong(0) }

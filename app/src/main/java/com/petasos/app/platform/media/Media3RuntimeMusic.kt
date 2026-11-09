@@ -11,6 +11,7 @@ import androidx.media3.common.Player
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import com.petasos.app.platform.android.audio.AndroidOutputAudioFocus
 import com.petasos.app.playback.OperationToken
 import com.petasos.app.runtime.*
 
@@ -21,6 +22,8 @@ class Media3RuntimeMusic(context: Context) : RuntimeMusic {
     private val main = Handler(Looper.getMainLooper())
     private class Slot(val token: OperationToken, val initialPositionMs: Long, val callback: (RuntimeMusicEvent) -> Unit) {
         var player: ExoPlayer? = null
+        var focus: AndroidOutputAudioFocus? = null
+        var recoveringFocus = false
         var preparationResolved = false
         var started = false
         var stopping = false
@@ -30,6 +33,7 @@ class Media3RuntimeMusic(context: Context) : RuntimeMusic {
     }
     private class Quiescent(val token: OperationToken, val positionMs: Long, val callback: (RuntimeMusicEvent) -> Unit)
     private var current: Slot? = null
+    private var recoveringSlot: Slot? = null
     private var lastQuiescent: Quiescent? = null
     private var closed = false
 
@@ -51,6 +55,8 @@ class Media3RuntimeMusic(context: Context) : RuntimeMusic {
                 callback(RuntimeMusicEvent.Stopped(positionMs.coerceAtLeast(0))) // This attempt never created a player.
                 return@post
             }
+            recoveringSlot?.focus?.close()
+            recoveringSlot = null
             val slot = Slot(attempt, positionMs, callback)
             current = slot
             lastQuiescent = null
@@ -89,7 +95,34 @@ class Media3RuntimeMusic(context: Context) : RuntimeMusic {
             slot.player = player
             player.repeatMode = Player.REPEAT_MODE_OFF
             player.shuffleModeEnabled = false
-            player.setAudioAttributes(AudioAttributes.Builder().setUsage(C.USAGE_MEDIA).setContentType(C.AUDIO_CONTENT_TYPE_MUSIC).build(), true)
+            // This owner retains the same request during a stop/recreate resume. ExoPlayer must
+            // not independently resume its old player before the Coordinator validates recovery.
+            player.setAudioAttributes(AudioAttributes.Builder().setUsage(C.USAGE_MEDIA).setContentType(C.AUDIO_CONTENT_TYPE_MUSIC).build(), false)
+            val focus = AndroidOutputAudioFocus(context, android.media.AudioAttributes.Builder()
+                .setUsage(android.media.AudioAttributes.USAGE_MEDIA)
+                .setContentType(android.media.AudioAttributes.CONTENT_TYPE_MUSIC).build(), pauseWhenDucked = false) { change ->
+                if (!closed && (current === slot || recoveringSlot === slot)) when (change) {
+                    AndroidOutputAudioFocus.Change.DUCK -> if (current === slot && !slot.stopping) player.volume = 0.2f
+                    AndroidOutputAudioFocus.Change.GAINED -> {
+                        if (slot.recoveringFocus) {
+                            slot.recoveringFocus = false
+                            slot.callback(RuntimeMusicEvent.FocusRegained)
+                            if (recoveringSlot === slot) { slot.focus?.close(); recoveringSlot = null }
+                        } else if (current === slot && !slot.stopping) player.volume = 1f
+                    }
+                    AndroidOutputAudioFocus.Change.TRANSIENT -> {
+                        slot.recoveringFocus = true
+                        if (current === slot && !slot.stopping) player.pause()
+                        slot.callback(RuntimeMusicEvent.FocusTransient)
+                    }
+                    AndroidOutputAudioFocus.Change.LOST -> {
+                        slot.recoveringFocus = false
+                        if (current === slot && !slot.stopping) player.pause()
+                        slot.callback(RuntimeMusicEvent.FocusLost)
+                    }
+                }
+            }
+            slot.focus = focus
             player.setHandleAudioBecomingNoisy(true)
             player.addListener(object : Player.Listener {
                 override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -108,7 +141,6 @@ class Media3RuntimeMusic(context: Context) : RuntimeMusic {
                 }
                 override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
                     if (current !== slot || slot.stopping || playWhenReady) return
-                    if (reason == Player.PLAY_WHEN_READY_CHANGE_REASON_AUDIO_FOCUS_LOSS) slot.callback(RuntimeMusicEvent.FocusTransient)
                     if (reason == Player.PLAY_WHEN_READY_CHANGE_REASON_AUDIO_BECOMING_NOISY) slot.callback(RuntimeMusicEvent.FocusLost)
                 }
                 override fun onPlayerError(error: PlaybackException) {
@@ -121,6 +153,12 @@ class Media3RuntimeMusic(context: Context) : RuntimeMusic {
             // These guards read only atomic/volatile authority, never a file, hash or database.
             if (!permitted()) { stopSlot(slot); return }
             player.prepare()
+            if (!permitted()) { stopSlot(slot); return }
+            if (!focus.acquire()) {
+                slot.callback(RuntimeMusicEvent.FocusLost)
+                stopSlot(slot)
+                return
+            }
             if (!permitted()) { stopSlot(slot); return }
             player.play()
             tick(slot)
@@ -157,6 +195,8 @@ class Media3RuntimeMusic(context: Context) : RuntimeMusic {
         if (player == null) {
             slot.stopping = true
             if (current === slot) current = null
+            slot.focus?.outputFinished()
+            if (slot.recoveringFocus) recoveringSlot = slot
             lastQuiescent = Quiescent(slot.token, slot.initialPositionMs, slot.callback)
             slot.callback(RuntimeMusicEvent.Stopped(slot.initialPositionMs))
             return
@@ -172,16 +212,30 @@ class Media3RuntimeMusic(context: Context) : RuntimeMusic {
         slot.stopping = true
         return try {
             checkNotNull(slot.player).release()
-            if (slot.releaseFailed) { slot.callback(RuntimeMusicEvent.Failed); false }
+            if (slot.releaseFailed) { slot.focus?.close(); slot.callback(RuntimeMusicEvent.Failed); false }
             else {
                 if (current === slot) current = null
+                slot.focus?.outputFinished()
+                if (slot.recoveringFocus) recoveringSlot = slot
                 lastQuiescent = Quiescent(slot.token, position, slot.callback)
                 true
             }
-        } catch (_: Exception) { slot.releaseFailed = true; slot.callback(RuntimeMusicEvent.Failed); false }
+        } catch (_: Exception) { slot.releaseFailed = true; slot.focus?.close(); slot.callback(RuntimeMusicEvent.Failed); false }
+    }
+
+    override fun cancelFocusRecovery() {
+        main.post {
+            current?.takeIf { it.recoveringFocus }?.let { it.recoveringFocus = false; it.focus?.close() }
+            recoveringSlot?.focus?.close()
+            recoveringSlot = null
+        }
     }
 
     override fun close() {
-        main.post { closed = true; current?.let(::stopSlot) }
+        main.post {
+            closed = true
+            recoveringSlot?.focus?.close(); recoveringSlot = null
+            current?.let { it.recoveringFocus = false; stopSlot(it); it.focus?.close() }
+        }
     }
 }

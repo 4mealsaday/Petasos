@@ -672,6 +672,153 @@ class PlaybackRuntimeTest {
         assertEquals(1, h.speech.outputStops)
     }
 
+    @Test fun `real focus gain after confirmed stop restarts interrupted paragraph with fresh identity`() {
+        val h = Harness()
+        h.runtime.playInstalledStory("installed-v1"); h.queue.drain()
+        val first = h.speech.outputs.single()
+        first.callback(RuntimeOutputEvent.STARTED); h.queue.drain()
+        first.callback(RuntimeOutputEvent.FOCUS_TRANSIENT); h.queue.drain()
+        first.callback(RuntimeOutputEvent.STOPPED); h.queue.drain()
+        assertEquals(1, h.speech.outputs.size)
+        assertTrue(h.runtime.snapshot().playIntent)
+        first.callback(RuntimeOutputEvent.FOCUS_REGAINED); h.queue.drain()
+        assertTrue(h.runtime.snapshot().blockers.isEmpty())
+        assertEquals(2, h.speech.outputs.size)
+        assertNotEquals(first.token, h.speech.outputs.last().token)
+        assertEquals(first.text.value, h.speech.outputs.last().text.value)
+        assertEquals(0, h.persistence.completed)
+        first.callback(RuntimeOutputEvent.FOCUS_REGAINED); h.queue.drain()
+        assertEquals(2, h.speech.outputs.size)
+    }
+
+    @Test fun `focus gain never bypasses unconfirmed output stop`() {
+        val h = Harness()
+        h.runtime.playInstalledStory("installed-v1"); h.queue.drain()
+        val first = h.speech.outputs.single()
+        first.callback(RuntimeOutputEvent.FOCUS_TRANSIENT); h.queue.drain()
+        first.callback(RuntimeOutputEvent.FOCUS_REGAINED); h.queue.drain()
+        assertEquals(1, h.speech.outputs.size)
+        assertEquals(AdapterPhase.STOPPING, h.runtime.snapshot().outputPhase)
+        first.callback(RuntimeOutputEvent.STOPPED); h.queue.drain()
+        assertEquals(2, h.speech.outputs.size)
+    }
+
+    @Test fun `manual stop before or after queued gain cancels recovery without leaving focus blocker`() {
+        for (gainFirst in listOf(false, true)) {
+            val h = Harness()
+            h.runtime.playInstalledStory("installed-v1"); h.queue.drain()
+            val first = h.speech.outputs.single()
+            first.callback(RuntimeOutputEvent.FOCUS_TRANSIENT); h.queue.drain()
+            first.callback(RuntimeOutputEvent.STOPPED); h.queue.drain()
+            if (gainFirst) first.callback(RuntimeOutputEvent.FOCUS_REGAINED)
+            h.runtime.dispatch(PlaybackEvent.Stop)
+            if (!gainFirst) first.callback(RuntimeOutputEvent.FOCUS_REGAINED)
+            h.queue.drain()
+            assertFalse(h.runtime.snapshot().playIntent)
+            assertTrue(h.runtime.snapshot().blockers.isEmpty())
+            assertEquals(1, h.speech.outputs.size)
+            assertTrue(h.speech.focusCancellations > 0)
+        }
+    }
+
+    @Test fun `power blocker and close cancel transient gain authority`() {
+        for (close in listOf(false, true)) {
+            val h = Harness()
+            h.runtime.playInstalledStory("installed-v1"); h.queue.drain()
+            val first = h.speech.outputs.single()
+            first.callback(RuntimeOutputEvent.FOCUS_TRANSIENT); h.queue.drain()
+            first.callback(RuntimeOutputEvent.STOPPED); h.queue.drain()
+            if (close) h.runtime.close() else h.runtime.dispatch(PlaybackEvent.Block(PlaybackBlocker.POWER_AUDIO))
+            first.callback(RuntimeOutputEvent.FOCUS_REGAINED); h.queue.drain()
+            assertEquals(1, h.speech.outputs.size)
+            if (close) assertTrue(h.runtime.snapshot().closed)
+            else assertEquals(setOf(PlaybackBlocker.POWER_AUDIO), h.runtime.snapshot().blockers)
+        }
+    }
+
+    @Test fun `permanent loss never auto resumes and explicit play requests a fresh attempt`() {
+        val h = Harness()
+        h.runtime.playInstalledStory("installed-v1"); h.queue.drain()
+        val first = h.speech.outputs.single()
+        first.callback(RuntimeOutputEvent.FOCUS_LOST); h.queue.drain()
+        first.callback(RuntimeOutputEvent.STOPPED); h.queue.drain()
+        first.callback(RuntimeOutputEvent.FOCUS_REGAINED); h.queue.drain()
+        assertEquals(setOf(PlaybackBlocker.FOCUS_LOST), h.runtime.snapshot().blockers)
+        assertEquals(1, h.speech.outputs.size)
+        h.runtime.dispatch(PlaybackEvent.Play); h.queue.drain()
+        assertTrue(h.runtime.snapshot().blockers.isEmpty())
+        assertEquals(2, h.speech.outputs.size)
+    }
+
+    @Test fun `permanent loss after transient stop supersedes retained recovery`() {
+        val h = Harness()
+        h.runtime.playInstalledStory("installed-v1"); h.queue.drain()
+        val first = h.speech.outputs.single()
+        first.callback(RuntimeOutputEvent.FOCUS_TRANSIENT); h.queue.drain()
+        first.callback(RuntimeOutputEvent.STOPPED); h.queue.drain()
+        first.callback(RuntimeOutputEvent.FOCUS_LOST); h.queue.drain()
+        first.callback(RuntimeOutputEvent.FOCUS_REGAINED); h.queue.drain()
+        assertEquals(setOf(PlaybackBlocker.FOCUS_LOST), h.runtime.snapshot().blockers)
+        assertEquals(1, h.speech.outputs.size)
+    }
+
+    @Test fun `permanent loss after gain but before stop confirmation cancels planned resume`() {
+        val h = Harness()
+        h.runtime.playInstalledStory("installed-v1"); h.queue.drain()
+        val first = h.speech.outputs.single()
+        first.callback(RuntimeOutputEvent.FOCUS_TRANSIENT); h.queue.drain()
+        first.callback(RuntimeOutputEvent.FOCUS_REGAINED); h.queue.drain()
+        first.callback(RuntimeOutputEvent.FOCUS_LOST); h.queue.drain()
+        first.callback(RuntimeOutputEvent.STOPPED); h.queue.drain()
+        assertEquals(setOf(PlaybackBlocker.FOCUS_LOST), h.runtime.snapshot().blockers)
+        assertEquals(1, h.speech.outputs.size)
+    }
+
+    @Test fun `explicit focus retry never clears a simultaneous power blocker`() {
+        val h = Harness()
+        h.runtime.playInstalledStory("installed-v1"); h.queue.drain()
+        val first = h.speech.outputs.single()
+        first.callback(RuntimeOutputEvent.FOCUS_LOST); h.queue.drain()
+        first.callback(RuntimeOutputEvent.STOPPED); h.queue.drain()
+        h.runtime.dispatch(PlaybackEvent.Block(PlaybackBlocker.POWER_AUDIO)); h.queue.drain()
+        h.runtime.dispatch(PlaybackEvent.Play); h.queue.drain()
+        assertEquals(setOf(PlaybackBlocker.FOCUS_LOST, PlaybackBlocker.POWER_AUDIO), h.runtime.snapshot().blockers)
+        assertEquals(1, h.speech.outputs.size)
+    }
+
+    @Test fun `stale old gain cannot unblock a later output interruption`() {
+        val h = Harness()
+        h.runtime.playInstalledStory("installed-v1"); h.queue.drain()
+        val first = h.speech.outputs.single()
+        first.callback(RuntimeOutputEvent.FOCUS_TRANSIENT); h.queue.drain()
+        first.callback(RuntimeOutputEvent.STOPPED); h.queue.drain()
+        first.callback(RuntimeOutputEvent.FOCUS_REGAINED); h.queue.drain()
+        val second = h.speech.outputs.last()
+        second.callback(RuntimeOutputEvent.FOCUS_TRANSIENT); h.queue.drain()
+        second.callback(RuntimeOutputEvent.STOPPED); h.queue.drain()
+        first.callback(RuntimeOutputEvent.FOCUS_REGAINED); h.queue.drain()
+        assertEquals(2, h.speech.outputs.size)
+        assertEquals(setOf(PlaybackBlocker.FOCUS_TRANSIENT), h.runtime.snapshot().blockers)
+        second.callback(RuntimeOutputEvent.FOCUS_REGAINED); h.queue.drain()
+        assertEquals(3, h.speech.outputs.size)
+    }
+
+    @Test fun `stop ingressed during focus block transition cannot leave a recoverable intent`() {
+        val h = Harness()
+        h.runtime.playInstalledStory("installed-v1"); h.queue.drain()
+        val first = h.speech.outputs.single()
+        h.onTransition = { if (PlaybackBlocker.FOCUS_TRANSIENT in it.snapshot.blockers) h.runtime.dispatch(PlaybackEvent.Stop) }
+        first.callback(RuntimeOutputEvent.FOCUS_TRANSIENT)
+        h.queue.runNext() // Focus loss observes a Stop ingress before constructing recovery authority.
+        h.onTransition = null
+        first.callback(RuntimeOutputEvent.FOCUS_REGAINED)
+        first.callback(RuntimeOutputEvent.STOPPED)
+        h.queue.drain()
+        assertFalse(h.runtime.snapshot().playIntent)
+        assertTrue(h.runtime.snapshot().blockers.isEmpty())
+        assertEquals(1, h.speech.outputs.size)
+    }
+
     @Test fun `plaintext DTOs and callback wrappers redact all bodies`() {
         val text = RuntimeText("secret")
         val paragraph = RuntimeParagraph("private-key", text)
@@ -1191,12 +1338,14 @@ class PlaybackRuntimeTest {
         val inputs = mutableListOf<Input>()
         var inputStops = 0
         var outputStops = 0
+        var focusCancellations = 0
         var closed = false
         override fun startOutput(attempt: OperationToken, text: RuntimeText, callback: (RuntimeOutputEvent) -> Unit) {
             log += "speak"
             outputs += Output(attempt, text, callback)
         }
         override fun stopOutput(attempt: OperationToken) { outputStops++ }
+        override fun cancelFocusRecovery() { focusCancellations++ }
         override fun requestInput(input: OperationToken, callback: (RuntimeInputEvent) -> Unit) { inputs += Input(input, callback) }
         override fun stopInput(input: OperationToken) { inputStops++ }
         override fun close() { closed = true }

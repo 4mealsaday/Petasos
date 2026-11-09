@@ -2,13 +2,9 @@
 <resources>
     <string name="demo_idle_title">길 위에서 만나는 이야기</string>
     <string name="demo_music_title">이야기 사이, 잠시 쉬어가기</string>
-    <string name="demo_region_value">지금 지나는 곳 · %1$s</string>
+    <string name="demo_region_value">현재 가상 지역 · %1$s</string>
     <string name="demo_region_waiting">위치 입력을 기다리고 있어요</string>
-    <string name="demo_next_value">%1$s\n%2$s</string>
-    <string name="demo_target_value">%1$s의 이야기를 준비해요</string>
-    <string name="demo_next_waiting">재생 길이와 경로에 맞춰 다음 이야기를 고릅니다</string>
     <string name="demo_clock_value">%1$02d:%2$02d</string>
-    <string name="demo_completed_value">완료한 이야기 %1$d편  ·  음악 간격 %2$d회</string>
     <string name="demo_operation_failed">시연을 계속할 수 없습니다. 처음부터 다시 시도해 주세요. 종료가 확인되지 않으면 기존 시연 기록을 보존합니다.</string>
     <string name="demo_working">시연을 진행하고 있어요</string>
 </resources>

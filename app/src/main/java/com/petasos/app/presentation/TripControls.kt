@@ -13,16 +13,20 @@ import com.google.common.util.concurrent.ListenableFuture
 import com.petasos.app.R
 import com.petasos.app.platform.android.location.LocationAccess
 import com.petasos.app.platform.android.runtime.PetasosSessionHost
+import com.petasos.app.presentation.interests.InterestGridView
+import com.petasos.app.presentation.interests.InterestSelectionDraft
 import com.petasos.app.records.TripResultHeader
 import com.petasos.app.records.VehiclePreferences
 import com.petasos.app.records.VehicleRecordingSettings
 
 /** Parked presentation only. Queries never create a trip and saved summaries never enter logs. */
 class TripControls(private val activity: Activity) {
+    var onInterestsSaved: (() -> Unit)? = null
     private val notice = activity.findViewById<TextView>(R.id.records_notice)
     private val location = activity.findViewById<Button>(R.id.records_location)
     private val permission = activity.findViewById<Button>(R.id.records_permission)
     private val keywords = activity.findViewById<EditText>(R.id.records_keywords)
+    private val interestGrid = activity.findViewById<InterestGridView>(R.id.records_interest_grid)
     private val saveKeywords = activity.findViewById<Button>(R.id.records_save_keywords)
     private val refresh = activity.findViewById<Button>(R.id.records_refresh)
     private val selection = activity.findViewById<Spinner>(R.id.records_trip_selection)
@@ -44,8 +48,16 @@ class TripControls(private val activity: Activity) {
     private var requestedLocationPermissions = emptyArray<String>()
     private var observedTripId: String? = null
     private var observedEnding = false
+    private var interestDraft = InterestSelectionDraft.empty()
 
     init {
+        interestGrid?.onChoice = { choice ->
+            val current = host
+            if (available && recording != null && !saving && current?.isEndingTrip() == false) {
+                interestDraft = interestDraft.withCustomText(keywords.text.toString()).toggle(choice)
+            }
+            interestGrid.render(interestDraft.selectedTags)
+        }
         location.setOnClickListener { saveLocation() }
         permission.setOnClickListener {
             if (available && recording?.locationEnabled == true && !requestingPermission) {
@@ -84,7 +96,7 @@ class TripControls(private val activity: Activity) {
         if (changed) {
             epoch++; tripRead++; listRead++
             preferences = null; recording = null; trips = emptyList(); saving = false
-            keywords.setText(""); result.setText(R.string.records_empty)
+            bindInterests(emptyList()); result.setText(R.string.records_empty)
             updatingSelection = true
             selection.adapter = null
             updatingSelection = false
@@ -135,7 +147,7 @@ class TripControls(private val activity: Activity) {
             observe(current, current.readRecordingSettings(), onFailure = { render() }) { value -> recording = value; render() }
         }) { value ->
             preferences = value; recording = value.recording
-            if (replaceKeywords) keywords.setText(value.keywords.joinToString(", "))
+            if (replaceKeywords) bindInterests(value.keywords)
             render()
         }
     }
@@ -167,9 +179,13 @@ class TripControls(private val activity: Activity) {
         val current = host ?: return
         val settings = recording ?: return
         if (!available || saving || current.isEndingTrip()) return
-        val text = keywords.text.toString()
-        val values = if (text.isBlank()) emptyList() else text.split(',').map(String::trim)
-        if (values.size > 20 || values.any { it.isBlank() || it.length > 256 } || values.distinct().size != values.size) {
+        val values = if (interestGrid != null) {
+            interestDraft = interestDraft.withCustomText(keywords.text.toString())
+            interestDraft.valuesForSave()
+        } else {
+            InterestSelectionDraft.empty().withCustomText(keywords.text.toString()).valuesForSave()
+        }
+        if (values == null) {
             notice.setText(R.string.records_keywords_invalid); return
         }
         saving = true; render()
@@ -180,8 +196,9 @@ class TripControls(private val activity: Activity) {
             render()
         }) { stored ->
             saving = false; preferences = stored; recording = stored.recording
-            keywords.setText(stored.keywords.joinToString(", "))
+            bindInterests(stored.keywords)
             notice.setText(R.string.records_keywords_saved); render()
+            onInterestsSaved?.invoke()
         }
     }
 
@@ -238,6 +255,12 @@ class TripControls(private val activity: Activity) {
     }
 
     private fun permissionGranted() = LocationAccess.hasRequiredPermissions(activity)
+    private fun bindInterests(values: List<String>) {
+        interestDraft = InterestSelectionDraft.fromStored(values)
+        interestGrid?.render(interestDraft.selectedTags)
+        keywords.setText(if (interestGrid != null) interestDraft.customText else values.joinToString(", "))
+    }
+
     private fun render() {
         val current = host
         renderer.render(TripPresentationMapper.map(TripPresentationInput(

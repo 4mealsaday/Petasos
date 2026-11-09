@@ -25,6 +25,8 @@ sealed interface SpeechOutputEvent {
     data object Completed : SpeechOutputEvent
     data object Stopped : SpeechOutputEvent
     data class FocusLost(val kind: SpeechFocusLoss) : SpeechOutputEvent
+    /** Only an AudioManager GAIN for the same retained registration. */
+    data object FocusGained : SpeechOutputEvent
     data class Failed(val failure: SpeechFailure) : SpeechOutputEvent
 }
 
