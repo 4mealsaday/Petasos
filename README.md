@@ -108,7 +108,10 @@ Android Studio Device Manager에서 기존 **Pleos Connect v2.1.0** 에뮬레이
 
 ```sh
 adb shell appops set --user 10 com.petasos.app SYSTEM_ALERT_WINDOW allow
+adb shell pm grant --user 10 com.petasos.app android.permission.SYSTEM_ALERT_WINDOW
 ```
+
+이 Pleos 이미지에서는 `appops set`만으로는 부족할 수 있다 — `pm grant`까지 같이 실행해야 overlay가 확실히 뜬다.
 
 ## 위치·음성 SDK 검증
 
