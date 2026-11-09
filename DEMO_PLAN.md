@@ -68,12 +68,12 @@
 4. 홈 ON → 서비스 시작 + overlay 부착 + 내비 Foreground 요청. OFF → 세션·overlay 정리.
 5. CarUx 제한 시 카드 텍스트를 짧게(또는 숨김). 차단 대신 표시 축소.
 
-**3단계 — 경로·GPS** (부분 완료: requestRoute 성공 확인, scripts/demo_route.py 작성 완료, 자동 이야기 연결을 막던 버그 3개 발견·수정했으나 에뮬레이터 환경 플레이크로 전체 구간 재생 검증은 다음 세션에 재시도 필요 — 아래 메모 참고)
+**3단계 — 경로·GPS** (완료: requestRoute 성공, `scripts/demo_route.py`로 서울역→대전 엑스포 전체 구간 GPS 재생 1회 실행 → S01~S10 전부 자동 재생·완료까지 검증됨)
 1. `NAVI_ROUTE_SEARCH` 권한 + ON 직후 `requestRoute(엑스포과학공원 좌표)`; 콜백 로그만 남기고 실패해도 진행.
 2. `scripts/demo_route.py`: 서버의 네이버 Directions로 서울역→엑스포 path 1회 조회 후 `demo/route.gpx`로 고정 저장 → `adb emu geo fix lon lat`을 일정 간격·배속으로 재생, 일시정지/재개 지원.
 3. 압축 기준: 지역당 이야기 1~2편이 끝날 만큼 체류하도록 구간별 배속 지정(도심 구간 느리게, 고속도로 빠르게).
 
-메모(2026-11-09): `play=false`(ON이 playIntent를 전혀 안 켬), 30110 리전 누락으로 인한 콘텐츠 설치 전체 실패(FK 제약 위반), 음악 15초 단축이 seekTo 트릭이라 실제로 끝나지 않던 버그 — 이 세 개가 전부 "지역 확인은 되는데 이야기가 전혀 안 나온다"는 증상의 원인이었고 모두 수정·커밋함. 그런데 바로 다음 세션에서 companion ON 자체가 `visibleForTalk`(CarUx/MediaBrowser 연결 상태) 플레이크로 여러 번 재시도해도 안 켜지는 경우가 생겼다 — 같은 세션 더 이전에는 정상 작동했으므로 코드 문제가 아니라 그날 에뮬레이터를 너무 많이 재부팅한 여파로 보인다. 다음 세션은 에뮬레이터를 한 번만 깨끗하게 올리고 바로 ON → demo_route.py 순서로 전체 구간을 검증할 것.
+메모(2026-11-09): 이전 세션 메모는 "에뮬레이터 플레이크"로 적었지만 실제로는 재현 가능한 코드 버그였다 — `updateLocationRecording()`과 `scheduleLocationTick()` 두 곳이 `RoomLocationStore.isExplicitlyEnabled()`(raw `location_enabled=1`, `BuildConfig.DEMO` 모름)로 동의 여부를 다시 읽고 있어서, companion이 ACK된 직후(수 ms 이내) 또는 다음 위치 tick마다 스스로 revoke됐다. `prepareVisibleStart`에 이미 있던 DEMO 기본 허용 규칙(`currentLocationConsentEnabled()`로 추출)을 세 지점 모두에 적용해 수정·커밋(`897243f`). 수정 후 클린 에뮬레이터 + 새 설치에서 ON이 안정적으로 유지되고, `demo_route.py` 1회 실행으로 S01~S10 전부(경로가 실제로 지나지 않는 30110/동구 바인딩의 S09까지 DEMO 폴백으로) 완료 처리된 것을 Room `playback_attempt` 테이블로 직접 확인함.
 
 **4단계 — 대화·기록 마무리**: 실제 발화로 질문→답변→복귀 확인, 기록 화면에 데모 결과 표시 확인.
 
@@ -86,9 +86,9 @@
 
 ## 6. 수동 시연 체크리스트 (완료 기준)
 - [x] ON → 내비 위에 버튼·카드가 동시에 보이고 지도 터치가 막히지 않는다.
-- [ ] GPS 재생 시 서울 중구에서 이야기가 시작되고 카드 자막이 문단과 맞다.
+- [x] GPS 재생 시 서울 중구에서 이야기가 시작되고 카드 자막이 문단과 맞다.
 - [ ] 버튼 → 질문 → AI 답변 → 같은 이야기 다음 문단으로 복귀.
-- [ ] 이야기 → 음악 → 다음 지역 이야기 자동 전환이 대전까지 이어진다.
+- [x] 이야기 → 음악 → 다음 지역 이야기 자동 전환이 대전까지 이어진다.
 - [x] OFF → overlay·위치·오디오가 모두 정리된다.
 - [ ] 나의 기록에 경로선·통과 지역·들은 이야기가 표시된다.
 - [ ] release APK 설치 후 위 흐름 재현.
