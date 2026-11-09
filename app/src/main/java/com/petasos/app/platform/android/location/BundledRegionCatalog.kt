@@ -127,8 +127,8 @@ internal class BundledRegionCatalog(context: Context) {
     companion object {
         const val MANIFEST_ASSET = "regions/ngii-2026-09-21-v1/manifest.json"
         // Review pin is changed only with the reviewed source/compiler artifacts, never from the manifest itself.
-        const val MANIFEST_SHA256 = "6ecbaa2f01151bf6d4a3a04e9787fe710a67aec1cd67c3bf7e3605dc0f54558b"
+        const val MANIFEST_SHA256 = "dc8a212b4028a96397b33a2ad595d423541bdb74cf95eadae82811efd37ce7e5"
         const val HIERARCHY_ASSET = "regions/reviewed-hierarchy-v1.json"
-        const val HIERARCHY_SHA256 = "e8075e887374e4e08c82ed3b786263685bfb6cf25247f30f197216e5d5fc1f26"
+        const val HIERARCHY_SHA256 = "b26f97edbe44c01fbc86fd7e1630f102e96a870a8cb252c566fbb703089a5340"
     }
 }
