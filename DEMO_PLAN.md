@@ -75,6 +75,13 @@
 
 메모(2026-11-09): 이전 세션 메모는 "에뮬레이터 플레이크"로 적었지만 실제로는 재현 가능한 코드 버그였다 — `updateLocationRecording()`과 `scheduleLocationTick()` 두 곳이 `RoomLocationStore.isExplicitlyEnabled()`(raw `location_enabled=1`, `BuildConfig.DEMO` 모름)로 동의 여부를 다시 읽고 있어서, companion이 ACK된 직후(수 ms 이내) 또는 다음 위치 tick마다 스스로 revoke됐다. `prepareVisibleStart`에 이미 있던 DEMO 기본 허용 규칙(`currentLocationConsentEnabled()`로 추출)을 세 지점 모두에 적용해 수정·커밋(`897243f`). 수정 후 클린 에뮬레이터 + 새 설치에서 ON이 안정적으로 유지되고, `demo_route.py` 1회 실행으로 S01~S10 전부(경로가 실제로 지나지 않는 30110/동구 바인딩의 S09까지 DEMO 폴백으로) 완료 처리된 것을 Room `playback_attempt` 테이블로 직접 확인함.
 
+**다음 세션 환경 메모 (2026-11-10)**
+- 에뮬레이터: `Pleos_Connect_v2.1.0` AVD, `disk.dataPartition.size=6G`로 축소해둠(원래 10G는 12G 요구해서 디스크 부족 유발). 재부팅만 할 땐 `emulator -avd Pleos_Connect_v2.1.0 -no-snapshot-load -no-boot-anim`(wipe-data 불필요). 호스트 디스크가 부족해지면 `rm -rf app/build`로 회수.
+- 서버: `PYTHONPATH=server .local/server-venv/bin/python server/dev-local-https.py serve --port 8443` (인증서·토큰은 `.local/server/`에 이미 준비돼 있어 `prepare` 재실행 불필요) + `adb -s emulator-5554 reverse tcp:8443 tcp:8443`. 확인은 `curl -sk https://127.0.0.1:8443/v1/health`.
+- overlay 권한: `adb shell appops set --user 10 com.petasos.app SYSTEM_ALERT_WINDOW allow` **+** `adb shell pm grant --user 10 com.petasos.app android.permission.SYSTEM_ALERT_WINDOW` (이 이미지에서는 appops만으로는 안 붙을 때가 있음, 둘 다 실행).
+- 청취 이력 초기화(재시연용): `adb shell am broadcast -a com.petasos.app.debug.RESET_LISTENING_HISTORY` (debug 빌드 전용 `DemoResetReceiver`).
+- 홈 ON 탭이 "지금은 동행을 시작할 수 없어요"로 실패하면 — 897243f 이전 버그는 해결됐으니, 남은 원인은 보통 overlay 권한 둘 중 하나 누락이거나 RECORD_AUDIO/위치 권한 미승인.
+
 **4단계 — 대화·기록 마무리**: 실제 발화로 질문→답변→복귀 확인, 기록 화면에 데모 결과 표시 확인.
 
 **5단계 — 제출물**: release APK(`apk/팀명_Petasos_release.apk`, 100MB 미만), README(실행 방법·서버·adb 명령), 시연 영상 녹화.
