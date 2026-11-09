@@ -3,7 +3,6 @@ package com.petasos.app.storage
 import android.content.Context
 import android.database.Cursor
 import androidx.sqlite.db.SimpleSQLiteQuery
-import com.petasos.app.BuildConfig
 import com.petasos.app.generation.StrictJson
 import com.petasos.app.records.VehiclePreferences
 import com.petasos.app.records.VehicleRecordingSettings
@@ -125,9 +124,7 @@ class RoomVehiclePreferenceStore internal constructor(
     }
     private fun validKeywords(values: List<String>): Boolean = values.size <= 20 &&
         values.distinct().size == values.size && values.all { it.isNotBlank() && it.length <= 256 }
-    // A never-set row defaults consent off everywhere except DEMO builds, which skip the first-run
-    // Settings trip so a fresh install can run the GPS demo without a manual toggle.
-    private fun missing() = VehicleRecordingSettings(BuildConfig.DEMO, null, null)
+    private fun missing() = VehicleRecordingSettings(false, null, null)
     private fun unavailable(): Nothing = throw StorageUnavailable("preference_storage_unavailable")
     private fun <T> transaction(block: () -> T): T = try { database.runInTransaction(Callable { block() }) }
     catch (failure: PreferenceVersionConflict) { throw failure }

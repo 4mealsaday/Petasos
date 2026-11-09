@@ -8,6 +8,7 @@ import android.os.Looper
 import android.os.SystemClock
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.SettableFuture
+import com.petasos.app.BuildConfig
 import com.petasos.app.generation.*
 import com.petasos.app.platform.android.summary.SummaryBackground
 import com.petasos.app.platform.android.music.BundledMusicCatalog
@@ -408,10 +409,18 @@ class PetasosSessionHost(
         val setup = work {
             check(visiblePlaybackCurrent(job))
             if (job.requiresCompanion) {
-                locationConsentEnabled = RoomVehiclePreferenceStore(persistence().database).readRecordingSettings().locationEnabled
+                val recording = RoomVehiclePreferenceStore(persistence().database).readRecordingSettings()
+                // A never-set preference (version == null) defaults consent off everywhere except DEMO
+                // builds, which skip the first-run Settings trip so a fresh install can run the GPS
+                // demo without a manual toggle; an explicit row (version != null) is never overridden.
+                locationConsentEnabled = recording.locationEnabled || (BuildConfig.DEMO && recording.version == null)
                 check(locationConsentEnabled && !locationConsentAuthority.isWithdrawn())
                 check(LocationAccess.hasRequiredPermissions(context))
-                if (runtime == null) createRuntime(job.epoch, play = false)
+                // Companion ON must itself carry play intent -- there is no separate Play affordance
+                // in the overlay UI, and without playIntent=true here, refreshPlanning()'s allowOffer
+                // gate (state.playIntent && state.blockers.isEmpty()) stays false forever, so the
+                // automatic region -> story chain can never select or offer anything.
+                if (runtime == null) createRuntime(job.epoch, play = true)
             }
             Unit
         }

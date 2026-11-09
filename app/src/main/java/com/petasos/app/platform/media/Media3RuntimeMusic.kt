@@ -163,11 +163,15 @@ class Media3RuntimeMusic(context: Context) : RuntimeMusic {
             if (!permitted()) { stopSlot(slot); return }
             player.play()
             tick(slot)
-            // DEMO: seeking to the end lets the real STATE_ENDED listener above drive the ordinary
-            // completion path, so the automatic chain advances without waiting out a full track.
+            // DEMO: treat DEMO_MUSIC_DURATION_MS of playback as a complete play-through, driving the
+            // exact same completion path a real STATE_ENDED would (not a seek -- ExoPlayer clamps
+            // seekTo(Long.MAX_VALUE) to a position short of the real end and keeps playing from
+            // there instead of reaching STATE_ENDED, so a seek-based trick never actually completes).
             if (BuildConfig.DEMO) main.postDelayed({
                 if (current === slot && !slot.stopping && !slot.ended) {
-                    try { player.seekTo(Long.MAX_VALUE) } catch (_: Exception) { /* Real completion path already guards duplicates. */ }
+                    slot.ended = true
+                    val position = player.currentPosition.coerceAtLeast(0)
+                    if (release(slot, position)) slot.callback(RuntimeMusicEvent.Completed(position))
                 }
             }, DEMO_MUSIC_DURATION_MS)
         } catch (_: Exception) {
