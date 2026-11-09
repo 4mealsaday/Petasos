@@ -3,6 +3,7 @@ package com.petasos.app.storage
 import android.content.Context
 import android.database.Cursor
 import androidx.sqlite.db.SimpleSQLiteQuery
+import com.petasos.app.BuildConfig
 import com.petasos.app.content.ContentBundleCodec
 import com.petasos.app.generation.StrictJson
 import com.petasos.app.planning.AutomaticStoryCandidate
@@ -49,6 +50,39 @@ class RoomAutomaticStoryStore internal constructor(
             }
         }
         result.toList()
+    }
+
+    /**
+     * DEMO-only last resort: when the confirmed region has no story of its own reviewed binding
+     * (e.g. this fixed demo route's Daejeon leg arrives in 유성구/30200, but the only remaining
+     * Daejeon-area reviewed story is bound to 동구/30110, a district this route's real polyline
+     * never geometrically enters -- a content/route mismatch, not a pruning bug), surface any one
+     * remaining unplayed story instead of leaving the automatic chain stuck. The candidate's
+     * regionId is relabeled to the current region so every downstream eligibility check (which
+     * requires regionId == currentRegionId) passes unchanged; the "demo-fallback:" eligibilityKey
+     * prefix lets [isDemoFallbackCandidateCurrent] re-validate it without the normal scope check.
+     */
+    fun demoFallbackCandidate(currentRegionId: String, excludedStoryIds: Set<String>): AutomaticStoryCandidate? {
+        if (!BuildConfig.DEMO || currentRegionId.isBlank()) return null
+        return read(null) {
+            query("${RoomAutomaticStoryEligibility.SELECT} ORDER BY s.story_id").use { rows ->
+                while (rows.moveToNext()) {
+                    val record = eligibility.read(rows) ?: continue
+                    if (record.storyId in excludedStoryIds) continue
+                    val prepared = eligibility.prepare(record) ?: continue
+                    val key = ContentBundleCodec.sha256(StrictJson.encode(linkedMapOf(
+                        "demoFallback" to true, "metadata" to record.metadata, "currentRegionId" to currentRegionId,
+                    )))
+                    return@read AutomaticStoryCandidate(prepared, CandidateReason.CURRENT_REGION, currentRegionId, "demo-fallback:$key")
+                }
+                null
+            }
+        }
+    }
+
+    /** Companion re-validation for [demoFallbackCandidate]: still published, still unplayed. No region scope check. */
+    fun isDemoFallbackCandidateCurrent(candidate: AutomaticStoryCandidate): Boolean = read(false) {
+        query("${RoomAutomaticStoryEligibility.SELECT} AND v.story_version_id=?", candidate.story.versionId).use { it.moveToFirst() }
     }
 
     /** Re-read metadata, preferences, current rights and global completed-story/stable-fact history. */

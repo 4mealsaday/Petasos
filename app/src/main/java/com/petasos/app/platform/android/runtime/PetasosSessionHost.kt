@@ -644,7 +644,11 @@ class PetasosSessionHost(
         val contentPlanner = ContentPlanner(clockScopeId)
         val landmarkSession = LandmarkCandidateSession(contentPlanner, sessionId, clockScopeId)
         val planner = AutomaticStoryPlaybackBridge(contentPlanner, { region, excluded ->
-            val available = automaticStories.candidates(region, excluded)
+            val available = automaticStories.candidates(region, excluded).let { base ->
+                // DEMO-only: nothing bound to the confirmed region itself -> one unplayed story overall.
+                if (region == null || base.any { it.reason == CandidateReason.CURRENT_REGION }) base
+                else automaticStories.demoFallbackCandidate(region, excluded)?.let { base + it } ?: base
+            }
             val target = regionalTarget?.takeIf { it.regionId == region }
             val seed = available.firstOrNull { it.reason == CandidateReason.CURRENT_REGION }
             val plan = if (target != null && seed != null) AutomaticGenerationPlan(
@@ -659,7 +663,10 @@ class PetasosSessionHost(
         }, object : PlannedStoryOutput {
             override fun offer(story: PreparedStory, offerId: String) { runtime?.dispatch(PlaybackEvent.OfferStory(story, offerId)) }
             override fun withdraw(storyId: String, versionId: String) { runtime?.dispatch(PlaybackEvent.ClearOfferedStory(storyId, versionId)) }
-        }, SystemClock::elapsedRealtime, candidateCurrent = automaticStories::isCurrent,
+        }, SystemClock::elapsedRealtime, candidateCurrent = { candidate, region ->
+            if (candidate.eligibilityKey.startsWith("demo-fallback:")) automaticStories.isDemoFallbackCandidateCurrent(candidate)
+            else automaticStories.isCurrent(candidate, region)
+        },
             targetCurrent = { regionalPlanner?.isCurrent(it, SystemClock.elapsedRealtime()) == true },
             targetPlayable = { regionalPlanner?.isPlayableNow(it, SystemClock.elapsedRealtime()) == true },
             landmarkSession = landmarkSession,

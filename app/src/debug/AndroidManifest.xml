@@ -3,5 +3,10 @@
     <application android:networkSecurityConfig="@xml/debug_network_security_config">
         <meta-data android:name="com.naver.maps.map.NCP_KEY_ID" android:value="@string/petasos_naver_map_key_id" />
         <meta-data android:name="com.naver.maps.map.CACHE_LOCATION" android:value="cache" />
+        <receiver android:name="com.petasos.app.debug.DemoResetReceiver" android:exported="true">
+            <intent-filter>
+                <action android:name="com.petasos.app.debug.RESET_LISTENING_HISTORY" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import androidx.core.net.toUri
+import com.petasos.app.BuildConfig
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
@@ -162,6 +163,13 @@ class Media3RuntimeMusic(context: Context) : RuntimeMusic {
             if (!permitted()) { stopSlot(slot); return }
             player.play()
             tick(slot)
+            // DEMO: seeking to the end lets the real STATE_ENDED listener above drive the ordinary
+            // completion path, so the automatic chain advances without waiting out a full track.
+            if (BuildConfig.DEMO) main.postDelayed({
+                if (current === slot && !slot.stopping && !slot.ended) {
+                    try { player.seekTo(Long.MAX_VALUE) } catch (_: Exception) { /* Real completion path already guards duplicates. */ }
+                }
+            }, DEMO_MUSIC_DURATION_MS)
         } catch (_: Exception) {
             slot.callback(RuntimeMusicEvent.Failed)
             stopSlot(slot)
@@ -237,5 +245,9 @@ class Media3RuntimeMusic(context: Context) : RuntimeMusic {
             recoveringSlot?.focus?.close(); recoveringSlot = null
             current?.let { it.recoveringFocus = false; stopSlot(it); it.focus?.close() }
         }
+    }
+
+    private companion object {
+        const val DEMO_MUSIC_DURATION_MS = 15_000L
     }
 }
