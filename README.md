@@ -104,6 +104,12 @@ Android Studio Device Manager에서 기존 **Pleos Connect v2.1.0** 에뮬레이
 
 스크립트는 Pleos/API 34 에뮬레이터인지 확인한 뒤 현재 사용자에 APK를 업데이트 설치하고, Activity 실행·프로세스·전면 화면을 검사한다. 스크린샷과 앱 로그는 기본적으로 `artifacts/milestone-1/`에 남긴다. 이전 증거를 보존하려면 `PETASOS_ARTIFACTS_DIR`에 다른 경로를 지정한다. `--build-type privacy`는 privacy APK를 사용하고 스크린샷/원본 로그 없이 crash count만 기록한다. Virtual Console 연결이나 `adb forward`는 필요하지 않다.
 
+내비 위 Petasos overlay(버튼·카드)는 `SYSTEM_ALERT_WINDOW` 특수 권한이 필요하다. 에뮬레이터에는 이 권한을 끄고 켜는 설정 화면이 없으므로 설치 후 다음 명령으로 직접 허용한다(현재 사용자 ID가 10이 아니면 `--user`를 그 값으로 바꾼다):
+
+```sh
+adb shell appops set --user 10 com.petasos.app SYSTEM_ALERT_WINDOW allow
+```
+
 ## 위치·음성 SDK 검증
 
 ```sh

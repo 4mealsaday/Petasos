@@ -22,6 +22,7 @@ import com.google.common.util.concurrent.SettableFuture
 import com.petasos.app.MainActivity
 import com.petasos.app.R
 import com.petasos.app.location.CompanionSessionAuthority
+import com.petasos.app.platform.android.overlay.CompanionOverlay
 import com.petasos.app.platform.android.runtime.PetasosSessionHost
 import java.lang.ref.WeakReference
 import java.util.UUID
@@ -34,6 +35,7 @@ import java.util.UUID
 class CompanionLocationService : Service() {
     private var request: Request? = null
     private var connection: ListenableFuture<MediaBrowser>? = null
+    private var overlay: CompanionOverlay? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -78,6 +80,7 @@ class CompanionLocationService : Service() {
                     next.acknowledged = true
                     handler.removeCallbacks(next.timeout)
                     promote(recording = true)
+                    overlay = CompanionOverlay(this, next.host).also { it.attach() }
                     next.result.set(true)
                 } catch (_: Exception) { finish(next) }
             }, mainExecutor)
@@ -109,6 +112,8 @@ class CompanionLocationService : Service() {
             request = null
             connection?.let(MediaController::releaseFuture)
             connection = null
+            overlay?.detach()
+            overlay = null
         }
         retire(value)
         if (stopWhenIdle) stopIfIdle()

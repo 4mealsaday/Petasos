@@ -61,7 +61,7 @@
 5. 생성 클라이언트에서 provider 검토 만료·과도한 strict 검사 완화(스키마 검증은 유지).
 6. 빌드 + 설치 + 기존 홈/기록 화면이 뜨는지 확인. 남은 단위 테스트가 깨지면 삭제.
 
-**2단계 — 제품 overlay 연결**
+**2단계 — 제품 overlay 연결** (완료: 사전 확인 A/B 포함, 264개 중 경로가 지나는 21개 리전만 유지 + overlay 2창 + 홈 ON/OFF 연결 검증됨)
 1. Manifest에 `SYSTEM_ALERT_WINDOW` 추가. 에뮬레이터에는 설정 화면이 없으므로 README에 `adb shell appops set --user 10 com.petasos.app SYSTEM_ALERT_WINDOW allow` 명시.
 2. `CompanionOverlay`(기존 `CompanionLocationService` 안에서 관리): `TYPE_APPLICATION_OVERLAY` 창 2개 — 원형 버튼(포커스 없음), 하단 카드(터치 통과, 불투명도 0.8 미만). 진단 APK(`diagnostics/navigation-overlay`)의 창 파라미터를 그대로 이식.
 3. 버튼 → 기존 runtime의 말하기 요청. 카드 ← `PlaybackPresentationState`(현재 문단/음악 제목/듣는 중 상태).
@@ -83,10 +83,10 @@
 - 권한·만료·세대(generation) 검사는 실제로 버그를 막는 곳(재생 중복, 늦은 콜백)만 남긴다.
 
 ## 6. 수동 시연 체크리스트 (완료 기준)
-- [ ] ON → 내비 위에 버튼·카드가 동시에 보이고 지도 터치가 막히지 않는다.
+- [x] ON → 내비 위에 버튼·카드가 동시에 보이고 지도 터치가 막히지 않는다.
 - [ ] GPS 재생 시 서울 중구에서 이야기가 시작되고 카드 자막이 문단과 맞다.
 - [ ] 버튼 → 질문 → AI 답변 → 같은 이야기 다음 문단으로 복귀.
 - [ ] 이야기 → 음악 → 다음 지역 이야기 자동 전환이 대전까지 이어진다.
-- [ ] OFF → overlay·위치·오디오가 모두 정리된다.
+- [x] OFF → overlay·위치·오디오가 모두 정리된다.
 - [ ] 나의 기록에 경로선·통과 지역·들은 이야기가 표시된다.
 - [ ] release APK 설치 후 위 흐름 재현.

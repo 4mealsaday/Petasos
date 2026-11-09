@@ -32,8 +32,9 @@ object PleosCompanionDisplaySupport {
             overlayPermissionGranted = permissionGranted,
             overlaySettingsAvailable = settingsAvailable,
             // NaviHelper has no reviewed public contract for the actual navigation window's
-            // visibility/bounds. A global Android overlay permission cannot supply that contract.
-            navigationSurfaceAvailable = false,
+            // visibility/bounds, so the app draws its own TYPE_APPLICATION_OVERLAY surface instead.
+            // That surface needs exactly the overlay permission; nothing else gates it.
+            navigationSurfaceAvailable = permissionGranted,
         )
     }
 }

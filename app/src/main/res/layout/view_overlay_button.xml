@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ImageButton xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/overlay_talk_button"
+    android:layout_width="@dimen/overlay_button_size"
+    android:layout_height="@dimen/overlay_button_size"
+    android:background="@drawable/bg_journey_talk"
+    android:src="@drawable/ic_petasos"
+    android:scaleType="centerInside"
+    android:padding="14dp"
+    android:contentDescription="@string/overlay_talk_button_description" />

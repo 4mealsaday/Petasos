@@ -155,6 +155,7 @@ class PlaybackControls(private val activity: Activity) {
     /** Permission completion is informational only. A new explicit Talk click is always required. */
     fun permissionResult(requestCode: Int, granted: Boolean): Boolean {
         if (tripControls.permissionResult(requestCode, granted)) return true
+        if (companion.permissionResult(requestCode, granted)) return true
         if (requestCode != MICROPHONE_REQUEST) return false
         requestingMicrophone = false
         presentationNotice = if (granted) PlaybackPresentationNotice.MICROPHONE_PERMISSION_GRANTED else PlaybackPresentationNotice.MICROPHONE_PERMISSION_DENIED

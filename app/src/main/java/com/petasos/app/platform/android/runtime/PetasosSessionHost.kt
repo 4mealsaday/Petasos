@@ -70,6 +70,7 @@ class PetasosSessionHost(
     @Volatile private var captionVisible = false
     private val captionLock = Any()
     private val captionVisibility = CaptionVisibilityAuthority()
+    private val talkVisibility = CaptionVisibilityAuthority()
     private var music: Media3RuntimeMusic? = null
     @Volatile private var selected: String? = null
     private var pendingSelection = false // Worker-owned explicit setMediaItem intent, distinct from retained metadata.
@@ -317,16 +318,42 @@ class PetasosSessionHost(
         }
     }
 
-    /** Same-process Activity hook only. No MediaSession custom command exposes this capability. */
+    /** Same-process hook only. No MediaSession custom command exposes this capability. */
     fun setTalkUiVisible(visible: Boolean) {
         checkMain()
-        visibleForTalk = visible
-        if (!visible) {
+        val stillVisible = synchronized(captionLock) {
+            talkVisibility.setActivityVisible(visible)
+            refreshTalkVisibilityLocked()
+            visibleForTalk
+        }
+        if (!stillVisible) {
             setCaptionVisible(false)
             cancelVisiblePlaybackPreparation()
             if (isPreparingStory()) cancelStoryPreparation()
             cancelVisibleInput()
         }
+    }
+
+    /** Companion overlay hook: a second same-process surface, gated the same as the overlay caption. */
+    fun setOverlayTalkVisible(owner: Any, visible: Boolean): Boolean {
+        checkMain()
+        val (accepted, stillVisible) = synchronized(captionLock) {
+            val result = talkVisibility.setOverlayVisible(owner, visible, overlayCaptionAllowed())
+            refreshTalkVisibilityLocked()
+            result to visibleForTalk
+        }
+        if (!stillVisible) {
+            setCaptionVisible(false)
+            cancelVisiblePlaybackPreparation()
+            if (isPreparingStory()) cancelStoryPreparation()
+            cancelVisibleInput()
+        }
+        return accepted
+    }
+
+    /** Caller holds captionLock. */
+    private fun refreshTalkVisibilityLocked() {
+        visibleForTalk = !disposed && talkVisibility.hasVisibleSurface(overlayCaptionAllowed())
     }
 
     /** Activity visibility permits an explicit start; it never grants recording by itself. */
@@ -544,6 +571,8 @@ class PetasosSessionHost(
         main.post { navigation?.close() }
         synchronized(captionLock) {
             captionVisibility.clear()
+            talkVisibility.clear()
+            refreshTalkVisibilityLocked()
             refreshCaptionVisibilityLocked()
         }
         if (!disposed) queue.execute {

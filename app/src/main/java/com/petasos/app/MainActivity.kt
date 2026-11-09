@@ -5,6 +5,7 @@ import android.app.Activity
 import android.os.Bundle
 import android.content.pm.PackageManager
 import com.petasos.app.platform.android.location.LocationAccess
+import com.petasos.app.presentation.CompanionControls
 import com.petasos.app.presentation.PlaybackControls
 import com.petasos.app.presentation.TripControls
 
@@ -32,6 +33,8 @@ class MainActivity : Activity() {
             TripControls.LOCATION_REQUEST -> LocationAccess.hasRequiredPermissions(this)
             PlaybackControls.MICROPHONE_REQUEST ->
                 checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
+            CompanionControls.PERMISSION_REQUEST ->
+                permissions.all { checkSelfPermission(it) == PackageManager.PERMISSION_GRANTED }
             else -> false
         }
         controls.permissionResult(requestCode, granted)
