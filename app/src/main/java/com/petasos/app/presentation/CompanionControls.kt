@@ -9,6 +9,7 @@ import com.petasos.app.platform.android.location.LocationAccess
 import com.petasos.app.platform.android.runtime.PetasosSessionHost
 import com.petasos.app.platform.pleos.navigation.PleosCompanionDisplaySupport
 import com.petasos.app.platform.pleos.navigation.PleosNavigationScreens
+import com.petasos.app.platform.pleos.navigation.PleosRouteSearch
 
 /**
  * The home switch represents the entire companion, never just Media3 play/pause.
@@ -87,6 +88,7 @@ class CompanionControls(
                 check(request.get())
                 check(current.consumeVisibleCompanionPreparation(request))
                 requestNavigationForeground()
+                requestDemoDestinationRoute()
             } catch (_: Exception) {
                 notice = activity.getString(R.string.companion_start_unavailable)
             }
@@ -127,6 +129,18 @@ class CompanionControls(
                 onFailed = { gateway.close() },
             )
         } catch (_: Exception) { gateway.close() }
+    }
+
+    /** Fire-and-forget: a routing failure must never block or delay companion start. */
+    private fun requestDemoDestinationRoute() {
+        try {
+            PleosRouteSearch.request(
+                activity.applicationContext,
+                poiName = "대전엑스포과학공원",
+                latitude = 36.3765,
+                longitude = 127.3866,
+            )
+        } catch (_: Exception) { /* Logged inside PleosRouteSearch; never surfaced here. */ }
     }
 
     companion object { const val PERMISSION_REQUEST = 4803 }
