@@ -160,6 +160,9 @@ class CompanionControls(
         catch (_: Exception) { requestingPermission = false; onChanged() }
     }
 
+    /** Home's "내비로 돌아가기": the same navigation-foreground request the ON gesture makes. */
+    fun returnToNavigation() { if (!starting && !stopping) requestNavigationForeground() }
+
     /** One-shot: the companion ON gesture already owns this click, no ongoing UI state to publish. */
     private fun requestNavigationForeground() {
         if (BuildConfig.DEMO) {

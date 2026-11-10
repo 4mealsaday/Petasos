@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="@dimen/preview_brand_mark_size" android:height="@dimen/preview_brand_mark_size"
-    android:viewportWidth="64" android:viewportHeight="64">
-    <path android:fillColor="@color/accent" android:pathData="M32,1a31,31 0,1 0,0 62a31,31 0,1 0,0 -62" />
-    <path android:fillColor="@color/journey_on_blue" android:pathData="M18,32C11,31 8,26 7,20C12,24 16,23 20,27L23,34C16,36 11,32 10,29C13,31 15,31 18,32M46,32C53,31 56,26 57,20C52,24 48,23 44,27L41,34C48,36 53,32 54,29C51,31 49,31 46,32M23,34C23,22 26,18 32,18C38,18 41,22 41,34ZM14,37C23,32 41,32 50,37C47,44 17,44 14,37Z" />
-    <path android:fillColor="@color/journey_sky" android:pathData="M23,30C28,32 36,32 41,30L42,34C35,36 29,36 22,34Z"/>
-</vector>

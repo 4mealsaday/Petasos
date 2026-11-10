@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/page_about"
+    android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:visibility="gone">
+    <LinearLayout style="@style/Widget.Petasos.TopBar">
+        <ImageButton android:id="@+id/about_back" style="@style/Widget.Petasos.IconButton"
+            android:src="@drawable/ic_arrow_back" android:contentDescription="@string/action_back" />
+        <TextView style="@style/Text.Heading" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:layout_marginStart="@dimen/space_8" android:text="@string/about_title" />
+    </LinearLayout>
+    <LinearLayout style="@style/Widget.Petasos.Card" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_margin="@dimen/screen_padding" android:orientation="vertical">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical">
+            <FrameLayout android:layout_width="96dp" android:layout_height="96dp" android:background="@drawable/bg_logo_tile">
+                <ImageView android:layout_width="76dp" android:layout_height="76dp" android:layout_gravity="center"
+                    android:src="@drawable/ic_petasos_mark" android:importantForAccessibility="no" />
+            </FrameLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                android:layout_marginStart="@dimen/space_24" android:orientation="vertical">
+                <TextView style="@style/Text.Display" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/app_name" />
+                <TextView style="@style/Text.Caption" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/app_tagline" />
+            </LinearLayout>
+        </LinearLayout>
+        <TextView android:id="@+id/about_version" style="@style/Text.Title" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_32" />
+        <TextView style="@style/Text.Body" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_12"
+            android:text="@string/about_privacy" />
+    </LinearLayout>
+</LinearLayout>

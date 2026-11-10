@@ -114,7 +114,10 @@ class PetasosSessionHost(
     @Volatile private var observedNavigationRouteState = NavigationRouteState.UNKNOWN
     private val navigationIngressRevision = AtomicLong()
     private var committedNavigationIngressRevision = 0L
-    private var currentRegionId: String? = null
+    @Volatile private var currentRegionId: String? = null
+
+    /** Display only (card/home label): the currently confirmed region id, if any. Grants no authority. */
+    fun displayRegionId(): String? = currentRegionId
     @Volatile private var confirmedRegionAuthority: ConfirmedRegionAuthority? = null
     private var locationValid = false
     private var latestReceivedElapsed: Long? = null

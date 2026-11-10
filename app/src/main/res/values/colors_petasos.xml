@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#0078FF</color>
+    <color name="primary_pressed">#0069FF</color>
+    <color name="primary_heavy">#0052E0</color>
+    <color name="primary_soft">#D6EBFF</color>
+    <color name="primary_wash">#EBF5FF</color>
+    <color name="primary_line">#99CEFF</color>
+    <color name="text_strong">#141A24</color>
+    <color name="text">#354153</color>
+    <color name="text_sub">#697383</color>
+    <color name="text_hint">#99A1B1</color>
+    <color name="text_disabled">#B4BBCB</color>
+    <color name="line">#E5E8EF</color>
+    <color name="bg">#F2F3F8</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="positive">#04CA81</color>
+    <color name="caution">#FF8800</color>
+    <color name="negative">#FF3A5B</color>
+    <color name="dim">#70141A24</color>
+    <!-- Pressed fill for weak surfaces (bg one step darker). -->
+    <color name="bg_pressed">#E6E8F0</color>
+    <color name="primary_soft_pressed">#C4E1FF</color>
+</resources>

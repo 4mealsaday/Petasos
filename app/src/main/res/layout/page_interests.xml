@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/page_interests"
+    android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:visibility="gone">
+    <LinearLayout style="@style/Widget.Petasos.TopBar">
+        <ImageButton android:id="@+id/interests_back" style="@style/Widget.Petasos.IconButton"
+            android:src="@drawable/ic_arrow_back" android:contentDescription="@string/action_back" />
+        <TextView style="@style/Text.Heading" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:layout_marginStart="@dimen/space_8" android:text="@string/interests_title" />
+    </LinearLayout>
+    <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
+        <LinearLayout style="@style/Widget.Petasos.Card" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_margin="@dimen/screen_padding" android:orientation="vertical">
+            <TextView style="@style/Text.Body" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="@string/interests_hint" android:layout_marginBottom="@dimen/space_24" />
+            <com.petasos.app.presentation.interests.InterestGridView android:id="@+id/settings_interest_grid"
+                android:layout_width="match_parent" android:layout_height="wrap_content" />
+        </LinearLayout>
+    </ScrollView>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical"
+        android:paddingHorizontal="@dimen/screen_padding" android:paddingBottom="@dimen/screen_padding">
+        <TextView android:id="@+id/interests_notice" style="@style/Text.Caption" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/space_12" android:gravity="center" android:visibility="gone" android:saveEnabled="false" />
+        <Button android:id="@+id/interests_save" style="@style/Widget.Petasos.Button.Primary"
+            android:layout_width="match_parent" android:layout_height="@dimen/button_large_height" android:text="@string/interests_save" />
+    </LinearLayout>
+</LinearLayout>

@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!-- Dimensions belong to the temporary preview, not the SDK or product logic. -->
-    <dimen name="preview_brand_mark_size">56dp</dimen>
-    <dimen name="preview_text_line_spacing">4dp</dimen>
-</resources>

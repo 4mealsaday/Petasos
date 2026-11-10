@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/page_sources"
+    android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:visibility="gone">
+    <LinearLayout style="@style/Widget.Petasos.TopBar">
+        <ImageButton android:id="@+id/sources_back" style="@style/Widget.Petasos.IconButton"
+            android:src="@drawable/ic_arrow_back" android:contentDescription="@string/action_back" />
+        <TextView style="@style/Text.Heading" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:layout_marginStart="@dimen/space_8" android:text="@string/sources_title" />
+    </LinearLayout>
+    <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
+        <LinearLayout style="@style/Widget.Petasos.Card" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_margin="@dimen/screen_padding" android:orientation="vertical">
+            <TextView style="@style/Text.Title" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/sources_public_title" />
+            <TextView style="@style/Text.Body" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_8"
+                android:text="@string/sources_public_body" />
+            <TextView style="@style/Text.Title" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_24" android:text="@string/sources_map_title" />
+            <TextView style="@style/Text.Body" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_8"
+                android:text="@string/sources_map_body" />
+            <TextView style="@style/Text.Title" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_24" android:text="@string/sources_music_title" />
+            <TextView android:id="@+id/sources_music" style="@style/Text.Body" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_8" android:text="@string/sources_music_loading" android:saveEnabled="false" />
+            <TextView style="@style/Text.Title" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_24" android:text="@string/sources_font_title" />
+            <TextView style="@style/Text.Body" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_8"
+                android:text="@string/sources_font_body" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

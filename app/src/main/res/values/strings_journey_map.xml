@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="journey_map_offline">오프라인 지역 지도 · 국토지리정보원·브이월드</string>
-    <string name="journey_map_loading">네이버 지도를 불러오고 있어요</string>
-    <string name="journey_map_current_position">네이버 지도 · 현재 위치</string>
-    <string name="journey_map_position_pending">네이버 지도 · 현재 위치 확인 전</string>
-    <string name="journey_map_unavailable">지도를 불러오지 못해 오프라인 지역 지도를 표시합니다</string>
-</resources>

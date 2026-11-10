@@ -4,9 +4,9 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
-import com.petasos.app.R
 import com.petasos.app.presentation.records.DisplayRegionShape
 import com.petasos.app.presentation.records.MapCoordinate
+import com.petasos.app.presentation.records.RecordedPath
 import com.petasos.app.presentation.records.RegionalMapView
 
 /**
@@ -22,17 +22,13 @@ class ProductJourneyMap @JvmOverloads constructor(context: Context, attrs: Attri
     private var destroyed = false
     private var generation = 0L
     private var pendingPosition: MapCoordinate? = null
+    private var geometry = emptyList<DisplayRegionShape>()
+    private var scene = MapScene()
     private var timeout: Runnable? = null
     var status: JourneyMapStatus = JourneyMapStatus.OFFLINE
         private set
     var onStatusChanged: ((JourneyMapStatus) -> Unit)? = null
         set(value) { field = value; value?.invoke(status) }
-    val statusTextRes: Int get() = when (status) {
-        JourneyMapStatus.OFFLINE -> R.string.journey_map_offline
-        JourneyMapStatus.LOADING -> R.string.journey_map_loading
-        JourneyMapStatus.READY -> if (pendingPosition == null) R.string.journey_map_position_pending else R.string.journey_map_current_position
-        JourneyMapStatus.UNAVAILABLE -> R.string.journey_map_unavailable
-    }
 
     init {
         isSaveEnabled = false
@@ -41,7 +37,22 @@ class ProductJourneyMap @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     fun submitGeometry(geometry: List<DisplayRegionShape>) {
-        fallback.submit(geometry, focusOnPaths = true)
+        this.geometry = geometry
+        pushFallback()
+    }
+
+    /** Routes, the highlighted region and the camera target; the offline fallback draws the routes too. */
+    fun setScene(value: MapScene) {
+        if (destroyed) return
+        scene = value
+        safely { backend?.setScene(value) }
+        pushFallback()
+    }
+
+    private fun pushFallback() {
+        fallback.submit(geometry, scene.routes.filter { it.points.size >= 2 }.map { RecordedPath(it.key, it.points) },
+            selectedRegionId = scene.highlightRegionId, focusOnPaths = scene.focus.isNotEmpty() && scene.highlightRegionId == null,
+            focusRegionId = scene.highlightRegionId)
     }
 
     /** Null and invalid positions clear the old marker; display state is never saved in a Bundle. */
@@ -71,6 +82,7 @@ class ProductJourneyMap @JvmOverloads constructor(context: Context, attrs: Attri
             layer.onCreate()
             layer.onStart()
             layer.setPosition(pendingPosition)
+            layer.setScene(scene)
             timeout = Runnable { if (started && generation == token && status == JourneyMapStatus.LOADING) fail() }
                 .also { postDelayed(it, MAP_LOAD_TIMEOUT_MS) }
         }
@@ -80,7 +92,7 @@ class ProductJourneyMap @JvmOverloads constructor(context: Context, attrs: Attri
         if (destroyed || resumed) return
         onStart()
         resumed = true
-        safely { backend?.onResume() }
+        safely { backend?.onResume(); backend?.setScene(scene) }
     }
 
     fun onPause() {

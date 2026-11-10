@@ -1,7 +1,7 @@
 package com.petasos.app
 
-import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.content.pm.PackageManager
 import com.petasos.app.platform.android.location.LocationAccess
@@ -12,6 +12,11 @@ import com.petasos.app.presentation.TripControls
 /** Thin parked-only screen; creating the Activity never starts playback, recording, or microphone. */
 class MainActivity : Activity() {
     private lateinit var controls: PlaybackControls
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(com.petasos.app.presentation.DesignScale.wrap(newBase, newBase.resources.configuration.screenWidthDp))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -31,8 +36,6 @@ class MainActivity : Activity() {
         // A coarse-only grant is valid location access; callback array order is not authority.
         val granted = when (requestCode) {
             TripControls.LOCATION_REQUEST -> LocationAccess.hasRequiredPermissions(this)
-            PlaybackControls.MICROPHONE_REQUEST ->
-                checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
             CompanionControls.PERMISSION_REQUEST ->
                 permissions.all { checkSelfPermission(it) == PackageManager.PERMISSION_GRANTED }
             else -> false

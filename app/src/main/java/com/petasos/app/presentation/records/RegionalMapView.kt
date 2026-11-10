@@ -35,6 +35,7 @@ class RegionalMapView @JvmOverloads constructor(context: Context, attrs: Attribu
     private var highlighted = emptySet<String>()
     private var selected: String? = null
     private var focus = false
+    private var focusRegion: String? = null
     private var current: MapCoordinate? = null
     private val viewport = RectF()
     private var pressedRegion: String? = null
@@ -42,15 +43,15 @@ class RegionalMapView @JvmOverloads constructor(context: Context, attrs: Attribu
 
     init {
         minimumHeight = dp(260f).toInt()
-        setBackgroundColor(context.getColor(R.color.records_map_water))
-        contentDescription = context.getString(R.string.records_ui_map_description)
+        setBackgroundColor(context.getColor(R.color.bg))
+        contentDescription = context.getString(R.string.trips_map_description)
         isFocusable = true
     }
 
     fun submit(
         geometry: List<DisplayRegionShape>, paths: List<RecordedPath> = emptyList(),
         highlightedRegionIds: Set<String> = emptySet(), selectedRegionId: String? = null,
-        focusOnPaths: Boolean = false,
+        focusOnPaths: Boolean = false, focusRegionId: String? = null,
     ) {
         if (shapePaths.size != geometry.size || shapePaths.zip(geometry).any { it.first.shape !== it.second }) {
             shapePaths = geometry.map { shape ->
@@ -65,6 +66,7 @@ class RegionalMapView @JvmOverloads constructor(context: Context, attrs: Attribu
             }
         }
         this.paths = paths.toList(); highlighted = highlightedRegionIds.toSet(); selected = selectedRegionId; focus = focusOnPaths
+        focusRegion = focusRegionId
         updateTransform(); invalidate()
     }
 
@@ -88,13 +90,16 @@ class RegionalMapView @JvmOverloads constructor(context: Context, attrs: Attribu
             }
         }
         if (focus) { paths.forEach { it.points.forEach(::include) }; current?.let(::include) }
+        if (bounds == null && focusRegion != null) {
+            shapePaths.firstOrNull { it.shape.regionId == focusRegion }?.let { bounds = RectF(it.bounds) }
+        }
         if (bounds == null) {
             val chosen = selected?.let { key -> shapePaths.firstOrNull { it.shape.regionId == key } }
             if (focus && chosen != null) bounds = RectF(chosen.bounds)
             else shapePaths.forEach { if (bounds == null) bounds = RectF(it.bounds) else bounds!!.union(it.bounds) }
         }
         val source = bounds ?: return
-        val minimum = if (focus) .035f else .001f
+        val minimum = if (focus || focusRegion != null) .035f else .001f
         val extraX = max(source.width() * .12f, minimum)
         val extraY = max(source.height() * .12f, minimum)
         source.inset(-extraX, -extraY)
@@ -137,17 +142,17 @@ class RegionalMapView @JvmOverloads constructor(context: Context, attrs: Attribu
             if (!entry.inViewport) continue
             paint.style = Paint.Style.FILL
             paint.color = when (entry.shape.regionId) {
-                selected -> context.getColor(R.color.records_map_selected)
-                in highlighted -> context.getColor(R.color.records_map_passage)
-                else -> context.getColor(R.color.records_map_land)
+                selected -> context.getColor(R.color.primary_line)
+                in highlighted -> context.getColor(R.color.primary_wash)
+                else -> context.getColor(R.color.surface)
             }
             canvas.drawPath(entry.screenPath, paint)
-            paint.style = Paint.Style.STROKE; paint.strokeWidth = dp(.65f); paint.color = context.getColor(R.color.records_map_border)
+            paint.style = Paint.Style.STROKE; paint.strokeWidth = dp(.65f); paint.color = context.getColor(R.color.line)
             canvas.drawPath(entry.screenPath, paint)
         }
-        paint.color = context.getColor(if (focus) R.color.records_map_route else R.color.records_map_route_overview)
+        paint.color = context.getColor(if (focus) R.color.primary else R.color.primary)
         paint.style = Paint.Style.STROKE
-        paint.strokeWidth = dp(2.5f); paint.strokeCap = Paint.Cap.ROUND; paint.strokeJoin = Paint.Join.ROUND
+        paint.strokeWidth = dp(5f); paint.strokeCap = Paint.Cap.ROUND; paint.strokeJoin = Paint.Join.ROUND
         for (index in screenRoutes.indices) {
             val route = screenRoutes[index]
             val point = route.singlePoint
@@ -158,8 +163,8 @@ class RegionalMapView @JvmOverloads constructor(context: Context, attrs: Attribu
             }
         }
         if (drawCurrent) {
-            paint.style = Paint.Style.FILL; paint.color = context.getColor(R.color.records_ui_selected_text); canvas.drawCircle(screenCurrent[0], screenCurrent[1], dp(10f), paint)
-            paint.color = context.getColor(R.color.records_ui_blue); canvas.drawCircle(screenCurrent[0], screenCurrent[1], dp(7f), paint)
+            paint.style = Paint.Style.FILL; paint.color = context.getColor(R.color.surface); canvas.drawCircle(screenCurrent[0], screenCurrent[1], dp(10f), paint)
+            paint.color = context.getColor(R.color.primary); canvas.drawCircle(screenCurrent[0], screenCurrent[1], dp(7f), paint)
         }
     }
 
@@ -210,7 +215,7 @@ class RegionSilhouetteView(context: Context) : View(context) {
     private val targetBounds = RectF()
     private val placement = Matrix()
     fun submit(shape: DisplayRegionShape, collected: Boolean) {
-        contentDescription = context.getString(if (collected) R.string.records_ui_collected_shape else R.string.records_ui_uncollected_shape, shape.name)
+        contentDescription = shape.name
         sourcePath.reset()
         sourcePath.apply {
             fillType = Path.FillType.EVEN_ODD
@@ -223,7 +228,7 @@ class RegionSilhouetteView(context: Context) : View(context) {
             }
         }
         sourcePath.computeBounds(sourceBounds, true)
-        paint.color = context.getColor(if (collected) R.color.records_map_route else R.color.records_map_uncollected)
+        paint.color = context.getColor(if (collected) R.color.primary else R.color.text_disabled)
         updatePlacement(); invalidate()
     }
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) { updatePlacement() }

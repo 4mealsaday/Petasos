@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ImageButton xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/overlay_talk_button"
-    android:layout_width="@dimen/overlay_button_size"
-    android:layout_height="@dimen/overlay_button_size"
-    android:background="@drawable/bg_journey_talk"
-    android:src="@drawable/ic_petasos"
-    android:scaleType="centerInside"
-    android:padding="14dp"
-    android:contentDescription="@string/overlay_talk_button_description" />
+    android:layout_width="@dimen/overlay_button_size" android:layout_height="@dimen/overlay_button_size"
+    android:background="@drawable/bg_overlay_button" android:clickable="true" android:focusable="false"
+    android:stateListAnimator="@animator/press_scale"
+    android:contentDescription="@string/overlay_talk_button_description">
+    <ImageView android:id="@+id/overlay_talk_mark" android:layout_width="60dp" android:layout_height="60dp" android:layout_gravity="center"
+        android:src="@drawable/ic_petasos_mark" android:importantForAccessibility="no" />
+    <LinearLayout android:id="@+id/overlay_talk_dots" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal" android:layout_marginBottom="20dp" android:orientation="horizontal" android:visibility="gone">
+        <ImageView android:id="@+id/overlay_dot_1" android:layout_width="8dp" android:layout_height="8dp" android:src="@drawable/dot_white" android:importantForAccessibility="no" />
+        <ImageView android:id="@+id/overlay_dot_2" android:layout_width="8dp" android:layout_height="8dp" android:layout_marginHorizontal="6dp" android:src="@drawable/dot_white" android:importantForAccessibility="no" />
+        <ImageView android:id="@+id/overlay_dot_3" android:layout_width="8dp" android:layout_height="8dp" android:src="@drawable/dot_white" android:importantForAccessibility="no" />
+    </LinearLayout>
+    <View android:id="@+id/overlay_talk_ring" android:layout_width="match_parent" android:layout_height="match_parent"
+        android:background="@drawable/ring_idle" android:importantForAccessibility="no" />
+</FrameLayout>

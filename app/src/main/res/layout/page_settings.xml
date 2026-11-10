@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/page_settings"
+    android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:visibility="gone">
+    <LinearLayout style="@style/Widget.Petasos.TopBar">
+        <ImageButton android:id="@+id/settings_back" style="@style/Widget.Petasos.IconButton"
+            android:src="@drawable/ic_arrow_back" android:contentDescription="@string/action_back" />
+        <TextView style="@style/Text.Heading" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:layout_marginStart="@dimen/space_8" android:text="@string/settings_title" />
+    </LinearLayout>
+    <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical"
+            android:padding="@dimen/screen_padding">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical"
+                android:background="@drawable/bg_card" android:paddingVertical="@dimen/space_8">
+                <LinearLayout android:id="@+id/settings_row_location" style="@style/Widget.Petasos.Row">
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                        <TextView style="@style/Text.Title" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/settings_location" />
+                        <TextView style="@style/Text.Caption" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/settings_location_desc" />
+                    </LinearLayout>
+                    <com.petasos.app.presentation.ToggleView android:id="@+id/settings_location_switch"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                </LinearLayout>
+                <LinearLayout android:id="@+id/settings_location_permission_row" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:paddingHorizontal="@dimen/space_32" android:paddingBottom="@dimen/space_16" android:orientation="vertical" android:visibility="gone">
+                    <Button android:id="@+id/settings_location_permission" style="@style/Widget.Petasos.Button.Weak"
+                        android:layout_width="wrap_content" android:layout_height="@dimen/button_weak_height" android:text="@string/settings_location_permission" />
+                </LinearLayout>
+                <View style="@style/Widget.Petasos.Divider" android:layout_marginHorizontal="@dimen/space_32" />
+                <LinearLayout android:id="@+id/settings_row_interests" style="@style/Widget.Petasos.Row" android:clickable="true" android:focusable="true">
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                        <TextView style="@style/Text.Title" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/settings_interests" />
+                        <TextView style="@style/Text.Caption" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/settings_interests_desc" />
+                    </LinearLayout>
+                    <ImageView android:layout_width="@dimen/icon_size" android:layout_height="@dimen/icon_size" android:src="@drawable/ic_chevron_right" android:importantForAccessibility="no" />
+                </LinearLayout>
+                <View style="@style/Widget.Petasos.Divider" android:layout_marginHorizontal="@dimen/space_32" />
+                <LinearLayout android:id="@+id/settings_row_sources" style="@style/Widget.Petasos.Row" android:clickable="true" android:focusable="true">
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                        <TextView style="@style/Text.Title" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/settings_sources" />
+                        <TextView style="@style/Text.Caption" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/settings_sources_desc" />
+                    </LinearLayout>
+                    <ImageView android:layout_width="@dimen/icon_size" android:layout_height="@dimen/icon_size" android:src="@drawable/ic_chevron_right" android:importantForAccessibility="no" />
+                </LinearLayout>
+                <View style="@style/Widget.Petasos.Divider" android:layout_marginHorizontal="@dimen/space_32" />
+                <LinearLayout android:id="@+id/settings_row_about" style="@style/Widget.Petasos.Row" android:clickable="true" android:focusable="true">
+                    <TextView style="@style/Text.Title" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/settings_about" />
+                    <ImageView android:layout_width="@dimen/icon_size" android:layout_height="@dimen/icon_size" android:src="@drawable/ic_chevron_right" android:importantForAccessibility="no" />
+                </LinearLayout>
+                <View android:id="@+id/settings_reset_divider" style="@style/Widget.Petasos.Divider" android:layout_marginHorizontal="@dimen/space_32" android:visibility="gone" />
+                <LinearLayout android:id="@+id/settings_row_reset" style="@style/Widget.Petasos.Row" android:clickable="true" android:focusable="true" android:visibility="gone">
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                        <TextView style="@style/Text.Title" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/settings_reset" />
+                        <TextView android:id="@+id/settings_reset_desc" style="@style/Text.Caption" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/settings_reset_desc" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+            <TextView android:id="@+id/settings_notice" style="@style/Text.Caption" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_16" android:paddingHorizontal="@dimen/space_8" android:visibility="gone" android:saveEnabled="false" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

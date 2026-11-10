@@ -6,7 +6,6 @@ import android.content.Intent
 import android.util.Log
 import com.petasos.app.generation.DeviceGenerationConfigStore
 import com.petasos.app.generation.DeviceGenerationConfiguration
-import com.petasos.app.storage.StorageDatabase
 import kotlin.concurrent.thread
 
 /**
@@ -32,36 +31,9 @@ class DemoResetReceiver : BroadcastReceiver() {
             thread { try { provision(app) } finally { pending.finish() } }
             return
         }
-        thread {
-            try {
-                val database = StorageDatabase.open(app, "petasos.db")
-                try {
-                    val sql = database.openHelper.writableDatabase
-                    sql.beginTransaction()
-                    try {
-                        // collection_proof (record album evidence) references these attempts by FK.
-                        sql.execSQL("DELETE FROM collection_proof WHERE attempt_id IN " +
-                            "(SELECT attempt_id FROM playback_attempt WHERE kind='story' AND state='completed')")
-                        // Story cards are awarded once per story; drop earned ones so a rehearsal re-earns them.
-                        sql.execSQL("DELETE FROM collection_proof WHERE collection_id IN " +
-                            "(SELECT collection_id FROM collection_record WHERE collection_type='story')")
-                        sql.execSQL("DELETE FROM collection_record WHERE collection_type='story'")
-                        // Region cards are likewise earned once ever; clear them so this run's trip shows them.
-                        sql.execSQL("DELETE FROM collection_proof WHERE collection_id IN " +
-                            "(SELECT collection_id FROM collection_record WHERE collection_type='region')")
-                        sql.execSQL("DELETE FROM collection_record WHERE collection_type='region'")
-                        sql.execSQL("DELETE FROM playback_attempt WHERE kind='story' AND state='completed'")
-                        sql.setTransactionSuccessful()
-                    } finally { sql.endTransaction() }
-                    Log.i(TAG, "Demo listening history reset")
-                } finally {
-                    database.close()
-                }
-            } catch (error: Exception) {
-                Log.w(TAG, "Demo listening history reset failed", error)
-            } finally {
-                pending.finish()
-            }
+        com.petasos.app.storage.DemoListeningHistory.reset(app) { ok ->
+            Log.i(TAG, if (ok) "Demo listening history reset" else "Demo listening history reset failed")
+            pending.finish()
         }
     }
 

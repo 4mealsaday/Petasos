@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="music_credits_title">자료·음원 출처</string>
-    <string name="music_credits_loading">출처를 읽고 있어요.</string>
-    <string name="music_credits_empty">현재 확인할 출처 정보가 없습니다.</string>
-    <string name="music_credits_unavailable">출처를 읽지 못했어요. 잠시 후 다시 확인해주세요.</string>
-    <string name="music_credits_close">닫기</string>
-</resources>

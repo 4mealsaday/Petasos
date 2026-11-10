@@ -3,117 +3,75 @@ package com.petasos.app.presentation
 import android.app.Activity
 import android.content.pm.PackageManager
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.Button
-import android.widget.EditText
-import android.widget.Spinner
 import android.widget.TextView
 import com.google.common.util.concurrent.ListenableFuture
+import com.petasos.app.BuildConfig
 import com.petasos.app.R
 import com.petasos.app.platform.android.location.LocationAccess
 import com.petasos.app.platform.android.runtime.PetasosSessionHost
 import com.petasos.app.presentation.interests.InterestGridView
 import com.petasos.app.presentation.interests.InterestSelectionDraft
-import com.petasos.app.records.TripResultHeader
 import com.petasos.app.records.VehiclePreferences
 import com.petasos.app.records.VehicleRecordingSettings
 
-/** Parked presentation only. Queries never create a trip and saved summaries never enter logs. */
+/**
+ * Settings bindings: the location-recording switch and the interest chips. Queries never create a
+ * trip. Owners (the Host) decide consent; this class only reads, shows and sends explicit taps.
+ */
 class TripControls(private val activity: Activity) {
-    var onInterestsSaved: (() -> Unit)? = null
-    private val notice = activity.findViewById<TextView>(R.id.records_notice)
-    private val location = activity.findViewById<Button>(R.id.records_location)
-    private val permission = activity.findViewById<Button>(R.id.records_permission)
-    private val keywords = activity.findViewById<EditText>(R.id.records_keywords)
-    private val interestGrid = activity.findViewById<InterestGridView>(R.id.records_interest_grid)
-    private val saveKeywords = activity.findViewById<Button>(R.id.records_save_keywords)
-    private val refresh = activity.findViewById<Button>(R.id.records_refresh)
-    private val selection = activity.findViewById<Spinner>(R.id.records_trip_selection)
-    private val end = activity.findViewById<Button>(R.id.records_end_trip)
-    private val result = activity.findViewById<TextView>(R.id.records_result)
-    private val formatter = TripResultsFormatter(activity)
-    private val renderer = TripControlsRenderer(activity.window.decorView)
+    /** Called after interests were stored (true) or when storing failed (false). */
+    var onInterestsSaved: ((Boolean) -> Unit)? = null
+    private val locationSwitch = activity.findViewById<ToggleView>(R.id.settings_location_switch)
+    private val permissionRow = activity.findViewById<View>(R.id.settings_location_permission_row)
+    private val permission = activity.findViewById<Button>(R.id.settings_location_permission)
+    private val notice = activity.findViewById<TextView>(R.id.settings_notice)
+    private val grids = listOf(R.id.settings_interest_grid, R.id.onboarding_interest_grid)
+        .mapNotNull { activity.findViewById<InterestGridView>(it) }
+    private val saveSettings = activity.findViewById<Button>(R.id.interests_save)
+    private val saveOnboarding = activity.findViewById<Button>(R.id.onboarding_start)
     private var host: PetasosSessionHost? = null
     private var available = false
     private var epoch = 0L
-    private var tripRead = 0L
-    private var listRead = 0L
     private var preferences: VehiclePreferences? = null
     private var recording: VehicleRecordingSettings? = null
-    private var trips = emptyList<TripResultHeader>()
-    private var updatingSelection = false
     private var saving = false
     private var requestingPermission = false
     private var requestedLocationPermissions = emptyArray<String>()
-    private var observedTripId: String? = null
-    private var observedEnding = false
     private var interestDraft = InterestSelectionDraft.empty()
 
     init {
-        interestGrid?.onChoice = { choice ->
-            val current = host
-            if (available && recording != null && !saving && current?.isEndingTrip() == false) {
-                interestDraft = interestDraft.withCustomText(keywords.text.toString()).toggle(choice)
-            }
-            interestGrid.render(interestDraft.selectedTags)
-        }
-        location.setOnClickListener { saveLocation() }
-        permission.setOnClickListener {
-            if (available && recording?.locationEnabled == true && !requestingPermission) {
-                val requested = LocationAccess.requestPermissions(activity)
-                if (requested.isEmpty()) return@setOnClickListener
-                requestingPermission = true
-                requestedLocationPermissions = requested
-                render()
-                try {
-                    activity.requestPermissions(requested, LOCATION_REQUEST)
-                } catch (_: RuntimeException) {
-                    requestingPermission = false
-                    requestedLocationPermissions = emptyArray()
-                    notice.setText(R.string.records_permission_denied)
-                    render()
+        grids.forEach { grid ->
+            grid.onChoice = { choice ->
+                val current = host
+                if (available && recording != null && !saving && current?.isEndingTrip() == false) {
+                    interestDraft = interestDraft.toggle(choice)
                 }
+                renderInterests()
             }
         }
-        saveKeywords.setOnClickListener { saveInterests() }
-        refresh.setOnClickListener { host?.takeIf { available }?.let(::refreshTrips) }
-        end.setOnClickListener { endTrip() }
-        selection.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                if (available && !updatingSelection) host?.let { readSelected(it) }
-                render()
-            }
-            override fun onNothingSelected(parent: AdapterView<*>?) = Unit
-        }
+        locationSwitch.setOnClickListener { saveLocation() }
+        permission.setOnClickListener { requestPermission() }
+        saveSettings.setOnClickListener { saveInterests() }
+        saveOnboarding.setOnClickListener { saveInterests() }
         render()
     }
+
+    /** Whether the stored preference (or the DEMO default for a never-set one) allows recording. */
+    private fun locationOn() = recording?.let { it.locationEnabled || (BuildConfig.DEMO && it.version == null) } == true
 
     fun update(value: PetasosSessionHost?, allowed: Boolean) {
         val usable = allowed && value != null
         val changed = host !== value || usable != available
         host = value; available = usable
         if (changed) {
-            epoch++; tripRead++; listRead++
-            preferences = null; recording = null; trips = emptyList(); saving = false
-            bindInterests(emptyList()); result.setText(R.string.records_empty)
-            updatingSelection = true
-            selection.adapter = null
-            updatingSelection = false
-            observedTripId = value?.snapshot()?.tripId
-            observedEnding = value?.isEndingTrip() == true
+            epoch++
+            preferences = null; recording = null; saving = false
+            bindInterests(emptyList())
             if (usable) {
-                refreshPreferences(value!!, replaceKeywords = true)
-                refreshTrips(value)
+                refreshPreferences(value!!)
                 value.locationSettingsChanged() // Recheck platform revocation without granting consent.
             }
-        } else if (usable) {
-            val trip = value!!.snapshot()?.tripId
-            val ending = value.isEndingTrip()
-            if (trip != observedTripId || (observedEnding && !ending)) {
-                observedTripId = trip; observedEnding = ending
-                refreshTrips(value)
-            } else observedEnding = ending
         }
         render()
     }
@@ -126,124 +84,88 @@ class TripControls(private val activity: Activity) {
         }
         requestedLocationPermissions = emptyArray()
         if (available) {
-            notice.setText(when {
-                recording?.locationEnabled == false -> R.string.records_location_saved_off
-                granted && permissionGranted() -> R.string.records_location_saved_on
-                stageGranted && LocationAccess.hasPleosPermission(activity) -> R.string.records_permission_android_needed
-                stageGranted -> R.string.records_permission_needed
-                else -> R.string.records_permission_denied
-            })
+            if (!(granted && permissionGranted()) && !stageGranted) showNotice(R.string.settings_permission_denied)
             host?.locationSettingsChanged()
         }
-        // Do not chain the Android dialog after Pleos permission: the visible button is the next gesture.
+        // Do not chain the Android dialog after the Pleos one: the visible button is the next gesture.
         render()
         return true
     }
 
-    private fun refreshPreferences(current: PetasosSessionHost, replaceKeywords: Boolean) {
-        observe(current, current.readPreferences(), onFailure = {
-            notice.setText(R.string.records_operation_failed)
-            // A malformed interest list must never prevent location consent withdrawal.
-            observe(current, current.readRecordingSettings(), onFailure = { render() }) { value -> recording = value; render() }
-        }) { value ->
-            preferences = value; recording = value.recording
-            if (replaceKeywords) bindInterests(value.keywords)
+    private fun requestPermission() {
+        if (!available || !locationOn() || requestingPermission) return
+        val requested = LocationAccess.requestPermissions(activity)
+        if (requested.isEmpty()) return
+        requestingPermission = true
+        requestedLocationPermissions = requested
+        render()
+        try {
+            activity.requestPermissions(requested, LOCATION_REQUEST)
+        } catch (_: RuntimeException) {
+            requestingPermission = false
+            requestedLocationPermissions = emptyArray()
+            showNotice(R.string.settings_permission_denied)
             render()
         }
     }
 
-    private fun saveLocation() {
-        val current = host ?: return
-        val settings = recording ?: return
-        val enabled = !settings.locationEnabled
-        if (!available || saving || (enabled && current.isEndingTrip())) return
+    private fun refreshPreferences(current: PetasosSessionHost) {
+        observe(current, current.readPreferences(), onFailure = {
+            // A malformed interest list must never prevent location consent withdrawal.
+            observe(current, current.readRecordingSettings(), onFailure = { render() }) { value -> recording = value; render() }
+        }) { value ->
+            preferences = value; recording = value.recording
+            bindInterests(value.keywords)
+            render()
+        }
+    }
+
+    /**
+     * First run: "계속하기" on the screen that explains location use is the explicit consent gesture.
+     * Without it, saving interests would write an explicit "off" row and withdraw the DEMO default.
+     */
+    fun ensureLocationConsent() {
+        // The DEMO default shows "on" for a never-set row, but only a stored row survives saving interests.
+        if (!available || saving || recording?.locationEnabled != false) return
+        setLocation(true)
+    }
+
+    private fun saveLocation() = setLocation(!locationOn())
+
+    private fun setLocation(enabled: Boolean) {
+        val current = host ?: run { render(); return }
+        val settings = recording ?: run { render(); return }
+        if (!available || saving || (enabled && current.isEndingTrip())) { render(); return }
         saving = true; render()
         observe(current, current.setLocationEnabled(enabled, settings.version), onFailure = {
             saving = false
-            notice.setText(R.string.records_operation_failed)
-            refreshPreferences(current, replaceKeywords = false)
+            showNotice(R.string.settings_operation_failed)
+            refreshPreferences(current)
             render()
         }) { stored ->
             saving = false; recording = stored
-            notice.setText(when {
-                !stored.locationEnabled -> R.string.records_location_saved_off
-                !permissionGranted() -> R.string.records_permission_needed
-                else -> R.string.records_location_saved_on
-            })
-            refreshPreferences(current, replaceKeywords = false)
+            refreshPreferences(current)
             render()
         }
     }
 
     private fun saveInterests() {
         val current = host ?: return
-        val settings = recording ?: return
+        val settings = recording ?: run { onInterestsSaved?.invoke(false); return }
         if (!available || saving || current.isEndingTrip()) return
-        val values = if (interestGrid != null) {
-            interestDraft = interestDraft.withCustomText(keywords.text.toString())
-            interestDraft.valuesForSave()
-        } else {
-            InterestSelectionDraft.empty().withCustomText(keywords.text.toString()).valuesForSave()
-        }
-        if (values == null) {
-            notice.setText(R.string.records_keywords_invalid); return
-        }
+        val values = interestDraft.valuesForSave() ?: run { onInterestsSaved?.invoke(false); return }
         saving = true; render()
         observe(current, current.setInterestKeywords(values, settings.version), onFailure = {
             saving = false
-            notice.setText(R.string.records_operation_failed)
-            refreshPreferences(current, replaceKeywords = false)
+            refreshPreferences(current)
             render()
+            onInterestsSaved?.invoke(false)
         }) { stored ->
             saving = false; preferences = stored; recording = stored.recording
             bindInterests(stored.keywords)
-            notice.setText(R.string.records_keywords_saved); render()
-            onInterestsSaved?.invoke()
-        }
-    }
-
-    private fun refreshTrips(current: PetasosSessionHost) {
-        val serial = ++listRead
-        val prior = trips.getOrNull(selection.selectedItemPosition)?.tripId
-        observe(current, current.listTrips(), onFailure = { result.setText(R.string.records_operation_failed) }) { values ->
-            if (serial != listRead) return@observe
-            trips = values
-            updatingSelection = true
-            selection.adapter = ArrayAdapter(activity, android.R.layout.simple_spinner_item, values.map(formatter::label)).apply {
-                setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            }
-            val preferred = current.snapshot()?.tripId ?: prior
-            selection.setSelection(values.indexOfFirst { it.tripId == preferred }.coerceAtLeast(0))
-            updatingSelection = false
-            readSelected(current)
             render()
+            onInterestsSaved?.invoke(true)
         }
-    }
-
-    private fun readSelected(current: PetasosSessionHost) {
-        val serial = ++tripRead
-        val selected = trips.getOrNull(selection.selectedItemPosition)
-        if (selected == null) { result.setText(R.string.records_empty); return }
-        result.setText(R.string.records_loading)
-        observe(current, current.readTrip(selected.tripId), onFailure = {
-            if (serial == tripRead) result.setText(R.string.records_operation_failed)
-        }) { value ->
-            if (serial == tripRead) result.text = value?.let(formatter::format) ?: activity.getString(R.string.records_empty)
-        }
-    }
-
-    private fun endTrip() {
-        val current = host ?: return
-        val selected = trips.getOrNull(selection.selectedItemPosition) ?: return
-        if (!available || saving || selected.tripId != current.endableTripId() || current.isTripEndPending()) return
-        notice.setText(R.string.records_ending_trip)
-        observe(current, current.endTrip(selected.tripId), onFailure = {
-            notice.setText(R.string.records_end_unconfirmed); render()
-        }) {
-            notice.setText(R.string.records_ended_trip)
-            refreshTrips(current); render()
-        }
-        render()
     }
 
     private fun <T> observe(current: PetasosSessionHost, request: ListenableFuture<T>, onFailure: () -> Unit, onValue: (T) -> Unit) {
@@ -255,15 +177,23 @@ class TripControls(private val activity: Activity) {
     }
 
     private fun permissionGranted() = LocationAccess.hasRequiredPermissions(activity)
+
     private fun bindInterests(values: List<String>) {
-        interestDraft = InterestSelectionDraft.fromStored(values)
-        interestGrid?.render(interestDraft.selectedTags)
-        keywords.setText(if (interestGrid != null) interestDraft.customText else values.joinToString(", "))
+        interestDraft = try { InterestSelectionDraft.fromStored(values) } catch (_: IllegalArgumentException) { InterestSelectionDraft.empty() }
+        renderInterests()
+    }
+
+    private fun renderInterests() { grids.forEach { it.render(interestDraft.selectedTags) } }
+
+    private fun showNotice(resource: Int) {
+        notice.setText(resource)
+        notice.setTextColor(activity.getColor(R.color.negative))
+        notice.visibility = View.VISIBLE
     }
 
     private fun render() {
         val current = host
-        renderer.render(TripPresentationMapper.map(TripPresentationInput(
+        val state = TripPresentationMapper.map(TripPresentationInput(
             available = available,
             saving = saving,
             locationEnabled = recording?.locationEnabled,
@@ -271,12 +201,24 @@ class TripControls(private val activity: Activity) {
             hasPleosPermission = LocationAccess.hasPleosPermission(activity),
             endingTrip = current?.isEndingTrip() == true,
             requestingPermission = requestingPermission,
-            hasTrips = trips.isNotEmpty(),
+            hasTrips = false,
             tripEndPending = current?.isTripEndPending() == true,
-            selectedTripIsEndable = trips.getOrNull(selection.selectedItemPosition)?.tripId?.let {
-                it == current?.endableTripId()
-            } == true,
-        )))
+            selectedTripIsEndable = false,
+        ))
+        locationSwitch.checked = locationOn()
+        locationSwitch.isEnabled = state.locationToggleEnabled
+        val needsPermission = available && locationOn() && !permissionGranted()
+        permissionRow.visibility = if (needsPermission) View.VISIBLE else View.GONE
+        permission.setText(if (state.permissionStage == LocationPermissionStage.ANDROID)
+            R.string.settings_location_permission_android else R.string.settings_location_permission)
+        permission.isEnabled = state.permissionEnabled
+        grids.forEach { it.isEnabled = state.interestsEnabled }
+        saveSettings.isEnabled = state.interestsEnabled
+        saveOnboarding.isEnabled = state.interestsEnabled
+        if (notice.visibility == View.VISIBLE && notice.currentTextColor == activity.getColor(R.color.negative) && !needsPermission && available) {
+            // A stale permission error disappears once the platform grants it.
+            if (permissionGranted()) notice.visibility = View.GONE
+        }
     }
 
     companion object { const val LOCATION_REQUEST = 4802 }

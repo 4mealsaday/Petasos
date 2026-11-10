@@ -1,91 +1,79 @@
 package com.petasos.app.presentation
 
 import android.app.Activity
-import android.app.AlertDialog
-import android.content.pm.PackageManager
-import android.text.InputFilter
-import android.widget.EditText
 import android.view.View
 import android.widget.Button
-import android.widget.FrameLayout
-import android.widget.ScrollView
-import android.widget.CheckBox
 import android.widget.TextView
+import com.petasos.app.BuildConfig
 import com.petasos.app.R
 import com.petasos.app.platform.android.runtime.PetasosSessionHost
-import com.petasos.app.playback.PlaybackMode
-import com.petasos.app.capability.navigation.NavigationScreenCommand
-import com.petasos.app.capability.navigation.NavigationScreenCommands
-import com.petasos.app.capability.navigation.NavigationScreenCommandState
-import com.petasos.app.platform.pleos.navigation.PleosNavigationScreens
-import com.petasos.app.presentation.records.*
+import com.petasos.app.presentation.records.CurrentRegionLabel
+import com.petasos.app.presentation.records.RecordsDataSource
+import com.petasos.app.presentation.records.TripsScreen
 
 /** Page navigation and display only. Consent, playback and persistence remain with their owners. */
 class JourneyShell(private val activity: Activity, private val onPageChanged: () -> Unit) {
-    private enum class Page { HOME, RECORDS, SETTINGS }
+    private enum class Page(val viewId: Int, val parent: Page?) {
+        HOME(R.id.page_home, null),
+        TRIPS(R.id.page_trips, null),
+        SETTINGS(R.id.page_settings, null),
+        INTERESTS(R.id.page_interests, null),
+        SOURCES(R.id.page_sources, null),
+        ABOUT(R.id.page_about, null),
+        ONBOARD_INFO(R.id.page_onboarding_info, null),
+        ONBOARD_INTERESTS(R.id.page_onboarding_interests, null),
+    }
+
     private val preferences = activity.getSharedPreferences("journey_presentation", Activity.MODE_PRIVATE)
-    private var page = Page.HOME
-    private val records = RecordsPanel(activity)
-    private val caption = activity.findViewById<TextView>(R.id.journey_caption)
-    private val title = activity.findViewById<TextView>(R.id.journey_current_title)
-    private val navigationNotice = activity.findViewById<TextView>(R.id.journey_navigation_notice)
-    private val captionSwitch = activity.findViewById<CheckBox>(R.id.journey_caption_switch)
+    private val trips = TripsScreen(activity)
+    private var page = if (preferences.getBoolean(KEY_ONBOARDED, false)) Page.HOME else Page.ONBOARD_INFO
     private var source: RecordsDataSource? = null
     private var sourceHost: PetasosSessionHost? = null
     private var host: PetasosSessionHost? = null
     private var allowed = false
     private var disposed = false
-    private var searchDialog: AlertDialog? = null
-    private var optionsExpanded = false
     private var companionEnabled = false
     private var companionStopping = false
     private var companionNotice: String? = null
+    private var resetArmedAt = 0L
+    private var regionLabel: CurrentRegionLabel? = null
+    private var regionName: String? = null
     var onCompanionToggle: (() -> Unit)? = null
         set(value) { field = value; renderHome() }
-    private val navigation = NavigationScreenCommands(
-        permissionGranted = { activity.checkSelfPermission(PleosNavigationScreens.PERMISSION) == PackageManager.PERMISSION_GRANTED },
-        createGateway = { PleosNavigationScreens(activity.applicationContext) },
-        onState = { state -> navigationNotice.setText(when (state) {
-            NavigationScreenCommandState.IDLE -> R.string.journey_navigation_hint
-            NavigationScreenCommandState.CONNECTING -> R.string.journey_navigation_connecting
-            NavigationScreenCommandState.REQUESTED -> R.string.journey_navigation_requested
-            NavigationScreenCommandState.UNAVAILABLE -> R.string.journey_navigation_unavailable
-            NavigationScreenCommandState.PERMISSION_DENIED -> R.string.journey_navigation_permission
-        }) },
-    )
+    var onReturnToNavigation: (() -> Unit)? = null
+    var onOnboardingContinue: (() -> Unit)? = null
 
     init {
-        caption.movementMethod = android.text.method.ScrollingMovementMethod()
-        activity.findViewById<FrameLayout>(R.id.journey_records_container).addView(records,
-            FrameLayout.LayoutParams(-1, -1))
-        captionSwitch.isChecked = preferences.getBoolean("captions", true)
-        captionSwitch.setOnCheckedChangeListener { _, checked ->
-            savePresentationFlag("captions", checked)
-            renderContent()
+        bind(R.id.home_primary) {
+            if (companionEnabled) onReturnToNavigation?.invoke() else onCompanionToggle?.invoke()
         }
-        bind(R.id.journey_open_navigation) { navigation.request(NavigationScreenCommand.Foreground) }
-        bind(R.id.journey_search_destination) { searchDestination() }
-        bind(R.id.journey_show_route) { navigation.request(NavigationScreenCommand.CurrentRoute) }
-        bindHomeIcon(R.id.journey_companion_toggle, R.drawable.ic_petasos)
-        bindHomeIcon(R.id.journey_nav_records, R.drawable.ic_journey_album)
-        bind(R.id.journey_companion_toggle) { onCompanionToggle?.invoke() }
-        bind(R.id.journey_nav_listen) { go(Page.HOME) }
-        bind(R.id.journey_nav_records) { go(Page.RECORDS) }
-        bind(R.id.journey_nav_settings) { go(Page.SETTINGS) }
-        bind(R.id.journey_playback_options) {
-            optionsExpanded = !optionsExpanded
-            renderPages(); renderContent(); updateNavigationVisibility()
-        }
+        bind(R.id.home_stop) { onCompanionToggle?.invoke() }
+        bind(R.id.home_trips_card) { go(Page.TRIPS) }
+        bind(R.id.home_settings) { go(Page.SETTINGS) }
+        bind(R.id.trips_settings) { go(Page.SETTINGS) }
+        bind(R.id.trips_back) { go(Page.HOME) }
+        bind(R.id.settings_back) { go(Page.HOME) }
+        bind(R.id.settings_row_interests) { go(Page.INTERESTS) }
+        bind(R.id.settings_row_sources) { go(Page.SOURCES) }
+        bind(R.id.settings_row_about) { go(Page.ABOUT) }
+        bind(R.id.interests_back) { go(Page.SETTINGS) }
+        bind(R.id.sources_back) { go(Page.SETTINGS) }
+        bind(R.id.about_back) { go(Page.SETTINGS) }
+        bind(R.id.onboarding_continue) { onOnboardingContinue?.invoke(); go(Page.ONBOARD_INTERESTS) }
+        bind(R.id.onboarding_skip) { finishOnboarding() }
+        bind(R.id.settings_row_reset) { resetListening() }
+        activity.findViewById<TextView>(R.id.about_version).text = activity.getString(R.string.about_version, BuildConfig.VERSION_NAME)
+        val demoRows = if (BuildConfig.DEMO) View.VISIBLE else View.GONE
+        activity.findViewById<View>(R.id.settings_row_reset).visibility = demoRows
+        activity.findViewById<View>(R.id.settings_reset_divider).visibility = demoRows
         renderPages(); renderHome()
     }
 
-    val settingsVisible: Boolean get() = allowed && page == Page.SETTINGS
+    val sourcesVisible: Boolean get() = allowed && page == Page.SOURCES
 
     fun update(value: PetasosSessionHost?, available: Boolean, titleForStory: (String) -> String?, replay: (String) -> Unit) {
         if (disposed) return
-        if (value !== host || allowed != available) {
-            host?.setCaptionVisible(false)
-        }
+        if (value !== host || allowed != available) host?.setCaptionVisible(false)
         host = value; allowed = available
         if (sourceHost !== value) {
             sourceHost = value
@@ -94,25 +82,49 @@ class JourneyShell(private val activity: Activity, private val onPageChanged: ()
                 override fun readRegion(regionId: String) = current.readRecordsRegion(regionId)
                 override fun readTrip(tripId: String) = current.readRecordsTripMap(tripId)
                 override fun storyTitle(versionId: String) = titleForStory(versionId)
-                override fun replayStory(versionId: String) { if (allowed && host === current) { openAdvancedPlayback(); replay(versionId) } }
+                override fun replayStory(versionId: String) { if (allowed && host === current) replay(versionId) }
             } }
         }
-        listOf(R.id.journey_nav_listen, R.id.journey_nav_records, R.id.journey_nav_settings,
-            R.id.journey_playback_options, R.id.journey_caption_switch, R.id.journey_open_navigation,
-            R.id.journey_search_destination, R.id.journey_show_route).forEach { activity.findViewById<View>(it).isEnabled = available }
-        records.update(source, available && page == Page.RECORDS)
-        renderHome(); renderContent()
-        updateNavigationVisibility()
+        listOf(R.id.home_settings, R.id.home_trips_card, R.id.trips_settings, R.id.trips_back, R.id.settings_back,
+            R.id.settings_row_interests, R.id.settings_row_sources, R.id.settings_row_about, R.id.interests_back,
+            R.id.sources_back, R.id.about_back, R.id.onboarding_continue, R.id.onboarding_skip,
+        ).forEach { activity.findViewById<View>(it).isEnabled = available }
+        trips.update(source, available)
+        trips.setActive(available && page == Page.TRIPS)
+        syncRegionLabel()
+        renderHome()
+        updateReset()
     }
 
-    // Saving interests keeps the user in Settings; there is no introductory page or implicit start.
-    fun interestsSaved() = Unit
+    /** Called once interests were stored (true) or storing failed (false). */
+    fun interestsSaved(stored: Boolean = true) {
+        if (disposed) return
+        when (page) {
+            Page.ONBOARD_INTERESTS -> {
+                if (stored) finishOnboarding() else notice(R.id.onboarding_notice, R.string.interests_failed)
+            }
+            Page.INTERESTS -> {
+                if (stored) go(Page.SETTINGS) else notice(R.id.interests_notice, R.string.interests_failed)
+            }
+            else -> Unit
+        }
+    }
 
     /** Actual control owner supplies state; a tap never optimistically paints the app as ON. */
     fun updateCompanionState(enabled: Boolean, stopping: Boolean, notice: String? = null) {
         if (disposed) return
         companionEnabled = enabled; companionStopping = stopping; companionNotice = notice
+        syncRegionLabel()
         renderHome()
+        updateReset()
+    }
+
+    private fun syncRegionLabel() {
+        val wanted = if (allowed && companionEnabled && !companionStopping) host else null
+        if (regionLabel?.host === wanted) return
+        regionLabel?.stop(); regionLabel = null
+        if (wanted == null) { regionName = null; return }
+        regionLabel = CurrentRegionLabel(activity.applicationContext, wanted) { name -> regionName = name; renderHome() }.also { it.start() }
     }
 
     fun showHome() { if (!disposed) go(Page.HOME) }
@@ -120,146 +132,102 @@ class JourneyShell(private val activity: Activity, private val onPageChanged: ()
 
     private fun renderHome() {
         if (disposed) return
-        activity.findViewById<Button>(R.id.journey_companion_toggle).apply {
-            isEnabled = allowed && onCompanionToggle != null && !companionStopping
-            isSelected = companionEnabled
-            setText(when {
-                companionStopping -> R.string.journey_home_stopping
-                companionEnabled -> R.string.journey_home_on
-                else -> R.string.journey_home_off
-            })
+        val primary = activity.findViewById<Button>(R.id.home_primary)
+        val stop = activity.findViewById<Button>(R.id.home_stop)
+        val ready = allowed && onCompanionToggle != null && !companionStopping
+        primary.isEnabled = ready
+        stop.isEnabled = ready
+        stop.visibility = if (companionEnabled || companionStopping) View.VISIBLE else View.GONE
+        primary.setText(when {
+            companionStopping -> R.string.home_stopping
+            companionEnabled -> R.string.home_return_navigation
+            else -> R.string.home_start
+        })
+        activity.findViewById<TextView>(R.id.home_status_title).text = when {
+            (companionEnabled || companionStopping) && regionName != null -> activity.getString(R.string.home_on_title_region, regionName)
+            companionEnabled || companionStopping -> activity.getString(R.string.home_on_title)
+            else -> activity.getString(R.string.home_off_message)
         }
-        activity.findViewById<TextView>(R.id.journey_home_notice).apply {
+        activity.findViewById<TextView>(R.id.home_notice).apply {
             text = companionNotice.orEmpty()
             visibility = if (companionNotice.isNullOrBlank()) View.GONE else View.VISIBLE
         }
     }
 
-    private fun openAdvancedPlayback() {
-        optionsExpanded = true
-        if (page != Page.SETTINGS) go(Page.SETTINGS)
-        else { renderPages(); renderContent(); updateNavigationVisibility() }
-        activity.findViewById<ScrollView>(R.id.journey_settings_page).post {
-            if (!disposed && page == Page.SETTINGS && optionsExpanded)
-                activity.findViewById<View>(R.id.journey_listen_page).requestRectangleOnScreen(
-                    android.graphics.Rect(0, 0, 1, 1), false)
+    private fun updateReset() {
+        val row = activity.findViewById<View>(R.id.settings_row_reset)
+        row.isEnabled = allowed && !companionEnabled && !companionStopping
+        row.alpha = if (row.isEnabled) 1f else 0.45f
+    }
+
+    private fun resetListening() {
+        if (!BuildConfig.DEMO || !allowed || companionEnabled || companionStopping) {
+            if (companionEnabled) notice(R.id.settings_notice, R.string.settings_reset_busy)
+            return
+        }
+        val desc = activity.findViewById<TextView>(R.id.settings_reset_desc)
+        val now = android.os.SystemClock.elapsedRealtime()
+        if (now - resetArmedAt > 5_000) {
+            resetArmedAt = now
+            desc.setText(R.string.settings_reset_confirm)
+            desc.setTextColor(activity.getColor(R.color.negative))
+            desc.postDelayed({ if (!disposed) { resetArmedAt = 0; desc.setText(R.string.settings_reset_desc); desc.setTextColor(activity.getColor(R.color.text_sub)) } }, 5_000)
+            return
+        }
+        resetArmedAt = 0
+        desc.setText(R.string.settings_reset_desc)
+        desc.setTextColor(activity.getColor(R.color.text_sub))
+        com.petasos.app.storage.DemoListeningHistory.reset(activity.applicationContext) { ok ->
+            activity.runOnUiThread {
+                if (disposed) return@runOnUiThread
+                notice(R.id.settings_notice, if (ok) R.string.settings_reset_done else R.string.settings_reset_failed, error = !ok)
+                if (ok) trips.refresh()
+            }
         }
     }
 
-    fun onLowMemory() = Unit
-    fun saveTransientState() = Unit // No search text or live caption enters Activity saved state.
+    private fun notice(id: Int, text: Int, error: Boolean = true) {
+        activity.findViewById<TextView>(id).apply {
+            setText(text)
+            setTextColor(activity.getColor(if (error) R.color.negative else R.color.text_sub))
+            visibility = View.VISIBLE
+        }
+    }
+
+    fun onLowMemory() = trips.onLowMemory()
+    fun saveTransientState() = trips.saveTransientState() // No live text or map camera enters Activity saved state.
 
     fun dispose() {
         if (disposed) return
-        allowed = false; updateNavigationVisibility()
+        allowed = false
+        regionLabel?.stop(); regionLabel = null
         host?.setCaptionVisible(false); host = null; sourceHost = null; source = null
-        caption.text = ""; title.text = ""
-        records.dispose(); navigation.close()
+        trips.dispose()
         disposed = true
-    }
-
-    @android.annotation.SuppressLint("UseCompatLoadingForDrawables") // Native Activity and API 28+ framework vectors; no AppCompat theme or demo dependency.
-    private fun bindHomeIcon(buttonId: Int, drawableId: Int) {
-        val size = activity.resources.getDimensionPixelSize(R.dimen.journey_home_icon_size)
-        val icon = activity.getDrawable(drawableId)?.mutate()?.apply { setBounds(0, 0, size, size) }
-        activity.findViewById<Button>(buttonId).setCompoundDrawables(null, icon, null, null)
     }
 
     private fun bind(id: Int, action: () -> Unit) {
         activity.findViewById<View>(id).setOnClickListener { if (allowed) action() }
     }
 
-    // Native Activity/shared presentation has no required KTX dependency. Keep asynchronous apply.
-    @android.annotation.SuppressLint("UseKtx")
-    private fun savePresentationFlag(key: String, value: Boolean) { preferences.edit().putBoolean(key, value).apply() }
+    private fun finishOnboarding() {
+        preferences.edit().putBoolean(KEY_ONBOARDED, true).apply()
+        go(Page.HOME)
+    }
 
     private fun go(next: Page) {
         if (page == next) return
         page = next
-        renderPages(); renderContent(); updateNavigationVisibility()
-        records.update(source, allowed && page == Page.RECORDS)
+        renderPages()
+        trips.setActive(allowed && page == Page.TRIPS)
+        if (page == Page.TRIPS || page == Page.HOME) trips.refresh()
+        listOf(R.id.interests_notice, R.id.onboarding_notice, R.id.settings_notice).forEach { activity.findViewById<View>(it).visibility = View.GONE }
         onPageChanged()
     }
 
     private fun renderPages() {
-        fun visible(id: Int, show: Boolean) { activity.findViewById<View>(id).visibility = if (show) View.VISIBLE else View.GONE }
-        visible(R.id.journey_home_page, page == Page.HOME)
-        visible(R.id.journey_records_container, page == Page.RECORDS)
-        visible(R.id.journey_settings_page, page == Page.SETTINGS)
-        visible(R.id.journey_nav_listen, page != Page.HOME)
-        visible(R.id.journey_nav_settings, page == Page.RECORDS)
-        visible(R.id.journey_playback_options_body, optionsExpanded)
-        activity.findViewById<Button>(R.id.journey_playback_options).setText(
-            if (optionsExpanded) R.string.journey_playback_options_hide else R.string.journey_playback_options)
-        activity.findViewById<Button>(R.id.records_save_keywords).setText(R.string.records_keywords_save)
-        activity.findViewById<ScrollView>(R.id.journey_settings_page).scrollTo(0, 0)
+        Page.values().forEach { activity.findViewById<View>(it.viewId).visibility = if (it == page) View.VISIBLE else View.GONE }
     }
 
-    private fun renderContent() {
-        val current = host
-        val visible = allowed && page == Page.SETTINGS && optionsExpanded
-        current?.setCaptionVisible(visible && captionSwitch.isChecked)
-        if (!visible) { caption.text = ""; title.text = ""; return }
-        val state = current?.snapshot()
-        title.text = when {
-            state?.closed != false -> ""
-            state.mode == PlaybackMode.MUSIC -> state.musicCheckpoint?.track?.assetId?.let {
-                activity.getString(R.string.journey_title_music, current?.musicTitle(it).orEmpty(), current?.musicArtist(it).orEmpty())
-            }.orEmpty()
-            state.mode == PlaybackMode.STORY -> current?.selectedTitle().orEmpty()
-            else -> ""
-        }
-        val currentCaption = current?.currentCaption()
-        val captionText = when {
-            !captionSwitch.isChecked -> activity.getString(R.string.journey_caption_hidden)
-            currentCaption != null -> currentCaption.value
-            state?.mode == PlaybackMode.MUSIC -> activity.getString(R.string.journey_music_caption)
-            state?.mode == PlaybackMode.PAUSED -> activity.getString(R.string.journey_paused_caption)
-            else -> activity.getString(R.string.journey_caption_idle)
-        }
-        if (caption.text.toString() != captionText) { caption.text = captionText; caption.scrollTo(0, 0) }
-        activity.findViewById<Button>(R.id.playback_play).setText(if (state?.mode == PlaybackMode.PAUSED) R.string.journey_resume else R.string.playback_play)
-        val talkButton = activity.findViewById<View>(R.id.playback_talk)
-        talkButton.alpha = if (current?.supportsLiveInput() == true) 1f else 0.55f
-        talkButton.contentDescription = activity.getString(
-            if (current?.supportsLiveInput() == true) R.string.journey_talk_description else R.string.journey_talk_unavailable)
-    }
-
-    private fun updateNavigationVisibility() {
-        val active = allowed && page == Page.SETTINGS && optionsExpanded && !disposed
-        navigation.setAvailable(active)
-        if (!active) { searchDialog?.dismiss(); searchDialog = null }
-    }
-
-    private fun searchDestination() {
-        if (page != Page.SETTINGS || !optionsExpanded || disposed || !allowed || searchDialog != null) return
-        val input = EditText(activity).apply {
-            hint = activity.getString(R.string.journey_destination_hint)
-            inputType = android.text.InputType.TYPE_CLASS_TEXT
-            setSingleLine(true)
-            filters = arrayOf(InputFilter.LengthFilter(100))
-            isSaveEnabled = false
-            setSaveFromParentEnabled(false)
-            importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_NO_EXCLUDE_DESCENDANTS
-            setPadding(24, 16, 24, 16)
-        }
-        val dialog = AlertDialog.Builder(activity)
-            .setTitle(R.string.journey_search_destination)
-            .setMessage(R.string.journey_destination_explanation)
-            .setView(input)
-            .setNegativeButton(android.R.string.cancel, null)
-            .setPositiveButton(R.string.journey_destination_search, null)
-            .create()
-        searchDialog = dialog
-        dialog.setOnDismissListener { input.text.clear(); if (searchDialog === dialog) searchDialog = null }
-        dialog.setOnShowListener {
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-                val keyword = input.text.toString().trim()
-                if (keyword.isBlank()) { input.error = activity.getString(R.string.journey_destination_required); return@setOnClickListener }
-                if (allowed && !disposed && page == Page.SETTINGS && optionsExpanded) navigation.request(NavigationScreenCommand.Search(keyword))
-                dialog.dismiss()
-            }
-        }
-        dialog.show()
-    }
+    private companion object { const val KEY_ONBOARDED = "onboarded" }
 }

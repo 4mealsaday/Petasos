@@ -128,7 +128,7 @@ class CompanionLocationService : Service() {
     private fun notification(recording: Boolean): Notification {
         val open = PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), PendingIntent.FLAG_IMMUTABLE)
         return Notification.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_petasos)
+            .setSmallIcon(R.drawable.ic_petasos_mark)
             .setContentTitle(getString(R.string.app_name))
             .setContentText(getString(if (recording) R.string.companion_service_recording else R.string.companion_service_connecting))
             .setContentIntent(open)
