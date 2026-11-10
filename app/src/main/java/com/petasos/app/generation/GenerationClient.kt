@@ -430,7 +430,10 @@ class ApiRuntimeGeneration(
                     "target=${outcome.value.targetContentId} text=${outcome.value.paragraphs.joinToString(" ") { it.text.value }}")
             }
             callback(when (outcome) {
-                is GenerationOutcome.Failure -> RuntimeGenerationResult.Failure(outcome.failure.kind == GenerationFailureKind.RETRYABLE, outcome.failure.retryAfterMs)
+                is GenerationOutcome.Failure -> RuntimeGenerationResult.Failure(
+                    outcome.failure.kind == GenerationFailureKind.RETRYABLE, outcome.failure.retryAfterMs,
+                    // No device configuration, TLS trouble or an I/O error: the server is not reachable.
+                    unreachable = outcome.failure.kind == GenerationFailureKind.CONFIGURATION || outcome.failure.kind == GenerationFailureKind.RETRYABLE)
                 is GenerationOutcome.Success -> {
                     val answer = outcome.value
                     // Runtime's command-routing contract is not implemented yet. Never silently execute/ignore

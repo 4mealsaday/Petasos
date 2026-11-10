@@ -702,7 +702,7 @@ class PetasosSessionHost(
         musicPlanning = AutomaticMusicPlaybackBridge(musicCatalog::automaticCandidates, object : PlannedMusicOutput {
             override fun offer(track: PreparedMusic) { runtime?.dispatch(PlaybackEvent.OfferMusic(track)) }
             override fun withdraw(assetId: String) { runtime?.dispatch(PlaybackEvent.ClearOfferedMusic(assetId)) }
-        })
+        }, requireStoryFirst = BuildConfig.DEMO)
         val bridge = object : RuntimePersistence by persistence {
             private val outputReferences = mutableMapOf<OperationToken, OutputReference>()
             override fun registerOutput(attempt: OperationToken, reference: OutputReference, turnId: String?) {
@@ -831,7 +831,7 @@ class PetasosSessionHost(
                 restoredMusicRequiredBeforeAutomaticStory = candidate?.requireMusicBeforeAutomaticStory == true,
                 firstSpeechMs = if (BuildConfig.DEMO) DEMO_FIRST_SPEECH_MS else 5_000),
             queue, AndroidRuntimeClock, bridge, inputOutput,
-            generation = ApiRuntimeGeneration(client) { request -> persistence.answerContext(request) { live.isGenerationCurrent(request) } },
+            generation = ApiRuntimeGeneration(client) { request -> persistence.answerContext(request, { live.isGenerationCurrent(request) }, currentRegionId) },
             music = musicOutput,
             contentAuthority = planner,
             resumePlanner = ContentCheckedResumePlanner(delegate = resume, storyCurrent = { story ->

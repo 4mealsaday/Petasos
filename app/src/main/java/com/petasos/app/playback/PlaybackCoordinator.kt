@@ -80,6 +80,7 @@ class PlaybackCoordinator(
     private var resumeSelection: StoryCheckpoint? = null
     private var resumeMusicSelection: MusicCheckpoint? = null
     private var failureNotice = false
+    private var failureUnreachable = false
     private var commandNotice: String? = null
     private val emitted = mutableListOf<PlaybackEffect>()
 
@@ -533,7 +534,7 @@ class PlaybackCoordinator(
         if (request.waitingRetry) return "retry_already_scheduled"
         val remaining = request.deadline - now
         if (!event.retryable || request.attempt >= 2 || event.retryAfterMs < 0 || event.retryAfterMs >= remaining) {
-            failGeneration()
+            failGeneration(event.unreachable || event.retryable)
         } else if (event.retryAfterMs == 0L) retryGeneration()
         else {
             request.waitingRetry = true
@@ -596,7 +597,7 @@ class PlaybackCoordinator(
                 emitted += PlaybackEffect.RequestInput(active.token, turn.id)
                 schedule(TimerKind.INPUT_READY, now + 3_000)
             }
-            PlaybackMode.GENERATING -> if (failureNotice) startOutput(Purpose.FAILURE, OutputReference.FixedPrompt("generation-failed"))
+            PlaybackMode.GENERATING -> if (failureNotice) startOutput(Purpose.FAILURE, OutputReference.FixedPrompt(if (failureUnreachable) "generation-failed" else "generation-misheard"))
                 else if (generation == null && currentTurn()?.answerCommit == null) beginResume(now, afterInteraction = true)
             PlaybackMode.ANSWERING -> {
                 val turn = currentTurn() ?: return
@@ -647,7 +648,9 @@ class PlaybackCoordinator(
         emitted += PlaybackEffect.GenerateAnswer(request.token, turn.id, turn.utterance!!, request.attempt)
     }
 
-    private fun failGeneration() {
+    /** A deadline/timer expiry counts as an unreachable server; an explicit non-connection failure does not. */
+    private fun failGeneration(unreachable: Boolean = true) {
+        failureUnreachable = unreachable
         generation?.let { emitted += PlaybackEffect.CancelRequest(it.token) }
         generation = null
         cancelTimer(TimerKind.GENERATION); cancelTimer(TimerKind.GENERATION_RETRY)

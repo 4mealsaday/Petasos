@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="overlay_talk_button_description">Petasos에게 말하기</string>
+    <string name="overlay_card_waiting">출발하면 이야기를 들려드릴게요</string>
     <string name="overlay_card_idle">Petasos가 함께하고 있어요</string>
 </resources>

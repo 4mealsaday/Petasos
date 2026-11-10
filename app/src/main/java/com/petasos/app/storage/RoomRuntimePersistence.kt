@@ -48,8 +48,8 @@ class RoomRuntimePersistence internal constructor(
     /** Resolves a currently permitted, complete installed version without starting playback. */
     override fun prepareStory(versionId: String): PreparedStory = content.prepareStory(versionId)
 
-    fun answerContext(request: RuntimeGenerationRequest, isRuntimeCurrent: () -> Boolean): AnswerGenerationContext? =
-        content.answerContext(request, isRuntimeCurrent)
+    fun answerContext(request: RuntimeGenerationRequest, isRuntimeCurrent: () -> Boolean, regionId: String? = null): AnswerGenerationContext? =
+        content.answerContext(request, isRuntimeCurrent, regionId)
 
     private data class ActiveOutput(val token: OperationToken, val reference: OutputReference)
     private val activeOutputs = mutableMapOf<String, ActiveOutput>()
@@ -336,6 +336,7 @@ class RoomRuntimePersistence internal constructor(
     private fun fixedPrompt(assetId: String): String = when (assetId) {
         "talk-prompt" -> "말씀해 주세요."
         "generation-failed", "generation-unavailable" -> "지금은 답변 서버에 연결할 수 없어요."
+        "generation-misheard" -> "잘 못 들었어요. 다시 눌러 주세요."
         "command-music-unavailable" -> "재생할 수 있는 음악이 준비되어 있지 않습니다."
         "command-replay-unavailable" -> "다시 재생할 콘텐츠가 없습니다."
         else -> throw RuntimeContentUnavailable()

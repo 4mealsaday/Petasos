@@ -74,6 +74,8 @@ class CompanionOverlay(private val context: Context, private val host: PetasosSe
         val text = card.findViewById<TextView>(R.id.overlay_card_text)
         val snapshot = host.snapshot()
         val caption = when (snapshot?.mode) {
+            // Nothing is selected yet (region not confirmed): stay silent and say so.
+            PlaybackMode.IDLE -> context.getString(R.string.overlay_card_waiting)
             PlaybackMode.TALK_PENDING -> context.getString(R.string.playback_talk_pending)
             PlaybackMode.PROMPT -> context.getString(R.string.overlay_card_speak_now)
             PlaybackMode.LISTENING -> context.getString(R.string.playback_listening)

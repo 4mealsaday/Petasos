@@ -786,7 +786,7 @@ class PlaybackRuntime(
                         when (result) {
                             is RuntimeGenerationResult.Failure -> {
                                 if (!result.retryable) observer.onIssue(RuntimeIssue.GENERATION_UNAVAILABLE)
-                                process(PlaybackEvent.AnswerFailed(effect.request, result.retryable, result.retryAfterMs), fence)
+                                process(PlaybackEvent.AnswerFailed(effect.request, result.retryable, result.retryAfterMs, result.unreachable), fence)
                             }
                             is RuntimeGenerationResult.Success -> {
                                 val handle = PayloadHandle(nextHandle())

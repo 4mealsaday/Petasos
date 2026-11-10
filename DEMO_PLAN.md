@@ -94,13 +94,20 @@
 
 **5단계 — 제출물** (진행: release APK·README·GPX·비밀값 검사 완료, 시연 영상 녹화는 남음)
 - 이야기 2문단: S01·S03·S05·S08·S10을 문장 경계에서 2문단으로 분리(새 사실 없음), version 2·콘텐츠 해시 갱신. 사실이 하나뿐이라 "한 사실은 한 문단" 검사를 "같은 리비전 재사용 허용, 다른 리비전 혼용 거부"로 완화(서버·`ContentBundleCodec`·`RoomContentInstaller`). release에서 S01 1문단 중 말하기 → 실패 안내 → S01 2문단 복귀 확인(서버 답변 경로의 2문단 복귀는 직접 보지 못함, 복귀 로직은 공유).
-- release APK: `apk/Petasos_Petasos_release.apk`(60MB, git 제외 → GitHub Release 첨부). release도 `BuildConfig.DEMO=true`, debug 전용 receiver는 미포함, 로컬 키(`.local/android/`)로 서명. 앱 삭제 후 새 설치 → 서버·reverse 없이 ON → GPS 전 구간 → 이야기 → OFF → 기록(지역 17·이야기 카드 8, 오류 표시 없음) 통과. 서버 없는 말하기는 카드에 "지금은 답변 서버에 연결할 수 없어요." 후 이야기 복귀.
+- release APK: `apk/Petasos_Petasos_release.apk`(60MB, git에 커밋). release도 `BuildConfig.DEMO=true`, debug 전용 receiver는 미포함, 로컬 키(`.local/android/`)로 서명. 앱 삭제 후 새 설치 → 서버·reverse 없이 ON → GPS 전 구간 → 이야기 → OFF → 기록(지역 17·이야기 카드 8, 오류 표시 없음) 통과. 서버 없는 말하기는 카드에 "지금은 답변 서버에 연결할 수 없어요." 후 이야기 복귀.
 - 서버 연결(release 포함): 토큰·CA를 `/data/local/tmp/petasos-demo/`에 `adb push`하면 `DemoServerSetup`이 읽어 암호화 저장·localhost 한정 CA 신뢰(사용자 10의 앱 저장소는 adb 접근 불가라 이 경로). release + 로컬 서버로 질문 1회 성공(인식 "서울역은 언제 지어졌어?" → "…1925년에 완공…", 인식 후 약 2.3초).
 - 카드: 터치 가능·불투명 1.0, 창 크기를 카드 모양에 맞춤(투명 여백이 터치를 먹지 않음), 카드 밖 지도 터치 통과 확인. 서버 실패 문구가 카드에 보이도록 GENERATING 중 캡션 우선 표시.
 - GPX: `demo/route.gpx`(255점, 4.8분, `demo_route.py --gpx`). Extended controls에서의 실제 재생은 미확인.
 - 비밀값 검사: git 전체 이력 29커밋에서 `.env` 값·토큰·서명 비밀번호 일치 0, OpenRouter/AWS/개인키 패턴 0, 추적된 인증서는 debug 공개 CA뿐. 원격 저장소 없음(push 명령만 준비).
 - 내비 GPS 조사: 에뮬레이터 NMEA 체크섬이 `*47` 고정이라 내비 `NmeaParser`가 전부 거부(원인 확정). 올바른 체크섬 NMEA(`adb emu geo nmea`, 에뮬레이터와 같은 필드 형식)는 HAL이 받지만 내비 엔진 위치(`[mm] org(127.094681,37.4127212) sat(0)`)는 고정 → 해결 못 함, `demo_route.py` 옵션 없음. `getCurrentLocationInfo`는 활성 경로가 없어 확인 못 함.
-- 환경 메모: Mac 출력 볼륨이 낮으면(50%) `say` 음성이 STT에 안 잡힘(85% 정상). ON 직후 첫 출력은 음악이라 이야기를 한 문단 듣기 전 말하면 답변 근거가 없어 같은 실패 문구가 나옴.
+- 환경 메모: Mac 출력 볼륨이 낮으면(50%) `say` 음성이 STT에 안 잡힘(85% 정상). (아래 "녹화 전 마지막 수정"으로 해결: ON 직후 말해도 서버가 답함.)
+
+**5단계 후속 — 녹화 전 마지막 수정** (release 새 설치로 확인)
+- 시작: 지역 확정 전에는 아무것도 재생하지 않고 카드에 "출발하면 이야기를 들려드릴게요". 음악 제공은 DEMO에서 "이번 세션에 이야기가 시작된 뒤"로 제한(`AutomaticMusicPlaybackBridge(requireStoryFirst)`), 그래서 음악은 이야기 사이에만. 서울역 위치로 새 설치 → ON → 대기 카드 → S01 1문단 → 2문단 → 음악 순서 확인(첫 소리 = S01).
+- 맥락 없는 질문: 와이어 스키마(`minItems: 0`)와 서버는 이미 빈 맥락을 허용해서 계약 변경 없이, 앱이 DEMO에서 이야기를 아직 못 들었을 때 현재 지역 이름("현재 위치: 서울특별시 중구. 아직 들려드린 이야기는 없습니다.")만 `contextSummary`에 담도록 함(`RoomContentContext`). 서버 프롬프트 petasos-v0.8-5는 이 경우 지역을 장소 힌트로 일반 지식 답변("일반적으로 알려진 바로는" 유지). 경로 밖 위치에서 이야기 전 질문 → 서버 답변, 답변 후 다시 대기 카드(음악 없음) 확인.
+- 실패 문구: 연결 못 함(구성 없음·TLS·I/O·타이머 만료)만 "지금은 답변 서버에 연결할 수 없어요.", 그 밖의 실패는 "잘 못 들었어요. 다시 눌러 주세요."(`RuntimeGenerationResult.Failure.unreachable` → 고정 프롬프트 `generation-misheard`). 서버를 끈 상태와 토큰 만료(인증 거부) 상태에서 각각 확인.
+- 서버 켠 상태에서 S01 1문단 중 질문 → 인식 "서울역은 언제 지어졌어?" → 답변("일반적으로 알려진 바로는, 서울역은 1925년에 완공…") → S01 2문단 → 음악 확인.
+- 테스트: 서버 306개 중 실패 71(관광 API 계약 테스트·옛 promptVersion 기대값 등 이번 변경과 무관, 미정리), JVM 963개 중 `CaptioningRuntimeSpeechTest` 2개 실패(4단계 자막 권한 재검사 제거의 영향, 미정리).
 
 ## 5. 개발 원칙 (이전 방식에서 바꾸는 점)
 - 새 기능마다 문서·증거 JSON·probe를 만들지 않는다. 변경 내역은 git 커밋 메시지로 충분.

@@ -237,7 +237,8 @@ sealed interface RuntimeGenerationResult {
     class Success(val answer: RuntimeAnswer) : RuntimeGenerationResult {
         override fun toString(): String = "Success([redacted])"
     }
-    data class Failure(val retryable: Boolean, val retryAfterMs: Long = 0) : RuntimeGenerationResult
+    /** [unreachable]: the answer server itself could not be reached (selects the connection notice). */
+    data class Failure(val retryable: Boolean, val retryAfterMs: Long = 0, val unreachable: Boolean = false) : RuntimeGenerationResult
 }
 
 interface RuntimeGeneration {

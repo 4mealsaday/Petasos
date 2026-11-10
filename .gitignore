@@ -17,5 +17,3 @@ __pycache__/
 *.pyc
 
 
-# Release APK is attached to a GitHub Release, not committed
-/apk/

@@ -41,9 +41,14 @@ internal class RoomContentContext(
     }
 
     /** Public narrative only: no saved conversation summary, prior user text, or unplayed answer body. */
-    fun answerContext(request: RuntimeGenerationRequest, isRuntimeCurrent: () -> Boolean): AnswerGenerationContext? {
+    /**
+     * [regionId] lets the DEMO build answer before any story was heard: the context then carries only the
+     * current region's name (no sources, no facts), and the server answers from general knowledge.
+     */
+    fun answerContext(request: RuntimeGenerationRequest, isRuntimeCurrent: () -> Boolean, regionId: String? = null): AnswerGenerationContext? {
         if (!current(isRuntimeCurrent)) return null
-        val initial = snapshotOrNull(request) ?: return null
+        val allowEmpty = com.petasos.app.BuildConfig.DEMO
+        val initial = snapshotOrNull(request, allowEmpty, regionId) ?: return null
         if (!current(isRuntimeCurrent)) return null
         return AnswerGenerationContext(
             turnVersion = initial.turnVersion, routeRevision = null, contextSummary = initial.context,
@@ -51,7 +56,7 @@ internal class RoomContentContext(
             approvedFactSources = initial.facts, approvedFactKinds = initial.kinds,
             allowedActions = mapOf("continue" to setOf(null), "unsupported" to setOf(null)),
             isCurrent = {
-                current(isRuntimeCurrent) && snapshotOrNull(request)?.fingerprint == initial.fingerprint && current(isRuntimeCurrent)
+                current(isRuntimeCurrent) && snapshotOrNull(request, allowEmpty, regionId)?.fingerprint == initial.fingerprint && current(isRuntimeCurrent)
             },
         )
     }
@@ -64,13 +69,13 @@ internal class RoomContentContext(
     private class Heard(val paragraphId: String, val versionId: String, val completedAt: Long)
     private class Fact(val id: String, val kind: String, val sources: List<String>, val state: Map<String, Any?>)
 
-    private fun snapshotOrNull(request: RuntimeGenerationRequest): Snapshot? = try {
-        database.runInTransaction(Callable { snapshot(request) })
+    private fun snapshotOrNull(request: RuntimeGenerationRequest, allowEmpty: Boolean, regionId: String?): Snapshot? = try {
+        database.runInTransaction(Callable { snapshot(request, allowEmpty, regionId) })
     } catch (_: RuntimeContentUnavailable) { null }
     catch (failure: StorageUnavailable) { throw failure }
     catch (_: Exception) { throw StorageUnavailable("content_context_storage_failure") }
 
-    private fun snapshot(request: RuntimeGenerationRequest): Snapshot? {
+    private fun snapshot(request: RuntimeGenerationRequest, allowEmpty: Boolean, regionId: String?): Snapshot? {
         val turn = query("SELECT t.turn_version,t.session_id,t.lifecycle,t.frozen,t.utterance_finalized_at,s.status,s.cancel_epoch,p.payload_version,p.ciphertext,p.nonce,p.key_version,p.payload_hash FROM conversation_turn t JOIN session s ON s.session_id=t.session_id JOIN pending_conversation p ON p.turn_id=t.turn_id WHERE t.turn_id=?", request.turnId).use {
             if (!it.moveToFirst() || it.getString(1) != request.request.sessionId || it.getString(2) != "open" ||
                 it.getInt(3) != 0 || it.isNull(4) || it.getString(5) != "active" || it.getLong(6) != request.request.cancelEpoch ||
@@ -123,14 +128,29 @@ internal class RoomContentContext(
                 "completedAt" to candidate.completedAt, "versionHash" to versionHash, "text" to paragraph,
                 "facts" to paragraphFacts.map { it.state })
         }
-        if (selected.isEmpty() || sources.isEmpty() || facts.isEmpty()) return null
+        if (selected.isEmpty()) {
+            if (!allowEmpty) return null
+        } else if (sources.isEmpty() || facts.isEmpty()) return null
         val fingerprint = ContentBundleCodec.sha256(StrictJson.stringify(mapOf(
             "sessionId" to request.request.sessionId, "turnId" to request.turnId, "turnVersion" to turn.first,
             "cancelEpoch" to request.request.cancelEpoch, "payloadHash" to turn.second,
             "paragraphs" to selected, "sources" to sources,
         )).toByteArray(Charsets.UTF_8))
-        return Snapshot(turn.first, bodies.asReversed().joinToString("\n"), paragraphIds.asReversed().toList(),
+        val summary = if (selected.isEmpty()) emptyContextSummary(regionId) else bodies.asReversed().joinToString("\n")
+        return Snapshot(turn.first, summary, paragraphIds.asReversed().toList(),
             sources.keys.sorted(), facts.toMap(), kinds.toMap(), fingerprint)
+    }
+
+    /** "현재 위치: 서울특별시 중구. 아직 들려드린 이야기는 없습니다." -- a place hint only, never evidence. */
+    private fun emptyContextSummary(regionId: String?): String {
+        val row = regionId?.let { id ->
+            query("SELECT code,name FROM region_revision WHERE region_id=? ORDER BY dataset_version DESC LIMIT 1", id).use {
+                if (it.moveToFirst()) it.getString(0) to it.getString(1) else null
+            }
+        }
+        val province = row?.first?.take(2)?.let(PROVINCES::get)
+        val place = listOfNotNull(province, row?.second?.takeIf { it.isNotBlank() }).distinct().joinToString(" ")
+        return if (place.isEmpty()) "" else "현재 위치: $place. 아직 들려드린 이야기는 없습니다."
     }
 
     private fun readFacts(paragraphId: String): List<Fact> {
@@ -178,4 +198,11 @@ internal class RoomContentContext(
     private fun current(callback: () -> Boolean): Boolean = try { callback() } catch (_: Exception) { false }
     private fun query(statement: String, vararg arguments: Any?): Cursor = sql.query(SimpleSQLiteQuery(statement, arguments))
     private fun unavailable(code: String): Nothing = throw RuntimeContentUnavailable(code)
+
+    private companion object {
+        val PROVINCES = mapOf("11" to "서울특별시", "26" to "부산광역시", "27" to "대구광역시", "28" to "인천광역시", "29" to "광주광역시",
+            "30" to "대전광역시", "31" to "울산광역시", "36" to "세종특별자치시", "41" to "경기도", "42" to "강원특별자치도",
+            "43" to "충청북도", "44" to "충청남도", "45" to "전북특별자치도", "46" to "전라남도", "47" to "경상북도", "48" to "경상남도",
+            "50" to "제주특별자치도")
+    }
 }

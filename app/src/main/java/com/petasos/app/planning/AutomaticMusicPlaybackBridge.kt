@@ -25,12 +25,15 @@ interface PlannedMusicOutput {
 class AutomaticMusicPlaybackBridge(
     private val candidates: () -> List<AutomaticMusicCandidate>,
     private val output: PlannedMusicOutput,
+    /** DEMO: music only separates stories, so nothing is offered until a story started in this session. */
+    private val requireStoryFirst: Boolean = false,
 ) {
     private var sessionId: String? = null
     private var observedRevision = -1L
     private var eligible = false
     private var offered: AutomaticMusicCandidate? = null
     private var lastSelectedAssetId: String? = null
+    private var storyStartedThisSession = false
 
     /** The exact queued track, rather than an arbitrary catalog duration, determines the gap. */
     fun offeredDurationMs(): Long? = offered?.track?.durationMs
@@ -43,6 +46,9 @@ class AutomaticMusicPlaybackBridge(
         observedRevision = state.stateRevision
         val selected = transition.effects.filterIsInstance<PlaybackEffect.StartOutput>()
             .mapNotNull { it.reference as? OutputReference.MusicTrack }.lastOrNull()
+        if (transition.effects.filterIsInstance<PlaybackEffect.StartOutput>().any { it.reference is OutputReference.StoryParagraph }) {
+            storyStartedThisSession = true
+        }
         if (selected != null) {
             lastSelectedAssetId = selected.assetId
             if (offered?.track?.assetId == selected.assetId) offered = null
@@ -69,6 +75,7 @@ class AutomaticMusicPlaybackBridge(
         observedRevision = -1
         eligible = false
         lastSelectedAssetId = null
+        storyStartedThisSession = false
     }
 
     private fun useSession(state: PlaybackSnapshot) {
@@ -79,7 +86,8 @@ class AutomaticMusicPlaybackBridge(
     }
 
     private fun canOffer(state: PlaybackSnapshot): Boolean = !state.closed && state.blockers.isEmpty() &&
-        (state.playIntent || state.interactionIntent)
+        (state.playIntent || state.interactionIntent) &&
+        (!requireStoryFirst || storyStartedThisSession)
 
     private fun supply(state: PlaybackSnapshot) {
         val available = try {

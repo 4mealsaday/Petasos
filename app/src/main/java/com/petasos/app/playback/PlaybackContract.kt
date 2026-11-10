@@ -95,7 +95,7 @@ sealed interface PlaybackEvent {
     data class UtteranceCommitted(val commit: OperationToken, val storedPayload: PayloadHandle?) : PlaybackEvent
     data class ExplicitCommandResolved(val request: OperationToken, val command: ExplicitPlaybackCommand) : PlaybackEvent
     data class AnswerReceived(val request: OperationToken, val answer: ValidatedAnswer) : PlaybackEvent
-    data class AnswerFailed(val request: OperationToken, val retryable: Boolean, val retryAfterMs: Long = 0) : PlaybackEvent
+    data class AnswerFailed(val request: OperationToken, val retryable: Boolean, val retryAfterMs: Long = 0, val unreachable: Boolean = false) : PlaybackEvent
     data class AnswerCommitted(val commit: OperationToken, val storedAnswer: ValidatedAnswer?) : PlaybackEvent
     /** A content permission check rejected this write; the database remains available. */
     data class AnswerContentRejected(val commit: OperationToken) : PlaybackEvent
