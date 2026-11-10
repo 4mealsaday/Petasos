@@ -1352,7 +1352,7 @@ class PetasosSessionHost(
             val now = SystemClock.elapsedRealtime()
             val allowOffer = state.playIntent && state.blockers.isEmpty()
             if (!allowOffer) planningBoundary = PlanningBoundaryMemory()
-            val observedBoundary = if (allowOffer) lookahead?.nextStoryStartElapsedMs(state, now, musicPlanning?.offeredDurationMs()) {
+            val observedBoundary = if (allowOffer) lookahead?.nextStoryStartElapsedMs(state, now, musicPlanning?.offeredDurationMs()?.let { if (BuildConfig.DEMO) minOf(it, Media3RuntimeMusic.DEMO_MUSIC_DURATION_MS) else it }) {
                 storyTiming?.paragraphDurations(it)
             } else null
             val boundary = if (allowOffer) planningBoundary.resolve(state, observedBoundary, now,

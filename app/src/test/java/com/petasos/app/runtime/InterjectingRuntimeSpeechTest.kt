@@ -85,6 +85,18 @@ class InterjectingRuntimeSpeechTest {
         assertEquals(1, adapter.spoken.size)
     }
 
+    @Test fun focusRegainedAfterTheCutOffSentenceStillReachesTheParagraphOwner() {
+        speech.startOutput(token, RuntimeText("첫 문장이에요. 둘째 문장이에요.")) { events += it }
+        val callback = adapter.callbacks.last().second
+        // A navigation prompt takes focus: the adapter reports it, then the physical stop.
+        callback(RuntimeOutputEvent.FOCUS_TRANSIENT)
+        callback(RuntimeOutputEvent.STOPPED)
+        assertEquals(listOf(RuntimeOutputEvent.STARTED, RuntimeOutputEvent.FOCUS_TRANSIENT, RuntimeOutputEvent.STOPPED), events)
+        // Much later the adapter regains focus on that old sentence's registration.
+        callback(RuntimeOutputEvent.FOCUS_REGAINED)
+        assertEquals(RuntimeOutputEvent.FOCUS_REGAINED, events.last())
+    }
+
     @Test fun stopDuringAnAnnouncementStopsTheParagraph() {
         speech.startOutput(token, RuntimeText("첫 문장이에요. 둘째 문장이에요.")) { events += it }
         speech.interject({ announcement() }) { }

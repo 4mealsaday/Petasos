@@ -11,19 +11,20 @@ class ReviewedMusicBundleTest {
     @Test fun packagedOriginalMatchesItsReviewedManifestAndCreditNotice() {
         val root = listOf(File("src/main/assets/music"), File("app/src/main/assets/music")).first { it.isDirectory }
         val bundle = ReviewedMusicBundleCodec.decode(File(root,"manifest.json").readBytes())
-        assertEquals(1,bundle.entries.size)
-        val entry = bundle.entries.single()
-        val bytes = File(root,entry.bundledPath.substringAfter("music/")).readBytes()
-        assertEquals(entry.asset.expectedBytes,bytes.size.toLong())
-        assertEquals(entry.asset.sha256,ReviewedMusicBundleCodec.sha256(bytes))
-        assertEquals(68_545L,entry.credit.track.durationMs)
-        assertEquals("CC-BY-4.0",entry.credit.licenseName)
-        assertEquals(Long.MAX_VALUE,entry.asset.rightsValidUntilMs)
+        assertEquals(4,bundle.entries.size)
+        assertEquals(68_545L,bundle.entries.first().credit.track.durationMs)
         val notice = File(root,"CREDITS.txt").readText()
-        assertTrue(notice.contains(entry.credit.track.title))
-        assertTrue(notice.contains(entry.credit.track.artist))
-        assertTrue(notice.contains(entry.credit.licenseUrl))
-        assertTrue(notice.contains(entry.credit.sourceUrl))
+        bundle.entries.forEach { entry ->
+            val bytes = File(root,entry.bundledPath.substringAfter("music/")).readBytes()
+            assertEquals(entry.asset.expectedBytes,bytes.size.toLong())
+            assertEquals(entry.asset.sha256,ReviewedMusicBundleCodec.sha256(bytes))
+            assertEquals("CC-BY-4.0",entry.credit.licenseName)
+            assertEquals(Long.MAX_VALUE,entry.asset.rightsValidUntilMs)
+            assertTrue(notice.contains(entry.credit.track.title))
+            assertTrue(notice.contains(entry.credit.track.artist))
+            assertTrue(notice.contains(entry.credit.licenseUrl))
+            assertTrue(notice.contains(entry.credit.sourceUrl))
+        }
     }
 
     @Test fun missingOrAmbiguousRightsAndUnknownFieldsFailClosed() {

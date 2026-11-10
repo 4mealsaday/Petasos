@@ -126,7 +126,7 @@
     <!-- Data sources / about -->
     <string name="sources_title">데이터 출처</string>
     <string name="sources_public_title">공공데이터</string>
-    <string name="sources_public_body">지역 경계: 국토지리정보원·브이월드 (CC BY 2.0 KR). 화면용으로 단순화했고 도로 안내 지도가 아니에요.</string>
+    <string name="sources_public_body">지역 경계: 국토지리정보원·브이월드 (CC BY 2.0 KR). 화면용으로 단순화했고 도로 안내 지도가 아니에요.\n이야기·창밖 안내: 한국관광공사 TourAPI·Odii, 문화체육관광부·농촌진흥청·국토교통부·국사편찬위원회(공공누리 제1유형), 한국학중앙연구원 한국민족문화대백과사전(청계산 사실). 사실 중심으로 새로 다듬어 옮겼어요.</string>
     <string name="sources_map_title">지도</string>
     <string name="sources_map_body">내 여행의 지도는 NAVER 지도예요.</string>
     <string name="sources_music_title">음악</string>

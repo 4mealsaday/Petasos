@@ -169,8 +169,16 @@ class InterjectingRuntimeSpeech(
         }
     }
 
+    private fun isFocusEvent(event: RuntimeOutputEvent) = event == RuntimeOutputEvent.FOCUS_REGAINED ||
+        event == RuntimeOutputEvent.FOCUS_TRANSIENT || event == RuntimeOutputEvent.FOCUS_LOST
+
     private fun onSentenceEvent(up: Upstream, sub: OperationToken, text: String, event: RuntimeOutputEvent) {
-        if (upstream !== up || up.sub != sub) return
+        if (upstream !== up || up.sub != sub) {
+            // Focus recovery outlives the sentence that was cut off (a navigation voice prompt took focus and the
+            // adapter keeps its registration until real GAIN): the paragraph's owner must still hear FOCUS_REGAINED.
+            if (isFocusEvent(event) && lastFinished?.first == up.attempt) lastFinished?.second?.invoke(event)
+            return
+        }
         when (event) {
             RuntimeOutputEvent.STARTED -> {
                 sentence = text
@@ -236,6 +244,9 @@ class InterjectingRuntimeSpeech(
                     when (event) {
                         RuntimeOutputEvent.STARTED -> spoken = true
                         RuntimeOutputEvent.COMPLETED, RuntimeOutputEvent.STOPPED -> end()
+                        // The paragraph being interrupted must learn about focus changes (up is null when idle).
+                        RuntimeOutputEvent.FOCUS_REGAINED, RuntimeOutputEvent.FOCUS_TRANSIENT, RuntimeOutputEvent.FOCUS_LOST ->
+                            if (up != null) { if (upstream === up) up.callback(event) else if (lastFinished?.first == up.attempt) lastFinished?.second?.invoke(event) }
                         else -> Unit
                     }
                 }

@@ -299,7 +299,8 @@ class Media3RuntimeMusic(context: Context) : RuntimeMusic {
         }
     }
 
-    private companion object {
+    companion object {
+        /** DEMO: a track counts as completely played after this long (also what the planner assumes for the gap). */
         const val DEMO_MUSIC_DURATION_MS = 15_000L
     }
 }

@@ -21,22 +21,26 @@ data class WindowLandmark(
 }
 
 /**
- * Where the landmark is said to be (CONTENT_PIPELINE.md 6장): the side it passes on -- the sign of its lateral
- * position relative to the travel line, not the angle at announcement time -- or, for a large landmark that is
- * still far ahead and within +-20 degrees of the heading, straight ahead.
+ * Where the landmark is said to be (CONTENT_PIPELINE.md 6장). "앞쪽 멀리" only for a large landmark that is still far
+ * ahead and will pass within [AHEAD_LATERAL_M] of the travel line. Otherwise the side it passes on (the sign of its
+ * lateral position), with "앞" when it is within +-60 degrees of the heading at announcement time.
  */
 enum class WindowDirection(val words: String) {
-    AHEAD_FAR("앞쪽 멀리"), RIGHT("오른쪽"), LEFT("왼쪽");
+    AHEAD_FAR("앞쪽 멀리"), RIGHT_FRONT("오른쪽 앞"), LEFT_FRONT("왼쪽 앞"), RIGHT("오른쪽"), LEFT("왼쪽");
 
     companion object {
-        const val AHEAD_HALF_ANGLE_DEG = 20.0
+        const val AHEAD_LATERAL_M = 100.0
+        const val FRONT_HALF_ANGLE_DEG = 60.0
         /** "Still far": at least this far along the heading (a place due in 12 s at 17 m/s or more). */
         const val FAR_FORWARD_M = 200.0
 
-        fun of(landmark: WindowLandmark, forwardM: Double, lateralM: Double, bearingDeg: Double): WindowDirection =
-            if (landmark.visibility.radiusM >= WindowLandmark.Visibility.LARGE.radiusM &&
-                abs(bearingDeg) <= AHEAD_HALF_ANGLE_DEG && forwardM >= FAR_FORWARD_M) AHEAD_FAR
-            else if (lateralM >= 0) RIGHT else LEFT
+        fun of(landmark: WindowLandmark, forwardM: Double, lateralM: Double, bearingDeg: Double): WindowDirection {
+            val large = landmark.visibility.radiusM >= WindowLandmark.Visibility.LARGE.radiusM
+            if (large && abs(lateralM) < AHEAD_LATERAL_M && forwardM >= FAR_FORWARD_M) return AHEAD_FAR
+            val right = lateralM >= 0
+            return if (abs(bearingDeg) <= FRONT_HALF_ANGLE_DEG) { if (right) RIGHT_FRONT else LEFT_FRONT }
+            else { if (right) RIGHT else LEFT }
+        }
     }
 }
 
@@ -45,9 +49,11 @@ data class WindowAnnouncement(val landmark: WindowLandmark, val direction: Windo
     private val subject get() = "${landmark.name}${subjectParticle(landmark.name)}"
     val spoken: String get() = when (direction) {
         WindowDirection.AHEAD_FAR -> "앞쪽 멀리 $subject 보여요. ${landmark.intro}"
+        WindowDirection.RIGHT_FRONT -> "오른쪽 앞으로 $subject 보여요. ${landmark.intro}"
+        WindowDirection.LEFT_FRONT -> "왼쪽 앞으로 $subject 보여요. ${landmark.intro}"
         else -> "잠시 후 ${direction.words}으로 $subject 보여요. ${landmark.intro}"
     }
-    /** Caption card label line: "오른쪽 · 한빛탑". The body is the intro. */
+    /** Caption card label line: "오른쪽 앞 · 청계산". The body is the intro. */
     val label: String get() = "${direction.words} · ${landmark.name}"
     override fun toString() = "WindowAnnouncement([redacted])"
 
