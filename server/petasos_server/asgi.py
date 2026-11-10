@@ -8,12 +8,14 @@ from .auxiliary_routes import MAX_WIRE_BYTES
 
 MAX_BODY = 256 * 1024
 CANCEL = re.compile(r"/v1/generations/([A-Za-z0-9][A-Za-z0-9._:-]{0,127})/cancel\Z")
+REGION_PACK = re.compile(r"/v1/packs/region/([0-9]{5})\Z")
 
 
 class GenerationApp:
-    def __init__(self, tokens, service, route_service=None):
+    def __init__(self, tokens, service, route_service=None, pack_service=None):
         self.tokens, self.service = tokens, service
         self.route_service = route_service
+        self.pack_service = pack_service
 
     async def __call__(self, scope, receive, send):
         if scope["type"] == "lifespan":
@@ -48,6 +50,19 @@ class GenerationApp:
             except UnicodeError:
                 raise Failure("UNAUTHORIZED", 401) from None
             owner = self.tokens.authenticate(authorization)
+            region_pack = REGION_PACK.fullmatch(path)
+            if region_pack and method == "GET":
+                # CONTENT_PIPELINE.md 4장: same build function as server/tools/build_pack.py. App use is 2차.
+                if self.pack_service is None:
+                    raise Failure("PACKS_UNAVAILABLE", 503)
+                try:
+                    pack = await self.pack_service.region(region_pack.group(1))
+                except KeyError:
+                    raise Failure("NOT_FOUND", 404) from None
+                except LookupError:
+                    raise Failure("NO_CONTENT", 404) from None
+                await self.respond(send, 200, None, encoded_body=json.dumps(pack, ensure_ascii=False, separators=(",", ":")).encode())
+                return
             cancel = CANCEL.fullmatch(path)
             auxiliary = path == "/v1/routes/auxiliary"
             if method != "POST" or (path != "/v1/generations" and not cancel and not auxiliary):

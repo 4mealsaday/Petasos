@@ -293,7 +293,7 @@ class RegionalContentBundleTests(unittest.TestCase):
         v2 = build_reviewed_bundle(regional_review_fixture(), NOW)
         del v2["regionBindings"]
         self.assert_bundle_error(v2, "INVALID_BUNDLE")
-        for version in (0, 3, True, "2", None):
+        for version in (0, 4, True, "2", None):  # 3 is the Content Pack format (test_pack.py)
             with self.subTest(version=version):
                 invalid = build_reviewed_bundle(review_fixture(), NOW)
                 invalid["formatVersion"] = version

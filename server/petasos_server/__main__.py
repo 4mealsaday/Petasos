@@ -47,7 +47,21 @@ def build_app(config_path, environment: Mapping[str, str] | None = None):
         route_service = AuxiliaryRouteService(NaverDirectionsProvider(
             environment.get("PETASOS_NAVER_MAPS_CLIENT_ID", ""),
             environment.get("PETASOS_NAVER_MAPS_CLIENT_SECRET", "")))
-    return GenerationApp(TokenRegistry(path=config["tokensFile"]), GenerationService(evidence, provider, key), route_service)
+    pack_service = None
+    if config.get("packs"):
+        # {"packs": {"cacheDirectory": "..."}}: region packs from TourAPI + 국가유산청 (2차 skeleton).
+        from .pipeline.cache import SourceCache
+        from .pipeline.intro import IntroWriter
+        from .pipeline.regions import RegionIndex
+        from .pipeline.service import PackService
+        from .pipeline.sources.heritage import HeritageAdapter
+        from .pipeline.sources.tourapi import TourApiAdapter
+        cache = SourceCache(config["packs"]["cacheDirectory"])
+        adapters = {"heritage": HeritageAdapter(cache)}
+        if environment.get("PETASOS_TOURAPI_SERVICE_KEY"):
+            adapters["tourapi"] = TourApiAdapter(environment["PETASOS_TOURAPI_SERVICE_KEY"], cache)
+        pack_service = PackService(adapters, RegionIndex(), IntroWriter(None))
+    return GenerationApp(TokenRegistry(path=config["tokensFile"]), GenerationService(evidence, provider, key), route_service, pack_service)
 
 
 def main():

@@ -88,7 +88,7 @@ def _resolve(schema, document, references=()):
 @lru_cache(maxsize=1)
 def _registry() -> dict[tuple[str, str], Operation]:
     result = {}
-    directory = Path(__file__).resolve().parents[2] / "docs" / "reference" / "public-data"
+    directory = Path(__file__).resolve().parent / "reference"
     try:
         for service, filename in _SOURCES.items():
             document = json.loads((directory / filename).read_text(encoding="utf-8"))

@@ -3,6 +3,7 @@ package com.petasos.app.platform.media
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
 import androidx.core.net.toUri
 import com.petasos.app.BuildConfig
 import androidx.media3.common.C
@@ -31,6 +32,11 @@ class Media3RuntimeMusic(context: Context) : RuntimeMusic {
         var releaseFailed = false
         var ended = false
         var failed = false
+        /** Paused for a window announcement (CONTENT_PIPELINE.md 6장); focus is released meanwhile. */
+        var held = false
+        var playingSinceMs = 0L
+        var playedMs = 0L
+        var demoEnd: Runnable? = null
     }
     private class Quiescent(val token: OperationToken, val positionMs: Long, val callback: (RuntimeMusicEvent) -> Unit)
     private var current: Slot? = null
@@ -99,30 +105,7 @@ class Media3RuntimeMusic(context: Context) : RuntimeMusic {
             // This owner retains the same request during a stop/recreate resume. ExoPlayer must
             // not independently resume its old player before the Coordinator validates recovery.
             player.setAudioAttributes(AudioAttributes.Builder().setUsage(C.USAGE_MEDIA).setContentType(C.AUDIO_CONTENT_TYPE_MUSIC).build(), false)
-            val focus = AndroidOutputAudioFocus(context, android.media.AudioAttributes.Builder()
-                .setUsage(android.media.AudioAttributes.USAGE_MEDIA)
-                .setContentType(android.media.AudioAttributes.CONTENT_TYPE_MUSIC).build(), pauseWhenDucked = false) { change ->
-                if (!closed && (current === slot || recoveringSlot === slot)) when (change) {
-                    AndroidOutputAudioFocus.Change.DUCK -> if (current === slot && !slot.stopping) player.volume = 0.2f
-                    AndroidOutputAudioFocus.Change.GAINED -> {
-                        if (slot.recoveringFocus) {
-                            slot.recoveringFocus = false
-                            slot.callback(RuntimeMusicEvent.FocusRegained)
-                            if (recoveringSlot === slot) { slot.focus?.close(); recoveringSlot = null }
-                        } else if (current === slot && !slot.stopping) player.volume = 1f
-                    }
-                    AndroidOutputAudioFocus.Change.TRANSIENT -> {
-                        slot.recoveringFocus = true
-                        if (current === slot && !slot.stopping) player.pause()
-                        slot.callback(RuntimeMusicEvent.FocusTransient)
-                    }
-                    AndroidOutputAudioFocus.Change.LOST -> {
-                        slot.recoveringFocus = false
-                        if (current === slot && !slot.stopping) player.pause()
-                        slot.callback(RuntimeMusicEvent.FocusLost)
-                    }
-                }
-            }
+            val focus = createFocus(slot, player)
             slot.focus = focus
             player.setHandleAudioBecomingNoisy(true)
             player.addListener(object : Player.Listener {
@@ -161,23 +144,88 @@ class Media3RuntimeMusic(context: Context) : RuntimeMusic {
                 return
             }
             if (!permitted()) { stopSlot(slot); return }
+            slot.playingSinceMs = SystemClock.elapsedRealtime()
             player.play()
             tick(slot)
             // DEMO: treat DEMO_MUSIC_DURATION_MS of playback as a complete play-through, driving the
             // exact same completion path a real STATE_ENDED would (not a seek -- ExoPlayer clamps
             // seekTo(Long.MAX_VALUE) to a position short of the real end and keeps playing from
             // there instead of reaching STATE_ENDED, so a seek-based trick never actually completes).
-            if (BuildConfig.DEMO) main.postDelayed({
-                if (current === slot && !slot.stopping && !slot.ended) {
-                    slot.ended = true
-                    val position = player.currentPosition.coerceAtLeast(0)
-                    if (release(slot, position)) slot.callback(RuntimeMusicEvent.Completed(position))
-                }
-            }, DEMO_MUSIC_DURATION_MS)
+            scheduleDemoEnd(slot, player)
         } catch (_: Exception) {
             slot.callback(RuntimeMusicEvent.Failed)
             stopSlot(slot)
         }
+    }
+
+    private fun createFocus(slot: Slot, player: ExoPlayer): AndroidOutputAudioFocus {
+        return AndroidOutputAudioFocus(context, android.media.AudioAttributes.Builder()
+            .setUsage(android.media.AudioAttributes.USAGE_MEDIA)
+            .setContentType(android.media.AudioAttributes.CONTENT_TYPE_MUSIC).build(), pauseWhenDucked = false) { change ->
+            if (!closed && (current === slot || recoveringSlot === slot)) when (change) {
+                AndroidOutputAudioFocus.Change.DUCK -> if (current === slot && !slot.stopping) player.volume = 0.2f
+                AndroidOutputAudioFocus.Change.GAINED -> {
+                    if (slot.recoveringFocus) {
+                        slot.recoveringFocus = false
+                        slot.callback(RuntimeMusicEvent.FocusRegained)
+                        if (recoveringSlot === slot) { slot.focus?.close(); recoveringSlot = null }
+                    } else if (current === slot && !slot.stopping) player.volume = 1f
+                }
+                AndroidOutputAudioFocus.Change.TRANSIENT -> {
+                    slot.recoveringFocus = true
+                    if (current === slot && !slot.stopping) player.pause()
+                    slot.callback(RuntimeMusicEvent.FocusTransient)
+                }
+                AndroidOutputAudioFocus.Change.LOST -> {
+                    slot.recoveringFocus = false
+                    if (current === slot && !slot.stopping) player.pause()
+                    slot.callback(RuntimeMusicEvent.FocusLost)
+                }
+            }
+        }
+    }
+
+    /**
+     * Window announcement during music: pause and release focus (so the speech's own focus request never reaches
+     * the Coordinator as a music focus loss), then take focus again and continue from the same position.
+     * The DEMO play-through timer only counts time actually played.
+     */
+    fun holdForAnnouncement(hold: Boolean) {
+        main.post {
+            val slot = current ?: return@post
+            val player = slot.player ?: return@post
+            if (slot.stopping || closed || slot.held == hold) return@post
+            if (hold) {
+                slot.held = true
+                if (player.isPlaying) slot.playedMs += SystemClock.elapsedRealtime() - slot.playingSinceMs
+                slot.demoEnd?.let(main::removeCallbacks)
+                player.pause()
+                slot.focus?.close()
+                slot.focus = null
+            } else {
+                slot.held = false
+                val focus = createFocus(slot, player)
+                slot.focus = focus
+                if (!focus.acquire()) { slot.callback(RuntimeMusicEvent.FocusLost); return@post }
+                slot.playingSinceMs = SystemClock.elapsedRealtime()
+                player.play()
+                scheduleDemoEnd(slot, player)
+            }
+        }
+    }
+
+    private fun scheduleDemoEnd(slot: Slot, player: ExoPlayer) {
+        if (!BuildConfig.DEMO) return
+        val end = Runnable {
+            if (current === slot && !slot.stopping && !slot.ended && !slot.held) {
+                slot.ended = true
+                val position = player.currentPosition.coerceAtLeast(0)
+                if (release(slot, position)) slot.callback(RuntimeMusicEvent.Completed(position))
+            }
+        }
+        slot.demoEnd?.let(main::removeCallbacks)
+        slot.demoEnd = end
+        main.postDelayed(end, (DEMO_MUSIC_DURATION_MS - slot.playedMs).coerceAtLeast(0))
     }
 
     private fun tick(slot: Slot) {

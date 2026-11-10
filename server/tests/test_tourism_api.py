@@ -55,7 +55,7 @@ class FakeOpener:
 
 def captured_operation_fields():
     """Expected names come directly from the captured Swagger, independently of registry."""
-    directory = Path(__file__).resolve().parents[2] / "docs" / "reference" / "public-data"
+    directory = Path(__file__).resolve().parents[1] / "petasos_server" / "reference"
     for service in ("odii", "tourapi"):
         document = json.loads((directory / f"{service}.openapi.json").read_text())
 

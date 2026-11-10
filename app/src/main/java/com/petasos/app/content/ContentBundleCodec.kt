@@ -7,13 +7,16 @@ import java.security.MessageDigest
 /** Bounded, local reviewed-bundle format. This is not an authenticated online distribution channel. */
 internal object ContentBundleCodec {
     fun decode(bytes: ByteArray, nowEpochMs: Long): ContentBundle = try {
-        val parsed = StrictJson.parse(bytes.copyOf())
+        // Decimals are allowed only where a pack has them (scope path, interestScores); every other number
+        // is read through long()/integer(), which rejects a decimal as INVALID_BUNDLE.
+        val parsed = StrictJson.parseDecimalDocument(bytes.copyOf(), MAX_BYTES)
         need(parsed is Map<*, *>, "INVALID_BUNDLE")
         @Suppress("UNCHECKED_CAST") val values = parsed as Map<String, Any?>
         val formatVersion = integer(values, "formatVersion")
         val root = when (formatVersion) {
             1 -> obj(parsed, "formatVersion", "sources", "facts", "places", "stories", "versions")
             2 -> obj(parsed, "formatVersion", "sources", "facts", "places", "stories", "versions", "regionBindings")
+            3 -> obj(parsed, "formatVersion", "sources", "facts", "places", "stories", "versions", "regionBindings", *PACK_KEYS)
             else -> fail("UNSUPPORTED_BUNDLE_VERSION")
         }
         val bundle = ContentBundle(
@@ -39,8 +42,12 @@ internal object ContentBundleCodec {
                     rows(p,"externalIds").map { r -> val e=obj(r,"provider","externalId","verifiedAt"); ContentExternalId(str(e,"provider"),str(e,"externalId"),long(e,"verifiedAt")) })
             },
             rows(root,"stories").map { raw ->
-                val s=obj(raw,"storyId","topicId","title","coreQuestion","interestTags","placeId")
-                ContentStory(str(s,"storyId"),str(s,"topicId"),str(s,"title"),str(s,"coreQuestion"),strings(s,"interestTags"),optionalStr(s,"placeId"))
+                // interestScores (5-1) is optional in a pack: present or absent both read.
+                val withScores = formatVersion == 3 && raw is Map<*, *> && raw.containsKey("interestScores")
+                val s = if (withScores) obj(raw,"storyId","topicId","title","coreQuestion","interestTags","placeId","interestScores")
+                    else obj(raw,"storyId","topicId","title","coreQuestion","interestTags","placeId")
+                ContentStory(str(s,"storyId"),str(s,"topicId"),str(s,"title"),str(s,"coreQuestion"),strings(s,"interestTags"),optionalStr(s,"placeId"),
+                    if (withScores) scores(s["interestScores"]) else emptyMap())
             },
             rows(root,"versions").map { raw ->
                 val v=obj(raw,"storyVersionId","storyId","version","contentHash","createdAt","verifiedAt","validUntil","estimatedDurationMs","status","paragraphs")
@@ -48,12 +55,18 @@ internal object ContentBundleCodec {
                     rows(v,"paragraphs").map { r -> val p=obj(r,"paragraphId","ordinal","required","text","audioRef","estimatedDurationMs","factRevisionIds")
                         ContentParagraph(str(p,"paragraphId"),integer(p,"ordinal"),bool(p,"required"),str(p,"text"),optionalStr(p,"audioRef"),long(p,"estimatedDurationMs"),strings(p,"factRevisionIds")) })
             },
-            if (formatVersion == 2) rows(root, "regionBindings").map { raw ->
+            if (formatVersion >= 2) rows(root, "regionBindings").map { raw ->
                 val r = obj(raw, "storyId", "regionId", "regionRevisionId", "regionCode", "datasetVersion",
                     "regionName", "regionSourceRevisionId", "associationFactRevisionId", "verifiedAt", "reviewBasis")
                 ContentRegionBinding(str(r, "storyId"), str(r, "regionId"), str(r, "regionRevisionId"), str(r, "regionCode"),
                     str(r, "datasetVersion"), str(r, "regionName"), str(r, "regionSourceRevisionId"),
                     str(r, "associationFactRevisionId"), long(r, "verifiedAt"), str(r, "reviewBasis"))
+            } else emptyList(),
+            if (formatVersion == 3) packInfo(root) else null,
+            if (formatVersion == 3) rows(root, "landmarks").map { raw ->
+                val l = obj(raw, "placeId", "name", "latitude", "longitude", "regionCode", "visibility", "category", "intro", "factRevisionIds")
+                ContentLandmark(str(l, "placeId"), str(l, "name"), str(l, "latitude"), str(l, "longitude"), optionalStr(l, "regionCode"),
+                    str(l, "visibility"), str(l, "category"), str(l, "intro"), strings(l, "factRevisionIds"))
             } else emptyList(),
         )
         validate(bundle, nowEpochMs)
@@ -73,9 +86,49 @@ internal object ContentBundleCodec {
     // hashes after a database read; paragraph order itself remains meaningful.
     private fun paragraphMap(p: ContentParagraph): Map<String, Any?> = mapOf("paragraphId" to p.paragraphId,"ordinal" to p.ordinal,"required" to p.required,"text" to p.text,"audioRef" to p.audioRef,"estimatedDurationMs" to p.estimatedDurationMs,"factRevisionIds" to p.factRevisionIds.sorted())
 
+    private val PACK_KEYS = arrayOf("packId", "version", "createdAt", "promptVersion", "scoringVersion", "scope", "landmarks")
+    private const val MAX_BYTES = 256 * 1024
+
+    private fun packInfo(root: Map<String, Any?>): ContentPackInfo {
+        val scope = root["scope"] as? Map<*, *> ?: fail("INVALID_SCOPE")
+        val type = scope["type"] as? String ?: fail("INVALID_SCOPE")
+        @Suppress("UNCHECKED_CAST") val values = scope as Map<String, Any?>
+        when (type) {
+            "route" -> {
+                obj(values, "type", "scenarioId", "path", "regionCodes")
+                id(str(values, "scenarioId"))
+                val path = rows(values, "path")
+                need(path.size in 2..2000 && path.all { point ->
+                    point is List<*> && point.size == 2 && point.all { it is Number && it.toDouble().isFinite() } &&
+                        (point[0] as Number).toDouble() in -180.0..180.0 && (point[1] as Number).toDouble() in -90.0..90.0
+                }, "INVALID_SCOPE")
+            }
+            "region" -> obj(values, "type", "regionCode", "regionCodes")
+            else -> fail("INVALID_SCOPE")
+        }
+        val codes = strings(values, "regionCodes")
+        need(codes.size <= 256 && codes.distinct().size == codes.size && codes.all { Regex("[0-9]{5}").matches(it) }, "INVALID_SCOPE")
+        return ContentPackInfo(str(root, "packId"), integer(root, "version"), long(root, "createdAt"),
+            str(root, "promptVersion"), str(root, "scoringVersion"), type, codes)
+    }
+
+    private fun scores(value: Any?): Map<String, Double> {
+        val map = value as? Map<*, *> ?: fail("INVALID_INTEREST_SCORES")
+        need(map.size <= 32, "INVALID_INTEREST_SCORES")
+        return map.entries.associate { (key, score) ->
+            val name = key as? String ?: fail("INVALID_INTEREST_SCORES")
+            text(name, 100)
+            val number = (score as? Number)?.toDouble() ?: fail("INVALID_INTEREST_SCORES")
+            need(number.isFinite() && number in 0.0..1.0, "INVALID_INTEREST_SCORES")
+            name to number
+        }
+    }
+
     private fun validate(b: ContentBundle, now: Long) {
-        need(b.formatVersion in 1..2, "UNSUPPORTED_BUNDLE_VERSION")
-        need(now >= 0 && b.sources.size in 1..64 && b.facts.size in 1..256 && b.places.size <= 64 && b.stories.size in 1..32 && b.versions.size in 1..64, "INVALID_BUNDLE")
+        need(b.formatVersion in 1..3, "UNSUPPORTED_BUNDLE_VERSION")
+        val regionPack = b.pack?.scopeType == "region"
+        val minimum = if (regionPack) 0 else 1
+        need(now >= 0 && b.sources.size in 1..64 && b.facts.size in 1..256 && b.places.size <= 64 && b.stories.size in minimum..32 && b.versions.size in minimum..64, "INVALID_BUNDLE")
         val sources = unique(b.sources) { it.sourceRevisionId }
         val facts = unique(b.facts) { it.factRevisionId }
         val places = unique(b.places) { it.placeId }
@@ -151,6 +204,23 @@ internal object ContentBundleCodec {
             need(v.contentHash == versionHash(v.storyId,v.version,v.paragraphs),"STORY_HASH_MISMATCH")
         }
         need(stories.keys == b.versions.map { it.storyId }.toSet(),"INCOMPLETE_BUNDLE")
+        b.pack?.let { pack ->
+            id(pack.packId); need(pack.version >= 1, "INVALID_REVISION"); timestamp(pack.createdAt)
+            text(pack.promptVersion, 128); text(pack.scoringVersion, 128)
+        }
+        need(b.landmarks.size <= 64, "INVALID_LANDMARK")
+        val landmarkPlaces = mutableSetOf<String>()
+        b.landmarks.forEach { l ->
+            val place = places[l.placeId]
+            need(place != null && landmarkPlaces.add(l.placeId), "INVALID_LANDMARK")
+            text(l.name, 200); text(l.category, 64); text(l.intro, 300)
+            coordinate(l.latitude, -90.0, 90.0); coordinate(l.longitude, -180.0, 180.0)
+            // A landmark repeats its place's reviewed coordinates; it can never move the place.
+            need(l.latitude == place!!.latitude && l.longitude == place.longitude, "INVALID_LANDMARK")
+            need(l.regionCode == null || Regex("[0-9]{5}").matches(l.regionCode), "INVALID_LANDMARK")
+            need(l.visibility in setOf("small", "large"), "INVALID_LANDMARK")
+            refs(l.factRevisionIds, facts.keys)
+        }
     }
 
     private fun coordinate(value: String?, min: Double, max: Double) {

@@ -9,7 +9,22 @@ internal data class ContentBundle(
     val stories: List<ContentStory>,
     val versions: List<ContentVersion>,
     val regionBindings: List<ContentRegionBinding> = emptyList(),
+    /** Content Pack (formatVersion 3) metadata; null for v1/v2 bundles. */
+    val pack: ContentPackInfo? = null,
+    val landmarks: List<ContentLandmark> = emptyList(),
 ) { override fun toString() = "ContentBundle([redacted])" }
+
+/** CONTENT_PIPELINE.md 2장. scope keeps only what the app uses; the route path is validated, not stored. */
+internal data class ContentPackInfo(
+    val packId: String, val version: Int, val createdAt: Long, val promptVersion: String, val scoringVersion: String,
+    val scopeType: String, val regionCodes: List<String>,
+)
+
+/** A window-side landmark (6장): the app decides when and in which direction to mention it. */
+internal data class ContentLandmark(
+    val placeId: String, val name: String, val latitude: String, val longitude: String, val regionCode: String?,
+    val visibility: String, val category: String, val intro: String, val factRevisionIds: List<String>,
+) { override fun toString() = "ContentLandmark([redacted])" }
 
 internal data class ContentLicense(val type: String, val url: String, val scope: String, val reviewBasis: String)
 internal data class ContentUses(val allowGeneration: Boolean, val allowDisplay: Boolean, val allowDistribution: Boolean, val reviewBasis: String)
@@ -37,6 +52,8 @@ internal data class ContentPlace(
 internal data class ContentStory(
     val storyId: String, val topicId: String, val title: String, val coreQuestion: String,
     val interestTags: List<String>, val placeId: String?,
+    /** 5-1 seat: interest -> relevance 0..1. Optional; empty before 1차. Not used for selection yet. */
+    val interestScores: Map<String, Double> = emptyMap(),
 ) { override fun toString() = "ContentStory([redacted])" }
 
 /** Reviewed story association to an independently installed, pinned region revision. Not a visit policy. */

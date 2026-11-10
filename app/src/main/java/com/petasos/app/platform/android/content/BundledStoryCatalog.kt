@@ -38,8 +38,9 @@ internal class BundledStoryCatalog(context: Context) {
     }
 
     companion object {
-        const val ASSET = "content/p0-stories-v2.json"
-        const val SHA256 = "ed5b8ec72eadd055820473a5b8f5146d92c4d82b6b45342585eea7fd14e2d569"
+        /** The seoul-daejeon Content Pack (server/tools/build_pack.py): the v2 stories unchanged + window landmarks. */
+        const val ASSET = "content/packs/seoul-daejeon.json"
+        const val SHA256 = "b277e020b530afa67546691efdc21cd1afd9f6503290266bddd3e6cb5e68b015"
         private const val MAX_BYTES = 262_144
     }
 }

@@ -1,24 +1,28 @@
 #!/usr/bin/env python3
 """GPS replay for the Seoul Station -> Daejeon Expo demo route.
 
-Drives `adb emu geo fix` along demo/route.json's path at a variable cadence: slow inside the
+Drives `adb emu geo fix` along a demo scenario's route.json path (demo/scenarios/<id>/) at a variable cadence: slow inside the
 five story-bearing region groups (so the app has time to region-confirm and finish at least
 one story), fast everywhere else. Region containment uses the exact same even-odd point-in-
 polygon rule as the shipped PackedRegionBoundaryLookup, read directly from the pruned .pgeo
 assets -- not a separate/divergent geometry implementation.
 
 Usage:
-    python3 scripts/demo_route.py [--serial emulator-5554] [--start-index N] [--pause] [--speed X] [--video]
+    python3 scripts/demo_route.py [--scenario seoul-daejeon] [--serial emulator-5554] [--start-index N] [--pause] [--speed X] [--video]
 
 --gpx FILE: write the --video pacing as a timestamped GPX track (no adb needed) and exit. Load it in the
-emulator: Extended controls -> Location -> Routes -> Load GPX/KML -> Play route (demo/route.gpx is committed).
+emulator: Extended controls -> Location -> Routes -> Load GPX/KML -> Play route (demo/scenarios/seoul-daejeon/route.gpx is committed).
 
 --video: recording preset (~7 min total). Pair it with the app's DEMO video mode so each region
 plays one representative story (S01/S03/S05/S08/S10) + one 15 s music bridge:
     adb shell am broadcast --user 10 -f 0x20 -p com.petasos.app -a com.petasos.app.debug.SET_VIDEO_MODE --ez enabled true
 Each story region is held ~45 s and pass-through stretches are sent as fast as the cadence floor allows.
+Window landmarks listed in scenario.json video.landmarks get a real driving pace instead (landmarkPassSpeedMps,
+from landmarkSlowBeforeM before their closest point to landmarkSlowAfterM after, fixes every ~20 m): the app
+announces a landmark 8-12 s before passing it and ignores speeds no car reaches, so the fast-forward
+stretches stay silent and those landmarks are announced in their real direction.
 
-Every preset sends every point of demo/route.json, densified by linear interpolation so no two consecutive
+Every preset sends every point of the scenario's route.json, densified by linear interpolation so no two consecutive
 fixes are more than --max-spacing metres apart (the app records each fix, so the saved line follows the road).
 Time is compressed by shortening the send interval, never by skipping points. Fixes go through one
 persistent emulator console connection (an `adb emu geo fix` process costs ~0.15-0.2 s per fix, too slow
@@ -26,6 +30,7 @@ for dense points); `adb emu` is the fallback when the console cannot be opened.
 `kill -USR1 <pid>` toggles pause/resume as well as Enter (useful when stdin is not a terminal).
 """
 import argparse
+import json
 import math
 import signal
 import socket
@@ -37,7 +42,8 @@ from pathlib import Path
 from subprocess import run
 
 ROOT = Path(__file__).resolve().parents[1]
-ROUTE_FILE = ROOT / "demo" / "route.json"
+SCENARIOS_DIR = ROOT / "demo" / "scenarios"
+PACKS_DIR = ROOT / "demo" / "packs"
 MANIFEST_FILE = ROOT / "app/src/main/assets/regions/ngii-2026-09-21-v1/manifest.json"
 ASSETS_DIR = ROOT / "app/src/main/assets"
 
@@ -55,7 +61,7 @@ MAGIC = 0x5054524730303031  # ASCII "PTRG0001"
 # test that this route's real 1957-point polyline has ZERO points inside 30110's geometry. That
 # story is unreachable by GPS replay on this real route; it's a content/route mismatch (see the
 # DEMO-only app-side fallback in RoomAutomaticStoryStore.demoFallbackCandidate), not something this
-# script can route around, since demo/route.json is the real fetched Directions path.
+# script can route around, since the scenario's route.json is the real fetched Directions path.
 STORY_GROUPS = {
     "seoul": {"11140"},
     "yongin": {"41460", "41461", "41463", "41465"},
@@ -136,13 +142,15 @@ def category_for(code):
     return "passthrough", None
 
 
-def build_runs(points, index):
-    """Groups consecutive points by (category, group) so each contiguous stretch gets one pacing target."""
+def build_runs(points, index, slow=None):
+    """Groups consecutive points by (category, group) so each contiguous stretch gets one pacing target.
+
+    slow[i] is the seconds to wait before point i inside a landmark slow zone (None elsewhere)."""
     annotated = []
-    for lon, lat in points:
+    for i, (lon, lat) in enumerate(points):
         code, name = index.containing_code(lon, lat)
         category, group = category_for(code)
-        annotated.append((lon, lat, code, name, category, group))
+        annotated.append((lon, lat, code, name, category, group, slow[i] if slow else None))
 
     runs = []
     current = None
@@ -184,6 +192,45 @@ def densify(points, max_spacing=MAX_SPACING_M):
     return out
 
 
+SLOW_SPACING_M = 20.0
+
+
+def landmark_slow_zones(points, scenario, packs_dir, log=print):
+    """-> (points, slow): points re-densified to ~20 m inside each video landmark's zone, and per-point waits."""
+    video = scenario.get("video", {})
+    names = video.get("landmarks") or []
+    if not names:
+        return points, None
+    pack = json.loads((packs_dir / f"{scenario['packId']}.json").read_text())
+    by_name = {landmark["name"]: landmark for landmark in pack["landmarks"]}
+    speed = float(video.get("landmarkPassSpeedMps", 28))
+    before, after = float(video.get("landmarkSlowBeforeM", 700)), float(video.get("landmarkSlowAfterM", 150))
+    along = [0.0]
+    for a, b in zip(points, points[1:]):
+        along.append(along[-1] + distance_m(a, b))
+    zones = []
+    for name in names:
+        landmark = by_name.get(name)
+        if landmark is None:
+            log(f"WARNING: video landmark '{name}' is not in pack {scenario['packId']}; skipped")
+            continue
+        target = (float(landmark["longitude"]), float(landmark["latitude"]))
+        nearest = min(range(len(points)), key=lambda i: distance_m(points[i], target))
+        zones.append((along[nearest] - before, along[nearest] + after))
+        log(f"  slow zone: {name} at {along[nearest] / 1000:.1f} km ({speed:.0f} m/s)")
+    out, slow = [points[0]], [None]
+    for i in range(len(points) - 1):
+        a, b = points[i], points[i + 1]
+        inside = any(start <= along[i + 1] and along[i] <= end for start, end in zones)
+        pieces = max(1, math.ceil(distance_m(a, b) / SLOW_SPACING_M)) if inside else 1
+        for k in range(1, pieces + 1):
+            t = k / pieces
+            point = (a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t)
+            slow.append(distance_m(out[-1], point) / speed if inside else None)
+            out.append(point)
+    return out, slow
+
+
 def video_targets(runs):
     """Per-run seconds: each story group gets 45 s in total, split over its fragments by point count."""
     group_points = {}
@@ -202,7 +249,7 @@ def video_targets(runs):
 def run_interval(run, speed, video=False):
     """Seconds between fixes. Never thins: a run that cannot fit its target simply takes longer."""
     category, group = run["key"]
-    steps = max(1, len(run["items"]) - 1)
+    steps = max(1, sum(1 for item in run["items"] if item[6] is None) - 1)
     if video:
         interval = run["target"] / steps
     else:
@@ -268,9 +315,9 @@ def write_gpx(path, runs, speed):
     count = 0
     for run_item in runs:
         interval = run_interval(run_item, speed, True)
-        for lon, lat, *_rest in run_item["items"]:
+        for lon, lat, *_rest, slow in run_item["items"]:
             if count:
-                clock += timedelta(seconds=interval)
+                clock += timedelta(seconds=slow / speed if slow is not None else interval)
             lines.append(f'    <trkpt lat="{lat:.7f}" lon="{lon:.7f}"><ele>0</ele><time>{clock.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]}Z</time></trkpt>')
             count += 1
     lines += ['  </trkseg></trk>', '</gpx>', '']
@@ -333,6 +380,7 @@ class GeoSender:
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--scenario", default="seoul-daejeon", help="demo/scenarios/<id>/ (scenario.json, route.json)")
     parser.add_argument("--serial", default="emulator-5554")
     parser.add_argument("--start-index", type=int, default=0)
     parser.add_argument("--pause", action="store_true", help="Enter toggles pause/resume mid-run")
@@ -348,8 +396,9 @@ def main():
     if args.speed <= 0:
         parser.error("--speed must be positive")
 
-    import json
-    route = json.loads(ROUTE_FILE.read_text())
+    scenario_dir = SCENARIOS_DIR / args.scenario
+    scenario = json.loads((scenario_dir / "scenario.json").read_text())
+    route = json.loads((scenario_dir / scenario["route"]).read_text())
     manifest = json.loads(MANIFEST_FILE.read_text())
     original = route["path"][args.start_index:]
     if not original:
@@ -359,8 +408,11 @@ def main():
     print(f"Loading {len(manifest['regions'])} region boundaries...")
     index = RegionIndex(manifest)
 
+    slow = None
+    if args.video:
+        points, slow = landmark_slow_zones(points, scenario, PACKS_DIR)
     print("Classifying route points into region runs...")
-    runs = build_runs(points, index)
+    runs = build_runs(points, index, slow)
     if args.video:
         runs = video_targets(runs)
 
@@ -368,7 +420,8 @@ def main():
         write_gpx(args.gpx, runs, args.speed)
         return
 
-    total_seconds = sum(run_interval(run, args.speed, args.video) * max(1, len(run["items"]) - 1) for run in runs)
+    total_seconds = sum(run_interval(run, args.speed, args.video) * max(1, sum(1 for item in run["items"] if item[6] is None) - 1)
+                        + sum(item[6] for item in run["items"] if item[6] is not None) / args.speed for run in runs)
     story_runs = [r for r in runs if r["key"][0] == "story"]
     found_groups = {r["key"][1] for r in story_runs}
     missing_groups = set(STORY_GROUPS) - found_groups
@@ -395,14 +448,15 @@ def main():
             interval = run_interval(run_item, args.speed, args.video)
             label = describe_run(run_item)
             print(f"-- entering run [{label}] ({len(run_item['items'])} points, ~{interval:.2f}s/point)")
-            for lon, lat, code, name, category, group in run_item["items"]:
+            for lon, lat, code, name, category, group, slow_wait in run_item["items"]:
                 pause_controller.wait_while_paused()
                 started = time.monotonic()
                 sender.fix(lon, lat)
                 emitted += 1
                 if code and emitted % 20 == 0:
                     print(f"  [{emitted}] ({lon:.5f},{lat:.5f}) in {name} ({code})")
-                time.sleep(max(0.0, interval - (time.monotonic() - started)))
+                wait = max(SEND_MIN_INTERVAL_S, slow_wait / args.speed) if slow_wait is not None else interval
+                time.sleep(max(0.0, wait - (time.monotonic() - started)))
     except KeyboardInterrupt:
         print("\nInterrupted.")
     finally:

@@ -8,6 +8,7 @@ import android.widget.TextView
 import com.google.common.util.concurrent.ListenableFuture
 import com.petasos.app.BuildConfig
 import com.petasos.app.R
+import com.petasos.app.planning.WindowGuideSetting
 import com.petasos.app.platform.android.location.LocationAccess
 import com.petasos.app.platform.android.runtime.PetasosSessionHost
 import com.petasos.app.presentation.interests.InterestGridView
@@ -23,6 +24,7 @@ class TripControls(private val activity: Activity) {
     /** Called after interests were stored (true) or when storing failed (false). */
     var onInterestsSaved: ((Boolean) -> Unit)? = null
     private val locationSwitch = activity.findViewById<ToggleView>(R.id.settings_location_switch)
+    private val windowSwitch = activity.findViewById<ToggleView>(R.id.settings_window_switch)
     private val permissionRow = activity.findViewById<View>(R.id.settings_location_permission_row)
     private val permission = activity.findViewById<Button>(R.id.settings_location_permission)
     private val notice = activity.findViewById<TextView>(R.id.settings_notice)
@@ -51,6 +53,12 @@ class TripControls(private val activity: Activity) {
             }
         }
         locationSwitch.setOnClickListener { saveLocation() }
+        // 창밖 안내 (CONTENT_PIPELINE.md 6장): a device setting, read by the host when a landmark is due.
+        windowSwitch.checked = WindowGuideSetting.enabled(activity)
+        windowSwitch.setOnClickListener {
+            windowSwitch.checked = !windowSwitch.checked
+            WindowGuideSetting.set(activity, windowSwitch.checked)
+        }
         permission.setOnClickListener { requestPermission() }
         saveSettings.setOnClickListener { saveInterests() }
         saveOnboarding.setOnClickListener { saveInterests() }

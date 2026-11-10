@@ -120,6 +120,6 @@ class ContentRegionBindingCodecTest {
 
     @Test fun storySchemaStaysUnchangedAndUnknownTransferVersionsAreRejected() {
         reject("INVALID_BUNDLE") { it.row("stories")["regionId"] = "test-region" }
-        reject("UNSUPPORTED_BUNDLE_VERSION") { it["formatVersion"] = 3L }
+        reject("UNSUPPORTED_BUNDLE_VERSION") { it["formatVersion"] = 4L } // 3 is the Content Pack (ContentPackCodecTest)
     }
 }

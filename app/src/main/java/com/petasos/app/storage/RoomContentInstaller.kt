@@ -160,6 +160,7 @@ class RoomContentInstaller internal constructor(
                 ))
             }
         }
+        if (bundle.pack != null) installLandmarks(bundle)
         bundle.facts.forEach { fact ->
             requireIdentity("SELECT fact_revision_id FROM fact_revision WHERE fact_id=? AND version=?", fact.factRevisionId,
                 fact.factId, fact.version)
@@ -184,6 +185,22 @@ class RoomContentInstaller internal constructor(
         val regions = RoomRegionalContentBindings(database, wallTime)
         bundle.regionBindings.forEach(regions::install)
         return installVersions(bundle.versions)
+    }
+
+    /**
+     * A pack is the only source of window landmarks (CONTENT_PIPELINE.md 6장). Each one lives on its place row in
+     * landmark_policy_json -- the column the removed reviewed-policy catalog used -- so no schema change is needed.
+     * Installing a pack replaces every earlier landmark marker, including old policy JSON.
+     */
+    private fun installLandmarks(bundle: ContentBundle) {
+        sql.execSQL("UPDATE place SET landmark_policy_json=NULL WHERE landmark_policy_json IS NOT NULL")
+        bundle.landmarks.forEach { landmark ->
+            sql.execSQL("UPDATE place SET landmark_policy_json=? WHERE place_id=?", arrayOf(StrictJson.stringify(linkedMapOf(
+                "format" to RoomPackLandmarks.FORMAT, "packId" to bundle.pack!!.packId, "name" to landmark.name,
+                "visibility" to landmark.visibility, "category" to landmark.category, "intro" to landmark.intro,
+                "regionCode" to landmark.regionCode, "factRevisionIds" to landmark.factRevisionIds,
+            )), landmark.placeId))
+        }
     }
 
     private fun installVersions(versions: List<ContentVersion>): ContentInstallResult {

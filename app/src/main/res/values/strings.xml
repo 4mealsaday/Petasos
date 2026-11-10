@@ -86,6 +86,8 @@
     <string name="settings_title">설정</string>
     <string name="settings_location">위치 기록</string>
     <string name="settings_location_desc">지나온 길과 지역을 기기에만 저장해요</string>
+    <string name="settings_window">창밖 안내</string>
+    <string name="settings_window_desc">지나가는 길에 보이는 곳을 짧게 알려 드려요</string>
     <string name="settings_location_permission">위치 권한 허용</string>
     <string name="settings_location_permission_android">위치 권한 한 번 더 허용</string>
     <string name="settings_interests">관심사</string>

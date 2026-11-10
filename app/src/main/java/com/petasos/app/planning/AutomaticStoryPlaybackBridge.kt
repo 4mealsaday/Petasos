@@ -1,7 +1,6 @@
 package com.petasos.app.planning
 
 import com.petasos.app.location.LocationFreshness
-import com.petasos.app.location.RecordedLocation
 import com.petasos.app.playback.OutputReference
 import com.petasos.app.playback.PreparedStory
 import com.petasos.app.runtime.RuntimeContentAuthority
@@ -16,7 +15,7 @@ interface PlannedStoryOutput {
 }
 
 /**
- * One automatic offer across ordinary and landmark stories. The coordinator owns continuation,
+ * One automatic offer among regional stories. The coordinator owns continuation,
  * playback timing and the music gap. Updates observe movement even while output is suppressed.
  * Mutations share the host's worker queue; final read-only authority checks may run elsewhere.
  */
@@ -29,9 +28,6 @@ class AutomaticStoryPlaybackBridge(
     private val maximumLocationAgeMs: Long = LocationFreshness.DEFAULT_FRESHNESS_MS,
     private val targetCurrent: (RegionalStoryTarget) -> Boolean = { false },
     private val targetPlayable: (RegionalStoryTarget) -> Boolean = { false },
-    private val landmarkSession: LandmarkCandidateSession? = null,
-    private val landmarkCandidates: (Set<String>) -> List<LandmarkStoryCandidate> = { emptyList() },
-    private val landmarkCurrent: (LandmarkStoryCandidate) -> Boolean = { false },
     /** Duration-aware Host waits for a regional target; standalone current-region adapters may omit it. */
     private val requireRegionalTarget: Boolean = false,
 ) : RuntimeContentAuthority {
@@ -43,31 +39,21 @@ class AutomaticStoryPlaybackBridge(
         data class Ordinary(override val id: String, val candidate: AutomaticStoryCandidate, val targetKey: String?) : Entry {
             override val story get() = candidate.story
         }
-        data class Landmark(val offer: LandmarkOffer) : Entry {
-            override val id get() = offer.candidateId
-            override val story get() = offer.candidate.story
-        }
     }
     private data class Authority(val offerId: String, val entry: Entry, val context: PlanningContext)
     private val authority = AtomicReference<Authority?>()
     private val excludedStoryIds = mutableSetOf<String>()
     private var inventory = emptyList<Entry.Ordinary>()
-    private var activeLandmark: LandmarkOffer? = null
     private var offered: Entry? = null
 
     fun update(
         context: PlanningContext,
-        point: RecordedLocation? = null,
-        route: LandmarkRouteContext = LandmarkRouteContext.Unavailable,
         allowOffer: Boolean = true,
     ) {
         val region = selectionRegion(context)
-        // Region selection and actual location quality are different gates: landmarks need no region target.
         val checkedContext = context.copy(currentRegionId = freshRegion(context), locationValid = freshLocation(context))
         val eligible = try {
             val excluded = Collections.unmodifiableSet(excludedStoryIds.toSet())
-            activeLandmark = landmarkSession?.update(
-                landmarkCandidates(excluded).filter { it.story.storyId !in excluded }, point, checkedContext, route)
             // Starts and explicit skips are session exclusions, applied before the store's result cap.
             candidates(region, excluded).filter { candidate ->
                 candidate.story.storyId !in excludedStoryIds &&
@@ -96,11 +82,8 @@ class AutomaticStoryPlaybackBridge(
                 interestMatch = entry.candidate.interestMatch))
         }
 
-        val selectedId = if (allowOffer) planner.chooseAtBoundary(checkedContext) {
-            landmarkSession?.stillApproaching(it) == true
-        }?.candidateId else null
-        val next: Entry? = activeLandmark?.takeIf { it.candidateId == selectedId }?.let { Entry.Landmark(it) }
-            ?: inventory.firstOrNull { it.id == selectedId }
+        val selectedId = if (allowOffer) planner.chooseAtBoundary(checkedContext)?.candidateId else null
+        val next: Entry? = inventory.firstOrNull { it.id == selectedId }
         val previous = offered
         if (next?.id == previous?.id) {
             val current = authority.get()
@@ -126,10 +109,7 @@ class AutomaticStoryPlaybackBridge(
         val current = authority.get() ?: return
         if (current.offerId != offerId || current.entry.story.versionId != versionId) return
         excludedStoryIds += current.entry.story.storyId
-        if (current.entry is Entry.Landmark) {
-            landmarkSession?.consume(current.entry.id, elapsedTime())
-            activeLandmark = null
-        } else planner.consumed(current.entry.id)
+        planner.consumed(current.entry.id)
         inventory.filter { it.story.storyId in excludedStoryIds }.forEach { planner.expire(it.id) }
         inventory = inventory.filterNot { it.story.storyId in excludedStoryIds }
         authority.set(null)
@@ -146,10 +126,6 @@ class AutomaticStoryPlaybackBridge(
         excludedStoryIds += storyId
         inventory.filter { it.story.storyId == storyId }.forEach { planner.consumed(it.id) }
         inventory = inventory.filterNot { it.story.storyId == storyId }
-        if (activeLandmark?.candidate?.story?.storyId == storyId) {
-            landmarkSession?.clear(elapsedTime())
-            activeLandmark = null
-        }
         val pending = offered?.takeIf { it.story.storyId == storyId } ?: return
         authority.set(null)
         offered = null
@@ -159,8 +135,6 @@ class AutomaticStoryPlaybackBridge(
 
     fun clear() {
         authority.set(null)
-        landmarkSession?.clear(elapsedTime())
-        activeLandmark = null
         offered?.let { output.withdraw(it.story.storyId, it.story.versionId) }
         offered = null
         inventory.forEach { planner.expire(it.id) }
@@ -182,7 +156,6 @@ class AutomaticStoryPlaybackBridge(
         val permitted = try {
             when (val entry = current.entry) {
                 is Entry.Ordinary -> candidateCurrent(entry.candidate, selectionRegion(current.context))
-                is Entry.Landmark -> landmarkCurrent(entry.offer.candidate)
             }
         } catch (_: Exception) { false }
         // Location/route/preferences/Stop ingress can revoke while the evidence lookup is in progress.
@@ -203,7 +176,6 @@ class AutomaticStoryPlaybackBridge(
             is Entry.Ordinary -> entry.candidate.reason == CandidateReason.INTEREST ||
                 eligibleRegion(current.context, entry.candidate.regionId) &&
                 (current.context.regionalTarget?.let { try { targetPlayable(it) } catch (_: Exception) { false } } ?: true)
-            is Entry.Landmark -> freshLocation(current.context) && landmarkSession?.isCurrent(entry.offer) == true
         }
     }
 

@@ -31,6 +31,12 @@ _REGION_BINDING = {"storyId", "regionId", "regionRevisionId", "regionCode", "dat
                    "regionSourceRevisionId", "associationFactRevisionId", "verifiedAt", "reviewBasis"}
 _VERSION = {"storyVersionId", "storyId", "version", "contentHash", "createdAt", "verifiedAt", "validUntil", "estimatedDurationMs", "status", "paragraphs"}
 _PARAGRAPH = {"paragraphId", "ordinal", "required", "text", "audioRef", "estimatedDurationMs", "factRevisionIds"}
+# Content Pack (formatVersion 3, docs/CONTENT_PIPELINE.md 2장): the v2 bundle plus pack metadata and landmarks.
+_PACK_TOP = {"packId", "version", "createdAt", "promptVersion", "scoringVersion", "scope", "landmarks"}
+_LANDMARK = {"placeId", "name", "latitude", "longitude", "regionCode", "visibility", "category", "intro", "factRevisionIds"}
+VISIBILITIES = ("small", "large")
+MAX_LANDMARKS = 64
+MAX_SCOPE_POINTS = 2000
 _CODES = frozenset({
     "INVALID_BUNDLE", "INVALID_REVIEW", "UNSUPPORTED_BUNDLE_VERSION", "BUNDLE_TOO_LARGE",
     "DUPLICATE_REVISION", "SOURCE_NOT_REVIEWED", "USE_NOT_ALLOWED", "UNSUPPORTED_ASSET_SCOPE",
@@ -40,7 +46,7 @@ _CODES = frozenset({
     "INVALID_ORDINAL", "UNVERIFIED_MEDIA", "DUPLICATE_STABLE_FACT", "STORY_HASH_MISMATCH",
     "INCOMPLETE_BUNDLE", "INVALID_SOURCE_URL", "DUPLICATE_ID", "INVALID_ID", "INVALID_TIMESTAMP",
     "INVALID_TEXT", "DUPLICATE_REVIEW_KEY", "INVALID_DEVICE_IDS",
-    "INVALID_REGION_BINDING",
+    "INVALID_REGION_BINDING", "INVALID_SCOPE", "INVALID_LANDMARK", "INVALID_INTEREST_SCORES",
 })
 
 
@@ -170,14 +176,20 @@ def _coordinate(value, minimum, maximum):
 def _validate_bundle(bundle, now_epoch_ms):
     _need(isinstance(bundle, dict))
     version = bundle.get("formatVersion")
-    _need(type(version) is int and version in (1, 2), "UNSUPPORTED_BUNDLE_VERSION")
-    _obj(bundle, _TOP | ({"regionBindings"} if version == 2 else set()))
+    _need(type(version) is int and version in (1, 2, 3), "UNSUPPORTED_BUNDLE_VERSION")
+    _obj(bundle, _TOP | ({"regionBindings"} if version >= 2 else set()) | (_PACK_TOP if version == 3 else set()))
     _timestamp(now_epoch_ms)
-    for name, low, high in (("sources", 1, 64), ("facts", 1, 256), ("places", 0, 64), ("stories", 1, 32), ("versions", 1, 64)):
+    # A region pack (2차) may carry landmarks only; a route pack and every older bundle carry stories.
+    region_pack = version == 3 and isinstance(bundle["scope"], dict) and bundle["scope"].get("type") == "region"
+    story_minimum = 0 if region_pack else 1
+    for name, low, high in (("sources", 1, 64), ("facts", 1, 256), ("places", 0, 64), ("stories", story_minimum, 32), ("versions", story_minimum, 64)):
         _need(low <= len(_rows(bundle[name])) <= high)
-    for name, keys in (("sources", _SOURCE), ("facts", _FACT), ("places", _PLACE), ("stories", _STORY), ("versions", _VERSION)):
+    for name, keys in (("sources", _SOURCE), ("facts", _FACT), ("places", _PLACE), ("versions", _VERSION)):
         for row in bundle[name]:
             _obj(row, keys)
+    for row in bundle["stories"]:
+        # interestScores (5-1) is optional: absent and present are both valid.
+        _obj(row, _STORY | ({"interestScores"} if version == 3 and isinstance(row, dict) and "interestScores" in row else set()))
     sources = _unique(bundle["sources"], "sourceRevisionId")
     facts = _unique(bundle["facts"], "factRevisionId")
     places = _unique(bundle["places"], "placeId")
@@ -240,7 +252,15 @@ def _validate_bundle(bundle, now_epoch_ms):
         _text(story["coreQuestion"], 1000)
         _strings(story["interestTags"], 20, 100)
         _need(story["placeId"] is None or isinstance(story["placeId"], str) and story["placeId"] in places, "MISSING_REFERENCE")
-    if version == 2:
+        if "interestScores" in story:
+            scores = story["interestScores"]
+            _need(isinstance(scores, dict) and len(scores) <= 32, "INVALID_INTEREST_SCORES")
+            for key, value in scores.items():
+                _text(key, 100)
+                _need(type(value) in (int, float) and math.isfinite(value) and 0 <= value <= 1, "INVALID_INTEREST_SCORES")
+    if version == 3:
+        _validate_pack(bundle, places, facts, now_epoch_ms)
+    if version >= 2:
         _validate_region_bindings(bundle["regionBindings"], stories, facts, now_epoch_ms)
     paragraph_ids = set()
     for version in bundle["versions"]:
@@ -277,6 +297,47 @@ def _validate_bundle(bundle, now_epoch_ms):
     for rows, keys in ((bundle["sources"], ("sourceId", "contentHash")), (bundle["facts"], ("factId", "version")), (bundle["versions"], ("storyId", "version"))):
         _need(len({tuple(row[key] for key in keys) for row in rows}) == len(rows), "DUPLICATE_REVISION")
     _need(set(stories) == {version["storyId"] for version in bundle["versions"]}, "INCOMPLETE_BUNDLE")
+
+
+def _validate_pack(bundle, places, facts, now_epoch_ms):
+    _id(bundle["packId"])
+    _revision(bundle["version"])
+    _timestamp(bundle["createdAt"])
+    _text(bundle["promptVersion"], 128)
+    _text(bundle["scoringVersion"], 128)
+    scope = bundle["scope"]
+    _need(isinstance(scope, dict) and scope.get("type") in ("route", "region"), "INVALID_SCOPE")
+    if scope["type"] == "route":
+        _obj(scope, {"type", "scenarioId", "path", "regionCodes"}, "INVALID_SCOPE")
+        _id(scope["scenarioId"])
+        path = _rows(scope["path"])
+        _need(2 <= len(path) <= MAX_SCOPE_POINTS, "INVALID_SCOPE")
+        for point in path:
+            _need(isinstance(point, list) and len(point) == 2 and all(type(x) in (int, float) and math.isfinite(x) for x in point)
+                  and -180 <= point[0] <= 180 and -90 <= point[1] <= 90, "INVALID_SCOPE")
+    else:
+        _obj(scope, {"type", "regionCode", "regionCodes"}, "INVALID_SCOPE")
+        _need(isinstance(scope["regionCode"], str) and re.fullmatch(r"[0-9]{5}", scope["regionCode"]) is not None, "INVALID_SCOPE")
+    codes = _rows(scope["regionCodes"])
+    _need(len(codes) <= 256 and len(set(codes)) == len(codes) and all(isinstance(code, str) and re.fullmatch(r"[0-9]{5}", code) for code in codes), "INVALID_SCOPE")
+    landmarks = _rows(bundle["landmarks"])
+    _need(len(landmarks) <= MAX_LANDMARKS, "INVALID_LANDMARK")
+    seen = set()
+    for landmark in landmarks:
+        _obj(landmark, _LANDMARK, "INVALID_LANDMARK")
+        place = places.get(landmark["placeId"]) if isinstance(landmark["placeId"], str) else None
+        _need(place is not None and landmark["placeId"] not in seen, "INVALID_LANDMARK")
+        seen.add(landmark["placeId"])
+        _text(landmark["name"], 200)
+        _coordinate(landmark["latitude"], -90, 90)
+        _coordinate(landmark["longitude"], -180, 180)
+        # The landmark repeats its place's reviewed coordinates; it may not move the place.
+        _need(landmark["latitude"] == place["latitude"] and landmark["longitude"] == place["longitude"], "INVALID_LANDMARK")
+        _need(landmark["regionCode"] is None or isinstance(landmark["regionCode"], str) and re.fullmatch(r"[0-9]{5}", landmark["regionCode"]) is not None, "INVALID_LANDMARK")
+        _need(landmark["visibility"] in VISIBILITIES, "INVALID_LANDMARK")
+        _text(landmark["category"], 64)
+        _text(landmark["intro"], 300)
+        _refs(landmark["factRevisionIds"], facts)
 
 
 def _validate_region_bindings(bindings, stories, facts, now_epoch_ms):

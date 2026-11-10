@@ -13,7 +13,6 @@ import com.petasos.app.generation.*
 import com.petasos.app.platform.android.summary.SummaryBackground
 import com.petasos.app.platform.android.music.BundledMusicCatalog
 import com.petasos.app.platform.android.content.BundledStoryCatalog
-import com.petasos.app.platform.android.content.BundledLandmarkPolicyCatalog
 import com.petasos.app.platform.android.location.BundledRegionCatalog
 import com.petasos.app.platform.android.location.AndroidLocationSource
 import com.petasos.app.platform.android.location.LocationAccess
@@ -68,6 +67,10 @@ class PetasosSessionHost(
     private val tripEnding = AtomicReference<TripEnding?>(null)
     @Volatile private var recoverableTripId: String? = null
     @Volatile private var speech: CaptioningRuntimeSpeech? = null
+    /** Sentence-by-sentence TTS that can insert window announcements (CONTENT_PIPELINE.md 6장). */
+    @Volatile private var window: InterjectingRuntimeSpeech? = null
+    /** Worker-fed; null until a session with pack landmarks starts. Once per trip per place. */
+    @Volatile private var windowGuide: WindowLandmarkGuide? = null
     @Volatile private var captionVisible = false
     private val captionLock = Any()
     private val captionVisibility = CaptionVisibilityAuthority()
@@ -118,6 +121,11 @@ class PetasosSessionHost(
 
     /** Display only (card/home label): the currently confirmed region id, if any. Grants no authority. */
     fun displayRegionId(): String? = currentRegionId
+
+    /** Overlay: the exact story/answer sentence being spoken now (null between outputs). */
+    fun currentSpokenSentence(): String? = window?.currentSentence()
+    /** Overlay: the window announcement being spoken now -- label "오른쪽 · 한빛탑" and the intro as body. */
+    fun currentWindowAnnouncement(): InterjectingRuntimeSpeech.Interjection? = window?.currentInterjection()
     @Volatile private var confirmedRegionAuthority: ConfirmedRegionAuthority? = null
     private var locationValid = false
     private var latestReceivedElapsed: Long? = null
@@ -671,9 +679,7 @@ class PetasosSessionHost(
         locationStore = locations
         navigationStore = RoomNavigationStore(persistence.database, ownsDatabase = false)
         val automaticStories = RoomAutomaticStoryStore(persistence.database, System::currentTimeMillis, hierarchy = hierarchy)
-        val landmarkStories = RoomLandmarkCandidates(persistence.database)
         val contentPlanner = ContentPlanner(clockScopeId)
-        val landmarkSession = LandmarkCandidateSession(contentPlanner, sessionId, clockScopeId)
         val planner = AutomaticStoryPlaybackBridge(contentPlanner, { region, excluded ->
             val available = automaticStories.candidates(region, excluded).let { base ->
                 // DEMO-only: nothing bound to the confirmed region itself -> one unplayed story overall.
@@ -700,9 +706,6 @@ class PetasosSessionHost(
         },
             targetCurrent = { regionalPlanner?.isCurrent(it, SystemClock.elapsedRealtime()) == true },
             targetPlayable = { regionalPlanner?.isPlayableNow(it, SystemClock.elapsedRealtime()) == true },
-            landmarkSession = landmarkSession,
-            landmarkCandidates = landmarkStories::candidates,
-            landmarkCurrent = { landmarkStories.isCurrent(it) },
             requireRegionalTarget = true)
         planning = planner
         musicPlanning = AutomaticMusicPlaybackBridge(musicCatalog::automaticCandidates, object : PlannedMusicOutput {
@@ -798,7 +801,10 @@ class PetasosSessionHost(
             },
             onChanged = { queue.execute { refreshPlanning(); changed() } },
         )
-        val inputOutput = CaptioningRuntimeSpeech(PleosRuntimeSpeech(context, inputAllowed = ::mayCapture), onCaptionChanged = ::changed)
+        val sentences = InterjectingRuntimeSpeech(PleosRuntimeSpeech(context, inputAllowed = ::mayCapture), post = { main.post(it) }, onChanged = ::changed)
+        window = sentences
+        windowGuide = WindowLandmarkGuide(RoomPackLandmarks(persistence.database).all())
+        val inputOutput = CaptioningRuntimeSpeech(sentences, onCaptionChanged = ::changed)
         synchronized(captionLock) { speech = inputOutput; refreshCaptionVisibilityLocked() }
         val musicOutput = Media3RuntimeMusic(context)
         music = musicOutput
@@ -890,10 +896,8 @@ class PetasosSessionHost(
         return store ?: RoomRuntimePersistence(context, musicCatalog = musicCatalog).also {
             // Install reviewed public seeds once on the worker, before any catalog read. A rejected
             // bundle leaves existing content/settings available and grants no trip or location consent.
-            if (BundledStoryCatalog(context).load(it.database) != null) {
-                // Exact reviewed demo policies only; no source/story/consent changes or guessed thresholds.
-                BundledLandmarkPolicyCatalog(context).load(it.database)
-            }
+            // The pack also carries the window landmarks (installed on their place rows).
+            BundledStoryCatalog(context).load(it.database)
             store = it
             musicTracks = try { musicCatalog.credits().map { credit -> credit.track } } catch (_: Exception) { emptyList() }
         }
@@ -1244,8 +1248,7 @@ class PetasosSessionHost(
                 locationValid = locationSource != null && last.quality == LocationQuality.VALID &&
                     last.receivedAtElapsedMs == latestReceivedElapsed && locationFreshUntilElapsedMs != null &&
                     committedLocationAuthority()
-                // Only the latest exact receipt can authorize movement. The landmark session compares
-                // committed points across batches; an approach entirely inside one batch may be missed.
+                // Only the latest exact receipt can authorize movement.
                 committedLocation = last.takeIf { locationValid }
                 confirmedRegionAuthority?.invalidate()
                 confirmedRegionAuthority = committed.confirmedRegion?.takeIf {
@@ -1253,6 +1256,7 @@ class PetasosSessionHost(
                 }?.let(::ConfirmedRegionAuthority)
                 currentRegionId = confirmedRegionAuthority?.confirmation?.regionId
                 pendingPermits.clear() // A failed append retains the exact point permits for retry.
+                observeWindow(points)
                 refreshPlanning()
                 return committed
             }
@@ -1384,15 +1388,10 @@ class PetasosSessionHost(
                 locationFreshUntilElapsedMs, planningInputAuthority,
                 currentRegionPolicyKey = regionAuthority?.confirmation?.policySourceKey,
                 currentRegionAuthority = regionPermit))
-            // Pauses/blockers suppress offers, but passing a landmark during them is still terminal.
-            // Only explicit observed inactivity allows current-position landmark selection. An active
-            // route requires a reviewed route/landmark membership port, which is not available yet.
-            val landmarkRoute = if (observedNavigationRouteState == NavigationRouteState.INACTIVE)
-                LandmarkRouteContext.CurrentPosition else LandmarkRouteContext.Unavailable
             planning?.update(PlanningContext(currentRegionId, routeDependency, now, clockScopeId,
                 locationValid, state.interactionIntent, committedLocationElapsed, regionalTarget,
                 locationFreshUntilElapsedMs, planningInputAuthority, currentRegionAuthority = regionPermit,
-                currentRegionEvidenceCurrent = regionEvidence), committedLocation, landmarkRoute, allowOffer)
+                currentRegionEvidenceCurrent = regionEvidence), allowOffer)
             if (BuildConfig.DEBUG) {
                 val line = "plan playIntent=${state.playIntent} interaction=${state.interactionIntent} blockers=${state.blockers} " +
                     "mode=${state.mode} locValid=$locationValid region=$currentRegionId target=${regionalTarget?.regionId} boundary=${boundary != null} forecast=${forecast?.passages?.map { it.regionId }} locAuth=${planningInputAuthority()} rawLoc=${locationAuthority()} nav=${navigationIngressRevision.get() == navigationRevision} regionAuth=${regionPermit()}"
@@ -1474,6 +1473,41 @@ class PetasosSessionHost(
         stopLocationRecording()
     }
     private fun changed() { main.post { if (!released) { listener?.invoke(); uiListeners.toList().forEach { it() } } } }
+
+    // ------------------------------------------------------------------ window announcements (6장)
+
+    /** Worker: feed valid fixes, then hand at most one due landmark to the speech layer. */
+    private fun observeWindow(points: List<RecordedLocation>) {
+        val guide = windowGuide ?: return
+        points.forEach { point ->
+            val latitude = point.latitude ?: return@forEach
+            val longitude = point.longitude ?: return@forEach
+            if (point.quality == LocationQuality.VALID) guide.observe(latitude, longitude, point.receivedAtElapsedMs)
+        }
+        if (!WindowGuideSetting.enabled(context)) return
+        val landmark = guide.due() ?: return
+        val speaker = window ?: return
+        // Reserved now so the next fix cannot queue it twice; once per trip whether spoken or dropped.
+        // Only BUSY (another announcement still speaking) releases it for a later fix.
+        guide.mention(landmark.placeId)
+        var heldMusic = false
+        speaker.interject(build = build@{
+            // Main thread, right before speaking: drop it when the user is talking or it is already behind.
+            val state = latest
+            val mode = state?.mode
+            if (state == null || state.closed || !state.playIntent || state.interactionIntent || state.blockers.isNotEmpty() ||
+                mode !in WINDOW_MODES || released) return@build null
+            val announcement = guide.announcementNow(landmark) ?: return@build null
+            if (mode == PlaybackMode.MUSIC) { music?.holdForAnnouncement(true); heldMusic = true }
+            if (BuildConfig.DEBUG) android.util.Log.i("PetasosTalk", "window speak ${announcement.direction} mode=$mode")
+            InterjectingRuntimeSpeech.Interjection(RuntimeText(announcement.spoken), announcement.label, landmark.intro)
+        }, done = { outcome ->
+            if (heldMusic) music?.holdForAnnouncement(false)
+            if (outcome == InterjectingRuntimeSpeech.Outcome.BUSY) guide.release(landmark.placeId)
+            if (BuildConfig.DEBUG) android.util.Log.i("PetasosTalk", "window done $outcome")
+        })
+        if (BuildConfig.DEBUG) android.util.Log.i("PetasosTalk", "window due")
+    }
     private fun <T> work(action: () -> T): ListenableFuture<T> {
         val future = SettableFuture.create<T>()
         if (disposed) { future.setException(IllegalStateException("SESSION_CLOSED")); return future }
@@ -1514,7 +1548,7 @@ class PetasosSessionHost(
         musicPlanning?.clear(); musicPlanning = null
         automaticGeneration?.revoke(); automaticGeneration = null; automaticGenerationPlan = null
         auxiliaryRoutes?.close(); auxiliaryRoutes = null; auxiliaryRouteClient?.close(); auxiliaryRouteClient = null
-        speech?.close(); music?.close(); generation?.close(); locationStore?.close(); navigationStore?.close(); store?.close()
+        speech?.close(); music?.close(); window = null; windowGuide = null; generation?.close(); locationStore?.close(); navigationStore?.close(); store?.close()
         queue.close()
     }
     private fun checkMain() = check(Looper.myLooper() == Looper.getMainLooper())
@@ -1522,5 +1556,7 @@ class PetasosSessionHost(
         /** Conservative development candidate aligned with LOC freshness; real movement validation remains pending. */
         private const val RECEIPT_GAP_CANDIDATE_MS = 10_000L
         private const val DEMO_FIRST_SPEECH_MS = 9_000L
+        /** Story: at the next sentence end. Music: paused around it. Idle: on its own. Never during a conversation. */
+        private val WINDOW_MODES = setOf(PlaybackMode.STORY, PlaybackMode.MUSIC, PlaybackMode.IDLE)
     }
 }

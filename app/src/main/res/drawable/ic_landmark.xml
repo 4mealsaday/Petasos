@@ -1,0 +1,10 @@
+<!-- Window announcement (창밖 안내) mark on the overlay caption card: a simple columned landmark. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="960"
+    android:viewportHeight="960">
+  <path
+      android:fillColor="@color/text_strong"
+      android:pathData="M480,80L860,270L860,340L100,340L100,270ZM180,400h80v300h-80zM360,400h80v300h-80zM520,400h80v300h-80zM700,400h80v300h-80zM100,760h760v100h-760z"/>
+</vector>

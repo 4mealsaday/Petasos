@@ -1,0 +1,16 @@
+{
+  "scenarioId": "seoul-daejeon",
+  "name": "서울역 → 대전엑스포과학공원 (경부축)",
+  "origin": {"name": "서울역", "longitude": 126.9707, "latitude": 37.5547},
+  "destination": {"name": "대전엑스포과학공원", "longitude": 127.3866, "latitude": 36.3765},
+  "packId": "seoul-daejeon",
+  "route": "route.json",
+  "gpx": "route.gpx",
+  "video": {
+    "storyTitles": ["역이 문화공간으로", "용구와 처인에서 용인으로", "안성맞춤과 두 가지 유기", "철도와 함께 자란 대전", "박람회가 남긴 과학공원"],
+    "landmarks": ["반포대교 달빛무지개분수", "청계산", "용인포은아트홀", "한빛탑"],
+    "landmarkPassSpeedMps": 28,
+    "landmarkSlowBeforeM": 500,
+    "landmarkSlowAfterM": 150
+  }
+}

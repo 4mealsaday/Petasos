@@ -20,7 +20,7 @@ class TourismContractTests(unittest.TestCase):
         self.assertEqual(len(operations()), 23)
         self.assertEqual(len(operations("odii")), 8)
         self.assertEqual(len(operations("tourapi")), 15)
-        directory = Path(__file__).resolve().parents[2] / "docs/reference/public-data"
+        directory = Path(__file__).resolve().parents[1] / "petasos_server" / "reference"
         for service in ("odii", "tourapi"):
             raw = json.loads((directory / f"{service}.openapi.json").read_text())
             for path, entry in raw["paths"].items():

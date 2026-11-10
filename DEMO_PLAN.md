@@ -140,6 +140,19 @@
 - 환경: 에뮬레이터 재부팅 후 DNS가 안 되면(IP ping은 되는데 도메인 해석 실패, 내비 "서비스 연결 중" 멈춤) `-dns-server 8.8.8.8,1.1.1.1`로 부팅하면 해결.
 - 환경: 세션 중 에뮬레이터 기본 네트워크가 사라져(호스트는 정상, 에뮬레이터 `ping` unreachable, 비행기 모드 토글로 복구 안 됨) 내 여행이 자체 지도로 대체됨(`fallback reason=no-network`), 재부팅 후 복구. 내비 위 표시는 우리 홈 화면 위에도 그대로 떠 있음(기존 동작).
 
+**8단계 — 콘텐츠 파이프라인 1차 전 + 창밖 안내** (`docs/CONTENT_PIPELINE.md` 7장 "1차 전", 스크린샷 `Claude outputs/landmark-v1/`)
+- 서버 파이프라인(`server/petasos_server/pipeline/`): 출처 어댑터 TourAPI(기존 `TourismClient` 재사용, 지역 목록 `areaBasedList2` + 위치 목록 보충 + `detailCommon2` 개요)·국가유산청(목록/상세, 키 불필요) → 공통 `Place`/`Fact`/`SourceDocument`, 파일 캐시 `.local/content/cache`(같은 출처 ID 재조회 없음), 라이선스 필드 필수. TourAPI 위치 목록은 대전 쪽이 거의 비어 있어(반경 10 km 관광지 3곳) 경로가 지나는 시군구는 지역 목록으로 받음.
+- 1단계 정리 때 함께 지워졌던 TourAPI/Odii 계약 스냅샷을 `server/petasos_server/reference/`로 복원 → 서버 테스트 실패 71 → 5(남은 5개는 옛 promptVersion·데모에서 뺀 프라이버시 차단 기대값, 변경 전부터 실패).
+- 팩 형식 v3 = 기존 번들 + `packId`·`version`·`createdAt`·`promptVersion`·`scoringVersion`·`scope`·`landmarks[]`, `stories[].interestScores`는 선택(1차 전 비어 있음). 서버 `content_bundle`·앱 `ContentBundleCodec`/`RoomContentInstaller`가 같은 규칙으로 검증·설치(새 설치 경로 없음, 랜드마크는 기존 `place.landmark_policy_json` 열 재사용 → DB 스키마 변경 없음). 경로 좌표 때문에 코덱은 소수 허용 파서를 쓰되 정수 필드는 그대로 정수만 받음.
+- 프롬프트: `server/prompts/`(guide_persona·story·answer·summary_resume·landmark_intro, 파일마다 버전). 합친 시스템 프롬프트는 분리 전 상수와 바이트 동일(sha256 테스트). summary/resume 문장은 문서 목록 밖이라 `summary_resume.md`로 따로 둠.
+- `server/tools/build_pack.py --scenario seoul-daejeon [--install]`: 경로 2 km 안 장소 → 보임 규칙(`visibility.py`: 탑·전망대·경기장·대교·산성·산=large, 그 외 small, 유물·기록유산·골목·도서관 등 제외, 가로 거리가 small 150 m/large 1 km 안인 것만) → `Scorer`(rules-v0: 유산 등급·분류·개요 길이·경로 거리) → 지역당 최대 3곳 → intro(KOGL-1은 모델, KOGL-3·국가유산청은 원문 한 문장 인용, 인용 factId 검사) → 팩 + 검토표 `demo/packs/seoul-daejeon.review.md`. `InterestScorer`는 자리만. `GET /v1/packs/region/{code}`는 같은 `build_region_pack`을 부르는 뼈대(설정에 `packs`가 없으면 503).
+- 시나리오: `demo/scenarios/seoul-daejeon/`(scenario.json·route.json·route.gpx), `demo_route.py --scenario`. 이야기 10편·문단·해시는 그대로 팩에 옮김(빌드 시 기존 번들과 동일 비교, 앱 테스트로도 확인). 랜드마크 11곳.
+- 앱 창밖 안내: 기존 랜드마크 정책 체계(승인 목록·SHA 고정·300 m/180초·내비 경로 없을 때만, 관련 테스트 포함) 삭제. `WindowLandmarkGuide`(최근 GPS로 진행 방향·속도, 앞 ±20°/앞 옆 20~60°/옆 60~120°, 그 뒤는 말하지 않음, 가로 거리 반경, 가장 가까워지기 12초 이내에 도래, 시속 252 km 초과는 무시, 여정당 1회) + `InterjectingRuntimeSpeech`(문단을 문장 단위로 TTS → 현재 문장 끝에 "{방향} 창밖으로 {이름}이/가 있어요. {intro}" 삽입 후 다음 문장, 재생 상태기계는 변경 없음, 문장 간격 약 70 ms). 음악 중이면 음악을 멈추고 포커스를 반납했다가 같은 위치에서 재개(DEMO 15초 타이머는 실제 재생 시간만 셈). 대화 중(버튼·듣기·답변)이면 버림, 다른 안내가 말하는 중이면 다음 GPS에서 다시 시도. 자막 카드: 랜드마크 아이콘 + "오른쪽 앞 · 한빛탑" + intro, 이야기 자막은 이제 실제 말하는 문장. 설정 "창밖 안내"(기본 켜짐). 내비 경로 유무와 무관.
+- 영상 프리셋: 빠른 재생 구간은 시속 252 km를 넘어 안내하지 않으므로 scenario.json `video.landmarks`(반포대교 분수·청계산·용인포은아트홀·한빛탑) 앞 500 m~뒤 150 m만 28 m/s·20 m 간격으로 재생(GPX 8.6분, 2895점).
+- 확인(debug, 새 설치, `--video` 1회, 빌드 동시 실행 없음): 안내 4회 — 앞쪽·반포대교 달빛무지개분수 / 오른쪽 앞·청계산 / 앞쪽·용인포은아트홀(직후 S03 시작) / 왼쪽 앞·한빛탑, 대표 이야기 5편 각 2문단 완료. 이야기 중 삽입: 한빛탑 650 m 앞에서 ON → S10 1문장 → 한빛탑 안내 → S10 다음 문장(debug·release 모두 TTS 로그로 확인). 대화: 질문 → 답변(문장 단위 자막) → 음악 복귀. release 새 설치: 첫 실행 → 이야기 중 안내 → 설정 끄면 같은 접근에서 안내 없음 → 다시 켬.
+- 첫 회차에서 같은 Mac에서 gradle 빌드를 돌리자 에뮬레이터가 굶어 화면 프레임 최대 13초·작업 큐 약 18초가 밀렸고 S05를 놓침(앱 로직 아님). 재생 중에는 빌드하지 않을 것.
+- 남은 것: 랜드마크 표 사용자 검토(빼기·고치기 후 `build_pack.py` 재실행 → 앱 asset·`BundledStoryCatalog.SHA256` 교체), 국가유산청 설명문 이용 조건 확인, README의 `demo/route.*` 경로 표기(이번 범위 밖이라 그대로), 홈 "청취 기록 초기화" 후 내 여행 숫자 갱신 여부 미확인.
+
 ## 5. 개발 원칙 (이전 방식에서 바꾸는 점)
 - 새 기능마다 문서·증거 JSON·probe를 만들지 않는다. 변경 내역은 git 커밋 메시지로 충분.
 - "검증 전이면 기능을 끈다" 대신 "데모에서 동작하게 하고, 한계는 README에 한 줄".

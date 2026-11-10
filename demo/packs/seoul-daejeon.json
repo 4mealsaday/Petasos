@@ -1,0 +1,2909 @@
+{
+ "formatVersion": 3,
+ "packId": "seoul-daejeon",
+ "version": 1,
+ "createdAt": 1794322421927,
+ "promptVersion": "landmark-intro-v1",
+ "scoringVersion": "rules-v0",
+ "scope": {
+  "type": "route",
+  "scenarioId": "seoul-daejeon",
+  "path": [
+   [
+    126.969829,
+    37.554727
+   ],
+   [
+    126.969686,
+    37.555194
+   ],
+   [
+    126.969031,
+    37.555263
+   ],
+   [
+    126.968921,
+    37.556893
+   ],
+   [
+    126.969035,
+    37.553154
+   ],
+   [
+    126.970628,
+    37.544913
+   ],
+   [
+    126.971896,
+    37.545098
+   ],
+   [
+    126.974102,
+    37.536597
+   ],
+   [
+    126.97395,
+    37.535718
+   ],
+   [
+    126.975811,
+    37.534631
+   ],
+   [
+    126.986141,
+    37.53488
+   ],
+   [
+    126.987115,
+    37.534568
+   ],
+   [
+    126.989469,
+    37.532496
+   ],
+   [
+    126.991282,
+    37.529932
+   ],
+   [
+    126.991765,
+    37.525972
+   ],
+   [
+    126.993382,
+    37.523328
+   ],
+   [
+    126.994128,
+    37.519593
+   ],
+   [
+    127.000908,
+    37.505003
+   ],
+   [
+    127.014421,
+    37.509004
+   ],
+   [
+    127.015926,
+    37.509032
+   ],
+   [
+    127.028581,
+    37.476247
+   ],
+   [
+    127.030012,
+    37.473858
+   ],
+   [
+    127.056089,
+    37.445807
+   ],
+   [
+    127.061866,
+    37.438144
+   ],
+   [
+    127.09874,
+    37.401684
+   ],
+   [
+    127.100164,
+    37.399396
+   ],
+   [
+    127.103022,
+    37.383251
+   ],
+   [
+    127.103762,
+    37.246516
+   ],
+   [
+    127.106976,
+    37.231783
+   ],
+   [
+    127.106079,
+    37.229289
+   ],
+   [
+    127.097778,
+    37.217916
+   ],
+   [
+    127.095948,
+    37.21344
+   ],
+   [
+    127.095355,
+    37.209601
+   ],
+   [
+    127.095327,
+    37.186292
+   ],
+   [
+    127.095824,
+    37.177225
+   ],
+   [
+    127.09465,
+    37.173391
+   ],
+   [
+    127.084119,
+    37.150656
+   ],
+   [
+    127.083447,
+    37.146163
+   ],
+   [
+    127.086362,
+    37.136574
+   ],
+   [
+    127.088462,
+    37.133125
+   ],
+   [
+    127.109349,
+    37.117924
+   ],
+   [
+    127.112587,
+    37.113875
+   ],
+   [
+    127.1285,
+    37.078891
+   ],
+   [
+    127.133167,
+    37.072016
+   ],
+   [
+    127.134337,
+    37.069458
+   ],
+   [
+    127.13707,
+    37.043274
+   ],
+   [
+    127.143,
+    37.019591
+   ],
+   [
+    127.144169,
+    37.016474
+   ],
+   [
+    127.148854,
+    37.007887
+   ],
+   [
+    127.156717,
+    36.987285
+   ],
+   [
+    127.1589,
+    36.983683
+   ],
+   [
+    127.187933,
+    36.947935
+   ],
+   [
+    127.189237,
+    36.9455
+   ],
+   [
+    127.188836,
+    36.921467
+   ],
+   [
+    127.18913,
+    36.884083
+   ],
+   [
+    127.185818,
+    36.862599
+   ],
+   [
+    127.184996,
+    36.859877
+   ],
+   [
+    127.17635,
+    36.84458
+   ],
+   [
+    127.174098,
+    36.833858
+   ],
+   [
+    127.168259,
+    36.825879
+   ],
+   [
+    127.166717,
+    36.822881
+   ],
+   [
+    127.165017,
+    36.805844
+   ],
+   [
+    127.165288,
+    36.803533
+   ],
+   [
+    127.167828,
+    36.7958
+   ],
+   [
+    127.173337,
+    36.785716
+   ],
+   [
+    127.178552,
+    36.772437
+   ],
+   [
+    127.181244,
+    36.76941
+   ],
+   [
+    127.184613,
+    36.767683
+   ],
+   [
+    127.187859,
+    36.767022
+   ],
+   [
+    127.204309,
+    36.766111
+   ],
+   [
+    127.215439,
+    36.76132
+   ],
+   [
+    127.217261,
+    36.760225
+   ],
+   [
+    127.21825,
+    36.758858
+   ],
+   [
+    127.219362,
+    36.750691
+   ],
+   [
+    127.2207,
+    36.748458
+   ],
+   [
+    127.222585,
+    36.746898
+   ],
+   [
+    127.22615,
+    36.745582
+   ],
+   [
+    127.2395,
+    36.743649
+   ],
+   [
+    127.261899,
+    36.731674
+   ],
+   [
+    127.266292,
+    36.731209
+   ],
+   [
+    127.2859,
+    36.7343
+   ],
+   [
+    127.288499,
+    36.734242
+   ],
+   [
+    127.30915,
+    36.726167
+   ],
+   [
+    127.322949,
+    36.723691
+   ],
+   [
+    127.330912,
+    36.720408
+   ],
+   [
+    127.343987,
+    36.716958
+   ],
+   [
+    127.347037,
+    36.715583
+   ],
+   [
+    127.348337,
+    36.7142
+   ],
+   [
+    127.349096,
+    36.711733
+   ],
+   [
+    127.347169,
+    36.706283
+   ],
+   [
+    127.347365,
+    36.703721
+   ],
+   [
+    127.353037,
+    36.696316
+   ],
+   [
+    127.356612,
+    36.689208
+   ],
+   [
+    127.359042,
+    36.68672
+   ],
+   [
+    127.365584,
+    36.684698
+   ],
+   [
+    127.368362,
+    36.683016
+   ],
+   [
+    127.374062,
+    36.675699
+   ],
+   [
+    127.374374,
+    36.672208
+   ],
+   [
+    127.370848,
+    36.664608
+   ],
+   [
+    127.370489,
+    36.660378
+   ],
+   [
+    127.374612,
+    36.648491
+   ],
+   [
+    127.385506,
+    36.620935
+   ],
+   [
+    127.386962,
+    36.619016
+   ],
+   [
+    127.389334,
+    36.617147
+   ],
+   [
+    127.413975,
+    36.603083
+   ],
+   [
+    127.417199,
+    36.599933
+   ],
+   [
+    127.421011,
+    36.59715
+   ],
+   [
+    127.424443,
+    36.592954
+   ],
+   [
+    127.426134,
+    36.589884
+   ],
+   [
+    127.426615,
+    36.587517
+   ],
+   [
+    127.426527,
+    36.578111
+   ],
+   [
+    127.4325,
+    36.557616
+   ],
+   [
+    127.431749,
+    36.551341
+   ],
+   [
+    127.432224,
+    36.546016
+   ],
+   [
+    127.429985,
+    36.531411
+   ],
+   [
+    127.432436,
+    36.525233
+   ],
+   [
+    127.432625,
+    36.52345
+   ],
+   [
+    127.429825,
+    36.517941
+   ],
+   [
+    127.4286,
+    36.510333
+   ],
+   [
+    127.430625,
+    36.480316
+   ],
+   [
+    127.428237,
+    36.472499
+   ],
+   [
+    127.426237,
+    36.4706
+   ],
+   [
+    127.418324,
+    36.465891
+   ],
+   [
+    127.416536,
+    36.463625
+   ],
+   [
+    127.415724,
+    36.460383
+   ],
+   [
+    127.419583,
+    36.443349
+   ],
+   [
+    127.418522,
+    36.440213
+   ],
+   [
+    127.419662,
+    36.43956
+   ],
+   [
+    127.426578,
+    36.438891
+   ],
+   [
+    127.425028,
+    36.435057
+   ],
+   [
+    127.42125,
+    36.429142
+   ],
+   [
+    127.419431,
+    36.423526
+   ],
+   [
+    127.41973,
+    36.421133
+   ],
+   [
+    127.422725,
+    36.416841
+   ],
+   [
+    127.423098,
+    36.415156
+   ],
+   [
+    127.420622,
+    36.413258
+   ],
+   [
+    127.419817,
+    36.410951
+   ],
+   [
+    127.416172,
+    36.404994
+   ],
+   [
+    127.414425,
+    36.400549
+   ],
+   [
+    127.41285,
+    36.391741
+   ],
+   [
+    127.412527,
+    36.383261
+   ],
+   [
+    127.412027,
+    36.380046
+   ],
+   [
+    127.410875,
+    36.377633
+   ],
+   [
+    127.408736,
+    36.3793
+   ],
+   [
+    127.406625,
+    36.380233
+   ],
+   [
+    127.404374,
+    36.377241
+   ],
+   [
+    127.401674,
+    36.376266
+   ],
+   [
+    127.399149,
+    36.376008
+   ],
+   [
+    127.392312,
+    36.379018
+   ],
+   [
+    127.390547,
+    36.379264
+   ],
+   [
+    127.38863,
+    36.378558
+   ],
+   [
+    127.387074,
+    36.37955
+   ],
+   [
+    127.386224,
+    36.379396
+   ],
+   [
+    127.386198,
+    36.376503
+   ]
+  ],
+  "regionCodes": [
+   "11170",
+   "11650",
+   "41131",
+   "41135",
+   "41465",
+   "41463",
+   "41590",
+   "41370",
+   "41220",
+   "41461",
+   "41550",
+   "44133",
+   "44131",
+   "43113",
+   "43112",
+   "30230",
+   "30200"
+  ]
+ },
+ "sources": [
+  {
+   "allowedUses": {
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "allowGeneration": true,
+    "reviewBasis": "검토 대상은 normalizedText의 자체 작성 사실문장에 한정한다. 공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다."
+   },
+   "attribution": "한국관광공사, 문화역 서울 284, TourAPI contentId=250364, https://www.data.go.kr/data/15101578/openapi.do. 사실을 선별하여 Petasos가 자체 문장으로 작성함.",
+   "contentHash": "a96cc38082d305c393cc858aed2f6b9e0a930fb2bd2a3bbbb258133ca876260e",
+   "fetchedAt": 1794153008000,
+   "license": {
+    "reviewBasis": "공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다.",
+    "scope": "text",
+    "type": "DATA_GO_KR_UNRESTRICTED_TEXT",
+    "url": "https://www.data.go.kr/catalog/15101578/openapi.json"
+   },
+   "normalizedText": "문화역 서울 284는 옛 서울역 건물을 복원하여 만든 복합문화공간이다. 주소는 서울특별시 중구 통일로 1이다.",
+   "provider": "한국관광공사 TourAPI",
+   "reviewStatus": "verified",
+   "sourceId": "f5c8d2ad-f9d8-5f02-ae88-56879e655b99",
+   "sourceRevisionId": "6444b061-3726-5aab-9c4d-8207d3c09331",
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261020154516",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do",
+   "title": "문화역 서울 284",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "allowedUses": {
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "allowGeneration": true,
+    "reviewBasis": "검토 대상은 normalizedText의 자체 작성 사실문장에 한정한다. 개별 공식 자료의 공공누리 제1유형 표시를 확인했다. 출처를 표시하며 선택한 사실을 자체 문장으로 정리한다. 사진·도표·첨부파일은 포함하지 않는다."
+   },
+   "attribution": "문화체육관광부, 2011 구 서울역사, 복원 마치고 문화역 서울 284로 재탄생, https://www.mcst.go.kr/site/s_notice/press/pressView.jsp?pSeq=11498. 공공누리 제1유형; Petasos 사실 선별·자체 서술.",
+   "contentHash": "816fb714bdb17fe26beb34e4411c906f0860317c1814c7a5bf65f3164ddfb1bd",
+   "fetchedAt": 1794153964139,
+   "license": {
+    "reviewBasis": "개별 공식 자료의 공공누리 제1유형 표시를 확인했다. 출처를 표시하며 선택한 사실을 자체 문장으로 정리한다. 사진·도표·첨부파일은 포함하지 않는다.",
+    "scope": "text",
+    "type": "KOGL_TYPE_1_TEXT",
+    "url": "https://www.kogl.or.kr/info/licenseType1.do"
+   },
+   "normalizedText": "문화역 서울 284의 숫자 284는 옛 서울역사의 사적 번호에서 온 이름이다.",
+   "provider": "문화체육관광부",
+   "reviewStatus": "verified",
+   "sourceId": "32cda16b-350f-5f2c-a862-4bfa9890dd19",
+   "sourceRevisionId": "e5777bcb-69f7-51f6-8842-237706a399ce",
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "2011-07-14",
+   "sourceUrl": "https://www.mcst.go.kr/site/s_notice/press/pressView.jsp?pSeq=11498",
+   "title": "구 서울역사, 복원 마치고 문화역 서울 284로 재탄생",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "allowedUses": {
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "allowGeneration": true,
+    "reviewBasis": "검토 대상은 normalizedText의 자체 작성 사실문장에 한정한다. 국사편찬위원회 실록원문 공식 공공데이터 카탈로그는 출처표시 제1유형을 명시한다. 원문에 있는 용구·처인 통합과 용인 명칭이라는 사실만 자체 서술했다. 현대 국역문 전체와 이미지·DB 구조는 복제하지 않았다. 통합 연도 1413/1414 차이는 이 대본에서 제외한다."
+   },
+   "attribution": "국사편찬위원회, 조선왕조실록 태종실록 28권 태종 14년 8월 21일 기사4, https://sillok.history.go.kr/id/kca_11408021_004. 원문 공공누리 제1유형; Petasos 사실 선별·자체 서술.",
+   "contentHash": "626d83bcced36773050b2d239f3f097745e31e00df38c6b48637b314285c64e8",
+   "fetchedAt": 1794153964163,
+   "license": {
+    "reviewBasis": "국사편찬위원회 실록원문 공식 공공데이터 카탈로그는 출처표시 제1유형을 명시한다. 원문에 있는 용구·처인 통합과 용인 명칭이라는 사실만 자체 서술했다. 현대 국역문 전체와 이미지·DB 구조는 복제하지 않았다. 통합 연도 1413/1414 차이는 이 대본에서 제외한다.",
+    "scope": "text",
+    "type": "KOGL_TYPE_1_ORIGINAL_FACT_SUMMARY",
+    "url": "https://www.data.go.kr/catalog/15053647/fileData.json"
+   },
+   "normalizedText": "조선시대에 용구와 처인을 합쳐 용인이라는 이름을 사용한 사실이 태종실록에 기록되어 있다.",
+   "provider": "국사편찬위원회",
+   "reviewStatus": "verified",
+   "sourceId": "6bbc7ecf-a34e-5221-b92d-35081e654d71",
+   "sourceRevisionId": "0de160ec-0c6e-565e-b396-755259eab427",
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": null,
+   "sourceUrl": "https://sillok.history.go.kr/id/kca_11408021_004",
+   "title": "태종실록 28권 태종 14년 8월 21일 네 번째 기사",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "allowedUses": {
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "allowGeneration": true,
+    "reviewBasis": "검토 대상은 normalizedText의 자체 작성 사실문장에 한정한다. 저작물은 창작적 표현이라는 저작권법 제2조 기준에 따라, 지명 대응·날짜·행정 소속이라는 단순 사실만 새 문장으로 작성한 범위의 개발 검토다. 용인시 연혁 전체·배열·해설·의회 발언에 공공누리 허락이 있다고 주장하지 않는다. 연혁 표와 용인군의회 제44회 내무위원회 제1차의 개칭 조례안 기록을 직접 대조했다. 초안 조례를 이미 공포된 법령으로 간주하여 제7조를 적용하지 않는다."
+   },
+   "attribution": "사실 확인: 용인시, 용인시 연혁, https://www.yongin.go.kr/home/yiIf/yiIfProd/yiIfProd02.jsp; 용인군의회 제44회 내무위원회 제1차, https://council.yongin.go.kr/viewer/minutes.do?uid=425. Petasos 자체 사실문장; 원문 표현·표 복제 없음.",
+   "contentHash": "62d76b6821b49a9e1203dd655f03644326b24b484148517fb8adb724865c0fb5",
+   "fetchedAt": 1794154239017,
+   "license": {
+    "reviewBasis": "저작물은 창작적 표현이라는 저작권법 제2조 기준에 따라, 지명 대응·날짜·행정 소속이라는 단순 사실만 새 문장으로 작성한 범위의 개발 검토다. 용인시 연혁 전체·배열·해설·의회 발언에 공공누리 허락이 있다고 주장하지 않는다. 연혁 표와 용인군의회 제44회 내무위원회 제1차의 개칭 조례안 기록을 직접 대조했다. 초안 조례를 이미 공포된 법령으로 간주하여 제7조를 적용하지 않는다.",
+    "scope": "text",
+    "type": "INDEPENDENT_FACT_STATEMENTS_ONLY",
+    "url": "https://www.law.go.kr/lsInfoP.do?lsiSeq=285693"
+   },
+   "normalizedText": "용인시 연혁은 용구와 처인을 합쳐 용인이라는 이름을 사용한 사실을 기록한다. 1996년 3월 1일 당시 용인지역의 내사면은 양지면으로, 외사면은 백암면으로 이름이 바뀌었다.",
+   "provider": "용인시",
+   "reviewStatus": "verified",
+   "sourceId": "7c187c0c-2e4f-56b5-8db6-c334c3a4846b",
+   "sourceRevisionId": "3a4fe8ae-0e59-5b47-b798-644f813726fc",
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": null,
+   "sourceUrl": "https://www.yongin.go.kr/home/yiIf/yiIfProd/yiIfProd02.jsp",
+   "title": "용인시 연혁의 지명·행정변경 사실",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "allowedUses": {
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "allowGeneration": true,
+    "reviewBasis": "검토 대상은 normalizedText의 자체 작성 사실문장에 한정한다. 공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다."
+   },
+   "attribution": "한국관광공사, 안성맞춤박물관, TourAPI contentId=130440, https://www.data.go.kr/data/15101578/openapi.do. 사실을 선별하여 Petasos가 자체 문장으로 작성함.",
+   "contentHash": "242d05f69fc7311b84ecf5d1a0d0657674293f4f73dd525f05988ae41630837e",
+   "fetchedAt": 1794152981000,
+   "license": {
+    "reviewBasis": "공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다.",
+    "scope": "text",
+    "type": "DATA_GO_KR_UNRESTRICTED_TEXT",
+    "url": "https://www.data.go.kr/catalog/15101578/openapi.json"
+   },
+   "normalizedText": "안성맞춤박물관은 경기도 안성시 대덕면에 있다. 박물관은 유기의 역사와 제작 방법, 생활 속 쓰임을 전시한다.",
+   "provider": "한국관광공사 TourAPI",
+   "reviewStatus": "verified",
+   "sourceId": "6ce0c208-7902-51a7-8a24-b363908f7c38",
+   "sourceRevisionId": "dc580b0b-19e9-57c4-828c-59802d399461",
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261103132015",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do",
+   "title": "안성맞춤박물관",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "allowedUses": {
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "allowGeneration": true,
+    "reviewBasis": "검토 대상은 normalizedText의 자체 작성 사실문장에 한정한다. 공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다."
+   },
+   "attribution": "한국관광공사, 안성맞춤의 도시 안성, Odii stid=5682, stlid=16680, https://www.data.go.kr/data/15101971/openapi.do. 사실을 선별하여 Petasos가 자체 문장으로 작성함.",
+   "contentHash": "cd7734ed3a43c44bbf5d7046e79af593f385d0cea56e91daaacf45d05bea6aee",
+   "fetchedAt": 1794153042000,
+   "license": {
+    "reviewBasis": "공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다.",
+    "scope": "text",
+    "type": "DATA_GO_KR_UNRESTRICTED_TEXT",
+    "url": "https://www.data.go.kr/catalog/15101971/openapi.json"
+   },
+   "normalizedText": "안성에서는 장에 내다 팔기 위해 대량으로 만든 장내기 유기와 주문받아 만든 맞춤 유기를 생산했다. 안성은 큰 장이 서던 상업의 요지였고, 그 장에서 안성지역에서 만든 유기가 거래되었다.",
+   "provider": "한국관광공사 Odii",
+   "reviewStatus": "verified",
+   "sourceId": "8266ff94-8fee-5822-b377-392e494f6d1b",
+   "sourceRevisionId": "b56714a2-92bd-5a44-a3c5-544f13fbb018",
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20230905122413",
+   "sourceUrl": "https://www.data.go.kr/data/15101971/openapi.do",
+   "title": "안성맞춤의 도시 안성",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "allowedUses": {
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "allowGeneration": true,
+    "reviewBasis": "검토 대상은 normalizedText의 자체 작성 사실문장에 한정한다. 개별 공식 자료의 공공누리 제1유형 표시를 확인했다. 출처를 표시하며 선택한 사실을 자체 문장으로 정리한다. 사진·도표·첨부파일은 포함하지 않는다."
+   },
+   "attribution": "농촌진흥청·대한민국 정책브리핑, 2016 우리 밥상에 건강 더하는 밭작물 전시회에 놀러오세요, https://m.korea.kr/briefing/pressReleaseView.do?newsId=156153724&pWise=sub&pWiseSub=J2. 공공누리 제1유형; Petasos 사실 선별·자체 서술.",
+   "contentHash": "4f94f1b0098e64564973e355eb86d839a72117149c23c4bde8f84d04a4df31f0",
+   "fetchedAt": 1794153964992,
+   "license": {
+    "reviewBasis": "개별 공식 자료의 공공누리 제1유형 표시를 확인했다. 출처를 표시하며 선택한 사실을 자체 문장으로 정리한다. 사진·도표·첨부파일은 포함하지 않는다.",
+    "scope": "text",
+    "type": "KOGL_TYPE_1_TEXT",
+    "url": "https://www.kogl.or.kr/info/licenseType1.do"
+   },
+   "normalizedText": "천안 호두과자에는 팥을 재료로 만든 제품이 있다. 농촌진흥청은 2016년 밭작물 전시회 안내에서 아라리 팥으로 만든 천안 호두과자를 소개했다.",
+   "provider": "농촌진흥청·대한민국 정책브리핑",
+   "reviewStatus": "verified",
+   "sourceId": "154ee563-e74b-5f78-84af-1124b1db6864",
+   "sourceRevisionId": "b7227b6c-01ca-55ce-b10f-b6a315b0e700",
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "2016-09-07",
+   "sourceUrl": "https://m.korea.kr/briefing/pressReleaseView.do?newsId=156153724&pWise=sub&pWiseSub=J2",
+   "title": "우리 밥상에 건강 더하는 밭작물 전시회에 놀러오세요",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "allowedUses": {
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "allowGeneration": true,
+    "reviewBasis": "검토 대상은 normalizedText의 자체 작성 사실문장에 한정한다. 공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다."
+   },
+   "attribution": "한국관광공사, 천안삼거리공원, TourAPI contentId=126922, https://www.data.go.kr/data/15101578/openapi.do. 사실을 선별하여 Petasos가 자체 문장으로 작성함.",
+   "contentHash": "223154492bfcb901f740382a2f2b2df9770b119ef9e1ce85499203ea0b77ac92",
+   "fetchedAt": 1794152982000,
+   "license": {
+    "reviewBasis": "공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다.",
+    "scope": "text",
+    "type": "DATA_GO_KR_UNRESTRICTED_TEXT",
+    "url": "https://www.data.go.kr/catalog/15101578/openapi.json"
+   },
+   "normalizedText": "천안삼거리는 한양·경상도·전라도 방면의 길이 나뉘던 삼남대로의 분기점이다. 천안삼거리공원은 충청남도 천안시 동남구 삼룡동에 있다.",
+   "provider": "한국관광공사 TourAPI",
+   "reviewStatus": "verified",
+   "sourceId": "e526b6d4-f148-5ec6-bee7-9f01ac26fc9e",
+   "sourceRevisionId": "150b6f4d-5739-5397-9fe5-c742e8dc3907",
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20260927115418",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do",
+   "title": "천안삼거리공원",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "allowedUses": {
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "allowGeneration": true,
+    "reviewBasis": "검토 대상은 normalizedText의 자체 작성 사실문장에 한정한다. 공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다."
+   },
+   "attribution": "한국관광공사, 제3경 천안삼거리공원, Odii stid=6698, stlid=18759, https://www.data.go.kr/data/15101971/openapi.do. 사실을 선별하여 Petasos가 자체 문장으로 작성함.",
+   "contentHash": "671c605e5a19a64b451f6038920bbeafbc07dd75094b5b611fc195e820739694",
+   "fetchedAt": 1794153062000,
+   "license": {
+    "reviewBasis": "공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다.",
+    "scope": "text",
+    "type": "DATA_GO_KR_UNRESTRICTED_TEXT",
+    "url": "https://www.data.go.kr/catalog/15101971/openapi.json"
+   },
+   "normalizedText": "천안삼거리는 북쪽 한양, 남쪽 경상도, 서쪽 전라도 방향으로 가는 길이 갈라지는 삼남대로의 분기점으로 알려져 있다.",
+   "provider": "한국관광공사 Odii",
+   "reviewStatus": "verified",
+   "sourceId": "1e35147d-effe-566a-96b2-da5e4333e7f8",
+   "sourceRevisionId": "e7d2e436-a609-509a-bd67-43994cb0a30d",
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20241106102537",
+   "sourceUrl": "https://www.data.go.kr/data/15101971/openapi.do",
+   "title": "제3경 천안삼거리공원",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "allowedUses": {
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "allowGeneration": true,
+    "reviewBasis": "검토 대상은 normalizedText의 자체 작성 사실문장에 한정한다. 개별 공식 자료의 공공누리 제1유형 표시를 확인했다. 출처를 표시하며 선택한 사실을 자체 문장으로 정리한다. 사진·도표·첨부파일은 포함하지 않는다."
+   },
+   "attribution": "국토교통부·대한민국 정책브리핑, 대한민국을 혁신하는 과학기술 수도 대전 민생토론회 주요내용 발표, https://www.korea.kr/briefing/policyBriefingView.do?newsId=156615822. 공공누리 제1유형; Petasos 사실 선별·자체 서술.",
+   "contentHash": "43b02075dcceb5d690337037ea197f4e69d89d6055b29208d3de1761428ff11a",
+   "fetchedAt": 1794153964845,
+   "license": {
+    "reviewBasis": "개별 공식 자료의 공공누리 제1유형 표시를 확인했다. 출처를 표시하며 선택한 사실을 자체 문장으로 정리한다. 사진·도표·첨부파일은 포함하지 않는다.",
+    "scope": "text",
+    "type": "KOGL_TYPE_1_TEXT",
+    "url": "https://www.kogl.or.kr/info/licenseType1.do"
+   },
+   "normalizedText": "대전은 철도와 함께 성장한 도시이며 경부선과 호남선이 갈라지는 철도 교통의 중요한 지역이다.",
+   "provider": "국토교통부·대한민국 정책브리핑",
+   "reviewStatus": "verified",
+   "sourceId": "5c515306-5759-51ef-ba4b-2599a0e42854",
+   "sourceRevisionId": "9662db55-be7e-53da-af2a-1b69d773491e",
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": null,
+   "sourceUrl": "https://www.korea.kr/briefing/policyBriefingView.do?newsId=156615822",
+   "title": "대한민국을 혁신하는 과학기술 수도 대전 민생토론회 주요내용 발표",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "allowedUses": {
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "allowGeneration": true,
+    "reviewBasis": "검토 대상은 normalizedText의 자체 작성 사실문장에 한정한다. 공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다."
+   },
+   "attribution": "한국관광공사, 대전역 동광장, TourAPI contentId=2775503, https://www.data.go.kr/data/15101578/openapi.do. 사실을 선별하여 Petasos가 자체 문장으로 작성함.",
+   "contentHash": "177e60ba846b789d2ab8f7ade05cd65dcf1d143469c82eab07d28e38c96c9270",
+   "fetchedAt": 1794153009000,
+   "license": {
+    "reviewBasis": "공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다.",
+    "scope": "text",
+    "type": "DATA_GO_KR_UNRESTRICTED_TEXT",
+    "url": "https://www.data.go.kr/catalog/15101578/openapi.json"
+   },
+   "normalizedText": "대전역 동광장은 대전광역시 동구 소제동에 있다.",
+   "provider": "한국관광공사 TourAPI",
+   "reviewStatus": "verified",
+   "sourceId": "ab939014-5b9b-59bd-809f-d96ad94a40f8",
+   "sourceRevisionId": "68a403ab-25f1-512a-888e-f7ef16013ff4",
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261026091256",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do",
+   "title": "대전역 동광장",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "allowedUses": {
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "allowGeneration": true,
+    "reviewBasis": "검토 대상은 normalizedText의 자체 작성 사실문장에 한정한다. 공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다."
+   },
+   "attribution": "한국관광공사, 대전엑스포과학공원, TourAPI contentId=125994, https://www.data.go.kr/data/15101578/openapi.do. 사실을 선별하여 Petasos가 자체 문장으로 작성함.",
+   "contentHash": "46e6d4b26506a6eddf52f0f92fb87a562171ceb70feb9f7ba82559083cca62b0",
+   "fetchedAt": 1794152983000,
+   "license": {
+    "reviewBasis": "공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다.",
+    "scope": "text",
+    "type": "DATA_GO_KR_UNRESTRICTED_TEXT",
+    "url": "https://www.data.go.kr/catalog/15101578/openapi.json"
+   },
+   "normalizedText": "대전엑스포과학공원은 1993년 대전세계박람회를 기념하고 박람회 시설과 부지를 과학교육에 활용하기 위해 조성되었다. 공원 주소는 대전광역시 유성구 대덕대로 480 도룡동이다.",
+   "provider": "한국관광공사 TourAPI",
+   "reviewStatus": "verified",
+   "sourceId": "fe20db2a-e68c-5af0-baff-6ebcdfebae3d",
+   "sourceRevisionId": "7ce22da2-4f74-58c9-a660-8624f4452277",
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261026143817",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do",
+   "title": "대전엑스포과학공원",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "allowedUses": {
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "allowGeneration": false,
+    "reviewBasis": "공식 공공데이터 카탈로그의 이용허락범위 제한 없음과 사진 1·3유형 별도 안내를 확인했다. 허용 범위는 해당 항목의 이름·주소·WGS84 좌표를 텍스트로 보존한 메타데이터이며 사진·음성·설명문을 포함하지 않는다. 좌표 원문 문자열을 수정하지 않는다. 모델 입력·좌표 기반 추론 허용은 부여하지 않는다."
+   },
+   "attribution": "한국관광공사 TourAPI, 문화역 서울 284, contentId=250364, https://www.data.go.kr/data/15101578/openapi.do. 공급자 대표점 좌표·이름·주소 원문 필드 보존.",
+   "contentHash": "8be844fbde88f4ace3bc3113d1453c1c7387c247c014553eb80576b360a0ed32",
+   "fetchedAt": 1794153008000,
+   "license": {
+    "reviewBasis": "공식 공공데이터 카탈로그의 이용허락범위 제한 없음과 사진 1·3유형 별도 안내를 확인했다. 허용 범위는 해당 항목의 이름·주소·WGS84 좌표를 텍스트로 보존한 메타데이터이며 사진·음성·설명문을 포함하지 않는다. 좌표 원문 문자열을 수정하지 않는다.",
+    "scope": "text",
+    "type": "DATA_GO_KR_UNRESTRICTED_METADATA_TEXT",
+    "url": "https://www.data.go.kr/catalog/15101578/openapi.json"
+   },
+   "normalizedText": "TourAPI contentId=250364; title=문화역 서울 284; addr1=서울특별시 중구 통일로 1 (봉래동2가); mapx=126.9716093128; mapy=37.5559582569; coordinateSystem=WGS84.",
+   "provider": "한국관광공사 TourAPI",
+   "reviewStatus": "verified",
+   "sourceId": "13c74812-0b20-528d-a699-ede2d1e82fa3",
+   "sourceRevisionId": "bbff35a2-9a3d-5829-9479-049b4e679fd8",
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261020154516",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do",
+   "title": "문화역 서울 284 — 공식 대표점 좌표 메타데이터",
+   "verifiedAt": 1794157970529
+  },
+  {
+   "allowedUses": {
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "allowGeneration": false,
+    "reviewBasis": "공식 공공데이터 카탈로그의 이용허락범위 제한 없음과 사진 1·3유형 별도 안내를 확인했다. 허용 범위는 해당 항목의 이름·주소·WGS84 좌표를 텍스트로 보존한 메타데이터이며 사진·음성·설명문을 포함하지 않는다. 좌표 원문 문자열을 수정하지 않는다. 모델 입력·좌표 기반 추론 허용은 부여하지 않는다."
+   },
+   "attribution": "한국관광공사 TourAPI, 대전엑스포과학공원, contentId=125994, https://www.data.go.kr/data/15101578/openapi.do. 공급자 대표점 좌표·이름·주소 원문 필드 보존.",
+   "contentHash": "0240654ff318c965b63e3726dbe23b1f0434e92c5c9cf047a4fda05b09093918",
+   "fetchedAt": 1794152983000,
+   "license": {
+    "reviewBasis": "공식 공공데이터 카탈로그의 이용허락범위 제한 없음과 사진 1·3유형 별도 안내를 확인했다. 허용 범위는 해당 항목의 이름·주소·WGS84 좌표를 텍스트로 보존한 메타데이터이며 사진·음성·설명문을 포함하지 않는다. 좌표 원문 문자열을 수정하지 않는다.",
+    "scope": "text",
+    "type": "DATA_GO_KR_UNRESTRICTED_METADATA_TEXT",
+    "url": "https://www.data.go.kr/catalog/15101578/openapi.json"
+   },
+   "normalizedText": "TourAPI contentId=125994; title=대전엑스포과학공원; addr1=대전광역시 유성구 대덕대로 480 (도룡동); mapx=127.3802532459; mapy=36.3759480684; coordinateSystem=WGS84.",
+   "provider": "한국관광공사 TourAPI",
+   "reviewStatus": "verified",
+   "sourceId": "3b78dcca-1c1f-5528-a693-c07bce69bfcc",
+   "sourceRevisionId": "21ba8b7c-7016-512f-af79-f7226818273f",
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261026143817",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do",
+   "title": "대전엑스포과학공원 — 공식 대표점 좌표 메타데이터",
+   "verifiedAt": 1794157970529
+  },
+  {
+   "sourceRevisionId": "6e56c73d-c2ed-5d92-aedf-d4f30901ddde",
+   "sourceId": "tourapi:2775505",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=2775505",
+   "title": "민주화운동기념관",
+   "fetchedAt": 1794322380008,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20260601173453",
+   "verifiedAt": 1794322397972,
+   "contentHash": "a52ca2be19049d76e7b2f5d02df1ed5484ab48cf9a60bf9436837562f70de9b7",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "민주화운동기념관은 서울 용산구 남영동에 있었던 공권력의 고문시설 치안본부(경찰청의 전신) 남영동 대공분시를 보존하고, 전시와 교육 시설을 더하여 아픔을 기억하며 희망으로 미래를 열어가는 기념시설이다. 2001년 6월 28일 민주화운동의 정신을 기념하고 계승하기 위해 민주화운동기념사업특별법에 의해 설립된 행정안전부 산하 공공기관은 민주화운동기념사업회과 시민 사회의 힘으로 민주인권기념관을 건립하였다. 민주주의를 이끌어 낸 민주화운동을 기념하고 기억하는 공간이자, 민주주의와 민주인권을 교육하고 세계와 연대하는 공간으로 독재정권의 어두운 역사와 이를 극복한 민주주의의 이야기를 담고 있다. 이 건물은 건축의 대가인 김수근 씨에 의해 1976년 10월에 지상 5층 규모로 건축되었고, 1983년 12월엔 7층으로 증축하였다.남영동 대공분실은 1976년 만들어진 이후 오랫동안 경찰이 관리하면서 민주인사들을 비롯한 무고한 시민들이 고문을 받던 장소이다. 1976년부터 2005년까지 대공분실의 기능을 하였으며, 이후 경찰청 인권센터로 운영되었다. 1976년 내무부 치안본부 소속의 대공분실에서 1991년 경찰청 보안분실, 2005년 경찰청 인권보호센터를 거치며 덧입혀진 세월의 흔적을 고스란히 간직한 채 시민의 품으로 돌아왔다. 곳곳에 아픈 시간과 기억을 넘어 민주주의가 살아 숨 쉬는 공간으로 되기 위해 M1(신관)과 M2(옛 남영동 대공분실)로 구성되어 있으며 전시와 기록을 통해 민주화운동의 의미와 역사를 전달하고자 한다."
+  },
+  {
+   "sourceRevisionId": "5ce58f1a-cb81-5f8a-964d-f7dc477ef9fc",
+   "sourceId": "tourapi:3013174",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=3013174",
+   "title": "용산아트홀",
+   "fetchedAt": 1794322380148,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20260910140716",
+   "verifiedAt": 1794322397972,
+   "contentHash": "bb740a20b8b979d726855b4ccf6223cf45fbb516d00f6c5d96ae07e9ab130ca2",
+   "license": {
+    "type": "KOGL-3",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type3: 공공누리 제3유형(출처표시·변경금지)"
+   },
+   "allowedUses": {
+    "allowGeneration": false,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-3)",
+   "reviewStatus": "verified",
+   "normalizedText": "용산아트홀은 용산구 종합행정타운 안에 위치하고 있는 지상 1층, 지하 3층 규모의 문화예술 전용 공간이다. 대극장 미르, 소극장 가람, 전시장, 다목적실, 문화강좌실 등의 시설을 갖추고 있다. 대극장 미르는 787석 규모로 오케스트라, 콘서트, 뮤지컬 등 수준 놓은 공연 작품을 만날 수 있다. 소극장 가람은 298석의 좌석으로 대극장과 같은 조명, 음향 시설을 갖추고 있으며 소규모의 음악회, 연극 등의 다양한 공연을 만날 수 있다. 전시장에서는 지역문화 공간에서의 전시를 통해 문화예술의 기회를 넓힐 수 있다. 다목적실과 분장실, 강의실 및 문화강좌실이 있고 매점과 카페도 있어서 편리하게 이용할 수 있다. 수도권 지하철 6호선 녹사평역 3번 출구에서 400m 거리에 위치하고 있으며 인근에 용산공원, 전쟁기념관이 있다."
+  },
+  {
+   "sourceRevisionId": "709b34fc-5f11-5078-9c4d-a5965d4bbc10",
+   "sourceId": "tourapi:1603296",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=1603296",
+   "title": "서빙고동 부군당",
+   "fetchedAt": 1794322379895,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261028171023",
+   "verifiedAt": 1794322397972,
+   "contentHash": "d675e51d865a0ef12c8d738e5d4abb11d7465414a13729ed48ecee306bb73891",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "서빙고동 부군당은 조선시대 이 마을 주민들이 마을의 수호와 주민의 안녕을 위해 세운 제당이다. 부군당은 서울을 중심으로 한 경기지역에서만 불리던 당의 명칭이다. 이 당은 조선 후기 신당의 건축양식을 보여줄 뿐 아니라, 서울지역의 동제 신앙을 보여주는 기와를 올린 작은 집으로, 조선 인조 13년(1635) 당을 고칠 때 걸어둔 현판을 비롯한 5개의 현판과 무신도가 보존되어 있다. 특히 무신도는 조선 태조 내외분, 출산과 목숨, 농사의 신이라는 삼불제석의 그림이라고 전하는데, 마을을 보호해 주는 수호신의 대상이 되고 있다."
+  },
+  {
+   "sourceRevisionId": "9f680c40-ec59-5519-99b5-e2af9a82545d",
+   "sourceId": "tourapi:729167",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=729167",
+   "title": "반포대교 달빛무지개분수",
+   "fetchedAt": 1794322380277,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20260318101005",
+   "verifiedAt": 1794322397972,
+   "contentHash": "7e4f5855c0337df9d7b7caf544444ed21b7becf4f71a54456f4ae507407af4cf",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "서울 반포대교에 설치된 분수인 달빛무지개분수는 한강르네상스의 핵심적인 사업으로 2007년 6월 시작하여 2009년 4월 개막식을 통해 유유히 흐르는 한강의 정적인 이미지에 웅장하고 역동적인 이미지를 담은 교량분수로 화려하게 탄생했다. 서울 한강만이 가지고 있는 약 700m의 넓은 강폭 전체를 연출하기 위해 반포대교 구간의 상류 측과 하류 측 1,140m 구간에 380개 노즐을 설치해 낙하용 수중펌프로 끌어올린 한강물을 약 20m 아래 한강 수면으로 떨어뜨리는 새로운 개념의 분수이다. 단순히 물만 내뿜는 것이 아니라 배경음악과 분수연출이 아름답고 조화롭게 어우러지도록 프로그램을 구성하고, 야간에는 경관조명을 이용하여 환상적인 한강의 야경을 보여준다. 또한 2008년 11월 7일 ‘세계에서 가장 긴 교량분수’로 기네스북에 등재되면서 최고의 위용을 세계에서도 인정받았으며, 시향연주회, 무용발표회, 창장음악회 및 개막식, 그랜드오픈행사 시 분수연출을 선보이기도 했다.\n달빛무지개분수는 낮과 밤에 다른 모습을 즐길 수 있다. 낮에는 분수에 떨어지는 물결의 모양에 따라 휘날리는 버들가지와 버들잎을 형상화한 모양 등 100여 가지의 다양한 모습의 분수를 만들어내며, 밤에는 긍정과 희망의 이미지를 상징하는 무지개 색깔의 분수로 화려하게 변신한다. 설치된 조명 200개는 아름다운 무지개 모양의 야경을 선사하고 음악에 맞춰 춤추는 분수는 시민들에게 색다른 즐거움을 선사한다."
+  },
+  {
+   "sourceRevisionId": "b538bd6f-6fbd-5ff5-9080-e67a07b6b847",
+   "sourceId": "tourapi:4001148",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=4001148",
+   "title": "피카소 벽화",
+   "fetchedAt": 1794322380791,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20260514082738",
+   "verifiedAt": 1794322397972,
+   "contentHash": "fbb63a66a77aaee6453e7afd4135ca99767203c70ba6b79c011d991ccbc9b5f7",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "고속터미널역에서 반포한강공원을 이어주는 공간인 지하공공보행통로는 서울을 사랑하는 모든 시민들과 나누고자 스트리트 갤러리로 기획되었다. 특히 스페인 관광청, 말라가 관광청과 서초구의 협업으로 만들어진 피카소 벽화는 피카소의 시선을 통해 건축, 음식, 전통, 일상생활 등 스페인 말라가와 서울의 다양한 측면을 보여주는 65m의 벽화다. 이 벽화를 그린 작가는 유로피안 어반 아트 챔피언 대회 우승자이자 라론(Lalone)으로 활동 중인 세계적인 그래피티 아티스트 '에두아르도 루케'이며, 라론이 피카소 벽화를 그리는 과정이 벽화 옆 카페형 휴식공간에서 재생되고 있다."
+  },
+  {
+   "sourceRevisionId": "e68b6362-fa22-54e7-977a-e5ac588fbf8c",
+   "sourceId": "tourapi:125452",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=125452",
+   "title": "청계산",
+   "fetchedAt": 1794322164106,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20250902140626",
+   "verifiedAt": 1794322397972,
+   "contentHash": "419d0db32d8896a0ca9c746d8c505f206238b748babae257afac444b1803b8d5",
+   "license": {
+    "type": "KOGL-3",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type3: 공공누리 제3유형(출처표시·변경금지)"
+   },
+   "allowedUses": {
+    "allowGeneration": false,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-3)",
+   "reviewStatus": "verified",
+   "normalizedText": "청계산은 서울특별시와 경기도 성남시, 과천시, 의왕시의 경계에 따라 위치해 있는 산이다. 산세는 서남쪽으로 의왕시에 소재한 백운산, 모락산, 오봉산으로 뻗쳐 있고, 서북쪽으로 과천시 옥녀봉 자락과 이어져 대체로 남북 방향으로 자리하고 있다.\n청계산은 청룡이 승천했던 곳이라고 해서 청룡산으로 불리기도 하며, 풍수지리학적으로는 관악산을 백호, 청계산은 청룡이라 하여 좌청룡 우백호의 개념으로 해석하기도 한다. 서울대공원과 서울랜드, 국립현대미술관을 둘러싼 푸른 산자락이 바로 청계산이다.\n청계산은 울창한 숲과 아늑한 계곡, 서울대공원, 청계사, 산림욕장 등 다양한 볼거리가 있는 가족산행의 명소로서 수많은 등산로가 다양하게 형성되어 있다. 과천 쪽에서 바라보는 청계산은 산세가 부드럽고 온화해서 토산처럼 보이지만, 서울대공원 쪽에서 보이는 망경대는 바위로 둘러싸여 있어 거칠고 당당하게 보인다.\n망경대(618.2m)가 바로 청계산의 정상이나 정부시설이 있어 등산이 불가하다. 주암동 쪽에서 망경대 쪽으로 오르다 보면 추사 김정희의 생부 김노경의 묘터가 있던 옥녀봉이 나타난다. 조선시대의 학자인 정여창이 피눈물을 흘리며 넘었다는 혈읍재를 지나 망경대 바로 밑으로 가면 정여창이 은거했다는 금정수가 있다. 이 약수는 정여창이 사사되자 핏빛으로 변했다가 이내 금빛으로 물들었다는 말이 전해온다. 풀 향기 가득한 산길을 걷다 보면 야생밤나무와 도토리나무, 머루와 다래 등이 종종 눈길을 끈다."
+  },
+  {
+   "sourceRevisionId": "4ff55492-5482-542e-b39a-b3f7ac57b588",
+   "sourceId": "tourapi:3032823",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=3032823",
+   "title": "판교어린이천문대",
+   "fetchedAt": 1794322380906,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20260414171336",
+   "verifiedAt": 1794322397972,
+   "contentHash": "4e7c6cb8120880e600015dc5887daf627b0c9aaf63aaf0ffdb5aa23c053c128a",
+   "license": {
+    "type": "KOGL-3",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type3: 공공누리 제3유형(출처표시·변경금지)"
+   },
+   "allowedUses": {
+    "allowGeneration": false,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-3)",
+   "reviewStatus": "verified",
+   "normalizedText": "판교어린이천문대는 많은 과학자들이 파헤쳐 간 우주의 이야기들을 들으며 아이들에게 천문과학자의 꿈을 심어주고 별을 바라보며 상상 속에 있던 우주를 현실화시켜 주는 곳이다. 판교 청계산 자락에 자리를 잡고 있으며 어린이를 대상으로 여러 가지 천문대 프로그램을 운영하고 있다. 이곳에서는 단순한 관람이 아닌 교육 중심의 프로그램을 운영하며, 아이들이 천문학적 개념을 단계적으로 이해할 수 있도록 구성된 커리큘럼이 특징이다. 여러 선생님들과 함께 우주와 별에 관한 수업을 들으며 천체우주에 대한 꿈을 키우는 장소이다."
+  },
+  {
+   "sourceRevisionId": "a3a2363f-06a9-514d-9d59-22a8c6a6cd21",
+   "sourceId": "tourapi:1753401",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=1753401",
+   "title": "용인포은아트홀",
+   "fetchedAt": 1794322381036,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20260921172810",
+   "verifiedAt": 1794322397972,
+   "contentHash": "ede6bdb9d2a99e35b5b18f420971b9d9e483ddb2c7048a6fc88f731923d1cbe0",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "용인아르피아종합운동장 부지 내에 있는 용인포은아트홀은 용인 시민의 여가와 문화생활 증진을 위해 2004년 4월 개관하였으며 용인문화재단이 운영하고 있다. 포은아트홀의 이름은 포은 정몽주 선생의 아호에서 따왔으며 첨단 시설을 갖춘 세계적인 수준의 공연장이다. 총면적 13,826㎡, 무대 면적 1,109㎡, 객석 1,258석을 갖추고 있으며 공연 활동을 완벽하게 지원할 수 있는 환경과 편안하게 감상할 수 있는 객석, 휴식을 즐길 수 있는 시민들의 생활 속 쉼터이자 품격 있는 공연을 즐길 수 있는 문화체험장이다. 판교 IC에서 차량으로 약 17분, 수인분당선 죽전역(단국대)에서 도보로 약 5분(345m) 소요된다. 인근에 에버랜드, 한국민속촌, 한국잡월드, 세계문화유산 융건릉, 물향기수목원, 용인농촌테마파크, 덕평공룡수목원 등이 있다."
+  },
+  {
+   "sourceRevisionId": "7b1642ab-e3da-5c9a-b030-50b1e8b92d6b",
+   "sourceId": "tourapi:127274",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=127274",
+   "title": "청주 신전동 고가",
+   "fetchedAt": 1794322381145,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20260311100340",
+   "verifiedAt": 1794322397972,
+   "contentHash": "4e448ecb333e86b55b6afdcff0a3efb237cfdd368ea905d230125b57445fd1c0",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "이 집은 1926년에 지은 것으로 안채의 종도리 장여에 상량문이 적혀 있다. 일자형의 안채와 사랑채, 행랑채가 ㄷ자 형으로 배치되어 있는데, 집의 형태를 보면 안채는 3단의 장대석 기단 위에 둥근 주춧돌을 놓고 네모기둥을 세웠고, 기둥 위에 큰 부재로 된 대들보를 걸고, 그 위에 종보를 올렸다. 종보 위에는 파련대공을 세우고 종도리와 뜬창방을 결구하였는데 주택에서는 보기 드문 수법이다. 건물이 세워진 연대는 오래되지 않았으나 안채･사랑채･행랑채가 고루 갖추어져 있는 전통 주거 건축의 모습을 잘 나타내고 있다. 현재는 소유자가 거주하면서 관리를 하고 있다.\n(출처 : 청주 문화관광 홈페이지)"
+  },
+  {
+   "sourceRevisionId": "65e278da-192f-56a7-86a5-6185d49496fe",
+   "sourceId": "tourapi:741957",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=741957",
+   "title": "대전솔로몬로파크",
+   "fetchedAt": 1794322381262,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20260703092341",
+   "verifiedAt": 1794322397972,
+   "contentHash": "c6955da966d719cbb993ecc8cd3f0a4fee4595121b89a1151f1bb9697f5dc55c",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "대전 솔로몬로파크는 법무부에서 운영하는 법교육 테마 공원이다. 어린이, 청소년, 그리고 일반 국민들이 법을 쉽고 재미있게 배우고 체험할 수 있도록, 법무부가 조성하고 직접 운영하는 법과 정의의 배움터이자 법교육의 장이다. 놀면서 직접 법을 체험할 수 있도록 어린이, 청소년, 지역 시민들에게 다양한 법 체험 및 연수 프로그램을 무료로 제공한다. 솔로몬 왕이 재판을 통해 지혜롭게 정의를 실현했듯, 솔로몬로파크는 법치사회의 자유, 지혜, 정의를 느끼고 체험함으로써 국민 누구나 신뢰하는 법치국가를 만들어가는 데 필요한 민주시민의 자질과 소양을 쌓을 수 있도록 한다. 법체험관에서는 세계의 법 역사와 우리나라의 법제도를 폭넓게 이해하고 직접 체험할 수 있도록 입법체험실, 과학수사실, 모의법정실, 교도소체험 등이 마련되어 있다. 미취학 아동을 위한 ‘법짱마을’도 운영되며, 솔로몬로파크 내 법체험관과 법연수관을 중심으로 다양한 법 체험 및 법연수 프로그램이 국민에게 제공되고 있다."
+  },
+  {
+   "sourceRevisionId": "ea335396-c08e-5058-bd96-35d76b7ccd93",
+   "sourceId": "tourapi:2779504",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=2779504",
+   "title": "한빛탑",
+   "fetchedAt": 1794322381515,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20260212100226",
+   "verifiedAt": 1794322397972,
+   "contentHash": "43b647000736a3377e03d6e02e19fc475f9119da02042fc2fe888681313bfada",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "한빛탑은 대전 유성구 엑스포과학공원 내에 위치한 과학과 우주를 모티브로 하여 조형화한 전망대이다. 이 탑은 1993년에 열린 대전엑스포를 기념하기 위해 건립된 상징 조형물로, 현재와 미래를 잇는 한 줄기 빛이라는 뜻에서 한빛탑이라 불린다. 한빛탑은 엑스포과학공원과 대전시 주요 지역 등을 한눈에 조망할 수 있는 공간으로 한 번에 20명이 탑승할 수 있는 승강기가 운영중이며 전면 유리창을 통해 다양한 모습을 감상할 수 있다. 1층에는 전시실에서는 대전을 상징하는 주요 관광명소 사진과 시청각 영상물을 관람할 수 있다. 한빛탑은 유등로, 대덕대로에서 엑스포로를 통해 접근할 수 있으며 주변에는 엑스포과학공원 외에 대전신세계아트앤사이언스, 국립중앙과학관, 대전컨벤션센터, 한밭수목원 등이 있다."
+  }
+ ],
+ "facts": [
+  {
+   "factId": "ff8acee3-b6a0-57f6-8b93-bff1f6fb9270",
+   "factRevisionId": "550e8570-4e6e-56c8-b751-31ab030fa788",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "6444b061-3726-5aab-9c4d-8207d3c09331"
+   ],
+   "statement": "문화역 서울 284는 서울특별시 중구에 있다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "a413538c-5aff-5ca7-8a3d-151eb9d01099",
+   "factRevisionId": "17e887c1-11b6-5954-8365-2da61d828efb",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "3a4fe8ae-0e59-5b47-b798-644f813726fc",
+    "0de160ec-0c6e-565e-b396-755259eab427"
+   ],
+   "statement": "용구·처인의 통합과 용인 명칭은 현재 용인시가 공식 연혁에 기록하는 해당 지역의 역사이다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "247d4087-ea06-5b4f-a8e6-a64403c6914e",
+   "factRevisionId": "cc2411f2-e51d-572c-9b59-ecdc0e07d380",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "3a4fe8ae-0e59-5b47-b798-644f813726fc"
+   ],
+   "statement": "내사면·외사면에서 양지면·백암면으로의 개칭은 용인지역의 행정지명 변경이다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "0e03bd85-633e-51d7-8e75-6f8aa2386c0c",
+   "factRevisionId": "2878a3b3-0033-58da-840c-98b26f005ebe",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "b56714a2-92bd-5a44-a3c5-544f13fbb018",
+    "dc580b0b-19e9-57c4-828c-59802d399461"
+   ],
+   "statement": "안성 유기 제작과 안성 장의 거래는 경기도 안성지역에 관한 역사 소재이다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "353bcd25-4330-5b56-a74f-7a38360e1c50",
+   "factRevisionId": "08bb3e8a-015c-57d1-8034-11ad3c50cfed",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "b7227b6c-01ca-55ce-b10f-b6a315b0e700"
+   ],
+   "statement": "천안 호두과자는 공식 농촌진흥청 자료가 천안의 이름으로 소개하는 지역 제과 소재이다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "20739bfc-ae18-5c94-9c10-80203afa6bca",
+   "factRevisionId": "3cf667a0-77e7-5d2e-8638-499e3c53e12c",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "150b6f4d-5739-5397-9fe5-c742e8dc3907"
+   ],
+   "statement": "천안삼거리공원은 충청남도 천안시 동남구에 있다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "f14a9e1d-7d84-547d-8178-0b69c789a98e",
+   "factRevisionId": "767625b8-1756-57f9-9bdd-790a0a7af59c",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "68a403ab-25f1-512a-888e-f7ef16013ff4"
+   ],
+   "statement": "대전 철도 이야기의 장소 기준인 대전역 동광장은 대전광역시 동구에 있다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "f7f4e600-7c23-592d-b871-d21e833f9026",
+   "factRevisionId": "9a43805b-fef1-5b68-a434-71e13a8cf048",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "7ce22da2-4f74-58c9-a660-8624f4452277"
+   ],
+   "statement": "대전엑스포과학공원은 대전광역시 유성구에 있다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "e87751fd-65e5-50a7-be3e-36b331663387",
+   "factRevisionId": "483cfc22-d83a-5346-9adc-69b756075edf",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "6444b061-3726-5aab-9c4d-8207d3c09331"
+   ],
+   "statement": "옛 서울역 건물을 복원하여 문화역 서울 284라는 복합문화공간으로 사용하고 있다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "84e831f1-162c-588e-b4f3-2a0ba2023af9",
+   "factRevisionId": "c0483580-6179-5a93-9f84-e700924762bf",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "e5777bcb-69f7-51f6-8842-237706a399ce"
+   ],
+   "statement": "문화역 서울 284의 284는 옛 서울역사의 사적 번호에서 온 이름이다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "f0f32b5d-1e6b-5b97-8c24-13c8cd51c46f",
+   "factRevisionId": "a7e34148-57ab-5bd2-99de-c4a8255e448f",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "0de160ec-0c6e-565e-b396-755259eab427"
+   ],
+   "statement": "조선시대 용구와 처인을 합쳐 용인이라는 이름을 사용한 사실이 태종실록에 기록되어 있다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "15f289d5-2d24-5903-9741-c79d039dda88",
+   "factRevisionId": "03970925-d308-5bee-9aca-462698ba2b47",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "3a4fe8ae-0e59-5b47-b798-644f813726fc"
+   ],
+   "statement": "1996년 3월 1일 당시 용인지역 내사면이 양지면으로, 외사면이 백암면으로 개칭되었다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "28a4241f-e4e5-53e3-9421-906dc85bca5f",
+   "factRevisionId": "7297891c-3417-556a-a914-8ce3a1e0cc21",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "b56714a2-92bd-5a44-a3c5-544f13fbb018"
+   ],
+   "statement": "안성에서는 시장 판매를 위해 대량으로 만든 장내기 유기와 주문을 받아 만든 맞춤 유기를 생산했다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "825a2abf-44c9-5812-85ec-656f584deede",
+   "factRevisionId": "4b5b50b4-91ba-53f2-866c-661541378fa0",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "b56714a2-92bd-5a44-a3c5-544f13fbb018"
+   ],
+   "statement": "안성은 큰 장이 서던 상업의 요지였으며 안성 장에서는 지역에서 제작한 유기가 거래되었다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "3526ae07-9676-5f68-9a00-f99a048726b3",
+   "factRevisionId": "efd53577-97e4-58ba-b677-779757438d00",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "b7227b6c-01ca-55ce-b10f-b6a315b0e700"
+   ],
+   "statement": "천안 호두과자에는 팥을 재료로 만든 제품이 있으며 농촌진흥청이 아라리 팥을 쓴 사례를 소개했다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "cb238ba9-10a5-58c0-b01b-d80bf1bb15e1",
+   "factRevisionId": "486c3f10-9ae3-5c69-88dd-0267ccff1a03",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "150b6f4d-5739-5397-9fe5-c742e8dc3907",
+    "e7d2e436-a609-509a-bd67-43994cb0a30d"
+   ],
+   "statement": "천안삼거리는 북쪽 한양, 남쪽 경상도, 서쪽 전라도 방향으로 가는 길이 나뉘던 삼남대로의 분기점이다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "8247c771-389f-5340-aa6b-1ad39458ea93",
+   "factRevisionId": "249294d7-9cbd-5e20-8b4e-432f852cf4ae",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "9662db55-be7e-53da-af2a-1b69d773491e"
+   ],
+   "statement": "대전은 철도와 함께 성장한 도시이며 경부선과 호남선이 갈라지는 중요한 철도 교통 지역이다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "276f408d-2e8d-511a-9d51-2b92b8b37367",
+   "factRevisionId": "3ce2057c-bd6b-5e57-822a-3464a5ab4000",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "7ce22da2-4f74-58c9-a660-8624f4452277"
+   ],
+   "statement": "대전엑스포과학공원은 1993년 대전세계박람회를 기념하고 시설과 부지를 과학교육에 활용하기 위해 조성되었다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factRevisionId": "8a727aa8-1329-5a1a-99be-4d6268eecdc1",
+   "factId": "85dfa813-75d4-5fdc-ba37-a1e3a407b5f9",
+   "version": 1,
+   "statement": "민주화운동기념관은 서울 용산구 남영동에 있었던 공권력의 고문시설 치안본부(경찰청의 전신) 남영동 대공분시를 보존하고, 전시와 교육 시설을 더하여 아픔을 기억하며 희망으로 미래를 열어가는 기념시설이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "6e56c73d-c2ed-5d92-aedf-d4f30901ddde"
+   ]
+  },
+  {
+   "factRevisionId": "0e75d64d-9b97-5300-8bd0-972f99213b93",
+   "factId": "642f56c7-c33a-5038-abf7-afb9f96985dc",
+   "version": 1,
+   "statement": "2001년 6월 28일 민주화운동의 정신을 기념하고 계승하기 위해 민주화운동기념사업특별법에 의해 설립된 행정안전부 산하 공공기관은 민주화운동기념사업회과 시민 사회의 힘으로 민주인권기념관을 건립하였다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "6e56c73d-c2ed-5d92-aedf-d4f30901ddde"
+   ]
+  },
+  {
+   "factRevisionId": "586ff086-411b-59b6-82b2-191687f54e9c",
+   "factId": "c20e45ad-0a41-5fec-a14f-804cab55d8c0",
+   "version": 1,
+   "statement": "민주주의를 이끌어 낸 민주화운동을 기념하고 기억하는 공간이자, 민주주의와 민주인권을 교육하고 세계와 연대하는 공간으로 독재정권의 어두운 역사와 이를 극복한 민주주의의 이야기를 담고 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "6e56c73d-c2ed-5d92-aedf-d4f30901ddde"
+   ]
+  },
+  {
+   "factRevisionId": "5f3e0c20-a7d8-597a-8d1d-63cefaa37e6f",
+   "factId": "69e247ed-a4e5-5546-916c-1386a3adc9fd",
+   "version": 1,
+   "statement": "이 건물은 건축의 대가인 김수근 씨에 의해 1976년 10월에 지상 5층 규모로 건축되었고, 1983년 12월엔 7층으로 증축하였다.남영동 대공분실은 1976년 만들어진 이후 오랫동안 경찰이 관리하면서 민주인사들을 비롯한 무고한 시민들이 고문을 받던 장소이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "6e56c73d-c2ed-5d92-aedf-d4f30901ddde"
+   ]
+  },
+  {
+   "factRevisionId": "efddf3bc-8efe-5ff6-a0e1-17eac8935a81",
+   "factId": "13355eec-e803-54b0-ba3d-2cc9dcc14ae0",
+   "version": 1,
+   "statement": "용산아트홀은 용산구 종합행정타운 안에 위치하고 있는 지상 1층, 지하 3층 규모의 문화예술 전용 공간이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "5ce58f1a-cb81-5f8a-964d-f7dc477ef9fc"
+   ]
+  },
+  {
+   "factRevisionId": "cc819dff-e714-5dd6-b26b-11822987e528",
+   "factId": "5e616f8c-ff71-544a-9f13-a147eae2eac5",
+   "version": 1,
+   "statement": "대극장 미르, 소극장 가람, 전시장, 다목적실, 문화강좌실 등의 시설을 갖추고 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "5ce58f1a-cb81-5f8a-964d-f7dc477ef9fc"
+   ]
+  },
+  {
+   "factRevisionId": "61d6de72-4979-52b9-982a-088614bb6867",
+   "factId": "7c1e36b4-7190-52af-8bf7-3b780e840924",
+   "version": 1,
+   "statement": "대극장 미르는 787석 규모로 오케스트라, 콘서트, 뮤지컬 등 수준 놓은 공연 작품을 만날 수 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "5ce58f1a-cb81-5f8a-964d-f7dc477ef9fc"
+   ]
+  },
+  {
+   "factRevisionId": "ddd495d2-cbfa-5088-a07e-f4117e6b26af",
+   "factId": "71de9b10-a5a2-59c7-9dfc-83690f5f2e7c",
+   "version": 1,
+   "statement": "소극장 가람은 298석의 좌석으로 대극장과 같은 조명, 음향 시설을 갖추고 있으며 소규모의 음악회, 연극 등의 다양한 공연을 만날 수 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "5ce58f1a-cb81-5f8a-964d-f7dc477ef9fc"
+   ]
+  },
+  {
+   "factRevisionId": "fb5146e6-14ce-554e-92fc-62621d17273a",
+   "factId": "7ba82a17-dd24-58a2-b567-8ae377128dd5",
+   "version": 1,
+   "statement": "서빙고동 부군당은 조선시대 이 마을 주민들이 마을의 수호와 주민의 안녕을 위해 세운 제당이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "709b34fc-5f11-5078-9c4d-a5965d4bbc10"
+   ]
+  },
+  {
+   "factRevisionId": "5fca1e9a-6712-5d89-8524-a6348b99e7bf",
+   "factId": "f36556c7-4de0-548b-89ae-eb15f5e3b2ae",
+   "version": 1,
+   "statement": "부군당은 서울을 중심으로 한 경기지역에서만 불리던 당의 명칭이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "709b34fc-5f11-5078-9c4d-a5965d4bbc10"
+   ]
+  },
+  {
+   "factRevisionId": "6f6353c6-a7d8-5d1e-856d-a2e990254d5e",
+   "factId": "649498ba-1773-553f-8f60-b5d25ba82d5c",
+   "version": 1,
+   "statement": "이 당은 조선 후기 신당의 건축양식을 보여줄 뿐 아니라, 서울지역의 동제 신앙을 보여주는 기와를 올린 작은 집으로, 조선 인조 13년(1635) 당을 고칠 때 걸어둔 현판을 비롯한 5개의 현판과 무신도가 보존되어 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "709b34fc-5f11-5078-9c4d-a5965d4bbc10"
+   ]
+  },
+  {
+   "factRevisionId": "4d4a24ec-f199-53af-aef8-a3f4078fce26",
+   "factId": "ee46ea15-c0f8-5a89-9cac-2f184a889f58",
+   "version": 1,
+   "statement": "특히 무신도는 조선 태조 내외분, 출산과 목숨, 농사의 신이라는 삼불제석의 그림이라고 전하는데, 마을을 보호해 주는 수호신의 대상이 되고 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "709b34fc-5f11-5078-9c4d-a5965d4bbc10"
+   ]
+  },
+  {
+   "factRevisionId": "5c2ac5cc-1e38-55e8-9e8d-15e526ae06e1",
+   "factId": "0c9257fa-4671-55d9-8b4b-bc43aa5017dc",
+   "version": 1,
+   "statement": "서울 반포대교에 설치된 분수인 달빛무지개분수는 한강르네상스의 핵심적인 사업으로 2007년 6월 시작하여 2009년 4월 개막식을 통해 유유히 흐르는 한강의 정적인 이미지에 웅장하고 역동적인 이미지를 담은 교량분수로 화려하게 탄생했다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "9f680c40-ec59-5519-99b5-e2af9a82545d"
+   ]
+  },
+  {
+   "factRevisionId": "4bc9a624-fe37-5190-a2e9-535e9ffb6d81",
+   "factId": "dc672d24-0072-5dee-b7b6-346665211327",
+   "version": 1,
+   "statement": "서울 한강만이 가지고 있는 약 700m의 넓은 강폭 전체를 연출하기 위해 반포대교 구간의 상류 측과 하류 측 1,140m 구간에 380개 노즐을 설치해 낙하용 수중펌프로 끌어올린 한강물을 약 20m 아래 한강 수면으로 떨어뜨리는 새로운 개념의 분수이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "9f680c40-ec59-5519-99b5-e2af9a82545d"
+   ]
+  },
+  {
+   "factRevisionId": "e8f101f4-8049-501c-ab7c-ba800882342d",
+   "factId": "a03c244d-c767-5fd4-976e-cc50a41bffe2",
+   "version": 1,
+   "statement": "단순히 물만 내뿜는 것이 아니라 배경음악과 분수연출이 아름답고 조화롭게 어우러지도록 프로그램을 구성하고, 야간에는 경관조명을 이용하여 환상적인 한강의 야경을 보여준다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "9f680c40-ec59-5519-99b5-e2af9a82545d"
+   ]
+  },
+  {
+   "factRevisionId": "ca89c4fd-5fdd-588a-9785-0d05f6f966a6",
+   "factId": "44aac810-d4a4-5ad4-8074-46fcb5f45585",
+   "version": 1,
+   "statement": "또한 2008년 11월 7일 ‘세계에서 가장 긴 교량분수’로 기네스북에 등재되면서 최고의 위용을 세계에서도 인정받았으며, 시향연주회, 무용발표회, 창장음악회 및 개막식, 그랜드오픈행사 시 분수연출을 선보이기도 했다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "9f680c40-ec59-5519-99b5-e2af9a82545d"
+   ]
+  },
+  {
+   "factRevisionId": "c997d233-71d7-50ad-897b-915332457409",
+   "factId": "c2fd7306-7952-5e4e-85a5-e23a4ff5d04f",
+   "version": 1,
+   "statement": "고속터미널역에서 반포한강공원을 이어주는 공간인 지하공공보행통로는 서울을 사랑하는 모든 시민들과 나누고자 스트리트 갤러리로 기획되었다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "b538bd6f-6fbd-5ff5-9080-e67a07b6b847"
+   ]
+  },
+  {
+   "factRevisionId": "a4912520-b018-5538-9ccb-00bf9e917cae",
+   "factId": "979f9c19-6a13-5131-bc2d-b2fc1c5eb9b8",
+   "version": 1,
+   "statement": "특히 스페인 관광청, 말라가 관광청과 서초구의 협업으로 만들어진 피카소 벽화는 피카소의 시선을 통해 건축, 음식, 전통, 일상생활 등 스페인 말라가와 서울의 다양한 측면을 보여주는 65m의 벽화다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "b538bd6f-6fbd-5ff5-9080-e67a07b6b847"
+   ]
+  },
+  {
+   "factRevisionId": "3369e986-2408-581b-b268-f2c6b5c8575b",
+   "factId": "9052af3a-c228-5158-b019-a975cf10ddb2",
+   "version": 1,
+   "statement": "이 벽화를 그린 작가는 유로피안 어반 아트 챔피언 대회 우승자이자 라론(Lalone)으로 활동 중인 세계적인 그래피티 아티스트 '에두아르도 루케'이며, 라론이 피카소 벽화를 그리는 과정이 벽화 옆 카페형 휴식공간에서 재생되고 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "b538bd6f-6fbd-5ff5-9080-e67a07b6b847"
+   ]
+  },
+  {
+   "factRevisionId": "437f94f6-abba-51e2-a34f-074953765868",
+   "factId": "2e753ca1-5581-552a-ae3e-85bdb0c9f001",
+   "version": 1,
+   "statement": "청계산은 서울특별시와 경기도 성남시, 과천시, 의왕시의 경계에 따라 위치해 있는 산이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "e68b6362-fa22-54e7-977a-e5ac588fbf8c"
+   ]
+  },
+  {
+   "factRevisionId": "991285bf-3b40-5032-b9af-eede34126bc2",
+   "factId": "a8d15868-ee54-567f-b0d7-d12a9c84c471",
+   "version": 1,
+   "statement": "산세는 서남쪽으로 의왕시에 소재한 백운산, 모락산, 오봉산으로 뻗쳐 있고, 서북쪽으로 과천시 옥녀봉 자락과 이어져 대체로 남북 방향으로 자리하고 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "e68b6362-fa22-54e7-977a-e5ac588fbf8c"
+   ]
+  },
+  {
+   "factRevisionId": "89db7385-66a7-5f5b-bd22-21e2612c12e6",
+   "factId": "086884ef-8efb-56d8-ba12-64a94a015ead",
+   "version": 1,
+   "statement": "청계산은 청룡이 승천했던 곳이라고 해서 청룡산으로 불리기도 하며, 풍수지리학적으로는 관악산을 백호, 청계산은 청룡이라 하여 좌청룡 우백호의 개념으로 해석하기도 한다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "e68b6362-fa22-54e7-977a-e5ac588fbf8c"
+   ]
+  },
+  {
+   "factRevisionId": "a2312099-713b-5ab2-b255-6cab87361f58",
+   "factId": "17a26abe-56c4-56f9-8fd0-1bfeb0598a7b",
+   "version": 1,
+   "statement": "서울대공원과 서울랜드, 국립현대미술관을 둘러싼 푸른 산자락이 바로 청계산이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "e68b6362-fa22-54e7-977a-e5ac588fbf8c"
+   ]
+  },
+  {
+   "factRevisionId": "76af36da-db9c-501f-9ff7-3a6d086bf831",
+   "factId": "fab13e06-bc22-5ff9-aa98-190cbf2164d6",
+   "version": 1,
+   "statement": "판교어린이천문대는 많은 과학자들이 파헤쳐 간 우주의 이야기들을 들으며 아이들에게 천문과학자의 꿈을 심어주고 별을 바라보며 상상 속에 있던 우주를 현실화시켜 주는 곳이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "4ff55492-5482-542e-b39a-b3f7ac57b588"
+   ]
+  },
+  {
+   "factRevisionId": "2162e48d-4d68-55e5-807a-d62e3d93aa81",
+   "factId": "a61fff0d-1045-59c9-81fb-4834d8e30ce4",
+   "version": 1,
+   "statement": "판교 청계산 자락에 자리를 잡고 있으며 어린이를 대상으로 여러 가지 천문대 프로그램을 운영하고 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "4ff55492-5482-542e-b39a-b3f7ac57b588"
+   ]
+  },
+  {
+   "factRevisionId": "aae5845e-16da-5434-9c09-f9c4c5b30e93",
+   "factId": "cda94f86-37a4-5f3f-870d-6fc3cf4ecd1c",
+   "version": 1,
+   "statement": "이곳에서는 단순한 관람이 아닌 교육 중심의 프로그램을 운영하며, 아이들이 천문학적 개념을 단계적으로 이해할 수 있도록 구성된 커리큘럼이 특징이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "4ff55492-5482-542e-b39a-b3f7ac57b588"
+   ]
+  },
+  {
+   "factRevisionId": "84db13a4-00b3-5716-bd89-afb98685792b",
+   "factId": "224019f5-5e20-5aba-97d6-cc9e0296f6bc",
+   "version": 1,
+   "statement": "여러 선생님들과 함께 우주와 별에 관한 수업을 들으며 천체우주에 대한 꿈을 키우는 장소이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "4ff55492-5482-542e-b39a-b3f7ac57b588"
+   ]
+  },
+  {
+   "factRevisionId": "62206cb8-03ae-5757-b115-047f4f3164e0",
+   "factId": "80df7253-156c-5877-a28e-1eb541140448",
+   "version": 1,
+   "statement": "용인아르피아종합운동장 부지 내에 있는 용인포은아트홀은 용인 시민의 여가와 문화생활 증진을 위해 2004년 4월 개관하였으며 용인문화재단이 운영하고 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "a3a2363f-06a9-514d-9d59-22a8c6a6cd21"
+   ]
+  },
+  {
+   "factRevisionId": "a3fe82b8-aa1e-5d9e-9bce-1ffef228aeb5",
+   "factId": "18a33036-405e-55c2-83a2-0316d2a5ef3a",
+   "version": 1,
+   "statement": "포은아트홀의 이름은 포은 정몽주 선생의 아호에서 따왔으며 첨단 시설을 갖춘 세계적인 수준의 공연장이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "a3a2363f-06a9-514d-9d59-22a8c6a6cd21"
+   ]
+  },
+  {
+   "factRevisionId": "3eade7cf-0831-5571-9b75-53a9ca2fcea3",
+   "factId": "710d358d-97b2-5402-aa39-594804603cc8",
+   "version": 1,
+   "statement": "총면적 13,826㎡, 무대 면적 1,109㎡, 객석 1,258석을 갖추고 있으며 공연 활동을 완벽하게 지원할 수 있는 환경과 편안하게 감상할 수 있는 객석, 휴식을 즐길 수 있는 시민들의 생활 속 쉼터이자 품격 있는 공연을 즐길 수 있는 문화체험장이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "a3a2363f-06a9-514d-9d59-22a8c6a6cd21"
+   ]
+  },
+  {
+   "factRevisionId": "8e07f57e-86ce-5c92-a19a-bbb7db66b70b",
+   "factId": "2313a76e-ff6a-5860-a57c-5f766b079515",
+   "version": 1,
+   "statement": "판교 IC에서 차량으로 약 17분, 수인분당선 죽전역(단국대)에서 도보로 약 5분(345m) 소요된다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "a3a2363f-06a9-514d-9d59-22a8c6a6cd21"
+   ]
+  },
+  {
+   "factRevisionId": "a479ff5e-0ce6-5570-8d1b-a992c364e5c9",
+   "factId": "81ec7efa-97c6-54df-b1ab-af308d4ed7d1",
+   "version": 1,
+   "statement": "이 집은 1926년에 지은 것으로 안채의 종도리 장여에 상량문이 적혀 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "7b1642ab-e3da-5c9a-b030-50b1e8b92d6b"
+   ]
+  },
+  {
+   "factRevisionId": "81e5d3b9-622f-5444-9710-66988a470af3",
+   "factId": "b441ee69-701f-5144-8ca8-a886288603a7",
+   "version": 1,
+   "statement": "일자형의 안채와 사랑채, 행랑채가 ㄷ자 형으로 배치되어 있는데, 집의 형태를 보면 안채는 3단의 장대석 기단 위에 둥근 주춧돌을 놓고 네모기둥을 세웠고, 기둥 위에 큰 부재로 된 대들보를 걸고, 그 위에 종보를 올렸다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "7b1642ab-e3da-5c9a-b030-50b1e8b92d6b"
+   ]
+  },
+  {
+   "factRevisionId": "88306cfc-f533-5289-aecc-461067cab2bb",
+   "factId": "5afe209a-0001-5edd-93c9-c64ecebd3081",
+   "version": 1,
+   "statement": "종보 위에는 파련대공을 세우고 종도리와 뜬창방을 결구하였는데 주택에서는 보기 드문 수법이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "7b1642ab-e3da-5c9a-b030-50b1e8b92d6b"
+   ]
+  },
+  {
+   "factRevisionId": "27d40957-a3fa-5a9f-82a3-b9c9d403f4d6",
+   "factId": "42d461fe-f79c-5a63-9159-3a01e1c885b8",
+   "version": 1,
+   "statement": "건물이 세워진 연대는 오래되지 않았으나 안채･사랑채･행랑채가 고루 갖추어져 있는 전통 주거 건축의 모습을 잘 나타내고 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "7b1642ab-e3da-5c9a-b030-50b1e8b92d6b"
+   ]
+  },
+  {
+   "factRevisionId": "c0e1fc6f-291a-5648-a530-d419ada3bc0e",
+   "factId": "5fad8256-ebda-5a8b-83f0-96e1fe170b0d",
+   "version": 1,
+   "statement": "대전 솔로몬로파크는 법무부에서 운영하는 법교육 테마 공원이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "65e278da-192f-56a7-86a5-6185d49496fe"
+   ]
+  },
+  {
+   "factRevisionId": "6d214a6c-065f-567d-acbd-23977db03ae6",
+   "factId": "f7a6c6db-9c28-51ee-a018-ba17361aa0fc",
+   "version": 1,
+   "statement": "어린이, 청소년, 그리고 일반 국민들이 법을 쉽고 재미있게 배우고 체험할 수 있도록, 법무부가 조성하고 직접 운영하는 법과 정의의 배움터이자 법교육의 장이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "65e278da-192f-56a7-86a5-6185d49496fe"
+   ]
+  },
+  {
+   "factRevisionId": "06a25d22-3789-5ce4-9526-3d545adb5883",
+   "factId": "6cebdfa3-0090-518f-af40-675e5d384164",
+   "version": 1,
+   "statement": "놀면서 직접 법을 체험할 수 있도록 어린이, 청소년, 지역 시민들에게 다양한 법 체험 및 연수 프로그램을 무료로 제공한다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "65e278da-192f-56a7-86a5-6185d49496fe"
+   ]
+  },
+  {
+   "factRevisionId": "acf1f81a-4ff5-5b6e-b898-2c4ccbca98f8",
+   "factId": "78ff5171-843e-581e-a5d7-941a70106b73",
+   "version": 1,
+   "statement": "솔로몬 왕이 재판을 통해 지혜롭게 정의를 실현했듯, 솔로몬로파크는 법치사회의 자유, 지혜, 정의를 느끼고 체험함으로써 국민 누구나 신뢰하는 법치국가를 만들어가는 데 필요한 민주시민의 자질과 소양을 쌓을 수 있도록 한다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "65e278da-192f-56a7-86a5-6185d49496fe"
+   ]
+  },
+  {
+   "factRevisionId": "68e709b8-c0e0-5e59-8ba2-2dda39a0fdc9",
+   "factId": "4c50fab8-4e46-5657-bde5-6821382df6a9",
+   "version": 1,
+   "statement": "한빛탑은 대전 유성구 엑스포과학공원 내에 위치한 과학과 우주를 모티브로 하여 조형화한 전망대이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "ea335396-c08e-5058-bd96-35d76b7ccd93"
+   ]
+  },
+  {
+   "factRevisionId": "82e8891f-f1f1-54f1-a020-bc822f74265c",
+   "factId": "06642c25-8ad5-5541-84f7-3089072c4281",
+   "version": 1,
+   "statement": "이 탑은 1993년에 열린 대전엑스포를 기념하기 위해 건립된 상징 조형물로, 현재와 미래를 잇는 한 줄기 빛이라는 뜻에서 한빛탑이라 불린다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "ea335396-c08e-5058-bd96-35d76b7ccd93"
+   ]
+  },
+  {
+   "factRevisionId": "da98c49f-6ddd-5d80-83ea-b3aa081838bc",
+   "factId": "91b05b64-6410-5040-851a-62e0af784d64",
+   "version": 1,
+   "statement": "한빛탑은 엑스포과학공원과 대전시 주요 지역 등을 한눈에 조망할 수 있는 공간으로 한 번에 20명이 탑승할 수 있는 승강기가 운영중이며 전면 유리창을 통해 다양한 모습을 감상할 수 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "ea335396-c08e-5058-bd96-35d76b7ccd93"
+   ]
+  },
+  {
+   "factRevisionId": "445d88b6-1cc9-5fba-9a8d-ea3928cec48e",
+   "factId": "daa39b9a-57bd-5a62-844c-f81744f395e2",
+   "version": 1,
+   "statement": "1층에는 전시실에서는 대전을 상징하는 주요 관광명소 사진과 시청각 영상물을 관람할 수 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794322397972,
+   "sourceRevisionIds": [
+    "ea335396-c08e-5058-bd96-35d76b7ccd93"
+   ]
+  }
+ ],
+ "places": [
+  {
+   "aliases": [],
+   "coordinateReviewBasis": "공식 TourAPI의 동일 contentid에 연결된 title/addr1/mapx/mapy 원문 문자열을 추출해 그대로 보존했다. 국문 관광정보 서비스의 공개 WGS84 경도·위도 필드 규약과 검색/상세 응답 일치를 확인했다. 공급자가 지정한 장소 대표점만 검토하며 입구·도로 접근점·GPS 정확도·실제 통과를 확정하지 않는다.",
+   "coordinateSourceRevisionId": "bbff35a2-9a3d-5829-9479-049b4e679fd8",
+   "coordinateSystem": "WGS84",
+   "externalIds": [
+    {
+     "externalId": "250364",
+     "provider": "kto-tourapi",
+     "verifiedAt": 1794157970529
+    }
+   ],
+   "latitude": "37.5559582569",
+   "longitude": "126.9716093128",
+   "name": "문화역 서울 284",
+   "placeId": "f79e9b40-aa96-5972-b59f-aa99f7bc8522"
+  },
+  {
+   "aliases": [],
+   "coordinateReviewBasis": "공식 TourAPI의 동일 contentid에 연결된 title/addr1/mapx/mapy 원문 문자열을 추출해 그대로 보존했다. 국문 관광정보 서비스의 공개 WGS84 경도·위도 필드 규약과 검색/상세 응답 일치를 확인했다. 공급자가 지정한 장소 대표점만 검토하며 입구·도로 접근점·GPS 정확도·실제 통과를 확정하지 않는다.",
+   "coordinateSourceRevisionId": "21ba8b7c-7016-512f-af79-f7226818273f",
+   "coordinateSystem": "WGS84",
+   "externalIds": [
+    {
+     "externalId": "125994",
+     "provider": "kto-tourapi",
+     "verifiedAt": 1794157970529
+    }
+   ],
+   "latitude": "36.3759480684",
+   "longitude": "127.3802532459",
+   "name": "대전엑스포과학공원",
+   "placeId": "f560a058-6fad-5f6f-9ac9-03ea8743ceb3"
+  },
+  {
+   "placeId": "tourapi:2775505",
+   "name": "민주화운동기념관",
+   "aliases": [],
+   "latitude": "37.5409794",
+   "longitude": "126.9720341",
+   "coordinateSystem": "WGS84",
+   "coordinateSourceRevisionId": "6e56c73d-c2ed-5d92-aedf-d4f30901ddde",
+   "coordinateReviewBasis": "한국관광공사 TourAPI 좌표(WGS84) 그대로",
+   "externalIds": [
+    {
+     "provider": "kto-tourapi",
+     "externalId": "2775505",
+     "verifiedAt": 1794322397972
+    }
+   ]
+  },
+  {
+   "placeId": "tourapi:3013174",
+   "name": "용산아트홀",
+   "aliases": [],
+   "latitude": "37.5324789",
+   "longitude": "126.9904825",
+   "coordinateSystem": "WGS84",
+   "coordinateSourceRevisionId": "5ce58f1a-cb81-5f8a-964d-f7dc477ef9fc",
+   "coordinateReviewBasis": "한국관광공사 TourAPI 좌표(WGS84) 그대로",
+   "externalIds": [
+    {
+     "provider": "kto-tourapi",
+     "externalId": "3013174",
+     "verifiedAt": 1794322397972
+    }
+   ]
+  },
+  {
+   "placeId": "tourapi:1603296",
+   "name": "서빙고동 부군당",
+   "aliases": [],
+   "latitude": "37.5204678",
+   "longitude": "126.9931789",
+   "coordinateSystem": "WGS84",
+   "coordinateSourceRevisionId": "709b34fc-5f11-5078-9c4d-a5965d4bbc10",
+   "coordinateReviewBasis": "한국관광공사 TourAPI 좌표(WGS84) 그대로",
+   "externalIds": [
+    {
+     "provider": "kto-tourapi",
+     "externalId": "1603296",
+     "verifiedAt": 1794322397972
+    }
+   ]
+  },
+  {
+   "placeId": "tourapi:729167",
+   "name": "반포대교 달빛무지개분수",
+   "aliases": [],
+   "latitude": "37.5126000",
+   "longitude": "126.9985000",
+   "coordinateSystem": "WGS84",
+   "coordinateSourceRevisionId": "9f680c40-ec59-5519-99b5-e2af9a82545d",
+   "coordinateReviewBasis": "한국관광공사 TourAPI 좌표(WGS84) 그대로",
+   "externalIds": [
+    {
+     "provider": "kto-tourapi",
+     "externalId": "729167",
+     "verifiedAt": 1794322397972
+    }
+   ]
+  },
+  {
+   "placeId": "tourapi:4001148",
+   "name": "피카소 벽화",
+   "aliases": [],
+   "latitude": "37.5075090",
+   "longitude": "126.9994510",
+   "coordinateSystem": "WGS84",
+   "coordinateSourceRevisionId": "b538bd6f-6fbd-5ff5-9080-e67a07b6b847",
+   "coordinateReviewBasis": "한국관광공사 TourAPI 좌표(WGS84) 그대로",
+   "externalIds": [
+    {
+     "provider": "kto-tourapi",
+     "externalId": "4001148",
+     "verifiedAt": 1794322397972
+    }
+   ]
+  },
+  {
+   "placeId": "tourapi:125452",
+   "name": "청계산",
+   "aliases": [],
+   "latitude": "37.4437532",
+   "longitude": "127.0553147",
+   "coordinateSystem": "WGS84",
+   "coordinateSourceRevisionId": "e68b6362-fa22-54e7-977a-e5ac588fbf8c",
+   "coordinateReviewBasis": "한국관광공사 TourAPI 좌표(WGS84) 그대로",
+   "externalIds": [
+    {
+     "provider": "kto-tourapi",
+     "externalId": "125452",
+     "verifiedAt": 1794322397972
+    }
+   ]
+  },
+  {
+   "placeId": "tourapi:3032823",
+   "name": "판교어린이천문대",
+   "aliases": [],
+   "latitude": "37.4269077",
+   "longitude": "127.0710103",
+   "coordinateSystem": "WGS84",
+   "coordinateSourceRevisionId": "4ff55492-5482-542e-b39a-b3f7ac57b588",
+   "coordinateReviewBasis": "한국관광공사 TourAPI 좌표(WGS84) 그대로",
+   "externalIds": [
+    {
+     "provider": "kto-tourapi",
+     "externalId": "3032823",
+     "verifiedAt": 1794322397972
+    }
+   ]
+  },
+  {
+   "placeId": "tourapi:1753401",
+   "name": "용인포은아트홀",
+   "aliases": [],
+   "latitude": "37.3248731",
+   "longitude": "127.1042542",
+   "coordinateSystem": "WGS84",
+   "coordinateSourceRevisionId": "a3a2363f-06a9-514d-9d59-22a8c6a6cd21",
+   "coordinateReviewBasis": "한국관광공사 TourAPI 좌표(WGS84) 그대로",
+   "externalIds": [
+    {
+     "provider": "kto-tourapi",
+     "externalId": "1753401",
+     "verifiedAt": 1794322397972
+    }
+   ]
+  },
+  {
+   "placeId": "tourapi:127274",
+   "name": "청주 신전동 고가",
+   "aliases": [],
+   "latitude": "36.6088929",
+   "longitude": "127.4019629",
+   "coordinateSystem": "WGS84",
+   "coordinateSourceRevisionId": "7b1642ab-e3da-5c9a-b030-50b1e8b92d6b",
+   "coordinateReviewBasis": "한국관광공사 TourAPI 좌표(WGS84) 그대로",
+   "externalIds": [
+    {
+     "provider": "kto-tourapi",
+     "externalId": "127274",
+     "verifiedAt": 1794322397972
+    }
+   ]
+  },
+  {
+   "placeId": "tourapi:741957",
+   "name": "대전솔로몬로파크",
+   "aliases": [],
+   "latitude": "36.3773585",
+   "longitude": "127.4015597",
+   "coordinateSystem": "WGS84",
+   "coordinateSourceRevisionId": "65e278da-192f-56a7-86a5-6185d49496fe",
+   "coordinateReviewBasis": "한국관광공사 TourAPI 좌표(WGS84) 그대로",
+   "externalIds": [
+    {
+     "provider": "kto-tourapi",
+     "externalId": "741957",
+     "verifiedAt": 1794322397972
+    }
+   ]
+  },
+  {
+   "placeId": "tourapi:2779504",
+   "name": "한빛탑",
+   "aliases": [],
+   "latitude": "36.3766000",
+   "longitude": "127.3882000",
+   "coordinateSystem": "WGS84",
+   "coordinateSourceRevisionId": "ea335396-c08e-5058-bd96-35d76b7ccd93",
+   "coordinateReviewBasis": "한국관광공사 TourAPI 좌표(WGS84) 그대로",
+   "externalIds": [
+    {
+     "provider": "kto-tourapi",
+     "externalId": "2779504",
+     "verifiedAt": 1794322397972
+    }
+   ]
+  }
+ ],
+ "stories": [
+  {
+   "coreQuestion": "기차역 건물은 어떻게 문화공간이 되었을까요?",
+   "interestTags": [
+    "history",
+    "culture"
+   ],
+   "placeId": null,
+   "storyId": "03849d89-1640-5603-be8b-9835d371ed02",
+   "title": "역이 문화공간으로",
+   "topicId": "9f2feae7-8e4a-55a0-badd-ed09c50d4ca1"
+  },
+  {
+   "coreQuestion": "문화역 서울 284의 숫자는 어디에서 왔을까요?",
+   "interestTags": [
+    "history",
+    "culture"
+   ],
+   "placeId": null,
+   "storyId": "126af9cc-2003-5d75-b33d-7ef66bd42c8d",
+   "title": "이름에 남은 숫자 284",
+   "topicId": "a6f1a274-6436-595c-8e2a-67e926f7550a"
+  },
+  {
+   "coreQuestion": "용인이라는 이름에는 어떤 옛 지명이 담겨 있을까요?",
+   "interestTags": [
+    "history",
+    "place_names"
+   ],
+   "placeId": null,
+   "storyId": "d87ba5a6-04d1-54b7-8f75-cf58dfe89ef8",
+   "title": "용구와 처인에서 용인으로",
+   "topicId": "aad405af-36ed-50ba-a8ef-07f959b030a9"
+  },
+  {
+   "coreQuestion": "양지와 백암은 예전에도 같은 이름이었을까요?",
+   "interestTags": [
+    "history",
+    "place_names"
+   ],
+   "placeId": null,
+   "storyId": "088b7514-07e1-530e-b6dc-979da12c1aee",
+   "title": "다시 불리게 된 양지와 백암",
+   "topicId": "81e3d13d-a0a5-5821-b54e-3dd7ac37f139"
+  },
+  {
+   "coreQuestion": "안성의 유기는 어떻게 만들어 팔았을까요?",
+   "interestTags": [
+    "history",
+    "craft"
+   ],
+   "placeId": null,
+   "storyId": "84cae426-7167-515c-b28f-808e5886f298",
+   "title": "안성맞춤과 두 가지 유기",
+   "topicId": "d2b6466c-0822-5f2d-8370-78448a8077a8"
+  },
+  {
+   "coreQuestion": "안성 장에서는 어떤 물건이 오갔을까요?",
+   "interestTags": [
+    "history",
+    "trade"
+   ],
+   "placeId": null,
+   "storyId": "07a9db6f-b2a5-5bbe-91ff-68e905e86125",
+   "title": "장이 서던 고장의 물건들",
+   "topicId": "ec158fee-7536-5143-8a44-88dfadc20db3"
+  },
+  {
+   "coreQuestion": "천안의 호두과자에는 어떤 재료가 만날까요?",
+   "interestTags": [
+    "food",
+    "travel"
+   ],
+   "placeId": null,
+   "storyId": "f5af3604-7b23-50fb-b697-e8c549b68c33",
+   "title": "여행길에 떠올리는 호두과자",
+   "topicId": "513dedf3-e9d3-5c57-b970-64f29d6eb87d"
+  },
+  {
+   "coreQuestion": "천안삼거리에서는 어디로 길이 이어졌을까요?",
+   "interestTags": [
+    "history",
+    "travel"
+   ],
+   "placeId": null,
+   "storyId": "16b09187-02dd-5655-8d46-4c8f4bb55d2f",
+   "title": "천안삼거리에서 갈라진 길",
+   "topicId": "4543f17a-0d3a-5f0c-9058-cc0515c68a70"
+  },
+  {
+   "coreQuestion": "철도는 대전의 도시 이야기와 어떻게 이어질까요?",
+   "interestTags": [
+    "history",
+    "transport"
+   ],
+   "placeId": null,
+   "storyId": "5b3a3c95-6d72-5b49-9c5c-8f5487267f37",
+   "title": "철도와 함께 자란 대전",
+   "topicId": "83283380-14fd-574b-bfe3-e2268b12ae76"
+  },
+  {
+   "coreQuestion": "1993년 박람회 뒤에는 무엇이 남았을까요?",
+   "interestTags": [
+    "history",
+    "science"
+   ],
+   "placeId": null,
+   "storyId": "666b77d3-aba4-5ea6-b9fc-1a4c6556eef5",
+   "title": "박람회가 남긴 과학공원",
+   "topicId": "104bbccf-5468-5a88-b0b4-7c29c5395105"
+  }
+ ],
+ "versions": [
+  {
+   "contentHash": "62954bdde0b5ddb8f8e6c6d2522f7687bc145b80d4717abb75510ce61f7ea2c8",
+   "createdAt": 1794154239017,
+   "estimatedDurationMs": 34000,
+   "paragraphs": [
+    {
+     "audioRef": null,
+     "estimatedDurationMs": 18000,
+     "factRevisionIds": [
+      "483cfc22-d83a-5346-9adc-69b756075edf"
+     ],
+     "ordinal": 0,
+     "paragraphId": "f7dfe200-ae9d-5605-9946-b6b89f7a50dc",
+     "required": true,
+     "text": "서울역에는 기차를 타러 들어가는 역사와 함께, 다른 만남을 품은 옛 역사도 있어요. 옛 서울역 건물을 복원해 만든 문화역 서울 이팔사는 복합문화공간입니다."
+    },
+    {
+     "audioRef": null,
+     "estimatedDurationMs": 16000,
+     "factRevisionIds": [
+      "483cfc22-d83a-5346-9adc-69b756075edf"
+     ],
+     "ordinal": 1,
+     "paragraphId": "0eb128a0-27ad-574c-9bba-f26e22b09698",
+     "required": true,
+     "text": "열차를 기다리던 건물이 문화를 만나는 공간으로 쓰이게 된 거죠. 같은 건물도 시간이 흐르면 새로운 역할을 맡을 수 있다는 이야기를 들려줍니다."
+    }
+   ],
+   "status": "published",
+   "storyId": "03849d89-1640-5603-be8b-9835d371ed02",
+   "storyVersionId": "fbee5b73-7527-527d-a470-c2538b42a002",
+   "validUntil": null,
+   "verifiedAt": 1794154239017,
+   "version": 2
+  },
+  {
+   "contentHash": "9371c634a75600fc24f0d868611833d783e3b0f85a7713c345263831ef39aa6c",
+   "createdAt": 1794154239017,
+   "estimatedDurationMs": 30000,
+   "paragraphs": [
+    {
+     "audioRef": null,
+     "estimatedDurationMs": 30000,
+     "factRevisionIds": [
+      "c0483580-6179-5a93-9f84-e700924762bf"
+     ],
+     "ordinal": 0,
+     "paragraphId": "4f457b2f-2607-523a-aac9-8aaa9221c7b4",
+     "required": true,
+     "text": "문화역 서울 이팔사라는 이름에서, 마지막 숫자가 눈에 띄죠. 이팔사는 건물 높이나 열차 번호가 아니라 옛 서울역사의 사적 번호에서 온 이름이에요. 장소의 이름 속에 그 건물을 기억하던 번호가 남은 셈입니다. 짧은 숫자 세 자리에도 건물의 지난 시간이 담겨 있네요."
+    }
+   ],
+   "status": "published",
+   "storyId": "126af9cc-2003-5d75-b33d-7ef66bd42c8d",
+   "storyVersionId": "f8871267-60eb-5695-83d7-78941f20307e",
+   "validUntil": null,
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "contentHash": "161862894c98c1c0752b521f6a0a77c62da091add656df11575568563aaa7e2c",
+   "createdAt": 1794154239017,
+   "estimatedDurationMs": 32000,
+   "paragraphs": [
+    {
+     "audioRef": null,
+     "estimatedDurationMs": 15000,
+     "factRevisionIds": [
+      "a7e34148-57ab-5bd2-99de-c4a8255e448f"
+     ],
+     "ordinal": 0,
+     "paragraphId": "7574c72b-964b-5609-9708-feb39a3ce522",
+     "required": true,
+     "text": "용인이라는 이름 앞에는 용구와 처인이라는 두 지명이 있었어요. 태종실록에는 두 지역을 합쳐 용인으로 삼는 내용이 기록되어 있습니다."
+    },
+    {
+     "audioRef": null,
+     "estimatedDurationMs": 17000,
+     "factRevisionIds": [
+      "a7e34148-57ab-5bd2-99de-c4a8255e448f"
+     ],
+     "ordinal": 1,
+     "paragraphId": "e0493a78-b129-5879-9099-ae91d542a0b4",
+     "required": true,
+     "text": "용구의 용, 처인의 인을 떠올리면 두 이름이 새 이름에 어떻게 이어졌는지 보이죠. 지금의 짧은 지명에서 옛 지역들의 흔적을 찾아보는 재미가 있습니다."
+    }
+   ],
+   "status": "published",
+   "storyId": "d87ba5a6-04d1-54b7-8f75-cf58dfe89ef8",
+   "storyVersionId": "f79911da-a096-5323-bb83-e025bb20cc46",
+   "validUntil": null,
+   "verifiedAt": 1794154239017,
+   "version": 2
+  },
+  {
+   "contentHash": "4c360535e6eea333f996c91a2a3472dbb787263cdc2a5fe62bd65638b1f3ddbb",
+   "createdAt": 1794154239017,
+   "estimatedDurationMs": 35000,
+   "paragraphs": [
+    {
+     "audioRef": null,
+     "estimatedDurationMs": 35000,
+     "factRevisionIds": [
+      "03970925-d308-5bee-9aca-462698ba2b47"
+     ],
+     "ordinal": 0,
+     "paragraphId": "c44c1e49-f808-5d4c-b7c2-d098cebd4738",
+     "required": true,
+     "text": "용인의 양지와 백암에는 행정지명이 달라진 시간이 있어요. 천구백구십육년 삼월 일일, 당시 내사면은 양지면으로, 외사면은 백암면으로 이름이 바뀌었습니다. 같은 고장을 찾더라도 오래된 기록에는 다른 이름이 나올 수 있는 이유죠. 지명을 따라가다 보면 지도 위의 장소뿐 아니라 그 장소를 부르던 시대도 만나게 됩니다."
+    }
+   ],
+   "status": "published",
+   "storyId": "088b7514-07e1-530e-b6dc-979da12c1aee",
+   "storyVersionId": "35d81d47-1886-5ce1-abc0-0f9f0df243fb",
+   "validUntil": null,
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "contentHash": "c78c916ec1d5421f2d256612396e3269136b9d0eec87ef2b06a121bd2ffd593e",
+   "createdAt": 1794154239017,
+   "estimatedDurationMs": 35000,
+   "paragraphs": [
+    {
+     "audioRef": null,
+     "estimatedDurationMs": 17000,
+     "factRevisionIds": [
+      "7297891c-3417-556a-a914-8ce3a1e0cc21"
+     ],
+     "ordinal": 0,
+     "paragraphId": "b9c3582b-9d16-5d25-ad7d-5113e6f97224",
+     "required": true,
+     "text": "안성의 유기는 만드는 목적에 따라 부르는 이름도 달랐어요. 장에 내다 팔려고 대량으로 만든 것은 장내기 유기, 주문을 받아 만든 것은 맞춤 유기였죠."
+    },
+    {
+     "audioRef": null,
+     "estimatedDurationMs": 18000,
+     "factRevisionIds": [
+      "7297891c-3417-556a-a914-8ce3a1e0cc21"
+     ],
+     "ordinal": 1,
+     "paragraphId": "62e1e0e2-9343-53c2-bba9-9de01f573dfd",
+     "required": true,
+     "text": "같은 유기라도 누구에게 어떻게 전할 것인지가 달랐던 셈입니다. 안성맞춤이라는 익숙한 말을 떠올리며, 그 뒤에 있던 제작과 주문의 풍경도 함께 그려볼 수 있겠네요."
+    }
+   ],
+   "status": "published",
+   "storyId": "84cae426-7167-515c-b28f-808e5886f298",
+   "storyVersionId": "b013b564-b36f-515d-9304-76b1e273b4a0",
+   "validUntil": null,
+   "verifiedAt": 1794154239017,
+   "version": 2
+  },
+  {
+   "contentHash": "a5997475be9af55d3639ebc8993af94375300538e5abfe3cf75d5a18491cd49e",
+   "createdAt": 1794154239017,
+   "estimatedDurationMs": 35000,
+   "paragraphs": [
+    {
+     "audioRef": null,
+     "estimatedDurationMs": 35000,
+     "factRevisionIds": [
+      "4b5b50b4-91ba-53f2-866c-661541378fa0"
+     ],
+     "ordinal": 0,
+     "paragraphId": "cb0bab26-d6ec-5ebd-ab9e-7c84beddc0cd",
+     "required": true,
+     "text": "안성의 옛 이야기를 장터 쪽에서 들여다볼까요. 안성은 큰 장이 서던 상업의 고장이었고, 그 장에서는 지역에서 만든 유기도 거래되었어요. 물건을 만드는 일과 사고파는 일이 한 고장의 이야기로 이어지는 거죠. 유기를 장인의 손끝에서만 보지 않고, 물건이 오가던 장터까지 넓혀 보면 안성의 또 다른 모습이 보입니다."
+    }
+   ],
+   "status": "published",
+   "storyId": "07a9db6f-b2a5-5bbe-91ff-68e905e86125",
+   "storyVersionId": "52658b14-87a1-51a8-bd25-e1b9d3b5ff7b",
+   "validUntil": null,
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "contentHash": "9230fcf1d9b621b91e4477600f0aa83078ba72554165f07ac7b465d926a1f689",
+   "createdAt": 1794154239017,
+   "estimatedDurationMs": 31000,
+   "paragraphs": [
+    {
+     "audioRef": null,
+     "estimatedDurationMs": 31000,
+     "factRevisionIds": [
+      "efd53577-97e4-58ba-b677-779757438d00"
+     ],
+     "ordinal": 0,
+     "paragraphId": "b6566154-5c6e-54f7-8656-dfd316230408",
+     "required": true,
+     "text": "여행길 간식을 하나 떠올려 볼까요. 천안의 이름과 함께 불리는 호두과자에는 팥을 넣어 만드는 제품이 있어요. 농촌진흥청이 소개한 천안 호두과자에는 아라리라는 팥 품종이 쓰이기도 했죠. 작은 간식을 재료 쪽에서 바라보면, 지역 먹거리와 농산물이 만나는 이야기도 찾을 수 있습니다."
+    }
+   ],
+   "status": "published",
+   "storyId": "f5af3604-7b23-50fb-b697-e8c549b68c33",
+   "storyVersionId": "c068725a-de13-5faa-b85c-1152f033786d",
+   "validUntil": null,
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "contentHash": "9b653b01252ec8b4c826a12bdc9f40ec8ee23b67b45a16b72659b0d84dc32915",
+   "createdAt": 1794154239017,
+   "estimatedDurationMs": 32000,
+   "paragraphs": [
+    {
+     "audioRef": null,
+     "estimatedDurationMs": 20000,
+     "factRevisionIds": [
+      "486c3f10-9ae3-5c69-88dd-0267ccff1a03"
+     ],
+     "ordinal": 0,
+     "paragraphId": "7096dd1b-060f-56e3-a43d-05fca89847b7",
+     "required": true,
+     "text": "천안삼거리라는 이름을 들으면 서로 다른 방향으로 이어지는 길을 떠올려보세요. 이곳은 북쪽 한양, 남쪽 경상도, 서쪽 전라도로 가는 길이 나뉘던 삼남대로의 분기점으로 알려져 있습니다."
+    },
+    {
+     "audioRef": null,
+     "estimatedDurationMs": 12000,
+     "factRevisionIds": [
+      "486c3f10-9ae3-5c69-88dd-0267ccff1a03"
+     ],
+     "ordinal": 1,
+     "paragraphId": "9ef8e1cc-1056-585b-94bb-b1a9e71fd61c",
+     "required": true,
+     "text": "삼거리의 세 갈래는 단순한 길 모양을 넘어, 서로 다른 목적지로 향하던 사람들의 이동을 생각하게 합니다."
+    }
+   ],
+   "status": "published",
+   "storyId": "16b09187-02dd-5655-8d46-4c8f4bb55d2f",
+   "storyVersionId": "fcb4e0a5-2ee1-5b87-97e8-3e2e371d0d5f",
+   "validUntil": null,
+   "verifiedAt": 1794154239017,
+   "version": 2
+  },
+  {
+   "contentHash": "b7e9afe136140dc5cb0fc5aef53209c0bde8950fe4c3bc6e1a589ba7232a895e",
+   "createdAt": 1794154239017,
+   "estimatedDurationMs": 33000,
+   "paragraphs": [
+    {
+     "audioRef": null,
+     "estimatedDurationMs": 33000,
+     "factRevisionIds": [
+      "249294d7-9cbd-5e20-8b4e-432f852cf4ae"
+     ],
+     "ordinal": 0,
+     "paragraphId": "e20056d1-113b-5771-8046-7dd228b0627f",
+     "required": true,
+     "text": "대전의 도시 이야기에 철도를 빼놓기 어렵습니다. 대전은 철도와 함께 성장했고, 경부선과 호남선이 갈라지는 중요한 교통의 자리였어요. 역을 열차가 서는 곳으로만 보면 놓치기 쉬운 이야기죠. 선로와 역을 따라 도시의 시간을 떠올려 보면, 대전이라는 고장의 모습을 다른 각도에서 만나게 됩니다."
+    }
+   ],
+   "status": "published",
+   "storyId": "5b3a3c95-6d72-5b49-9c5c-8f5487267f37",
+   "storyVersionId": "6014745e-d5a8-5c17-9ff3-2682b83e9e4c",
+   "validUntil": null,
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "contentHash": "c33c7ce0de65bfd709c01963d7c1dec8ff155bd1591771396fec1ed05ba43fe2",
+   "createdAt": 1794154239017,
+   "estimatedDurationMs": 36000,
+   "paragraphs": [
+    {
+     "audioRef": null,
+     "estimatedDurationMs": 20000,
+     "factRevisionIds": [
+      "3ce2057c-bd6b-5e57-822a-3464a5ab4000"
+     ],
+     "ordinal": 0,
+     "paragraphId": "30592edf-f5c1-53a9-9b58-ed4d3ce2690f",
+     "required": true,
+     "text": "대전엑스포과학공원이라는 이름에는 천구백구십삼년의 대전세계박람회가 남아 있어요. 이 공원은 박람회를 기념하면서, 남은 시설과 부지를 과학교육의 장으로 활용하기 위해 조성되었습니다."
+    },
+    {
+     "audioRef": null,
+     "estimatedDurationMs": 16000,
+     "factRevisionIds": [
+      "3ce2057c-bd6b-5e57-822a-3464a5ab4000"
+     ],
+     "ordinal": 1,
+     "paragraphId": "2bee1cb0-3a21-5622-9b6c-2adff53f70a0",
+     "required": true,
+     "text": "큰 행사가 끝난 뒤 그 자리를 어떻게 이어 쓸 것인가에 대한 답이 공원이 된 셈이죠. 박람회의 기억이 다음 배움의 장소로 이어진 이야기입니다."
+    }
+   ],
+   "status": "published",
+   "storyId": "666b77d3-aba4-5ea6-b9fc-1a4c6556eef5",
+   "storyVersionId": "030a43fd-3c8c-5363-ad6d-32ccaef77bcf",
+   "validUntil": null,
+   "verifiedAt": 1794154239017,
+   "version": 2
+  }
+ ],
+ "regionBindings": [
+  {
+   "associationFactRevisionId": "550e8570-4e6e-56c8-b751-31ab030fa788",
+   "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionCode": "11140",
+   "regionId": "kr-sigungu-11140",
+   "regionName": "중구",
+   "regionRevisionId": "kr-sigungu-11140-ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionSourceRevisionId": "ngii-sigungu-d7a3751bd89f",
+   "reviewBasis": "S01의 지역 소속은 독립 association fact와 그 원자료를 검토했다. 기존 NGII manifest의 11140 중구 identity를 그대로 사용한다. 원자료의 공식 주소/지역 설명과 행정구역을 대조했다. 좌표·방문 판정 정책·현재 위치·예측 경로를 이 binding으로 승인하지 않는다.",
+   "storyId": "03849d89-1640-5603-be8b-9835d371ed02",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "associationFactRevisionId": "550e8570-4e6e-56c8-b751-31ab030fa788",
+   "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionCode": "11140",
+   "regionId": "kr-sigungu-11140",
+   "regionName": "중구",
+   "regionRevisionId": "kr-sigungu-11140-ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionSourceRevisionId": "ngii-sigungu-d7a3751bd89f",
+   "reviewBasis": "S02의 지역 소속은 독립 association fact와 그 원자료를 검토했다. 기존 NGII manifest의 11140 중구 identity를 그대로 사용한다. 원자료의 공식 주소/지역 설명과 행정구역을 대조했다. 좌표·방문 판정 정책·현재 위치·예측 경로를 이 binding으로 승인하지 않는다.",
+   "storyId": "126af9cc-2003-5d75-b33d-7ef66bd42c8d",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "associationFactRevisionId": "17e887c1-11b6-5954-8365-2da61d828efb",
+   "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionCode": "41460",
+   "regionId": "kr-sigungu-41460",
+   "regionName": "용인시",
+   "regionRevisionId": "kr-sigungu-41460-ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionSourceRevisionId": "ngii-sigungu-d7a3751bd89f",
+   "reviewBasis": "S03의 지역 소속은 독립 association fact와 그 원자료를 검토했다. 기존 NGII manifest의 41460 용인시 identity를 그대로 사용한다. 시 전체 역사·먹거리 소재를 parent 시에 연결하며 특정 구를 임의로 지정하지 않는다. 좌표·방문 판정 정책·현재 위치·예측 경로를 이 binding으로 승인하지 않는다.",
+   "storyId": "d87ba5a6-04d1-54b7-8f75-cf58dfe89ef8",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "associationFactRevisionId": "cc2411f2-e51d-572c-9b59-ecdc0e07d380",
+   "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionCode": "41460",
+   "regionId": "kr-sigungu-41460",
+   "regionName": "용인시",
+   "regionRevisionId": "kr-sigungu-41460-ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionSourceRevisionId": "ngii-sigungu-d7a3751bd89f",
+   "reviewBasis": "S04의 지역 소속은 독립 association fact와 그 원자료를 검토했다. 기존 NGII manifest의 41460 용인시 identity를 그대로 사용한다. 시 전체 역사·먹거리 소재를 parent 시에 연결하며 특정 구를 임의로 지정하지 않는다. 좌표·방문 판정 정책·현재 위치·예측 경로를 이 binding으로 승인하지 않는다.",
+   "storyId": "088b7514-07e1-530e-b6dc-979da12c1aee",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "associationFactRevisionId": "2878a3b3-0033-58da-840c-98b26f005ebe",
+   "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionCode": "41550",
+   "regionId": "kr-sigungu-41550",
+   "regionName": "안성시",
+   "regionRevisionId": "kr-sigungu-41550-ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionSourceRevisionId": "ngii-sigungu-d7a3751bd89f",
+   "reviewBasis": "S05의 지역 소속은 독립 association fact와 그 원자료를 검토했다. 기존 NGII manifest의 41550 안성시 identity를 그대로 사용한다. 원자료의 공식 주소/지역 설명과 행정구역을 대조했다. 좌표·방문 판정 정책·현재 위치·예측 경로를 이 binding으로 승인하지 않는다.",
+   "storyId": "84cae426-7167-515c-b28f-808e5886f298",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "associationFactRevisionId": "2878a3b3-0033-58da-840c-98b26f005ebe",
+   "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionCode": "41550",
+   "regionId": "kr-sigungu-41550",
+   "regionName": "안성시",
+   "regionRevisionId": "kr-sigungu-41550-ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionSourceRevisionId": "ngii-sigungu-d7a3751bd89f",
+   "reviewBasis": "S06의 지역 소속은 독립 association fact와 그 원자료를 검토했다. 기존 NGII manifest의 41550 안성시 identity를 그대로 사용한다. 원자료의 공식 주소/지역 설명과 행정구역을 대조했다. 좌표·방문 판정 정책·현재 위치·예측 경로를 이 binding으로 승인하지 않는다.",
+   "storyId": "07a9db6f-b2a5-5bbe-91ff-68e905e86125",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "associationFactRevisionId": "08bb3e8a-015c-57d1-8034-11ad3c50cfed",
+   "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionCode": "44130",
+   "regionId": "kr-sigungu-44130",
+   "regionName": "천안시",
+   "regionRevisionId": "kr-sigungu-44130-ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionSourceRevisionId": "ngii-sigungu-d7a3751bd89f",
+   "reviewBasis": "S07의 지역 소속은 독립 association fact와 그 원자료를 검토했다. 기존 NGII manifest의 44130 천안시 identity를 그대로 사용한다. 시 전체 역사·먹거리 소재를 parent 시에 연결하며 특정 구를 임의로 지정하지 않는다. 좌표·방문 판정 정책·현재 위치·예측 경로를 이 binding으로 승인하지 않는다.",
+   "storyId": "f5af3604-7b23-50fb-b697-e8c549b68c33",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "associationFactRevisionId": "3cf667a0-77e7-5d2e-8638-499e3c53e12c",
+   "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionCode": "44131",
+   "regionId": "kr-sigungu-44131",
+   "regionName": "동남구",
+   "regionRevisionId": "kr-sigungu-44131-ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionSourceRevisionId": "ngii-sigungu-d7a3751bd89f",
+   "reviewBasis": "S08의 지역 소속은 독립 association fact와 그 원자료를 검토했다. 기존 NGII manifest의 44131 동남구 identity를 그대로 사용한다. 원자료의 공식 주소/지역 설명과 행정구역을 대조했다. 좌표·방문 판정 정책·현재 위치·예측 경로를 이 binding으로 승인하지 않는다.",
+   "storyId": "16b09187-02dd-5655-8d46-4c8f4bb55d2f",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "associationFactRevisionId": "767625b8-1756-57f9-9bdd-790a0a7af59c",
+   "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionCode": "30110",
+   "regionId": "kr-sigungu-30110",
+   "regionName": "동구",
+   "regionRevisionId": "kr-sigungu-30110-ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionSourceRevisionId": "ngii-sigungu-d7a3751bd89f",
+   "reviewBasis": "S09의 지역 소속은 독립 association fact와 그 원자료를 검토했다. 기존 NGII manifest의 30110 동구 identity를 그대로 사용한다. 원자료의 공식 주소/지역 설명과 행정구역을 대조했다. 좌표·방문 판정 정책·현재 위치·예측 경로를 이 binding으로 승인하지 않는다.",
+   "storyId": "5b3a3c95-6d72-5b49-9c5c-8f5487267f37",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "associationFactRevisionId": "9a43805b-fef1-5b68-a434-71e13a8cf048",
+   "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionCode": "30200",
+   "regionId": "kr-sigungu-30200",
+   "regionName": "유성구",
+   "regionRevisionId": "kr-sigungu-30200-ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionSourceRevisionId": "ngii-sigungu-d7a3751bd89f",
+   "reviewBasis": "S10의 지역 소속은 독립 association fact와 그 원자료를 검토했다. 기존 NGII manifest의 30200 유성구 identity를 그대로 사용한다. 원자료의 공식 주소/지역 설명과 행정구역을 대조했다. 좌표·방문 판정 정책·현재 위치·예측 경로를 이 binding으로 승인하지 않는다.",
+   "storyId": "666b77d3-aba4-5ea6-b9fc-1a4c6556eef5",
+   "verifiedAt": 1794154239017
+  }
+ ],
+ "landmarks": [
+  {
+   "placeId": "tourapi:2775505",
+   "name": "민주화운동기념관",
+   "latitude": "37.5409794",
+   "longitude": "126.9720341",
+   "regionCode": "11170",
+   "visibility": "small",
+   "category": "culture",
+   "intro": "과거 고문시설이었던 치안본부 남영동 대공분실을 보존해 만든 기념시설이에요. 1976년 건축된 건물에 독재정권의 어두운 역사와 민주주의의 이야기를 담고 있어요.",
+   "factRevisionIds": [
+    "8a727aa8-1329-5a1a-99be-4d6268eecdc1",
+    "5f3e0c20-a7d8-597a-8d1d-63cefaa37e6f",
+    "586ff086-411b-59b6-82b2-191687f54e9c"
+   ]
+  },
+  {
+   "placeId": "tourapi:3013174",
+   "name": "용산아트홀",
+   "latitude": "37.5324789",
+   "longitude": "126.9904825",
+   "regionCode": "11170",
+   "visibility": "small",
+   "category": "culture",
+   "intro": "용산아트홀은 용산구 종합행정타운 안에 위치하고 있는 지상 1층, 지하 3층 규모의 문화예술 전용 공간이다.",
+   "factRevisionIds": [
+    "efddf3bc-8efe-5ff6-a0e1-17eac8935a81"
+   ]
+  },
+  {
+   "placeId": "tourapi:1603296",
+   "name": "서빙고동 부군당",
+   "latitude": "37.5204678",
+   "longitude": "126.9931789",
+   "regionCode": "11170",
+   "visibility": "small",
+   "category": "heritage",
+   "intro": "조선시대 마을의 안녕을 빌던 제당으로, 인조 13년(1635)에 당을 고칠 때 걸어둔 현판을 포함해 5개의 현판과 무신도가 지금도 보존되어 있어요.",
+   "factRevisionIds": [
+    "6f6353c6-a7d8-5d1e-856d-a2e990254d5e",
+    "fb5146e6-14ce-554e-92fc-62621d17273a"
+   ]
+  },
+  {
+   "placeId": "tourapi:729167",
+   "name": "반포대교 달빛무지개분수",
+   "latitude": "37.5126000",
+   "longitude": "126.9985000",
+   "regionCode": "11650",
+   "visibility": "large",
+   "category": "culture",
+   "intro": "2008년 기네스북에 세계에서 가장 긴 교량분수로 등재된 곳이에요. 1,140m 구간에 380개 노즐을 설치해 한강물을 약 20m 아래로 떨어뜨리는 분수예요.",
+   "factRevisionIds": [
+    "ca89c4fd-5fdd-588a-9785-0d05f6f966a6",
+    "4bc9a624-fe37-5190-a2e9-535e9ffb6d81"
+   ]
+  },
+  {
+   "placeId": "tourapi:4001148",
+   "name": "피카소 벽화",
+   "latitude": "37.5075090",
+   "longitude": "126.9994510",
+   "regionCode": "11650",
+   "visibility": "small",
+   "category": "culture",
+   "intro": "스페인 관광청, 말라가 관광청, 서초구가 협업해 만든 65m 길이의 벽화예요. 피카소의 시선으로 말라가와 서울의 건축, 음식, 일상생활 등을 담고 있어요.",
+   "factRevisionIds": [
+    "a4912520-b018-5538-9ccb-00bf9e917cae"
+   ]
+  },
+  {
+   "placeId": "tourapi:125452",
+   "name": "청계산",
+   "latitude": "37.4437532",
+   "longitude": "127.0553147",
+   "regionCode": "11650",
+   "visibility": "large",
+   "category": "nature",
+   "intro": "청계산은 서울특별시와 경기도 성남시, 과천시, 의왕시의 경계에 따라 위치해 있는 산이다.",
+   "factRevisionIds": [
+    "437f94f6-abba-51e2-a34f-074953765868"
+   ]
+  },
+  {
+   "placeId": "tourapi:3032823",
+   "name": "판교어린이천문대",
+   "latitude": "37.4269077",
+   "longitude": "127.0710103",
+   "regionCode": "41131",
+   "visibility": "small",
+   "category": "culture",
+   "intro": "판교어린이천문대는 많은 과학자들이 파헤쳐 간 우주의 이야기들을 들으며 아이들에게 천문과학자의 꿈을 심어주고 별을 바라보며 상상 속에 있던 우주를 현실화시켜 주는 곳이다.",
+   "factRevisionIds": [
+    "76af36da-db9c-501f-9ff7-3a6d086bf831"
+   ]
+  },
+  {
+   "placeId": "tourapi:1753401",
+   "name": "용인포은아트홀",
+   "latitude": "37.3248731",
+   "longitude": "127.1042542",
+   "regionCode": "41465",
+   "visibility": "small",
+   "category": "culture",
+   "intro": "포은 정몽주 선생의 아호에서 이름을 따온 공연장으로, 2004년 4월에 개관했어요. 1,258석 규모의 객석을 갖추고 용인문화재단이 운영하고 있어요.",
+   "factRevisionIds": [
+    "a3fe82b8-aa1e-5d9e-9bce-1ffef228aeb5",
+    "62206cb8-03ae-5757-b115-047f4f3164e0",
+    "3eade7cf-0831-5571-9b75-53a9ca2fcea3"
+   ]
+  },
+  {
+   "placeId": "tourapi:127274",
+   "name": "청주 신전동 고가",
+   "latitude": "36.6088929",
+   "longitude": "127.4019629",
+   "regionCode": "43113",
+   "visibility": "small",
+   "category": "heritage",
+   "intro": "1926년에 지은 집으로, 안채 종도리 장여에 상량문이 남아 있어요. 안채·사랑채·행랑채를 고루 갖춘 전통 주거 건축의 모습을 잘 보여줘요.",
+   "factRevisionIds": [
+    "a479ff5e-0ce6-5570-8d1b-a992c364e5c9",
+    "27d40957-a3fa-5a9f-82a3-b9c9d403f4d6"
+   ]
+  },
+  {
+   "placeId": "tourapi:741957",
+   "name": "대전솔로몬로파크",
+   "latitude": "36.3773585",
+   "longitude": "127.4015597",
+   "regionCode": "30200",
+   "visibility": "small",
+   "category": "culture",
+   "intro": "법무부가 운영하는 법교육 테마 공원이에요. 어린이와 청소년이 법을 놀이처럼 체험할 수 있는 무료 프로그램을 운영해요.",
+   "factRevisionIds": [
+    "c0e1fc6f-291a-5648-a530-d419ada3bc0e",
+    "06a25d22-3789-5ce4-9526-3d545adb5883"
+   ]
+  },
+  {
+   "placeId": "tourapi:2779504",
+   "name": "한빛탑",
+   "latitude": "36.3766000",
+   "longitude": "127.3882000",
+   "regionCode": "30200",
+   "visibility": "large",
+   "category": "culture",
+   "intro": "1993년 대전엑스포를 기념해 세워진 전망대로, 현재와 미래를 잇는 한 줄기 빛이라는 뜻을 담고 있어요.",
+   "factRevisionIds": [
+    "82e8891f-f1f1-54f1-a020-bc822f74265c"
+   ]
+  }
+ ]
+}

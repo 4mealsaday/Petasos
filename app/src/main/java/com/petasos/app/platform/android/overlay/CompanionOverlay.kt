@@ -138,6 +138,10 @@ class CompanionOverlay(serviceContext: Context, private val host: PetasosSession
         val region = regionLabel?.label
         fun join(vararg parts: String?) = parts.filterNot { it.isNullOrBlank() }.joinToString(" · ")
         val caption = host.currentOverlayCaption(this)?.value
+        // A window announcement (CONTENT_PIPELINE.md 6장) owns the card while it is spoken: "오른쪽 · 한빛탑" + intro.
+        host.currentWindowAnnouncement()?.let { window ->
+            return CardState(R.drawable.ic_landmark, window.label, window.body, Ring.IDLE, false)
+        }
         if (mode != PlaybackMode.STORY && mode != PlaybackMode.ANSWERING && mode != PlaybackMode.RESUMING &&
             mode != PlaybackMode.PAUSED && mode != PlaybackMode.GENERATING) pace(null)
         return when (mode) {
@@ -179,8 +183,16 @@ class CompanionOverlay(serviceContext: Context, private val host: PetasosSession
 
     // ------------------------------------------------------------------ one sentence at a time
 
-    /** Returns the sentence to show for [text]. The text is the whole paragraph being spoken. */
+    /**
+     * Returns the sentence to show for [text], the whole paragraph being spoken. Speech now runs sentence by
+     * sentence, so the exact sentence is known; the length-based estimate is only a fallback.
+     */
     private fun pace(text: String?): String? {
+        val spoken = host.currentSpokenSentence()
+        if (text != null && spoken != null && text.contains(spoken)) {
+            if (pacedText != null) { pacedText = null; sentences = emptyList(); handler.removeCallbacks(advance) }
+            return spoken
+        }
         if (text == null) {
             if (pacedText != null) { pacedText = null; sentences = emptyList(); handler.removeCallbacks(advance) }
             return null
