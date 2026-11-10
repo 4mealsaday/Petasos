@@ -48,6 +48,8 @@ class RegionalMapView @JvmOverloads constructor(context: Context, attrs: Attribu
     private var routeStyles = emptyList<Boolean>()
     private var cityParents = emptySet<String>()
     var onRegionSelected: ((String) -> Unit)? = null
+    /** Line thickness multiplier (the small Home map draws thinner lines). */
+    var routeWidthScale = 1f
 
     init {
         minimumHeight = dp(260f).toInt()
@@ -181,9 +183,9 @@ class RegionalMapView @JvmOverloads constructor(context: Context, attrs: Attribu
             for (i in 1 until count) partial.lineTo(route.screen[2 * i], route.screen[2 * i + 1])
             paint.style = Paint.Style.STROKE
             if (route.emphasized) {
-                paint.strokeWidth = dp(10f); paint.color = ROUTE_GLOW; canvas.drawPath(partial, paint)
-                paint.strokeWidth = dp(4f); paint.color = ROUTE
-            } else { paint.strokeWidth = dp(4f); paint.color = ROUTE_GLOW }
+                paint.strokeWidth = dp(10f) * routeWidthScale; paint.color = ROUTE_GLOW; canvas.drawPath(partial, paint)
+                paint.strokeWidth = dp(4f) * routeWidthScale; paint.color = ROUTE
+            } else { paint.strokeWidth = dp(4f) * routeWidthScale; paint.color = ROUTE_GLOW }
             canvas.drawPath(partial, paint)
         }
         val headPoint = revealState?.head(progress)

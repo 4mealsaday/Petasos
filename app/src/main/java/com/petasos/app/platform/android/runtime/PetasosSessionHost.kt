@@ -1266,7 +1266,9 @@ class PetasosSessionHost(
         val source = PleosAuthorizedLocationSource(
             accessSourceFactory = { PleosLocationSource(context) },
             measurementSourceFactory = { access ->
-                AndroidLocationSource(context, AndroidLocationSource.preferredProvider(context) ?: "fused", access)
+                // DEMO: no 1 s floor, so every replayed fix is stored and the saved line follows the road.
+                AndroidLocationSource(context, AndroidLocationSource.preferredProvider(context) ?: "fused", access,
+                    minUpdateIntervalMs = if (BuildConfig.DEMO) 0L else 1_000L)
             },
             externalAccessAllowed = { leaseCurrent() && locationAccessAllowed() && sourceSessionId == sessionId },
             elapsedMs = SystemClock::elapsedRealtime,

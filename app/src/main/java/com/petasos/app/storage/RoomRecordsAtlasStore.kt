@@ -22,9 +22,33 @@ class RoomRecordsAtlasStore internal constructor(private val database: StorageDa
             val trips = RoomTripResultsStore(database).listTrips(TRIP_PAGE_SIZE, tripOffset)
             val count = query("SELECT count(*) FROM trip").use { it.moveToFirst(); it.getLong(0) }
             val routes = readPaths(null)
-            RecordsAtlasSnapshot(collected, trips, count, tripOffset, routes.first, routes.second)
+            RecordsAtlasSnapshot(collected, trips, count, tripOffset, routes.first, routes.second, heardRegions(collected))
         }
     }
+
+    /**
+     * Collected regions where at least one story was heard to the end, from the existing story completion records
+     * and each story's bound region. A story bound to a parent city (용인시) or played by the DEMO same-city fallback
+     * goes to the related collected region the trip had most recently entered when the story was earned.
+     */
+    private fun heardRegions(collected: List<RecordsRegionProof>): Map<String, List<RecordsStory>> {
+        val heard = mutableListOf<Pair<RecordsStory, String>>()
+        query("""SELECT c.story_version_id,c.earned_at,st.region_id FROM collection_record c JOIN story st ON st.story_id=c.story_id
+            WHERE c.collection_type='story' AND EXISTS ($STORY_PROOF) ORDER BY c.earned_at,c.collection_id""").use {
+            while (it.moveToNext()) heard += RecordsStory(it.getString(0), it.getLong(1)) to it.getString(2)
+        }
+        val result = LinkedHashMap<String, MutableList<RecordsStory>>()
+        heard.forEach { (story, bound) ->
+            val related = collected.filter { it.regionId == bound || DISPLAY_PARENT[it.regionId] == bound }
+                .ifEmpty { collected.filter { province(it.regionId) != null && province(it.regionId) == province(bound) } }
+            val target = related.filter { it.earnedAt <= story.earnedAt }.maxByOrNull { it.earnedAt }
+                ?: related.minByOrNull { it.earnedAt } ?: return@forEach
+            result.getOrPut(target.regionId) { mutableListOf() } += story
+        }
+        return result.mapValues { (_, stories) -> stories.sortedByDescending { it.earnedAt } }
+    }
+
+    private fun province(regionId: String) = regionId.substringAfterLast('-').takeIf { it.length == 5 }?.take(2)
 
     fun readRegion(regionId: String): RecordsRegionSnapshot {
         require(regionId.length in 1..256)
@@ -36,11 +60,7 @@ class RoomRecordsAtlasStore internal constructor(private val database: StorageDa
             val storyRegion = DISPLAY_PARENT[regionId] ?: regionId
             val stories = mutableListOf<RecordsStory>()
             query("""SELECT c.story_version_id,c.earned_at FROM collection_record c JOIN story st ON st.story_id=c.story_id
-                WHERE c.collection_type='story' AND st.region_id IN (?,?) AND EXISTS (
-                    SELECT 1 FROM collection_proof cp JOIN playback_attempt a ON a.attempt_id=cp.attempt_id
-                    JOIN paragraph p ON p.paragraph_id=a.paragraph_id WHERE cp.collection_id=c.collection_id
-                    AND cp.point_id IS NULL AND a.kind='story' AND a.state='completed'
-                    AND p.story_version_id=c.story_version_id AND cp.proof_key=p.paragraph_id)
+                WHERE c.collection_type='story' AND st.region_id IN (?,?) AND EXISTS ($STORY_PROOF)
                 ORDER BY c.earned_at DESC,c.collection_id LIMIT 51""", regionId, storyRegion).use {
                 while (it.moveToNext()) stories += RecordsStory(it.getString(0), it.getLong(1))
             }
@@ -101,6 +121,10 @@ class RoomRecordsAtlasStore internal constructor(private val database: StorageDa
         private const val REGION_PROOF = """SELECT 1 FROM collection_proof cp JOIN route_point p ON p.point_id=cp.point_id
             JOIN region_revision rr ON rr.region_revision_id=cp.region_revision_id WHERE cp.collection_id=c.collection_id
             AND cp.attempt_id IS NULL AND p.quality_status='valid' AND rr.region_id=c.region_id"""
+        private const val STORY_PROOF = """SELECT 1 FROM collection_proof cp JOIN playback_attempt a ON a.attempt_id=cp.attempt_id
+            JOIN paragraph p ON p.paragraph_id=a.paragraph_id WHERE cp.collection_id=c.collection_id
+            AND cp.point_id IS NULL AND a.kind='story' AND a.state='completed'
+            AND p.story_version_id=c.story_version_id AND cp.proof_key=p.paragraph_id"""
         // Exact five relationships pinned by assets/regions/reviewed-hierarchy-v1.json.
         private val DISPLAY_PARENT = mapOf("kr-sigungu-41461" to "kr-sigungu-41460", "kr-sigungu-41463" to "kr-sigungu-41460",
             "kr-sigungu-41465" to "kr-sigungu-41460", "kr-sigungu-44131" to "kr-sigungu-44130", "kr-sigungu-44133" to "kr-sigungu-44130")

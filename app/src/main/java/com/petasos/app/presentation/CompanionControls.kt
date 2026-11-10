@@ -28,6 +28,7 @@ class CompanionControls(
     private var requestingPermission = false
     private var continueAfterPermission = false
     private var notice: String? = null
+    private var readinessItem: JourneyShell.ReadyItem? = null
 
     fun update(value: PetasosSessionHost?, allowed: Boolean, shell: JourneyShell) {
         if (host !== value) {
@@ -47,6 +48,15 @@ class CompanionControls(
 
     /** Main-thread Activity permission callback passthrough; see [com.petasos.app.MainActivity]. */
     fun permissionResult(requestCode: Int, granted: Boolean): Boolean {
+        if (requestCode == READINESS_REQUEST) {
+            requestingPermission = false
+            onChanged()
+            // Location is two prompts (Pleos, then Android). A new request made inside this callback is dropped,
+            // so the second one follows on the next main-loop turn.
+            if (granted && readinessItem == JourneyShell.ReadyItem.LOCATION && LocationAccess.requestPermissions(activity).isNotEmpty())
+                activity.window.decorView.post { fixReadiness(JourneyShell.ReadyItem.LOCATION) }
+            return true
+        }
         if (requestCode != PERMISSION_REQUEST) return false
         requestingPermission = false
         if (granted) {
@@ -152,12 +162,31 @@ class CompanionControls(
         }, activity.mainExecutor)
     }
 
-    private fun requestPermission(permissions: Array<String>) {
+    private fun requestPermission(permissions: Array<String>, code: Int = PERMISSION_REQUEST) {
         requestingPermission = true
         notice = null
         onChanged()
-        try { activity.requestPermissions(permissions, PERMISSION_REQUEST) }
+        try { activity.requestPermissions(permissions, code) }
         catch (_: Exception) { requestingPermission = false; onChanged() }
+    }
+
+    /** Home readiness "설정 필요": one permission prompt, or the overlay settings screen / a guide line. */
+    fun fixReadiness(item: JourneyShell.ReadyItem) {
+        if (starting || stopping || requestingPermission) return
+        readinessItem = item
+        when (item) {
+            JourneyShell.ReadyItem.LOCATION -> LocationAccess.requestPermissions(activity).takeIf { it.isNotEmpty() }
+                ?.let { requestPermission(it, READINESS_REQUEST) }
+            JourneyShell.ReadyItem.MIC -> requestPermission(arrayOf(Manifest.permission.RECORD_AUDIO), READINESS_REQUEST)
+            JourneyShell.ReadyItem.OVERLAY -> {
+                val opened = PleosCompanionDisplaySupport.inspect(activity).overlaySettingsAvailable && try {
+                    activity.startActivity(android.content.Intent(android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        android.net.Uri.parse("package:${activity.packageName}"))); true
+                } catch (_: Exception) { false }
+                notice = if (opened) null else activity.getString(R.string.home_ready_overlay_guide)
+                onChanged()
+            }
+        }
     }
 
     /** Home's "내비로 돌아가기": the same navigation-foreground request the ON gesture makes. */
@@ -198,6 +227,7 @@ class CompanionControls(
 
     companion object {
         const val PERMISSION_REQUEST = 4803
+        const val READINESS_REQUEST = 4804
         private const val DEMO_NAVIGATION_PACKAGE = "ai.umos.maps.android.navigation.app"
     }
 }

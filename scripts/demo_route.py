@@ -13,15 +13,22 @@ Usage:
 --gpx FILE: write the --video pacing as a timestamped GPX track (no adb needed) and exit. Load it in the
 emulator: Extended controls -> Location -> Routes -> Load GPX/KML -> Play route (demo/route.gpx is committed).
 
---video: recording preset (~4-5 min total). Pair it with the app's DEMO video mode so each region
+--video: recording preset (~7 min total). Pair it with the app's DEMO video mode so each region
 plays one representative story (S01/S03/S05/S08/S10) + one 15 s music bridge:
     adb shell am broadcast --user 10 -f 0x20 -p com.petasos.app -a com.petasos.app.debug.SET_VIDEO_MODE --ez enabled true
-Each story region is held ~45 s, pass-through stretches ~8 s, and points are thinned so every
-geo fix step is >= 1 s (one `adb emu geo fix` alone costs ~0.15-0.2 s).
+Each story region is held ~45 s and pass-through stretches are sent as fast as the cadence floor allows.
+
+Every preset sends every point of demo/route.json, densified by linear interpolation so no two consecutive
+fixes are more than --max-spacing metres apart (the app records each fix, so the saved line follows the road).
+Time is compressed by shortening the send interval, never by skipping points. Fixes go through one
+persistent emulator console connection (an `adb emu geo fix` process costs ~0.15-0.2 s per fix, too slow
+for dense points); `adb emu` is the fallback when the console cannot be opened.
 `kill -USR1 <pid>` toggles pause/resume as well as Enter (useful when stdin is not a terminal).
 """
 import argparse
+import math
 import signal
+import socket
 import struct
 import sys
 import threading
@@ -151,7 +158,30 @@ def build_runs(points, index):
 
 VIDEO_STORY_TARGET_SECONDS = 45.0
 VIDEO_PASSTHROUGH_TARGET_SECONDS = 8.0
-VIDEO_MIN_STEP_S = 1.0
+# Cadence floor for any preset. The app stores ~20 points/s at most (each point re-checks region
+# confirmation over its recent points); 20 Hz overran that, the app fell minutes behind and its 10 s
+# freshness checks cut the recording. ~8 Hz keeps it at about 40% of that.
+SEND_MIN_INTERVAL_S = 0.12
+# The original points are the road's own vertices; inserts only split long straight stretches.
+MAX_SPACING_M = 100.0
+
+
+def distance_m(a, b):
+    lat1, lat2 = math.radians(a[1]), math.radians(b[1])
+    dlat, dlon = lat2 - lat1, math.radians(b[0] - a[0])
+    h = math.sin(dlat / 2) ** 2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2) ** 2
+    return 2 * 6371000.0 * math.asin(math.sqrt(h))
+
+
+def densify(points, max_spacing=MAX_SPACING_M):
+    """Every original point is kept; straight segments longer than max_spacing get evenly spaced inserts."""
+    out = [tuple(points[0])]
+    for a, b in zip(points, points[1:]):
+        pieces = max(1, math.ceil(distance_m(a, b) / max_spacing))
+        for k in range(1, pieces + 1):
+            t = k / pieces
+            out.append((a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t))
+    return out
 
 
 def video_targets(runs):
@@ -165,35 +195,20 @@ def video_targets(runs):
         if category == "story":
             run["target"] = VIDEO_STORY_TARGET_SECONDS * len(run["items"]) / group_points[group]
         else:
-            run["target"] = min(VIDEO_PASSTHROUGH_TARGET_SECONDS, max(1.0, len(run["items"]) * VIDEO_MIN_STEP_S))
+            run["target"] = VIDEO_PASSTHROUGH_TARGET_SECONDS * min(1.0, len(run["items"]) / 200)
     return runs
 
 
-def thin_run(run, video):
-    """Video preset: keep at most target/VIDEO_MIN_STEP_S evenly spread points (first and last kept)."""
-    if not video:
-        return run
-    target = run["target"]
-    keep = max(2, int(target / VIDEO_MIN_STEP_S) + 1)
-    items = run["items"]
-    if len(items) <= keep:
-        return run
-    step = (len(items) - 1) / (keep - 1)
-    picked = [items[round(i * step)] for i in range(keep)]
-    return {"key": run["key"], "items": picked, "target": target}
-
-
 def run_interval(run, speed, video=False):
+    """Seconds between fixes. Never thins: a run that cannot fit its target simply takes longer."""
     category, group = run["key"]
+    steps = max(1, len(run["items"]) - 1)
     if video:
-        steps = max(1, len(run["items"]) - 1)
-        return run["target"] / steps / speed
+        interval = run["target"] / steps
     else:
         target = STORY_REGION_TARGET_SECONDS if category == "story" else PASSTHROUGH_TARGET_SECONDS
-    steps = max(1, len(run["items"]) - 1)
-    interval = target / steps
-    interval = min(MAX_INTERVAL_S, max(MIN_INTERVAL_S, interval))
-    return interval / speed
+        interval = min(MAX_INTERVAL_S, target / steps)
+    return max(SEND_MIN_INTERVAL_S, interval / speed)
 
 
 def describe_run(run):
@@ -253,10 +268,10 @@ def write_gpx(path, runs, speed):
     count = 0
     for run_item in runs:
         interval = run_interval(run_item, speed, True)
-        for i, (lon, lat, *_rest) in enumerate(run_item["items"]):
+        for lon, lat, *_rest in run_item["items"]:
             if count:
-                clock += timedelta(seconds=interval if i else 1.0)
-            lines.append(f'    <trkpt lat="{lat:.7f}" lon="{lon:.7f}"><ele>0</ele><time>{clock.strftime("%Y-%m-%dT%H:%M:%SZ")}</time></trkpt>')
+                clock += timedelta(seconds=interval)
+            lines.append(f'    <trkpt lat="{lat:.7f}" lon="{lon:.7f}"><ele>0</ele><time>{clock.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]}Z</time></trkpt>')
             count += 1
     lines += ['  </trkseg></trk>', '</gpx>', '']
     path.write_text("\n".join(lines))
@@ -264,9 +279,56 @@ def write_gpx(path, runs, speed):
     print(f"Wrote {count} points, {total / 60:.1f} minutes, to {path}")
 
 
-def geo_fix(serial, lon, lat):
-    run(["adb", "-s", serial, "emu", "geo", "fix", f"{lon:.7f}", f"{lat:.7f}"],
-        check=True, capture_output=True)
+class GeoSender:
+    """One authenticated emulator console socket; falls back to `adb emu` per fix if it cannot connect."""
+
+    def __init__(self, serial):
+        self.serial = serial
+        self.sock = None
+        self.buffer = b""
+        if serial.startswith("emulator-"):
+            try:
+                self.sock = socket.create_connection(("127.0.0.1", int(serial.split("-", 1)[1])), timeout=5)
+                self._read_ok()
+                token_file = Path.home() / ".emulator_console_auth_token"
+                if token_file.exists():
+                    self._command(f"auth {token_file.read_text().strip()}")
+            except (OSError, ValueError, RuntimeError) as error:
+                print(f"Emulator console unavailable ({error}); falling back to adb emu (slow).")
+                self.close()
+
+    def _read_ok(self):
+        while True:
+            for line in self.buffer.split(b"\n")[:-1]:
+                if line.startswith(b"KO"):
+                    raise RuntimeError(line.decode(errors="replace").strip())
+            if b"\nOK" in b"\n" + self.buffer or self.buffer.endswith(b"OK\r\n"):
+                index = self.buffer.rfind(b"OK")
+                self.buffer = self.buffer[index + 2:].lstrip(b"\r\n")
+                return
+            chunk = self.sock.recv(4096)
+            if not chunk:
+                raise RuntimeError("console closed")
+            self.buffer += chunk
+
+    def _command(self, text):
+        self.sock.sendall(text.encode() + b"\n")
+        self._read_ok()
+
+    def fix(self, lon, lat):
+        if self.sock is not None:
+            self._command(f"geo fix {lon:.7f} {lat:.7f}")
+            return
+        run(["adb", "-s", self.serial, "emu", "geo", "fix", f"{lon:.7f}", f"{lat:.7f}"],
+            check=True, capture_output=True)
+
+    def close(self):
+        if self.sock is not None:
+            try:
+                self.sock.close()
+            except OSError:
+                pass
+        self.sock = None
 
 
 def main():
@@ -275,7 +337,9 @@ def main():
     parser.add_argument("--start-index", type=int, default=0)
     parser.add_argument("--pause", action="store_true", help="Enter toggles pause/resume mid-run")
     parser.add_argument("--speed", type=float, default=1.0, help="Overall speed multiplier (default 1.0)")
-    parser.add_argument("--video", action="store_true", help="Recording preset: ~45 s per story region, ~4-5 min total")
+    parser.add_argument("--video", action="store_true", help="Recording preset: ~45 s per story region, every point sent")
+    parser.add_argument("--max-spacing", type=float, default=MAX_SPACING_M,
+                        help=f"Interpolate so consecutive fixes are at most this many metres apart (default {MAX_SPACING_M:.0f})")
     parser.add_argument("--gpx", type=Path, help="Write the video-paced route as a timestamped GPX file and exit")
     args = parser.parse_args()
     if args.gpx:
@@ -287,9 +351,10 @@ def main():
     import json
     route = json.loads(ROUTE_FILE.read_text())
     manifest = json.loads(MANIFEST_FILE.read_text())
-    points = route["path"][args.start_index:]
-    if not points:
+    original = route["path"][args.start_index:]
+    if not original:
         parser.error(f"--start-index {args.start_index} is past the end of the route ({len(route['path'])} points)")
+    points = densify(original, args.max_spacing)
 
     print(f"Loading {len(manifest['regions'])} region boundaries...")
     index = RegionIndex(manifest)
@@ -297,7 +362,7 @@ def main():
     print("Classifying route points into region runs...")
     runs = build_runs(points, index)
     if args.video:
-        runs = [thin_run(r, True) for r in video_targets(runs)]
+        runs = video_targets(runs)
 
     if args.gpx:
         write_gpx(args.gpx, runs, args.speed)
@@ -308,7 +373,8 @@ def main():
     found_groups = {r["key"][1] for r in story_runs}
     missing_groups = set(STORY_GROUPS) - found_groups
 
-    print(f"Route: {len(points)} points from index {args.start_index}, {len(runs)} pacing runs.")
+    print(f"Route: {len(original)} original points from index {args.start_index}, densified to {len(points)} "
+          f"(<= {args.max_spacing:.0f} m apart, none skipped), {len(runs)} pacing runs.")
     print(f"Story groups touched by this route: {sorted(found_groups)}")
     if missing_groups:
         print(f"WARNING: these story groups have NO route points inside them: {sorted(missing_groups)}")
@@ -317,6 +383,7 @@ def main():
         print("Press Enter at any time to pause/resume.")
     print()
 
+    sender = GeoSender(args.serial)
     pause_controller = PauseController()
     if args.pause:
         pause_controller.start()
@@ -331,14 +398,15 @@ def main():
             for lon, lat, code, name, category, group in run_item["items"]:
                 pause_controller.wait_while_paused()
                 started = time.monotonic()
-                geo_fix(args.serial, lon, lat)
+                sender.fix(lon, lat)
                 emitted += 1
-                if code:
+                if code and emitted % 20 == 0:
                     print(f"  [{emitted}] ({lon:.5f},{lat:.5f}) in {name} ({code})")
                 time.sleep(max(0.0, interval - (time.monotonic() - started)))
     except KeyboardInterrupt:
         print("\nInterrupted.")
     finally:
+        sender.close()
         if args.pause:
             pause_controller.stop()
 

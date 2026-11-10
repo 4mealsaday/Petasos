@@ -47,6 +47,7 @@ class TripsScreen(private val activity: Activity) {
     private val tabJourneys = activity.findViewById<TextView>(R.id.trips_tab_journeys)
     private val homeSummary = activity.findViewById<TextView>(R.id.home_trips_summary)
     private val homeLatest = activity.findViewById<TextView>(R.id.home_trips_latest)
+    private val homeMap = activity.findViewById<RegionalMapView>(R.id.home_trips_map)
     private val worker = Executors.newSingleThreadExecutor()
     private val boldFont: Typeface? = resources.getFont(R.font.pretendard_bold)
     private val dateTime = SimpleDateFormat(activity.getString(R.string.trips_date_format), Locale.KOREA)
@@ -93,6 +94,13 @@ class TripsScreen(private val activity: Activity) {
             startRevealIfReady()
         }
         map.onTouchWhileRevealing = { finishReveal() }
+        homeMap.routeWidthScale = 0.6f
+        homeMap.clipToOutline = true
+        homeMap.outlineProvider = object : ViewOutlineProvider() {
+            override fun getOutline(view: View, outline: android.graphics.Outline) {
+                outline.setRoundRect(0, 0, view.width, view.height, resources.getDimension(R.dimen.radius_button_medium))
+            }
+        }
         tabRegions.setOnClickListener { selectTab(Tab.REGIONS) }
         tabJourneys.setOnClickListener { selectTab(Tab.JOURNEYS) }
         renderList()
@@ -120,18 +128,8 @@ class TripsScreen(private val activity: Activity) {
         startedAt = android.os.SystemClock.elapsedRealtime()
         observe(current.readAtlas(0), serial, token) { snapshot ->
             if (BuildConfig.DEBUG) android.util.Log.i("PetasosTrips", "atlas read ${android.os.SystemClock.elapsedRealtime() - startedAt}ms, paths=${snapshot.paths.size} samples=${snapshot.paths.sumOf { it.points.size }} truncated=${snapshot.routeSamplesTruncated}")
-            val collected = snapshot.collectedRegions
-            val pending = HashMap<String, List<RecordsStory>>()
-            if (collected.isEmpty()) { accept(snapshot, pending); return@observe }
-            var remaining = collected.size
-            collected.forEach { proof ->
-                observe(current.readRegion(proof.regionId), serial, token, onFailure = {
-                    if (--remaining == 0) accept(snapshot, pending)
-                }) { region ->
-                    pending[proof.regionId] = region.stories
-                    if (--remaining == 0) accept(snapshot, pending)
-                }
-            }
+            // 모은 지역 = regions where a story was heard to the end (passing through alone does not count).
+            accept(snapshot, snapshot.heardRegions)
         }
     }
 
@@ -198,7 +196,7 @@ class TripsScreen(private val activity: Activity) {
                 if (disposed || !available || token != epoch) return@runOnUiThread
                 geometry = values; locator = finder
                 map.submitGeometry(values)
-                renderList(); updateScene(); prepareReveal()
+                renderList(); updateScene(); prepareReveal(); renderHomeMap()
             }
         }
     }
@@ -251,9 +249,16 @@ class TripsScreen(private val activity: Activity) {
         }
         map.setScene(MapScene(shown, if (trip == null) region?.rings.orEmpty() else emptyList(), focus,
             if (trip == null) region?.regionId else null,
-            // Collected regions the lines touch come off as the line reaches them; the rest of the collected ones are open.
-            uncovered = atlas?.collectedRegions?.map { it.regionId }?.toSet().orEmpty() - revealIndex.keys, revealIndex = revealIndex))
+            // Only regions with a story heard to the end lose their cover: those the lines touch come off as the line
+            // reaches them, the rest are open. Regions merely driven through stay grey (the line is still drawn).
+            uncovered = heardIds() - revealIndex.keys, revealIndex = revealIndex.filterKeys { it in heardIds() }))
     }
+
+    private fun heardIds(): Set<String> = regionStories.filterValues { it.isNotEmpty() }.keys
+
+    /** Heard regions in the order they were first entered. */
+    private fun heardProofs(data: RecordsAtlasSnapshot): List<RecordsRegionProof> =
+        data.collectedRegions.filter { it.regionId in heardIds() }.sortedBy { it.earnedAt }
 
     // ---------------------------------------------------------------- reveal animation
 
@@ -308,9 +313,20 @@ class TripsScreen(private val activity: Activity) {
 
     // ---------------------------------------------------------------- home summary
 
-    private fun renderHome() {
+    /** Home card: a small static map (no animation) of heard regions and every recorded line, fitted to the lines. */
+    private fun renderHomeMap() {
         val data = atlas
-        val regions = data?.collectedRegions?.size ?: 0
+        if (data == null || geometry.isEmpty() || (routes.isEmpty() && heardIds().isEmpty())) { homeMap.visibility = View.GONE; return }
+        homeMap.visibility = View.VISIBLE
+        homeMap.submit(geometry, routes.map { RecordedPath(it.key, it.points) }, heardIds(), focusOnPaths = routes.isNotEmpty(),
+            focusRegionId = if (routes.isEmpty()) heardIds().firstOrNull() else null)
+        homeMap.setProgress(1f)
+    }
+
+    private fun renderHome() {
+        renderHomeMap()
+        val data = atlas
+        val regions = data?.let { heardProofs(it).size } ?: 0
         val stories = regionStories.values.flatten().map { it.versionId }.toSet().size
         if (data == null || (regions == 0 && stories == 0 && data.trips.isEmpty())) {
             homeSummary.setText(R.string.home_trips_empty)
@@ -350,8 +366,8 @@ class TripsScreen(private val activity: Activity) {
     }
 
     private fun renderRegions(data: RecordsAtlasSnapshot) {
-        val collectedIds = data.collectedRegions.map { it.regionId }.toSet()
-        val ordered = data.collectedRegions.sortedBy { it.earnedAt }
+        val collectedIds = heardIds()
+        val ordered = heardProofs(data)
         val entries = ordered.mapNotNull { proof -> geometry.firstOrNull { it.regionId == proof.regionId } }
         // Not collected yet: grey silhouette and a faded name, after every collected card.
         val parents = citiesWithDistricts(geometry)

@@ -52,7 +52,7 @@ class CaptioningRuntimeSpeechTest {
         }
     }
 
-    @Test fun revocationAfterStartClearsCaptionOnReadWithoutAnyNewOutputEvent() {
+    @Test fun permitIsAStartAuthorityOnlySoLaterRevocationKeepsTheCaptionUntilTheOutputEnds() {
         var allowed = true
         val adapter = Speech(); val wrapper = CaptioningRuntimeSpeech(adapter).apply { setVisible(true) }
         val events = mutableListOf<RuntimeOutputEvent>()
@@ -61,12 +61,12 @@ class CaptioningRuntimeSpeechTest {
         adapter.preparations.single().invoke { }
         adapter.outputs.single()(RuntimeOutputEvent.STARTED)
         assertSame(permit.text, wrapper.currentCaption())
+        // An automatic story's offer is consumed right after it starts; the audio keeps playing, so does the caption.
         allowed = false
+        assertSame(permit.text, wrapper.currentCaption())
+        adapter.outputs.single()(RuntimeOutputEvent.COMPLETED)
         assertNull(wrapper.currentCaption())
-        allowed = true
-        adapter.outputs.single()(RuntimeOutputEvent.STARTED)
-        assertNull(wrapper.currentCaption())
-        assertEquals(listOf(RuntimeOutputEvent.STARTED, RuntimeOutputEvent.STARTED), events)
+        assertEquals(listOf(RuntimeOutputEvent.STARTED, RuntimeOutputEvent.COMPLETED), events)
     }
 
     @Test fun hidingClearsImmediatelyAndLatePreparationOrStartedCannotRestoreThatAttempt() {
@@ -125,9 +125,13 @@ class CaptioningRuntimeSpeechTest {
 
     @Test fun inputDelegationAndExceptionsRemainExactAndDiagnosticsAreRedacted() {
         val adapter = Speech(); val wrapper = CaptioningRuntimeSpeech(adapter) { error("synthetic UI failure") }.apply { setVisible(true) }
-        val callback: (RuntimeInputEvent) -> Unit = {}
-        wrapper.requestInput(first, callback); wrapper.stopInput(first)
-        assertSame(callback, adapter.inputCallback); assertEquals(first, adapter.inputToken); assertEquals(first, adapter.inputStop)
+        val received = mutableListOf<RuntimeInputEvent>()
+        wrapper.requestInput(first) { received += it }; wrapper.stopInput(first)
+        assertEquals(first, adapter.inputToken); assertEquals(first, adapter.inputStop)
+        // Input events are forwarded unchanged; a final one is also kept (memory only) for the overlay card.
+        val final = RuntimeInputEvent.Final(RuntimeText("synthetic heard"))
+        adapter.inputCallback!!(final)
+        assertSame(final, received.single()); assertSame(final.text, wrapper.lastHeard)
         val events = mutableListOf<RuntimeOutputEvent>()
         wrapper.startOutput(first, RuntimeText("synthetic-private-caption-canary"), events::add)
         adapter.outputs.single()(RuntimeOutputEvent.STARTED)

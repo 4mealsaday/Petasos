@@ -36,7 +36,7 @@ class MainActivity : Activity() {
         // A coarse-only grant is valid location access; callback array order is not authority.
         val granted = when (requestCode) {
             TripControls.LOCATION_REQUEST -> LocationAccess.hasRequiredPermissions(this)
-            CompanionControls.PERMISSION_REQUEST ->
+            CompanionControls.PERMISSION_REQUEST, CompanionControls.READINESS_REQUEST ->
                 permissions.all { checkSelfPermission(it) == PackageManager.PERMISSION_GRANTED }
             else -> false
         }

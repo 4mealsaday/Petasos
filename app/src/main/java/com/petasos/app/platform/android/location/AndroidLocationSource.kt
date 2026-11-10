@@ -170,6 +170,14 @@ class AndroidLocationSource(
     private inner class Session(val manager: LocationManager, val onEvent: (LocationEvent) -> Unit) {
         var registrationAttempted = false
         var receiverRegistered = false
+        private var lastUpdate: Location? = null
+        /** The emulator hands every fix over twice within a few ms; with no interval floor (DEMO) that doubles the work. */
+        fun isRepeat(location: Location): Boolean {
+            val previous = lastUpdate
+            lastUpdate = location
+            return previous != null && previous.latitude == location.latitude && previous.longitude == location.longitude &&
+                location.elapsedRealtimeNanos - previous.elapsedRealtimeNanos in 0..REPEAT_WINDOW_NANOS
+        }
         val receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) { checkAccess(this@Session) }
         }
@@ -180,7 +188,7 @@ class AndroidLocationSource(
         }
         val listener = object : LocationListener {
             override fun onLocationChanged(location: Location) {
-                if (activeSession === this@Session) enqueueLocation(this@Session, LocationReadingKind.UPDATE, location)
+                if (activeSession === this@Session && !isRepeat(location)) enqueueLocation(this@Session, LocationReadingKind.UPDATE, location)
             }
             override fun onProviderDisabled(provider: String) {
                 handler.post { closeSession(this@Session, listOf(LocationEvent.NoLocation(LocationReadingKind.UPDATE))) }
@@ -192,6 +200,7 @@ class AndroidLocationSource(
     }
 
     companion object {
+        private const val REPEAT_WINDOW_NANOS = 100_000_000L
         private const val ACCESS_RECHECK_MS = 1_000L
 
         /** Provider names/states/permission bits only: no last-known, current-location or subscription call. */

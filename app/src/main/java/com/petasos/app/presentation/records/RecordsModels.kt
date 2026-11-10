@@ -72,6 +72,8 @@ data class RecordsAtlasSnapshot(
     val collectedRegions: List<RecordsRegionProof>, val trips: List<TripResultHeader>,
     val totalTrips: Long, val tripOffset: Int, val paths: List<RecordedPath>,
     val routeSamplesTruncated: Boolean,
+    /** Collected regions where a story was heard to the end -> those stories (newest first). Only these count as 모은 지역. */
+    val heardRegions: Map<String, List<RecordsStory>> = emptyMap(),
 ) {
     override fun toString() = "RecordsAtlasSnapshot([redacted])"
 }

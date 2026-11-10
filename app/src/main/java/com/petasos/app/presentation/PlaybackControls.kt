@@ -49,6 +49,7 @@ class PlaybackControls(private val activity: Activity) {
     init {
         shell.onCompanionToggle = companion::toggle
         shell.onReturnToNavigation = companion::returnToNavigation
+        shell.onFixReadiness = companion::fixReadiness
         shell.onOnboardingContinue = tripControls::ensureLocationConsent
         tripControls.onInterestsSaved = shell::interestsSaved
         render()

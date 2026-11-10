@@ -42,6 +42,16 @@ class JourneyShell(private val activity: Activity, private val onPageChanged: ()
         set(value) { field = value; renderHome() }
     var onReturnToNavigation: (() -> Unit)? = null
     var onOnboardingContinue: (() -> Unit)? = null
+    /** Home readiness row "설정 필요": asks for that one permission (or explains the overlay setting). */
+    var onFixReadiness: ((ReadyItem) -> Unit)? = null
+    enum class ReadyItem { LOCATION, MIC, OVERLAY }
+    private val nowPlaying = object : Runnable {
+        override fun run() {
+            if (disposed) return
+            renderHome()
+            if (companionEnabled && page == Page.HOME) activity.window.decorView.postDelayed(this, NOW_PLAYING_POLL_MS)
+        }
+    }
 
     init {
         bind(R.id.home_primary) {
@@ -62,6 +72,9 @@ class JourneyShell(private val activity: Activity, private val onPageChanged: ()
         bind(R.id.onboarding_continue) { onOnboardingContinue?.invoke(); go(Page.ONBOARD_INTERESTS) }
         bind(R.id.onboarding_skip) { finishOnboarding() }
         bind(R.id.settings_row_reset) { resetListening() }
+        bind(R.id.home_ready_location_state) { if (!ready(ReadyItem.LOCATION)) onFixReadiness?.invoke(ReadyItem.LOCATION) }
+        bind(R.id.home_ready_mic_state) { if (!ready(ReadyItem.MIC)) onFixReadiness?.invoke(ReadyItem.MIC) }
+        bind(R.id.home_ready_overlay_state) { if (!ready(ReadyItem.OVERLAY)) onFixReadiness?.invoke(ReadyItem.OVERLAY) }
         activity.findViewById<TextView>(R.id.about_version).text = activity.getString(R.string.about_version, BuildConfig.VERSION_NAME)
         val demoRows = if (BuildConfig.DEMO) View.VISIBLE else View.GONE
         activity.findViewById<View>(R.id.settings_row_reset).visibility = demoRows
@@ -113,9 +126,14 @@ class JourneyShell(private val activity: Activity, private val onPageChanged: ()
     /** Actual control owner supplies state; a tap never optimistically paints the app as ON. */
     fun updateCompanionState(enabled: Boolean, stopping: Boolean, notice: String? = null) {
         if (disposed) return
+        val turnedOn = enabled && !companionEnabled
+        // OFF ends the trip: re-read the records so the Home summary and map include it.
+        val ended = !enabled && !stopping && (companionEnabled || companionStopping)
         companionEnabled = enabled; companionStopping = stopping; companionNotice = notice
         syncRegionLabel()
         renderHome()
+        if (turnedOn) { activity.window.decorView.removeCallbacks(nowPlaying); nowPlaying.run() }
+        if (ended) trips.refresh()
         updateReset()
     }
 
@@ -143,16 +161,72 @@ class JourneyShell(private val activity: Activity, private val onPageChanged: ()
             companionEnabled -> R.string.home_return_navigation
             else -> R.string.home_start
         })
-        activity.findViewById<TextView>(R.id.home_status_title).text = when {
-            (companionEnabled || companionStopping) && regionName != null -> activity.getString(R.string.home_on_title_region, regionName)
-            companionEnabled || companionStopping -> activity.getString(R.string.home_on_title)
-            else -> activity.getString(R.string.home_off_message)
-        }
+        val on = companionEnabled || companionStopping
+        activity.findViewById<View>(R.id.home_off_group).visibility = if (on) View.GONE else View.VISIBLE
+        activity.findViewById<View>(R.id.home_on_group).visibility = if (on) View.VISIBLE else View.GONE
+        if (on) renderOn() else renderReadiness()
         activity.findViewById<TextView>(R.id.home_notice).apply {
             text = companionNotice.orEmpty()
             visibility = if (companionNotice.isNullOrBlank()) View.GONE else View.VISIBLE
         }
     }
+
+    fun ready(item: ReadyItem): Boolean = when (item) {
+        ReadyItem.LOCATION -> com.petasos.app.platform.android.location.LocationAccess.hasRequiredPermissions(activity)
+        ReadyItem.MIC -> activity.checkSelfPermission(android.Manifest.permission.RECORD_AUDIO) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        ReadyItem.OVERLAY -> com.petasos.app.platform.pleos.navigation.PleosCompanionDisplaySupport.inspect(activity).navigationSurfaceAvailable
+    }
+
+    private fun renderReadiness() {
+        listOf(ReadyItem.LOCATION to R.id.home_ready_location_state, ReadyItem.MIC to R.id.home_ready_mic_state,
+            ReadyItem.OVERLAY to R.id.home_ready_overlay_state).forEach { (item, id) ->
+            val ok = ready(item)
+            activity.findViewById<TextView>(id).apply {
+                setText(if (ok) R.string.home_ready_ok else R.string.home_ready_fix)
+                setTextColor(activity.getColor(if (ok) R.color.positive else R.color.primary))
+                val check = if (ok) activity.getDrawable(R.drawable.ic_check)?.mutate()?.apply {
+                    setTint(activity.getColor(R.color.positive)); setBounds(0, 0, dp(28), dp(28))
+                } else null
+                setCompoundDrawablesRelative(check, null, null, null)
+                setBackgroundResource(if (ok) 0 else R.drawable.bg_button_secondary)
+                isClickable = !ok
+            }
+        }
+    }
+
+    /** Region big, then what is playing; before the region is confirmed only the waiting line. */
+    private fun renderOn() {
+        val current = host
+        val snapshot = current?.snapshot()
+        val mode = snapshot?.mode
+        val region = regionName
+        activity.findViewById<TextView>(R.id.home_on_region).apply {
+            text = region.orEmpty(); visibility = if (region == null) View.GONE else View.VISIBLE
+        }
+        val kind: Int?; val title: String?; val icon: Int
+        when (mode) {
+            com.petasos.app.playback.PlaybackMode.STORY, com.petasos.app.playback.PlaybackMode.PAUSED -> {
+                kind = R.string.home_on_story; title = current?.selectedTitle(); icon = R.drawable.ic_menu_book
+            }
+            com.petasos.app.playback.PlaybackMode.MUSIC -> {
+                val assetId = snapshot.musicCheckpoint?.track?.assetId
+                kind = R.string.home_on_music; icon = R.drawable.ic_music_note
+                title = assetId?.let { listOf(current.musicTitle(it), current.musicArtist(it)).filter(String::isNotBlank).joinToString(" · ") }
+            }
+            com.petasos.app.playback.PlaybackMode.IDLE, null -> { kind = null; title = null; icon = R.drawable.ic_menu_book }
+            else -> { kind = R.string.home_on_talk; title = current?.lastHeardText(); icon = R.drawable.ic_chat_bubble }
+        }
+        val waiting = region == null && kind == null
+        activity.findViewById<View>(R.id.home_on_waiting).visibility = if (waiting) View.VISIBLE else View.GONE
+        activity.findViewById<View>(R.id.home_on_now).visibility = if (kind == null) View.GONE else View.VISIBLE
+        if (kind != null) {
+            activity.findViewById<android.widget.ImageView>(R.id.home_on_now_icon).setImageResource(icon)
+            activity.findViewById<TextView>(R.id.home_on_now_kind).setText(kind)
+            activity.findViewById<TextView>(R.id.home_on_now_title).text = title.orEmpty()
+        }
+    }
+
+    private fun dp(value: Int) = (value * activity.resources.displayMetrics.density).toInt()
 
     private fun updateReset() {
         val row = activity.findViewById<View>(R.id.settings_row_reset)
@@ -201,6 +275,7 @@ class JourneyShell(private val activity: Activity, private val onPageChanged: ()
         if (disposed) return
         allowed = false
         regionLabel?.stop(); regionLabel = null
+        activity.window.decorView.removeCallbacks(nowPlaying)
         host?.setCaptionVisible(false); host = null; sourceHost = null; source = null
         trips.dispose()
         disposed = true
@@ -221,6 +296,7 @@ class JourneyShell(private val activity: Activity, private val onPageChanged: ()
         renderPages()
         trips.setActive(allowed && page == Page.TRIPS)
         if (page == Page.TRIPS || page == Page.HOME) trips.refresh()
+        if (page == Page.HOME && companionEnabled) { activity.window.decorView.removeCallbacks(nowPlaying); nowPlaying.run() }
         listOf(R.id.interests_notice, R.id.onboarding_notice, R.id.settings_notice).forEach { activity.findViewById<View>(it).visibility = View.GONE }
         onPageChanged()
     }
@@ -229,5 +305,5 @@ class JourneyShell(private val activity: Activity, private val onPageChanged: ()
         Page.values().forEach { activity.findViewById<View>(it.viewId).visibility = if (it == page) View.VISIBLE else View.GONE }
     }
 
-    private companion object { const val KEY_ONBOARDED = "onboarded" }
+    private companion object { const val KEY_ONBOARDED = "onboarded"; const val NOW_PLAYING_POLL_MS = 1_000L }
 }

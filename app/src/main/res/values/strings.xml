@@ -18,6 +18,20 @@
     <string name="home_trips_title">내 여행</string>
     <string name="home_trips_empty">아직 기록이 없어요</string>
     <string name="home_trips_latest">최근 %1$s</string>
+    <string name="home_step_1">시작하면\n내비가 열려요</string>
+    <string name="home_step_2">이야기가\n저절로 나와요</string>
+    <string name="home_step_3">버튼 눌러\n물어보세요</string>
+    <string name="home_ready_title">준비 상태</string>
+    <string name="home_ready_location">위치</string>
+    <string name="home_ready_mic">마이크</string>
+    <string name="home_ready_overlay">내비 위 표시</string>
+    <string name="home_ready_ok">준비됨</string>
+    <string name="home_ready_fix">설정 필요</string>
+    <string name="home_ready_overlay_guide">설정 &gt; 앱 &gt; Petasos에서 \'다른 앱 위에 표시\'를 허용해 주세요.</string>
+    <string name="home_on_waiting">출발하면 이야기를 들려드릴게요</string>
+    <string name="home_on_story">지금 듣는 이야기</string>
+    <string name="home_on_music">이야기 사이 음악</string>
+    <string name="home_on_talk">대화 중</string>
 
     <!-- Companion start / stop notices -->
     <string name="companion_display_unavailable">내비 위 Petasos 표시를 연결할 수 없어요.</string>
