@@ -1,5 +1,6 @@
 package com.petasos.app.presentation.records
 
+import android.animation.ValueAnimator
 import android.app.Activity
 import android.graphics.Typeface
 import android.text.SpannableStringBuilder
@@ -10,6 +11,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewOutlineProvider
+import android.view.animation.LinearInterpolator
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -19,6 +21,7 @@ import com.google.common.util.concurrent.ListenableFuture
 import com.petasos.app.BuildConfig
 import com.petasos.app.R
 import com.petasos.app.presentation.map.JourneyMapStatus
+import com.petasos.app.presentation.map.citiesWithDistricts
 import com.petasos.app.presentation.map.MapRoute
 import com.petasos.app.presentation.map.MapScene
 import com.petasos.app.presentation.map.ProductJourneyMap
@@ -69,6 +72,10 @@ class TripsScreen(private val activity: Activity) {
     private var tripSnapshot: RecordsTripSnapshot? = null
     private var replayingVersion: String? = null
     private var startedAt = 0L
+    private var revealIndex = emptyMap<String, Int>()
+    private var revealReady = false
+    private var revealPending = false
+    private var revealer: ValueAnimator? = null
 
     init {
         val frame = activity.findViewById<FrameLayout>(R.id.trips_map_frame)
@@ -83,7 +90,9 @@ class TripsScreen(private val activity: Activity) {
         map.onStatusChanged = { status ->
             attribution.setText(if (status == JourneyMapStatus.OFFLINE || status == JourneyMapStatus.UNAVAILABLE)
                 R.string.trips_map_offline else R.string.trips_map_attribution)
+            startRevealIfReady()
         }
+        map.onTouchWhileRevealing = { finishReveal() }
         tabRegions.setOnClickListener { selectTab(Tab.REGIONS) }
         tabJourneys.setOnClickListener { selectTab(Tab.JOURNEYS) }
         renderList()
@@ -96,6 +105,7 @@ class TripsScreen(private val activity: Activity) {
         if (source === value && available == usable) return
         epoch++; read++; source = value; available = usable
         atlas = null; regionStories = emptyMap(); routes = emptyList(); tripEnds = emptyMap(); loaded = false; failed = false
+        revealIndex = emptyMap(); revealReady = false; finishReveal()
         selectedRegion = null; selectedTrip = null; tripSnapshot = null; tab = Tab.REGIONS
         renderHome(); renderList(); updateScene()
         if (usable) { loadGeometry(); refresh() }
@@ -129,10 +139,12 @@ class TripsScreen(private val activity: Activity) {
         val token = epoch
         // Thinning is display-only and runs off the main thread: the atlas can carry 30,000 samples.
         worker.execute {
+            // Near-original resolution (about 10 m); journeys in date order so the reveal follows the travel.
+            val startedAtByTrip = snapshot.trips.associate { it.tripId to it.startedAt }
             val thinned = snapshot.paths.mapIndexedNotNull { index, path ->
-                val points = RouteSimplifier.thin(path.points)
+                val points = RouteSimplifier.thin(path.points, minMeters = 10.0, maxPoints = 6_000)
                 if (points.size < 2) null else MapRoute(path.tripId + "#" + index, points, true) to path.tripId
-            }
+            }.sortedBy { startedAtByTrip[it.second] ?: Long.MAX_VALUE }
             if (BuildConfig.DEBUG) android.util.Log.i("PetasosTrips", "thinned ${snapshot.paths.sumOf { it.points.size }} -> ${thinned.sumOf { it.first.points.size }} points in ${android.os.SystemClock.elapsedRealtime() - startedAt}ms since refresh")
             val ends = snapshot.paths.groupBy { it.tripId }.mapValues { (_, paths) ->
                 paths.first().points.first() to paths.last().points.last()
@@ -143,7 +155,9 @@ class TripsScreen(private val activity: Activity) {
                 tripKeys = thinned.associate { it.first.key to it.second }
                 routes = thinned.map { it.first }
                 tripEnds = ends
+                revealReady = false
                 renderHome(); renderList(); updateScene()
+                prepareReveal()
             }
         }
     }
@@ -153,7 +167,11 @@ class TripsScreen(private val activity: Activity) {
     fun setActive(value: Boolean) {
         if (disposed || active == value) return
         active = value
-        if (value) { map.onStart(); map.onResume(); updateScene() } else { map.onPause(); map.onStop() }
+        if (value) {
+            revealPending = true; revealReady = false
+            map.setProgress(0f)
+            map.onStart(); map.onResume(); updateScene(); prepareReveal()
+        } else { finishReveal(); map.onPause(); map.onStop() }
     }
 
     fun onLowMemory() = map.onLowMemory()
@@ -180,7 +198,7 @@ class TripsScreen(private val activity: Activity) {
                 if (disposed || !available || token != epoch) return@runOnUiThread
                 geometry = values; locator = finder
                 map.submitGeometry(values)
-                renderList(); updateScene()
+                renderList(); updateScene(); prepareReveal()
             }
         }
     }
@@ -231,7 +249,61 @@ class TripsScreen(private val activity: Activity) {
             region != null -> region.rings.flatten()
             else -> shown.flatMap { it.points }
         }
-        map.setScene(MapScene(shown, if (trip == null) region?.rings.orEmpty() else emptyList(), focus, if (trip == null) region?.regionId else null))
+        map.setScene(MapScene(shown, if (trip == null) region?.rings.orEmpty() else emptyList(), focus,
+            if (trip == null) region?.regionId else null,
+            // Collected regions the lines touch come off as the line reaches them; the rest of the collected ones are open.
+            uncovered = atlas?.collectedRegions?.map { it.regionId }?.toSet().orEmpty() - revealIndex.keys, revealIndex = revealIndex))
+    }
+
+    // ---------------------------------------------------------------- reveal animation
+
+    /** Region first-touch indexes along the (date-ordered) lines. Off the main thread: it tests every point. */
+    private fun prepareReveal() {
+        if (disposed || !loaded || geometry.isEmpty() || revealReady) return
+        val finder = locator ?: return
+        val lines = routes
+        val token = epoch
+        revealReady = true // one computation per data set; a newer data set resets this
+        worker.execute {
+            val first = HashMap<String, Int>()
+            var global = 0
+            for (line in lines) {
+                for (i in line.points.indices) {
+                    if (i % 3 == 0 || i == line.points.lastIndex) {
+                        finder.find(line.points[i])?.let { if (it.regionId !in first) first[it.regionId] = global + i }
+                    }
+                }
+                global += line.points.size
+            }
+            activity.runOnUiThread {
+                if (disposed || token != epoch || lines !== routes) return@runOnUiThread
+                revealIndex = first
+                updateScene()
+                startRevealIfReady()
+            }
+        }
+    }
+
+    private fun startRevealIfReady() {
+        if (disposed || !revealPending || !active || !loaded || !revealReady || map.status == JourneyMapStatus.LOADING) return
+        revealPending = false
+        revealer?.cancel()
+        if (routes.isEmpty()) { map.setProgress(1f); return }
+        map.setProgress(0f)
+        // The system animator scale applies, so developer options can slow the reveal for inspection.
+        revealer = ValueAnimator.ofFloat(0f, 1f).apply {
+            duration = REVEAL_MS; interpolator = LinearInterpolator()
+            addUpdateListener { if (!disposed) map.setProgress(it.animatedValue as Float) }
+            start()
+        }
+    }
+
+    /** Jump to the finished picture (a touch, leaving the screen, or new data). */
+    private fun finishReveal() {
+        revealPending = false
+        revealer?.let { it.removeAllUpdateListeners(); it.cancel() }
+        revealer = null
+        if (!disposed) map.setProgress(1f)
     }
 
     // ---------------------------------------------------------------- home summary
@@ -278,9 +350,13 @@ class TripsScreen(private val activity: Activity) {
     }
 
     private fun renderRegions(data: RecordsAtlasSnapshot) {
+        val collectedIds = data.collectedRegions.map { it.regionId }.toSet()
         val ordered = data.collectedRegions.sortedBy { it.earnedAt }
         val entries = ordered.mapNotNull { proof -> geometry.firstOrNull { it.regionId == proof.regionId } }
-        if (entries.isEmpty()) { message(R.string.trips_empty); return }
+        // Not collected yet: grey silhouette and a faded name, after every collected card.
+        val parents = citiesWithDistricts(geometry)
+        val pending = geometry.filter { it.regionId !in collectedIds && it.regionId !in parents }.sortedBy { it.code }
+        if (entries.isEmpty() && pending.isEmpty()) { message(R.string.trips_empty); return }
         entries.forEachIndexed { index, shape ->
             val stories = regionStories[shape.regionId].orEmpty()
             val selected = selectedRegion == shape.regionId
@@ -294,7 +370,18 @@ class TripsScreen(private val activity: Activity) {
             row.addView(texts, LinearLayout.LayoutParams(0, -2, 1f).apply { marginStart = dp(20) })
             list.addView(row)
             if (selected) addStories(stories)
-            if (index < entries.lastIndex) list.addView(divider())
+            if (index < entries.lastIndex || pending.isNotEmpty()) list.addView(divider())
+        }
+        pending.forEachIndexed { index, shape ->
+            val row = row(selectedRegion == shape.regionId) { toggleRegion(shape.regionId) }
+            row.addView(RegionSilhouetteView(activity).apply {
+                submit(shape, false); importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+            }, LinearLayout.LayoutParams(dp(64), dp(64)))
+            row.addView(text(R.style.Text_Title, RegionLocator.displayName(shape)).apply {
+                setTextColor(activity.getColor(R.color.text_disabled))
+            }, LinearLayout.LayoutParams(0, -2, 1f).apply { marginStart = dp(20) })
+            list.addView(row)
+            if (index < pending.lastIndex) list.addView(divider())
         }
     }
 
@@ -408,4 +495,6 @@ class TripsScreen(private val activity: Activity) {
         layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1).apply { marginStart = dp(24); marginEnd = dp(24) }
     }
     private fun dp(value: Int) = (value * resources.displayMetrics.density).toInt()
+
+    private companion object { const val REVEAL_MS = 3_000L }
 }
