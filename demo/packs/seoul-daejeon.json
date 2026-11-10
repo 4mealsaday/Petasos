@@ -1,9 +1,9 @@
 {
  "formatVersion": 3,
  "packId": "seoul-daejeon",
- "version": 1,
- "createdAt": 1794322421927,
- "promptVersion": "landmark-intro-v1",
+ "version": 2,
+ "createdAt": 1794326405150,
+ "promptVersion": "landmark-intro-v2",
  "scoringVersion": "rules-v0",
  "scope": {
   "type": "route",
@@ -1026,87 +1026,6 @@
    "verifiedAt": 1794157970529
   },
   {
-   "sourceRevisionId": "6e56c73d-c2ed-5d92-aedf-d4f30901ddde",
-   "sourceId": "tourapi:2775505",
-   "provider": "한국관광공사 TourAPI",
-   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=2775505",
-   "title": "민주화운동기념관",
-   "fetchedAt": 1794322380008,
-   "sourceUpdatedAt": null,
-   "sourceUpdatedRaw": "20260601173453",
-   "verifiedAt": 1794322397972,
-   "contentHash": "a52ca2be19049d76e7b2f5d02df1ed5484ab48cf9a60bf9436837562f70de9b7",
-   "license": {
-    "type": "KOGL-1",
-    "url": "https://www.kogl.or.kr/info/license.do",
-    "scope": "text",
-    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
-   },
-   "allowedUses": {
-    "allowGeneration": true,
-    "allowDisplay": true,
-    "allowDistribution": true,
-    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
-   },
-   "attribution": "한국관광공사 TourAPI (KOGL-1)",
-   "reviewStatus": "verified",
-   "normalizedText": "민주화운동기념관은 서울 용산구 남영동에 있었던 공권력의 고문시설 치안본부(경찰청의 전신) 남영동 대공분시를 보존하고, 전시와 교육 시설을 더하여 아픔을 기억하며 희망으로 미래를 열어가는 기념시설이다. 2001년 6월 28일 민주화운동의 정신을 기념하고 계승하기 위해 민주화운동기념사업특별법에 의해 설립된 행정안전부 산하 공공기관은 민주화운동기념사업회과 시민 사회의 힘으로 민주인권기념관을 건립하였다. 민주주의를 이끌어 낸 민주화운동을 기념하고 기억하는 공간이자, 민주주의와 민주인권을 교육하고 세계와 연대하는 공간으로 독재정권의 어두운 역사와 이를 극복한 민주주의의 이야기를 담고 있다. 이 건물은 건축의 대가인 김수근 씨에 의해 1976년 10월에 지상 5층 규모로 건축되었고, 1983년 12월엔 7층으로 증축하였다.남영동 대공분실은 1976년 만들어진 이후 오랫동안 경찰이 관리하면서 민주인사들을 비롯한 무고한 시민들이 고문을 받던 장소이다. 1976년부터 2005년까지 대공분실의 기능을 하였으며, 이후 경찰청 인권센터로 운영되었다. 1976년 내무부 치안본부 소속의 대공분실에서 1991년 경찰청 보안분실, 2005년 경찰청 인권보호센터를 거치며 덧입혀진 세월의 흔적을 고스란히 간직한 채 시민의 품으로 돌아왔다. 곳곳에 아픈 시간과 기억을 넘어 민주주의가 살아 숨 쉬는 공간으로 되기 위해 M1(신관)과 M2(옛 남영동 대공분실)로 구성되어 있으며 전시와 기록을 통해 민주화운동의 의미와 역사를 전달하고자 한다."
-  },
-  {
-   "sourceRevisionId": "5ce58f1a-cb81-5f8a-964d-f7dc477ef9fc",
-   "sourceId": "tourapi:3013174",
-   "provider": "한국관광공사 TourAPI",
-   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=3013174",
-   "title": "용산아트홀",
-   "fetchedAt": 1794322380148,
-   "sourceUpdatedAt": null,
-   "sourceUpdatedRaw": "20260910140716",
-   "verifiedAt": 1794322397972,
-   "contentHash": "bb740a20b8b979d726855b4ccf6223cf45fbb516d00f6c5d96ae07e9ab130ca2",
-   "license": {
-    "type": "KOGL-3",
-    "url": "https://www.kogl.or.kr/info/license.do",
-    "scope": "text",
-    "reviewBasis": "TourAPI cpyrhtDivCd=Type3: 공공누리 제3유형(출처표시·변경금지)"
-   },
-   "allowedUses": {
-    "allowGeneration": false,
-    "allowDisplay": true,
-    "allowDistribution": true,
-    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
-   },
-   "attribution": "한국관광공사 TourAPI (KOGL-3)",
-   "reviewStatus": "verified",
-   "normalizedText": "용산아트홀은 용산구 종합행정타운 안에 위치하고 있는 지상 1층, 지하 3층 규모의 문화예술 전용 공간이다. 대극장 미르, 소극장 가람, 전시장, 다목적실, 문화강좌실 등의 시설을 갖추고 있다. 대극장 미르는 787석 규모로 오케스트라, 콘서트, 뮤지컬 등 수준 놓은 공연 작품을 만날 수 있다. 소극장 가람은 298석의 좌석으로 대극장과 같은 조명, 음향 시설을 갖추고 있으며 소규모의 음악회, 연극 등의 다양한 공연을 만날 수 있다. 전시장에서는 지역문화 공간에서의 전시를 통해 문화예술의 기회를 넓힐 수 있다. 다목적실과 분장실, 강의실 및 문화강좌실이 있고 매점과 카페도 있어서 편리하게 이용할 수 있다. 수도권 지하철 6호선 녹사평역 3번 출구에서 400m 거리에 위치하고 있으며 인근에 용산공원, 전쟁기념관이 있다."
-  },
-  {
-   "sourceRevisionId": "709b34fc-5f11-5078-9c4d-a5965d4bbc10",
-   "sourceId": "tourapi:1603296",
-   "provider": "한국관광공사 TourAPI",
-   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=1603296",
-   "title": "서빙고동 부군당",
-   "fetchedAt": 1794322379895,
-   "sourceUpdatedAt": null,
-   "sourceUpdatedRaw": "20261028171023",
-   "verifiedAt": 1794322397972,
-   "contentHash": "d675e51d865a0ef12c8d738e5d4abb11d7465414a13729ed48ecee306bb73891",
-   "license": {
-    "type": "KOGL-1",
-    "url": "https://www.kogl.or.kr/info/license.do",
-    "scope": "text",
-    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
-   },
-   "allowedUses": {
-    "allowGeneration": true,
-    "allowDisplay": true,
-    "allowDistribution": true,
-    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
-   },
-   "attribution": "한국관광공사 TourAPI (KOGL-1)",
-   "reviewStatus": "verified",
-   "normalizedText": "서빙고동 부군당은 조선시대 이 마을 주민들이 마을의 수호와 주민의 안녕을 위해 세운 제당이다. 부군당은 서울을 중심으로 한 경기지역에서만 불리던 당의 명칭이다. 이 당은 조선 후기 신당의 건축양식을 보여줄 뿐 아니라, 서울지역의 동제 신앙을 보여주는 기와를 올린 작은 집으로, 조선 인조 13년(1635) 당을 고칠 때 걸어둔 현판을 비롯한 5개의 현판과 무신도가 보존되어 있다. 특히 무신도는 조선 태조 내외분, 출산과 목숨, 농사의 신이라는 삼불제석의 그림이라고 전하는데, 마을을 보호해 주는 수호신의 대상이 되고 있다."
-  },
-  {
    "sourceRevisionId": "9f680c40-ec59-5519-99b5-e2af9a82545d",
    "sourceId": "tourapi:729167",
    "provider": "한국관광공사 TourAPI",
@@ -1115,7 +1034,7 @@
    "fetchedAt": 1794322380277,
    "sourceUpdatedAt": null,
    "sourceUpdatedRaw": "20260318101005",
-   "verifiedAt": 1794322397972,
+   "verifiedAt": 1794326392017,
    "contentHash": "7e4f5855c0337df9d7b7caf544444ed21b7becf4f71a54456f4ae507407af4cf",
    "license": {
     "type": "KOGL-1",
@@ -1134,85 +1053,58 @@
    "normalizedText": "서울 반포대교에 설치된 분수인 달빛무지개분수는 한강르네상스의 핵심적인 사업으로 2007년 6월 시작하여 2009년 4월 개막식을 통해 유유히 흐르는 한강의 정적인 이미지에 웅장하고 역동적인 이미지를 담은 교량분수로 화려하게 탄생했다. 서울 한강만이 가지고 있는 약 700m의 넓은 강폭 전체를 연출하기 위해 반포대교 구간의 상류 측과 하류 측 1,140m 구간에 380개 노즐을 설치해 낙하용 수중펌프로 끌어올린 한강물을 약 20m 아래 한강 수면으로 떨어뜨리는 새로운 개념의 분수이다. 단순히 물만 내뿜는 것이 아니라 배경음악과 분수연출이 아름답고 조화롭게 어우러지도록 프로그램을 구성하고, 야간에는 경관조명을 이용하여 환상적인 한강의 야경을 보여준다. 또한 2008년 11월 7일 ‘세계에서 가장 긴 교량분수’로 기네스북에 등재되면서 최고의 위용을 세계에서도 인정받았으며, 시향연주회, 무용발표회, 창장음악회 및 개막식, 그랜드오픈행사 시 분수연출을 선보이기도 했다.\n달빛무지개분수는 낮과 밤에 다른 모습을 즐길 수 있다. 낮에는 분수에 떨어지는 물결의 모양에 따라 휘날리는 버들가지와 버들잎을 형상화한 모양 등 100여 가지의 다양한 모습의 분수를 만들어내며, 밤에는 긍정과 희망의 이미지를 상징하는 무지개 색깔의 분수로 화려하게 변신한다. 설치된 조명 200개는 아름다운 무지개 모양의 야경을 선사하고 음악에 맞춰 춤추는 분수는 시민들에게 색다른 즐거움을 선사한다."
   },
   {
-   "sourceRevisionId": "b538bd6f-6fbd-5ff5-9080-e67a07b6b847",
-   "sourceId": "tourapi:4001148",
+   "sourceRevisionId": "20af5f85-2299-5469-af98-4347403133b0",
+   "sourceId": "tourapi:125452:coordinates",
    "provider": "한국관광공사 TourAPI",
-   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=4001148",
-   "title": "피카소 벽화",
-   "fetchedAt": 1794322380791,
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=125452",
+   "title": "청계산 — 대표 좌표",
+   "fetchedAt": 1794326367809,
    "sourceUpdatedAt": null,
-   "sourceUpdatedRaw": "20260514082738",
-   "verifiedAt": 1794322397972,
-   "contentHash": "fbb63a66a77aaee6453e7afd4135ca99767203c70ba6b79c011d991ccbc9b5f7",
+   "sourceUpdatedRaw": null,
+   "verifiedAt": 1794326392017,
+   "contentHash": "f7fded3b6516a5a4ef11c8962b93a352efcce42b8849191dcafb438deee74fa6",
    "license": {
-    "type": "KOGL-1",
-    "url": "https://www.kogl.or.kr/info/license.do",
+    "type": "COORDINATE_FACT_ONLY",
+    "url": "https://www.data.go.kr/data/15101578/openapi.do",
     "scope": "text",
-    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+    "reviewBasis": "대표점 좌표 한 쌍만. 생성 근거로 쓰지 않는다."
+   },
+   "allowedUses": {
+    "allowGeneration": false,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "점 좌표라는 단순 사실만 새 문장으로 기록한다. TourAPI 청계산 설명 본문은 변경 금지 유형이라 이 팩에 넣지 않는다."
+   },
+   "attribution": "좌표 사실: 한국관광공사 TourAPI 청계산(contentId 125452) 대표 좌표. 설명 본문(공공누리 제3유형)은 쓰지 않음.",
+   "reviewStatus": "verified",
+   "normalizedText": "청계산의 대표 좌표(WGS84)는 경도 127.0553147, 위도 37.4437532이다."
+  },
+  {
+   "sourceRevisionId": "9cf7ac39-d3ff-5506-b58a-740182447e15",
+   "sourceId": "encykorea:E0056245",
+   "provider": "한국학중앙연구원 한국민족문화대백과사전",
+   "sourceUrl": "https://encykorea.aks.ac.kr/Article/E0056245",
+   "title": "청계산 — 지리 사실",
+   "fetchedAt": 1794326367809,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": null,
+   "verifiedAt": 1794326392017,
+   "contentHash": "1aa8693681304206a29d4303b42087cd90eea747ea0afcaa6eecc5d89484ffae",
+   "license": {
+    "type": "INDEPENDENT_FACT_STATEMENTS_ONLY",
+    "url": "https://encykorea.aks.ac.kr/Article/E0056245",
+    "scope": "text",
+    "reviewBasis": "청계산 지리 사실(소속 지역·높이·이칭·고속도로 위치)만 새 문장으로 작성한 범위. 원문 표현·배열·해설에 이용허락이 있다고 주장하지 않는다. TourAPI 청계산 설명(공공누리 제3유형, 변경금지)은 쓰지 않는다."
    },
    "allowedUses": {
     "allowGeneration": true,
     "allowDisplay": true,
     "allowDistribution": true,
-    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+    "reviewBasis": "검토 대상은 text의 자체 작성 사실문장 4개에 한정한다(소속 지역·높이·이칭·고속도로 위치라는 단순 사실). 한국민족문화대백과사전은 공공저작물로서 공공누리 제도에 따라 이용 가능하다고 밝히나 항목 본문의 유형 표시는 확인하지 못했고, 변경 금지 여부가 불명확하므로 원문 문장·배열·해설은 쓰지 않고 사실만 새 문장으로 작성했다. 2026-11-11 해당 항목 본문과 대조했다."
    },
-   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "attribution": "사실 확인: 한국학중앙연구원, 청계산, 한국민족문화대백과사전, https://encykorea.aks.ac.kr/Article/E0056245. Petasos 자체 사실문장; 원문 표현 복제 없음.",
    "reviewStatus": "verified",
-   "normalizedText": "고속터미널역에서 반포한강공원을 이어주는 공간인 지하공공보행통로는 서울을 사랑하는 모든 시민들과 나누고자 스트리트 갤러리로 기획되었다. 특히 스페인 관광청, 말라가 관광청과 서초구의 협업으로 만들어진 피카소 벽화는 피카소의 시선을 통해 건축, 음식, 전통, 일상생활 등 스페인 말라가와 서울의 다양한 측면을 보여주는 65m의 벽화다. 이 벽화를 그린 작가는 유로피안 어반 아트 챔피언 대회 우승자이자 라론(Lalone)으로 활동 중인 세계적인 그래피티 아티스트 '에두아르도 루케'이며, 라론이 피카소 벽화를 그리는 과정이 벽화 옆 카페형 휴식공간에서 재생되고 있다."
-  },
-  {
-   "sourceRevisionId": "e68b6362-fa22-54e7-977a-e5ac588fbf8c",
-   "sourceId": "tourapi:125452",
-   "provider": "한국관광공사 TourAPI",
-   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=125452",
-   "title": "청계산",
-   "fetchedAt": 1794322164106,
-   "sourceUpdatedAt": null,
-   "sourceUpdatedRaw": "20250902140626",
-   "verifiedAt": 1794322397972,
-   "contentHash": "419d0db32d8896a0ca9c746d8c505f206238b748babae257afac444b1803b8d5",
-   "license": {
-    "type": "KOGL-3",
-    "url": "https://www.kogl.or.kr/info/license.do",
-    "scope": "text",
-    "reviewBasis": "TourAPI cpyrhtDivCd=Type3: 공공누리 제3유형(출처표시·변경금지)"
-   },
-   "allowedUses": {
-    "allowGeneration": false,
-    "allowDisplay": true,
-    "allowDistribution": true,
-    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
-   },
-   "attribution": "한국관광공사 TourAPI (KOGL-3)",
-   "reviewStatus": "verified",
-   "normalizedText": "청계산은 서울특별시와 경기도 성남시, 과천시, 의왕시의 경계에 따라 위치해 있는 산이다. 산세는 서남쪽으로 의왕시에 소재한 백운산, 모락산, 오봉산으로 뻗쳐 있고, 서북쪽으로 과천시 옥녀봉 자락과 이어져 대체로 남북 방향으로 자리하고 있다.\n청계산은 청룡이 승천했던 곳이라고 해서 청룡산으로 불리기도 하며, 풍수지리학적으로는 관악산을 백호, 청계산은 청룡이라 하여 좌청룡 우백호의 개념으로 해석하기도 한다. 서울대공원과 서울랜드, 국립현대미술관을 둘러싼 푸른 산자락이 바로 청계산이다.\n청계산은 울창한 숲과 아늑한 계곡, 서울대공원, 청계사, 산림욕장 등 다양한 볼거리가 있는 가족산행의 명소로서 수많은 등산로가 다양하게 형성되어 있다. 과천 쪽에서 바라보는 청계산은 산세가 부드럽고 온화해서 토산처럼 보이지만, 서울대공원 쪽에서 보이는 망경대는 바위로 둘러싸여 있어 거칠고 당당하게 보인다.\n망경대(618.2m)가 바로 청계산의 정상이나 정부시설이 있어 등산이 불가하다. 주암동 쪽에서 망경대 쪽으로 오르다 보면 추사 김정희의 생부 김노경의 묘터가 있던 옥녀봉이 나타난다. 조선시대의 학자인 정여창이 피눈물을 흘리며 넘었다는 혈읍재를 지나 망경대 바로 밑으로 가면 정여창이 은거했다는 금정수가 있다. 이 약수는 정여창이 사사되자 핏빛으로 변했다가 이내 금빛으로 물들었다는 말이 전해온다. 풀 향기 가득한 산길을 걷다 보면 야생밤나무와 도토리나무, 머루와 다래 등이 종종 눈길을 끈다."
-  },
-  {
-   "sourceRevisionId": "4ff55492-5482-542e-b39a-b3f7ac57b588",
-   "sourceId": "tourapi:3032823",
-   "provider": "한국관광공사 TourAPI",
-   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=3032823",
-   "title": "판교어린이천문대",
-   "fetchedAt": 1794322380906,
-   "sourceUpdatedAt": null,
-   "sourceUpdatedRaw": "20260414171336",
-   "verifiedAt": 1794322397972,
-   "contentHash": "4e7c6cb8120880e600015dc5887daf627b0c9aaf63aaf0ffdb5aa23c053c128a",
-   "license": {
-    "type": "KOGL-3",
-    "url": "https://www.kogl.or.kr/info/license.do",
-    "scope": "text",
-    "reviewBasis": "TourAPI cpyrhtDivCd=Type3: 공공누리 제3유형(출처표시·변경금지)"
-   },
-   "allowedUses": {
-    "allowGeneration": false,
-    "allowDisplay": true,
-    "allowDistribution": true,
-    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
-   },
-   "attribution": "한국관광공사 TourAPI (KOGL-3)",
-   "reviewStatus": "verified",
-   "normalizedText": "판교어린이천문대는 많은 과학자들이 파헤쳐 간 우주의 이야기들을 들으며 아이들에게 천문과학자의 꿈을 심어주고 별을 바라보며 상상 속에 있던 우주를 현실화시켜 주는 곳이다. 판교 청계산 자락에 자리를 잡고 있으며 어린이를 대상으로 여러 가지 천문대 프로그램을 운영하고 있다. 이곳에서는 단순한 관람이 아닌 교육 중심의 프로그램을 운영하며, 아이들이 천문학적 개념을 단계적으로 이해할 수 있도록 구성된 커리큘럼이 특징이다. 여러 선생님들과 함께 우주와 별에 관한 수업을 들으며 천체우주에 대한 꿈을 키우는 장소이다."
+   "normalizedText": "청계산은 서울특별시와 경기도 성남시, 과천시, 의왕시에 걸쳐 있는 산이다. 청계산의 높이는 618m이다. 청계산은 청룡산이라고도 불렸다. 청계산의 동쪽으로는 경부고속도로가 지나간다."
   },
   {
    "sourceRevisionId": "a3a2363f-06a9-514d-9d59-22a8c6a6cd21",
@@ -1223,7 +1115,7 @@
    "fetchedAt": 1794322381036,
    "sourceUpdatedAt": null,
    "sourceUpdatedRaw": "20260921172810",
-   "verifiedAt": 1794322397972,
+   "verifiedAt": 1794326392017,
    "contentHash": "ede6bdb9d2a99e35b5b18f420971b9d9e483ddb2c7048a6fc88f731923d1cbe0",
    "license": {
     "type": "KOGL-1",
@@ -1242,60 +1134,6 @@
    "normalizedText": "용인아르피아종합운동장 부지 내에 있는 용인포은아트홀은 용인 시민의 여가와 문화생활 증진을 위해 2004년 4월 개관하였으며 용인문화재단이 운영하고 있다. 포은아트홀의 이름은 포은 정몽주 선생의 아호에서 따왔으며 첨단 시설을 갖춘 세계적인 수준의 공연장이다. 총면적 13,826㎡, 무대 면적 1,109㎡, 객석 1,258석을 갖추고 있으며 공연 활동을 완벽하게 지원할 수 있는 환경과 편안하게 감상할 수 있는 객석, 휴식을 즐길 수 있는 시민들의 생활 속 쉼터이자 품격 있는 공연을 즐길 수 있는 문화체험장이다. 판교 IC에서 차량으로 약 17분, 수인분당선 죽전역(단국대)에서 도보로 약 5분(345m) 소요된다. 인근에 에버랜드, 한국민속촌, 한국잡월드, 세계문화유산 융건릉, 물향기수목원, 용인농촌테마파크, 덕평공룡수목원 등이 있다."
   },
   {
-   "sourceRevisionId": "7b1642ab-e3da-5c9a-b030-50b1e8b92d6b",
-   "sourceId": "tourapi:127274",
-   "provider": "한국관광공사 TourAPI",
-   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=127274",
-   "title": "청주 신전동 고가",
-   "fetchedAt": 1794322381145,
-   "sourceUpdatedAt": null,
-   "sourceUpdatedRaw": "20260311100340",
-   "verifiedAt": 1794322397972,
-   "contentHash": "4e448ecb333e86b55b6afdcff0a3efb237cfdd368ea905d230125b57445fd1c0",
-   "license": {
-    "type": "KOGL-1",
-    "url": "https://www.kogl.or.kr/info/license.do",
-    "scope": "text",
-    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
-   },
-   "allowedUses": {
-    "allowGeneration": true,
-    "allowDisplay": true,
-    "allowDistribution": true,
-    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
-   },
-   "attribution": "한국관광공사 TourAPI (KOGL-1)",
-   "reviewStatus": "verified",
-   "normalizedText": "이 집은 1926년에 지은 것으로 안채의 종도리 장여에 상량문이 적혀 있다. 일자형의 안채와 사랑채, 행랑채가 ㄷ자 형으로 배치되어 있는데, 집의 형태를 보면 안채는 3단의 장대석 기단 위에 둥근 주춧돌을 놓고 네모기둥을 세웠고, 기둥 위에 큰 부재로 된 대들보를 걸고, 그 위에 종보를 올렸다. 종보 위에는 파련대공을 세우고 종도리와 뜬창방을 결구하였는데 주택에서는 보기 드문 수법이다. 건물이 세워진 연대는 오래되지 않았으나 안채･사랑채･행랑채가 고루 갖추어져 있는 전통 주거 건축의 모습을 잘 나타내고 있다. 현재는 소유자가 거주하면서 관리를 하고 있다.\n(출처 : 청주 문화관광 홈페이지)"
-  },
-  {
-   "sourceRevisionId": "65e278da-192f-56a7-86a5-6185d49496fe",
-   "sourceId": "tourapi:741957",
-   "provider": "한국관광공사 TourAPI",
-   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=741957",
-   "title": "대전솔로몬로파크",
-   "fetchedAt": 1794322381262,
-   "sourceUpdatedAt": null,
-   "sourceUpdatedRaw": "20260703092341",
-   "verifiedAt": 1794322397972,
-   "contentHash": "c6955da966d719cbb993ecc8cd3f0a4fee4595121b89a1151f1bb9697f5dc55c",
-   "license": {
-    "type": "KOGL-1",
-    "url": "https://www.kogl.or.kr/info/license.do",
-    "scope": "text",
-    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
-   },
-   "allowedUses": {
-    "allowGeneration": true,
-    "allowDisplay": true,
-    "allowDistribution": true,
-    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
-   },
-   "attribution": "한국관광공사 TourAPI (KOGL-1)",
-   "reviewStatus": "verified",
-   "normalizedText": "대전 솔로몬로파크는 법무부에서 운영하는 법교육 테마 공원이다. 어린이, 청소년, 그리고 일반 국민들이 법을 쉽고 재미있게 배우고 체험할 수 있도록, 법무부가 조성하고 직접 운영하는 법과 정의의 배움터이자 법교육의 장이다. 놀면서 직접 법을 체험할 수 있도록 어린이, 청소년, 지역 시민들에게 다양한 법 체험 및 연수 프로그램을 무료로 제공한다. 솔로몬 왕이 재판을 통해 지혜롭게 정의를 실현했듯, 솔로몬로파크는 법치사회의 자유, 지혜, 정의를 느끼고 체험함으로써 국민 누구나 신뢰하는 법치국가를 만들어가는 데 필요한 민주시민의 자질과 소양을 쌓을 수 있도록 한다. 법체험관에서는 세계의 법 역사와 우리나라의 법제도를 폭넓게 이해하고 직접 체험할 수 있도록 입법체험실, 과학수사실, 모의법정실, 교도소체험 등이 마련되어 있다. 미취학 아동을 위한 ‘법짱마을’도 운영되며, 솔로몬로파크 내 법체험관과 법연수관을 중심으로 다양한 법 체험 및 법연수 프로그램이 국민에게 제공되고 있다."
-  },
-  {
    "sourceRevisionId": "ea335396-c08e-5058-bd96-35d76b7ccd93",
    "sourceId": "tourapi:2779504",
    "provider": "한국관광공사 TourAPI",
@@ -1304,7 +1142,7 @@
    "fetchedAt": 1794322381515,
    "sourceUpdatedAt": null,
    "sourceUpdatedRaw": "20260212100226",
-   "verifiedAt": 1794322397972,
+   "verifiedAt": 1794326392017,
    "contentHash": "43b647000736a3377e03d6e02e19fc475f9119da02042fc2fe888681313bfada",
    "license": {
     "type": "KOGL-1",
@@ -1526,144 +1364,12 @@
    "version": 1
   },
   {
-   "factRevisionId": "8a727aa8-1329-5a1a-99be-4d6268eecdc1",
-   "factId": "85dfa813-75d4-5fdc-ba37-a1e3a407b5f9",
-   "version": 1,
-   "statement": "민주화운동기념관은 서울 용산구 남영동에 있었던 공권력의 고문시설 치안본부(경찰청의 전신) 남영동 대공분시를 보존하고, 전시와 교육 시설을 더하여 아픔을 기억하며 희망으로 미래를 열어가는 기념시설이다.",
-   "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
-   "sourceRevisionIds": [
-    "6e56c73d-c2ed-5d92-aedf-d4f30901ddde"
-   ]
-  },
-  {
-   "factRevisionId": "0e75d64d-9b97-5300-8bd0-972f99213b93",
-   "factId": "642f56c7-c33a-5038-abf7-afb9f96985dc",
-   "version": 1,
-   "statement": "2001년 6월 28일 민주화운동의 정신을 기념하고 계승하기 위해 민주화운동기념사업특별법에 의해 설립된 행정안전부 산하 공공기관은 민주화운동기념사업회과 시민 사회의 힘으로 민주인권기념관을 건립하였다.",
-   "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
-   "sourceRevisionIds": [
-    "6e56c73d-c2ed-5d92-aedf-d4f30901ddde"
-   ]
-  },
-  {
-   "factRevisionId": "586ff086-411b-59b6-82b2-191687f54e9c",
-   "factId": "c20e45ad-0a41-5fec-a14f-804cab55d8c0",
-   "version": 1,
-   "statement": "민주주의를 이끌어 낸 민주화운동을 기념하고 기억하는 공간이자, 민주주의와 민주인권을 교육하고 세계와 연대하는 공간으로 독재정권의 어두운 역사와 이를 극복한 민주주의의 이야기를 담고 있다.",
-   "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
-   "sourceRevisionIds": [
-    "6e56c73d-c2ed-5d92-aedf-d4f30901ddde"
-   ]
-  },
-  {
-   "factRevisionId": "5f3e0c20-a7d8-597a-8d1d-63cefaa37e6f",
-   "factId": "69e247ed-a4e5-5546-916c-1386a3adc9fd",
-   "version": 1,
-   "statement": "이 건물은 건축의 대가인 김수근 씨에 의해 1976년 10월에 지상 5층 규모로 건축되었고, 1983년 12월엔 7층으로 증축하였다.남영동 대공분실은 1976년 만들어진 이후 오랫동안 경찰이 관리하면서 민주인사들을 비롯한 무고한 시민들이 고문을 받던 장소이다.",
-   "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
-   "sourceRevisionIds": [
-    "6e56c73d-c2ed-5d92-aedf-d4f30901ddde"
-   ]
-  },
-  {
-   "factRevisionId": "efddf3bc-8efe-5ff6-a0e1-17eac8935a81",
-   "factId": "13355eec-e803-54b0-ba3d-2cc9dcc14ae0",
-   "version": 1,
-   "statement": "용산아트홀은 용산구 종합행정타운 안에 위치하고 있는 지상 1층, 지하 3층 규모의 문화예술 전용 공간이다.",
-   "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
-   "sourceRevisionIds": [
-    "5ce58f1a-cb81-5f8a-964d-f7dc477ef9fc"
-   ]
-  },
-  {
-   "factRevisionId": "cc819dff-e714-5dd6-b26b-11822987e528",
-   "factId": "5e616f8c-ff71-544a-9f13-a147eae2eac5",
-   "version": 1,
-   "statement": "대극장 미르, 소극장 가람, 전시장, 다목적실, 문화강좌실 등의 시설을 갖추고 있다.",
-   "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
-   "sourceRevisionIds": [
-    "5ce58f1a-cb81-5f8a-964d-f7dc477ef9fc"
-   ]
-  },
-  {
-   "factRevisionId": "61d6de72-4979-52b9-982a-088614bb6867",
-   "factId": "7c1e36b4-7190-52af-8bf7-3b780e840924",
-   "version": 1,
-   "statement": "대극장 미르는 787석 규모로 오케스트라, 콘서트, 뮤지컬 등 수준 놓은 공연 작품을 만날 수 있다.",
-   "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
-   "sourceRevisionIds": [
-    "5ce58f1a-cb81-5f8a-964d-f7dc477ef9fc"
-   ]
-  },
-  {
-   "factRevisionId": "ddd495d2-cbfa-5088-a07e-f4117e6b26af",
-   "factId": "71de9b10-a5a2-59c7-9dfc-83690f5f2e7c",
-   "version": 1,
-   "statement": "소극장 가람은 298석의 좌석으로 대극장과 같은 조명, 음향 시설을 갖추고 있으며 소규모의 음악회, 연극 등의 다양한 공연을 만날 수 있다.",
-   "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
-   "sourceRevisionIds": [
-    "5ce58f1a-cb81-5f8a-964d-f7dc477ef9fc"
-   ]
-  },
-  {
-   "factRevisionId": "fb5146e6-14ce-554e-92fc-62621d17273a",
-   "factId": "7ba82a17-dd24-58a2-b567-8ae377128dd5",
-   "version": 1,
-   "statement": "서빙고동 부군당은 조선시대 이 마을 주민들이 마을의 수호와 주민의 안녕을 위해 세운 제당이다.",
-   "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
-   "sourceRevisionIds": [
-    "709b34fc-5f11-5078-9c4d-a5965d4bbc10"
-   ]
-  },
-  {
-   "factRevisionId": "5fca1e9a-6712-5d89-8524-a6348b99e7bf",
-   "factId": "f36556c7-4de0-548b-89ae-eb15f5e3b2ae",
-   "version": 1,
-   "statement": "부군당은 서울을 중심으로 한 경기지역에서만 불리던 당의 명칭이다.",
-   "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
-   "sourceRevisionIds": [
-    "709b34fc-5f11-5078-9c4d-a5965d4bbc10"
-   ]
-  },
-  {
-   "factRevisionId": "6f6353c6-a7d8-5d1e-856d-a2e990254d5e",
-   "factId": "649498ba-1773-553f-8f60-b5d25ba82d5c",
-   "version": 1,
-   "statement": "이 당은 조선 후기 신당의 건축양식을 보여줄 뿐 아니라, 서울지역의 동제 신앙을 보여주는 기와를 올린 작은 집으로, 조선 인조 13년(1635) 당을 고칠 때 걸어둔 현판을 비롯한 5개의 현판과 무신도가 보존되어 있다.",
-   "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
-   "sourceRevisionIds": [
-    "709b34fc-5f11-5078-9c4d-a5965d4bbc10"
-   ]
-  },
-  {
-   "factRevisionId": "4d4a24ec-f199-53af-aef8-a3f4078fce26",
-   "factId": "ee46ea15-c0f8-5a89-9cac-2f184a889f58",
-   "version": 1,
-   "statement": "특히 무신도는 조선 태조 내외분, 출산과 목숨, 농사의 신이라는 삼불제석의 그림이라고 전하는데, 마을을 보호해 주는 수호신의 대상이 되고 있다.",
-   "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
-   "sourceRevisionIds": [
-    "709b34fc-5f11-5078-9c4d-a5965d4bbc10"
-   ]
-  },
-  {
    "factRevisionId": "5c2ac5cc-1e38-55e8-9e8d-15e526ae06e1",
    "factId": "0c9257fa-4671-55d9-8b4b-bc43aa5017dc",
    "version": 1,
    "statement": "서울 반포대교에 설치된 분수인 달빛무지개분수는 한강르네상스의 핵심적인 사업으로 2007년 6월 시작하여 2009년 4월 개막식을 통해 유유히 흐르는 한강의 정적인 이미지에 웅장하고 역동적인 이미지를 담은 교량분수로 화려하게 탄생했다.",
    "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
+   "verifiedAt": 1794326392017,
    "sourceRevisionIds": [
     "9f680c40-ec59-5519-99b5-e2af9a82545d"
    ]
@@ -1674,7 +1380,7 @@
    "version": 1,
    "statement": "서울 한강만이 가지고 있는 약 700m의 넓은 강폭 전체를 연출하기 위해 반포대교 구간의 상류 측과 하류 측 1,140m 구간에 380개 노즐을 설치해 낙하용 수중펌프로 끌어올린 한강물을 약 20m 아래 한강 수면으로 떨어뜨리는 새로운 개념의 분수이다.",
    "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
+   "verifiedAt": 1794326392017,
    "sourceRevisionIds": [
     "9f680c40-ec59-5519-99b5-e2af9a82545d"
    ]
@@ -1685,7 +1391,7 @@
    "version": 1,
    "statement": "단순히 물만 내뿜는 것이 아니라 배경음악과 분수연출이 아름답고 조화롭게 어우러지도록 프로그램을 구성하고, 야간에는 경관조명을 이용하여 환상적인 한강의 야경을 보여준다.",
    "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
+   "verifiedAt": 1794326392017,
    "sourceRevisionIds": [
     "9f680c40-ec59-5519-99b5-e2af9a82545d"
    ]
@@ -1696,130 +1402,53 @@
    "version": 1,
    "statement": "또한 2008년 11월 7일 ‘세계에서 가장 긴 교량분수’로 기네스북에 등재되면서 최고의 위용을 세계에서도 인정받았으며, 시향연주회, 무용발표회, 창장음악회 및 개막식, 그랜드오픈행사 시 분수연출을 선보이기도 했다.",
    "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
+   "verifiedAt": 1794326392017,
    "sourceRevisionIds": [
     "9f680c40-ec59-5519-99b5-e2af9a82545d"
    ]
   },
   {
-   "factRevisionId": "c997d233-71d7-50ad-897b-915332457409",
-   "factId": "c2fd7306-7952-5e4e-85a5-e23a4ff5d04f",
+   "factRevisionId": "9a60d998-74bf-51be-b12d-adac10b3854e",
+   "factId": "58f4135d-a954-502e-b59a-75427d8b3eec",
    "version": 1,
-   "statement": "고속터미널역에서 반포한강공원을 이어주는 공간인 지하공공보행통로는 서울을 사랑하는 모든 시민들과 나누고자 스트리트 갤러리로 기획되었다.",
+   "statement": "청계산은 서울특별시와 경기도 성남시, 과천시, 의왕시에 걸쳐 있는 산이다.",
    "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
+   "verifiedAt": 1794326392017,
    "sourceRevisionIds": [
-    "b538bd6f-6fbd-5ff5-9080-e67a07b6b847"
+    "9cf7ac39-d3ff-5506-b58a-740182447e15"
    ]
   },
   {
-   "factRevisionId": "a4912520-b018-5538-9ccb-00bf9e917cae",
-   "factId": "979f9c19-6a13-5131-bc2d-b2fc1c5eb9b8",
+   "factRevisionId": "77eeb552-9eb8-52b4-886b-f52051390db2",
+   "factId": "7db024f3-e447-50ab-a90e-943c6c2e0fc8",
    "version": 1,
-   "statement": "특히 스페인 관광청, 말라가 관광청과 서초구의 협업으로 만들어진 피카소 벽화는 피카소의 시선을 통해 건축, 음식, 전통, 일상생활 등 스페인 말라가와 서울의 다양한 측면을 보여주는 65m의 벽화다.",
+   "statement": "청계산의 높이는 618m이다.",
    "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
+   "verifiedAt": 1794326392017,
    "sourceRevisionIds": [
-    "b538bd6f-6fbd-5ff5-9080-e67a07b6b847"
+    "9cf7ac39-d3ff-5506-b58a-740182447e15"
    ]
   },
   {
-   "factRevisionId": "3369e986-2408-581b-b268-f2c6b5c8575b",
-   "factId": "9052af3a-c228-5158-b019-a975cf10ddb2",
+   "factRevisionId": "f79ec1bc-b9ea-5543-9672-1c45449486af",
+   "factId": "afdfc8f7-4f24-5909-a3cc-bb57977e086d",
    "version": 1,
-   "statement": "이 벽화를 그린 작가는 유로피안 어반 아트 챔피언 대회 우승자이자 라론(Lalone)으로 활동 중인 세계적인 그래피티 아티스트 '에두아르도 루케'이며, 라론이 피카소 벽화를 그리는 과정이 벽화 옆 카페형 휴식공간에서 재생되고 있다.",
+   "statement": "청계산은 청룡산이라고도 불렸다.",
    "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
+   "verifiedAt": 1794326392017,
    "sourceRevisionIds": [
-    "b538bd6f-6fbd-5ff5-9080-e67a07b6b847"
+    "9cf7ac39-d3ff-5506-b58a-740182447e15"
    ]
   },
   {
-   "factRevisionId": "437f94f6-abba-51e2-a34f-074953765868",
-   "factId": "2e753ca1-5581-552a-ae3e-85bdb0c9f001",
+   "factRevisionId": "bf1c041e-7b65-561a-978d-55e33fc4dad2",
+   "factId": "e8a8b794-1077-57c7-94d3-3a72ff6ace16",
    "version": 1,
-   "statement": "청계산은 서울특별시와 경기도 성남시, 과천시, 의왕시의 경계에 따라 위치해 있는 산이다.",
+   "statement": "청계산의 동쪽으로는 경부고속도로가 지나간다.",
    "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
+   "verifiedAt": 1794326392017,
    "sourceRevisionIds": [
-    "e68b6362-fa22-54e7-977a-e5ac588fbf8c"
-   ]
-  },
-  {
-   "factRevisionId": "991285bf-3b40-5032-b9af-eede34126bc2",
-   "factId": "a8d15868-ee54-567f-b0d7-d12a9c84c471",
-   "version": 1,
-   "statement": "산세는 서남쪽으로 의왕시에 소재한 백운산, 모락산, 오봉산으로 뻗쳐 있고, 서북쪽으로 과천시 옥녀봉 자락과 이어져 대체로 남북 방향으로 자리하고 있다.",
-   "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
-   "sourceRevisionIds": [
-    "e68b6362-fa22-54e7-977a-e5ac588fbf8c"
-   ]
-  },
-  {
-   "factRevisionId": "89db7385-66a7-5f5b-bd22-21e2612c12e6",
-   "factId": "086884ef-8efb-56d8-ba12-64a94a015ead",
-   "version": 1,
-   "statement": "청계산은 청룡이 승천했던 곳이라고 해서 청룡산으로 불리기도 하며, 풍수지리학적으로는 관악산을 백호, 청계산은 청룡이라 하여 좌청룡 우백호의 개념으로 해석하기도 한다.",
-   "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
-   "sourceRevisionIds": [
-    "e68b6362-fa22-54e7-977a-e5ac588fbf8c"
-   ]
-  },
-  {
-   "factRevisionId": "a2312099-713b-5ab2-b255-6cab87361f58",
-   "factId": "17a26abe-56c4-56f9-8fd0-1bfeb0598a7b",
-   "version": 1,
-   "statement": "서울대공원과 서울랜드, 국립현대미술관을 둘러싼 푸른 산자락이 바로 청계산이다.",
-   "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
-   "sourceRevisionIds": [
-    "e68b6362-fa22-54e7-977a-e5ac588fbf8c"
-   ]
-  },
-  {
-   "factRevisionId": "76af36da-db9c-501f-9ff7-3a6d086bf831",
-   "factId": "fab13e06-bc22-5ff9-aa98-190cbf2164d6",
-   "version": 1,
-   "statement": "판교어린이천문대는 많은 과학자들이 파헤쳐 간 우주의 이야기들을 들으며 아이들에게 천문과학자의 꿈을 심어주고 별을 바라보며 상상 속에 있던 우주를 현실화시켜 주는 곳이다.",
-   "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
-   "sourceRevisionIds": [
-    "4ff55492-5482-542e-b39a-b3f7ac57b588"
-   ]
-  },
-  {
-   "factRevisionId": "2162e48d-4d68-55e5-807a-d62e3d93aa81",
-   "factId": "a61fff0d-1045-59c9-81fb-4834d8e30ce4",
-   "version": 1,
-   "statement": "판교 청계산 자락에 자리를 잡고 있으며 어린이를 대상으로 여러 가지 천문대 프로그램을 운영하고 있다.",
-   "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
-   "sourceRevisionIds": [
-    "4ff55492-5482-542e-b39a-b3f7ac57b588"
-   ]
-  },
-  {
-   "factRevisionId": "aae5845e-16da-5434-9c09-f9c4c5b30e93",
-   "factId": "cda94f86-37a4-5f3f-870d-6fc3cf4ecd1c",
-   "version": 1,
-   "statement": "이곳에서는 단순한 관람이 아닌 교육 중심의 프로그램을 운영하며, 아이들이 천문학적 개념을 단계적으로 이해할 수 있도록 구성된 커리큘럼이 특징이다.",
-   "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
-   "sourceRevisionIds": [
-    "4ff55492-5482-542e-b39a-b3f7ac57b588"
-   ]
-  },
-  {
-   "factRevisionId": "84db13a4-00b3-5716-bd89-afb98685792b",
-   "factId": "224019f5-5e20-5aba-97d6-cc9e0296f6bc",
-   "version": 1,
-   "statement": "여러 선생님들과 함께 우주와 별에 관한 수업을 들으며 천체우주에 대한 꿈을 키우는 장소이다.",
-   "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
-   "sourceRevisionIds": [
-    "4ff55492-5482-542e-b39a-b3f7ac57b588"
+    "9cf7ac39-d3ff-5506-b58a-740182447e15"
    ]
   },
   {
@@ -1828,7 +1457,7 @@
    "version": 1,
    "statement": "용인아르피아종합운동장 부지 내에 있는 용인포은아트홀은 용인 시민의 여가와 문화생활 증진을 위해 2004년 4월 개관하였으며 용인문화재단이 운영하고 있다.",
    "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
+   "verifiedAt": 1794326392017,
    "sourceRevisionIds": [
     "a3a2363f-06a9-514d-9d59-22a8c6a6cd21"
    ]
@@ -1839,7 +1468,7 @@
    "version": 1,
    "statement": "포은아트홀의 이름은 포은 정몽주 선생의 아호에서 따왔으며 첨단 시설을 갖춘 세계적인 수준의 공연장이다.",
    "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
+   "verifiedAt": 1794326392017,
    "sourceRevisionIds": [
     "a3a2363f-06a9-514d-9d59-22a8c6a6cd21"
    ]
@@ -1850,7 +1479,7 @@
    "version": 1,
    "statement": "총면적 13,826㎡, 무대 면적 1,109㎡, 객석 1,258석을 갖추고 있으며 공연 활동을 완벽하게 지원할 수 있는 환경과 편안하게 감상할 수 있는 객석, 휴식을 즐길 수 있는 시민들의 생활 속 쉼터이자 품격 있는 공연을 즐길 수 있는 문화체험장이다.",
    "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
+   "verifiedAt": 1794326392017,
    "sourceRevisionIds": [
     "a3a2363f-06a9-514d-9d59-22a8c6a6cd21"
    ]
@@ -1861,97 +1490,9 @@
    "version": 1,
    "statement": "판교 IC에서 차량으로 약 17분, 수인분당선 죽전역(단국대)에서 도보로 약 5분(345m) 소요된다.",
    "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
+   "verifiedAt": 1794326392017,
    "sourceRevisionIds": [
     "a3a2363f-06a9-514d-9d59-22a8c6a6cd21"
-   ]
-  },
-  {
-   "factRevisionId": "a479ff5e-0ce6-5570-8d1b-a992c364e5c9",
-   "factId": "81ec7efa-97c6-54df-b1ab-af308d4ed7d1",
-   "version": 1,
-   "statement": "이 집은 1926년에 지은 것으로 안채의 종도리 장여에 상량문이 적혀 있다.",
-   "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
-   "sourceRevisionIds": [
-    "7b1642ab-e3da-5c9a-b030-50b1e8b92d6b"
-   ]
-  },
-  {
-   "factRevisionId": "81e5d3b9-622f-5444-9710-66988a470af3",
-   "factId": "b441ee69-701f-5144-8ca8-a886288603a7",
-   "version": 1,
-   "statement": "일자형의 안채와 사랑채, 행랑채가 ㄷ자 형으로 배치되어 있는데, 집의 형태를 보면 안채는 3단의 장대석 기단 위에 둥근 주춧돌을 놓고 네모기둥을 세웠고, 기둥 위에 큰 부재로 된 대들보를 걸고, 그 위에 종보를 올렸다.",
-   "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
-   "sourceRevisionIds": [
-    "7b1642ab-e3da-5c9a-b030-50b1e8b92d6b"
-   ]
-  },
-  {
-   "factRevisionId": "88306cfc-f533-5289-aecc-461067cab2bb",
-   "factId": "5afe209a-0001-5edd-93c9-c64ecebd3081",
-   "version": 1,
-   "statement": "종보 위에는 파련대공을 세우고 종도리와 뜬창방을 결구하였는데 주택에서는 보기 드문 수법이다.",
-   "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
-   "sourceRevisionIds": [
-    "7b1642ab-e3da-5c9a-b030-50b1e8b92d6b"
-   ]
-  },
-  {
-   "factRevisionId": "27d40957-a3fa-5a9f-82a3-b9c9d403f4d6",
-   "factId": "42d461fe-f79c-5a63-9159-3a01e1c885b8",
-   "version": 1,
-   "statement": "건물이 세워진 연대는 오래되지 않았으나 안채･사랑채･행랑채가 고루 갖추어져 있는 전통 주거 건축의 모습을 잘 나타내고 있다.",
-   "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
-   "sourceRevisionIds": [
-    "7b1642ab-e3da-5c9a-b030-50b1e8b92d6b"
-   ]
-  },
-  {
-   "factRevisionId": "c0e1fc6f-291a-5648-a530-d419ada3bc0e",
-   "factId": "5fad8256-ebda-5a8b-83f0-96e1fe170b0d",
-   "version": 1,
-   "statement": "대전 솔로몬로파크는 법무부에서 운영하는 법교육 테마 공원이다.",
-   "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
-   "sourceRevisionIds": [
-    "65e278da-192f-56a7-86a5-6185d49496fe"
-   ]
-  },
-  {
-   "factRevisionId": "6d214a6c-065f-567d-acbd-23977db03ae6",
-   "factId": "f7a6c6db-9c28-51ee-a018-ba17361aa0fc",
-   "version": 1,
-   "statement": "어린이, 청소년, 그리고 일반 국민들이 법을 쉽고 재미있게 배우고 체험할 수 있도록, 법무부가 조성하고 직접 운영하는 법과 정의의 배움터이자 법교육의 장이다.",
-   "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
-   "sourceRevisionIds": [
-    "65e278da-192f-56a7-86a5-6185d49496fe"
-   ]
-  },
-  {
-   "factRevisionId": "06a25d22-3789-5ce4-9526-3d545adb5883",
-   "factId": "6cebdfa3-0090-518f-af40-675e5d384164",
-   "version": 1,
-   "statement": "놀면서 직접 법을 체험할 수 있도록 어린이, 청소년, 지역 시민들에게 다양한 법 체험 및 연수 프로그램을 무료로 제공한다.",
-   "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
-   "sourceRevisionIds": [
-    "65e278da-192f-56a7-86a5-6185d49496fe"
-   ]
-  },
-  {
-   "factRevisionId": "acf1f81a-4ff5-5b6e-b898-2c4ccbca98f8",
-   "factId": "78ff5171-843e-581e-a5d7-941a70106b73",
-   "version": 1,
-   "statement": "솔로몬 왕이 재판을 통해 지혜롭게 정의를 실현했듯, 솔로몬로파크는 법치사회의 자유, 지혜, 정의를 느끼고 체험함으로써 국민 누구나 신뢰하는 법치국가를 만들어가는 데 필요한 민주시민의 자질과 소양을 쌓을 수 있도록 한다.",
-   "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
-   "sourceRevisionIds": [
-    "65e278da-192f-56a7-86a5-6185d49496fe"
    ]
   },
   {
@@ -1960,7 +1501,7 @@
    "version": 1,
    "statement": "한빛탑은 대전 유성구 엑스포과학공원 내에 위치한 과학과 우주를 모티브로 하여 조형화한 전망대이다.",
    "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
+   "verifiedAt": 1794326392017,
    "sourceRevisionIds": [
     "ea335396-c08e-5058-bd96-35d76b7ccd93"
    ]
@@ -1971,7 +1512,7 @@
    "version": 1,
    "statement": "이 탑은 1993년에 열린 대전엑스포를 기념하기 위해 건립된 상징 조형물로, 현재와 미래를 잇는 한 줄기 빛이라는 뜻에서 한빛탑이라 불린다.",
    "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
+   "verifiedAt": 1794326392017,
    "sourceRevisionIds": [
     "ea335396-c08e-5058-bd96-35d76b7ccd93"
    ]
@@ -1982,7 +1523,7 @@
    "version": 1,
    "statement": "한빛탑은 엑스포과학공원과 대전시 주요 지역 등을 한눈에 조망할 수 있는 공간으로 한 번에 20명이 탑승할 수 있는 승강기가 운영중이며 전면 유리창을 통해 다양한 모습을 감상할 수 있다.",
    "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
+   "verifiedAt": 1794326392017,
    "sourceRevisionIds": [
     "ea335396-c08e-5058-bd96-35d76b7ccd93"
    ]
@@ -1993,7 +1534,7 @@
    "version": 1,
    "statement": "1층에는 전시실에서는 대전을 상징하는 주요 관광명소 사진과 시청각 영상물을 관람할 수 있다.",
    "kind": "verified_fact",
-   "verifiedAt": 1794322397972,
+   "verifiedAt": 1794326392017,
    "sourceRevisionIds": [
     "ea335396-c08e-5058-bd96-35d76b7ccd93"
    ]
@@ -2035,57 +1576,6 @@
    "placeId": "f560a058-6fad-5f6f-9ac9-03ea8743ceb3"
   },
   {
-   "placeId": "tourapi:2775505",
-   "name": "민주화운동기념관",
-   "aliases": [],
-   "latitude": "37.5409794",
-   "longitude": "126.9720341",
-   "coordinateSystem": "WGS84",
-   "coordinateSourceRevisionId": "6e56c73d-c2ed-5d92-aedf-d4f30901ddde",
-   "coordinateReviewBasis": "한국관광공사 TourAPI 좌표(WGS84) 그대로",
-   "externalIds": [
-    {
-     "provider": "kto-tourapi",
-     "externalId": "2775505",
-     "verifiedAt": 1794322397972
-    }
-   ]
-  },
-  {
-   "placeId": "tourapi:3013174",
-   "name": "용산아트홀",
-   "aliases": [],
-   "latitude": "37.5324789",
-   "longitude": "126.9904825",
-   "coordinateSystem": "WGS84",
-   "coordinateSourceRevisionId": "5ce58f1a-cb81-5f8a-964d-f7dc477ef9fc",
-   "coordinateReviewBasis": "한국관광공사 TourAPI 좌표(WGS84) 그대로",
-   "externalIds": [
-    {
-     "provider": "kto-tourapi",
-     "externalId": "3013174",
-     "verifiedAt": 1794322397972
-    }
-   ]
-  },
-  {
-   "placeId": "tourapi:1603296",
-   "name": "서빙고동 부군당",
-   "aliases": [],
-   "latitude": "37.5204678",
-   "longitude": "126.9931789",
-   "coordinateSystem": "WGS84",
-   "coordinateSourceRevisionId": "709b34fc-5f11-5078-9c4d-a5965d4bbc10",
-   "coordinateReviewBasis": "한국관광공사 TourAPI 좌표(WGS84) 그대로",
-   "externalIds": [
-    {
-     "provider": "kto-tourapi",
-     "externalId": "1603296",
-     "verifiedAt": 1794322397972
-    }
-   ]
-  },
-  {
    "placeId": "tourapi:729167",
    "name": "반포대교 달빛무지개분수",
    "aliases": [],
@@ -2098,24 +1588,7 @@
     {
      "provider": "kto-tourapi",
      "externalId": "729167",
-     "verifiedAt": 1794322397972
-    }
-   ]
-  },
-  {
-   "placeId": "tourapi:4001148",
-   "name": "피카소 벽화",
-   "aliases": [],
-   "latitude": "37.5075090",
-   "longitude": "126.9994510",
-   "coordinateSystem": "WGS84",
-   "coordinateSourceRevisionId": "b538bd6f-6fbd-5ff5-9080-e67a07b6b847",
-   "coordinateReviewBasis": "한국관광공사 TourAPI 좌표(WGS84) 그대로",
-   "externalIds": [
-    {
-     "provider": "kto-tourapi",
-     "externalId": "4001148",
-     "verifiedAt": 1794322397972
+     "verifiedAt": 1794326392017
     }
    ]
   },
@@ -2126,30 +1599,13 @@
    "latitude": "37.4437532",
    "longitude": "127.0553147",
    "coordinateSystem": "WGS84",
-   "coordinateSourceRevisionId": "e68b6362-fa22-54e7-977a-e5ac588fbf8c",
+   "coordinateSourceRevisionId": "20af5f85-2299-5469-af98-4347403133b0",
    "coordinateReviewBasis": "한국관광공사 TourAPI 좌표(WGS84) 그대로",
    "externalIds": [
     {
      "provider": "kto-tourapi",
      "externalId": "125452",
-     "verifiedAt": 1794322397972
-    }
-   ]
-  },
-  {
-   "placeId": "tourapi:3032823",
-   "name": "판교어린이천문대",
-   "aliases": [],
-   "latitude": "37.4269077",
-   "longitude": "127.0710103",
-   "coordinateSystem": "WGS84",
-   "coordinateSourceRevisionId": "4ff55492-5482-542e-b39a-b3f7ac57b588",
-   "coordinateReviewBasis": "한국관광공사 TourAPI 좌표(WGS84) 그대로",
-   "externalIds": [
-    {
-     "provider": "kto-tourapi",
-     "externalId": "3032823",
-     "verifiedAt": 1794322397972
+     "verifiedAt": 1794326392017
     }
    ]
   },
@@ -2166,41 +1622,7 @@
     {
      "provider": "kto-tourapi",
      "externalId": "1753401",
-     "verifiedAt": 1794322397972
-    }
-   ]
-  },
-  {
-   "placeId": "tourapi:127274",
-   "name": "청주 신전동 고가",
-   "aliases": [],
-   "latitude": "36.6088929",
-   "longitude": "127.4019629",
-   "coordinateSystem": "WGS84",
-   "coordinateSourceRevisionId": "7b1642ab-e3da-5c9a-b030-50b1e8b92d6b",
-   "coordinateReviewBasis": "한국관광공사 TourAPI 좌표(WGS84) 그대로",
-   "externalIds": [
-    {
-     "provider": "kto-tourapi",
-     "externalId": "127274",
-     "verifiedAt": 1794322397972
-    }
-   ]
-  },
-  {
-   "placeId": "tourapi:741957",
-   "name": "대전솔로몬로파크",
-   "aliases": [],
-   "latitude": "36.3773585",
-   "longitude": "127.4015597",
-   "coordinateSystem": "WGS84",
-   "coordinateSourceRevisionId": "65e278da-192f-56a7-86a5-6185d49496fe",
-   "coordinateReviewBasis": "한국관광공사 TourAPI 좌표(WGS84) 그대로",
-   "externalIds": [
-    {
-     "provider": "kto-tourapi",
-     "externalId": "741957",
-     "verifiedAt": 1794322397972
+     "verifiedAt": 1794326392017
     }
    ]
   },
@@ -2217,7 +1639,7 @@
     {
      "provider": "kto-tourapi",
      "externalId": "2779504",
-     "verifiedAt": 1794322397972
+     "verifiedAt": 1794326392017
     }
    ]
   }
@@ -2755,48 +2177,6 @@
  ],
  "landmarks": [
   {
-   "placeId": "tourapi:2775505",
-   "name": "민주화운동기념관",
-   "latitude": "37.5409794",
-   "longitude": "126.9720341",
-   "regionCode": "11170",
-   "visibility": "small",
-   "category": "culture",
-   "intro": "과거 고문시설이었던 치안본부 남영동 대공분실을 보존해 만든 기념시설이에요. 1976년 건축된 건물에 독재정권의 어두운 역사와 민주주의의 이야기를 담고 있어요.",
-   "factRevisionIds": [
-    "8a727aa8-1329-5a1a-99be-4d6268eecdc1",
-    "5f3e0c20-a7d8-597a-8d1d-63cefaa37e6f",
-    "586ff086-411b-59b6-82b2-191687f54e9c"
-   ]
-  },
-  {
-   "placeId": "tourapi:3013174",
-   "name": "용산아트홀",
-   "latitude": "37.5324789",
-   "longitude": "126.9904825",
-   "regionCode": "11170",
-   "visibility": "small",
-   "category": "culture",
-   "intro": "용산아트홀은 용산구 종합행정타운 안에 위치하고 있는 지상 1층, 지하 3층 규모의 문화예술 전용 공간이다.",
-   "factRevisionIds": [
-    "efddf3bc-8efe-5ff6-a0e1-17eac8935a81"
-   ]
-  },
-  {
-   "placeId": "tourapi:1603296",
-   "name": "서빙고동 부군당",
-   "latitude": "37.5204678",
-   "longitude": "126.9931789",
-   "regionCode": "11170",
-   "visibility": "small",
-   "category": "heritage",
-   "intro": "조선시대 마을의 안녕을 빌던 제당으로, 인조 13년(1635)에 당을 고칠 때 걸어둔 현판을 포함해 5개의 현판과 무신도가 지금도 보존되어 있어요.",
-   "factRevisionIds": [
-    "6f6353c6-a7d8-5d1e-856d-a2e990254d5e",
-    "fb5146e6-14ce-554e-92fc-62621d17273a"
-   ]
-  },
-  {
    "placeId": "tourapi:729167",
    "name": "반포대교 달빛무지개분수",
    "latitude": "37.5126000",
@@ -2804,23 +2184,10 @@
    "regionCode": "11650",
    "visibility": "large",
    "category": "culture",
-   "intro": "2008년 기네스북에 세계에서 가장 긴 교량분수로 등재된 곳이에요. 1,140m 구간에 380개 노즐을 설치해 한강물을 약 20m 아래로 떨어뜨리는 분수예요.",
+   "intro": "2008년 기네스북에 '세계에서 가장 긴 교량분수'로 공식 등재된 곳이에요. 1,140m 구간에 380개 노즐을 설치해 한강물을 약 20m 아래로 떨어뜨리는 방식으로 만들어졌어요.",
    "factRevisionIds": [
     "ca89c4fd-5fdd-588a-9785-0d05f6f966a6",
     "4bc9a624-fe37-5190-a2e9-535e9ffb6d81"
-   ]
-  },
-  {
-   "placeId": "tourapi:4001148",
-   "name": "피카소 벽화",
-   "latitude": "37.5075090",
-   "longitude": "126.9994510",
-   "regionCode": "11650",
-   "visibility": "small",
-   "category": "culture",
-   "intro": "스페인 관광청, 말라가 관광청, 서초구가 협업해 만든 65m 길이의 벽화예요. 피카소의 시선으로 말라가와 서울의 건축, 음식, 일상생활 등을 담고 있어요.",
-   "factRevisionIds": [
-    "a4912520-b018-5538-9ccb-00bf9e917cae"
    ]
   },
   {
@@ -2831,22 +2198,11 @@
    "regionCode": "11650",
    "visibility": "large",
    "category": "nature",
-   "intro": "청계산은 서울특별시와 경기도 성남시, 과천시, 의왕시의 경계에 따라 위치해 있는 산이다.",
+   "intro": "서울과 성남, 과천, 의왕에 걸쳐 있는 높이 618m의 산이에요. 예전에는 청룡산이라고도 불렸답니다.",
    "factRevisionIds": [
-    "437f94f6-abba-51e2-a34f-074953765868"
-   ]
-  },
-  {
-   "placeId": "tourapi:3032823",
-   "name": "판교어린이천문대",
-   "latitude": "37.4269077",
-   "longitude": "127.0710103",
-   "regionCode": "41131",
-   "visibility": "small",
-   "category": "culture",
-   "intro": "판교어린이천문대는 많은 과학자들이 파헤쳐 간 우주의 이야기들을 들으며 아이들에게 천문과학자의 꿈을 심어주고 별을 바라보며 상상 속에 있던 우주를 현실화시켜 주는 곳이다.",
-   "factRevisionIds": [
-    "76af36da-db9c-501f-9ff7-3a6d086bf831"
+    "9a60d998-74bf-51be-b12d-adac10b3854e",
+    "77eeb552-9eb8-52b4-886b-f52051390db2",
+    "f79ec1bc-b9ea-5543-9672-1c45449486af"
    ]
   },
   {
@@ -2857,39 +2213,10 @@
    "regionCode": "41465",
    "visibility": "small",
    "category": "culture",
-   "intro": "포은 정몽주 선생의 아호에서 이름을 따온 공연장으로, 2004년 4월에 개관했어요. 1,258석 규모의 객석을 갖추고 용인문화재단이 운영하고 있어요.",
+   "intro": "이 공연장의 이름은 포은 정몽주 선생의 아호에서 따왔어요. 2004년 개관 이후 용인문화재단이 운영하는 시민 문화공간이에요.",
    "factRevisionIds": [
     "a3fe82b8-aa1e-5d9e-9bce-1ffef228aeb5",
-    "62206cb8-03ae-5757-b115-047f4f3164e0",
-    "3eade7cf-0831-5571-9b75-53a9ca2fcea3"
-   ]
-  },
-  {
-   "placeId": "tourapi:127274",
-   "name": "청주 신전동 고가",
-   "latitude": "36.6088929",
-   "longitude": "127.4019629",
-   "regionCode": "43113",
-   "visibility": "small",
-   "category": "heritage",
-   "intro": "1926년에 지은 집으로, 안채 종도리 장여에 상량문이 남아 있어요. 안채·사랑채·행랑채를 고루 갖춘 전통 주거 건축의 모습을 잘 보여줘요.",
-   "factRevisionIds": [
-    "a479ff5e-0ce6-5570-8d1b-a992c364e5c9",
-    "27d40957-a3fa-5a9f-82a3-b9c9d403f4d6"
-   ]
-  },
-  {
-   "placeId": "tourapi:741957",
-   "name": "대전솔로몬로파크",
-   "latitude": "36.3773585",
-   "longitude": "127.4015597",
-   "regionCode": "30200",
-   "visibility": "small",
-   "category": "culture",
-   "intro": "법무부가 운영하는 법교육 테마 공원이에요. 어린이와 청소년이 법을 놀이처럼 체험할 수 있는 무료 프로그램을 운영해요.",
-   "factRevisionIds": [
-    "c0e1fc6f-291a-5648-a530-d419ada3bc0e",
-    "06a25d22-3789-5ce4-9526-3d545adb5883"
+    "62206cb8-03ae-5757-b115-047f4f3164e0"
    ]
   },
   {
@@ -2900,9 +2227,10 @@
    "regionCode": "30200",
    "visibility": "large",
    "category": "culture",
-   "intro": "1993년 대전엑스포를 기념해 세워진 전망대로, 현재와 미래를 잇는 한 줄기 빛이라는 뜻을 담고 있어요.",
+   "intro": "1993년 대전엑스포를 기념해 세운 상징 조형물로, 현재와 미래를 잇는 한 줄기 빛이라는 뜻을 담고 있어요. 과학과 우주를 모티브로 한 전망대예요.",
    "factRevisionIds": [
-    "82e8891f-f1f1-54f1-a020-bc822f74265c"
+    "82e8891f-f1f1-54f1-a020-bc822f74265c",
+    "68e709b8-c0e0-5e59-8ba2-2dda39a0fdc9"
    ]
   }
  ]

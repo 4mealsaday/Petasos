@@ -182,7 +182,7 @@ class ProviderCompatibilityTests(unittest.IsolatedAsyncioTestCase):
         try:
             for task in ("story", "resume"):
                 await provider.generate(task, {}, EvidenceContext(), model_schema(task))
-            self.assertEqual(PROMPT_VERSION, "petasos-v0.8-3")
+            self.assertEqual(PROMPT_VERSION, "petasos-v0.8-5")
             for task, sent in zip(("story", "resume"), captured):
                 self.assertEqual(sent["messages"][0], {"role": "system", "content": SYSTEM_PROMPT})
                 self.assertIn("public fact/tradition paragraphs only", sent["messages"][0]["content"])

@@ -123,10 +123,18 @@ def _facts_for(document, place):
     return rows
 
 
-def describe_candidates(raw, *, adapters, regions, route_filter=True, log=print):
-    """visibility + facts. raw = [(place, (distance, along, side))]."""
-    kept, dropped = [], {"invisible": 0, "too_far": 0, "no_description": 0}
+def describe_candidates(raw, *, adapters, regions, route_filter=True, curated=None, include=None, log=print):
+    """visibility + facts. raw = [(place, (distance, along, side))].
+
+    curated: place id -> reviewed replacement source (curated.load). include: the reviewed allowlist of place ids
+    (None = everything that passes the rules). A text whose license forbids modification (KOGL-3) or is
+    unconfirmed never becomes an intro: it is dropped unless a curated source replaces it."""
+    curated = curated or {}
+    kept, dropped = [], {"not_listed": 0, "invisible": 0, "too_far": 0, "no_description": 0, "no_modifiable_text": 0}
     for place, (distance, along, side) in raw:
+        if include is not None and place.place_id not in include:
+            dropped["not_listed"] += 1
+            continue
         adapter = adapters[place.source]
         group = None
         if place.source == "heritage":
@@ -145,7 +153,11 @@ def describe_candidates(raw, *, adapters, regions, route_filter=True, log=print)
         if route_filter and distance > RADIUS_M[seen]:
             dropped["too_far"] += 1
             continue
-        document = adapter.document(place)
+        replacement = curated.get(place.place_id)
+        document = replacement["document"] if replacement else adapter.document(place)
+        if document is not None and not document.license.allows_modification:
+            dropped["no_modifiable_text"] += 1
+            continue
         facts = _facts_for(document, place) if document else []
         if not facts:
             dropped["no_description"] += 1
@@ -153,7 +165,8 @@ def describe_candidates(raw, *, adapters, regions, route_filter=True, log=print)
         code, _ = regions.containing_code(place.lng, place.lat)
         kept.append(Candidate(place=place, visibility=seen, route_distance_m=distance, along_m=along, side=side,
                               region_code=code or place.region_code, document=document, facts=facts,
-                              heritage_grade=place.attributes.get("grade")))
+                              heritage_grade=place.attributes.get("grade"),
+                              coordinate_document=replacement["coordinates"] if replacement else None))
     log(f"  visible within radius with a description: {len(kept)} (dropped {dropped})")
     return kept
 
@@ -202,13 +215,13 @@ def _source_row(document, verified_at):
         "license": {"type": document.license.type, "url": document.license.url, "scope": "text",
                     "reviewBasis": document.license.basis},
         "allowedUses": {"allowGeneration": document.license.allows_generation, "allowDisplay": True, "allowDistribution": True,
-                        "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"},
-        "attribution": f"{document.provider} ({document.license.type})",
+                        "reviewBasis": document.uses_basis or "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"},
+        "attribution": document.attribution or f"{document.provider} ({document.license.type})",
         "reviewStatus": "verified", "normalizedText": document.text[:16000],
     }
 
 
-def landmark_rows(selected, *, intro_writer, existing_places, verified_at, log=print):
+def landmark_rows(selected, *, intro_writer, existing_places, verified_at, notes=None, log=print):
     """-> (sources, facts, places, landmarks, report). existing_places maps kto-tourapi content id -> place row."""
     sources, facts, places, landmarks, report = [], [], [], [], []
     prepared, requests = [], []
@@ -219,7 +232,7 @@ def landmark_rows(selected, *, intro_writer, existing_places, verified_at, log=p
                      for f in candidate.facts]
         requests.append((spoken_name(candidate.place.name), candidate.place.category,
                          [{**f, "sourceRevisionId": source["sourceRevisionId"]} for f in fact_rows],
-                         candidate.document.license.allows_generation))
+                         candidate.document.license.allows_generation, (notes or {}).get(candidate.place.place_id)))
         prepared.append((candidate, source, fact_rows))
     intros = intro_writer.write_many(requests)
     for (candidate, source, fact_rows), written in zip(prepared, intros):
@@ -234,9 +247,14 @@ def landmark_rows(selected, *, intro_writer, existing_places, verified_at, log=p
         else:
             place_id, lat, lng = place.place_id, _coordinate(place.lat), _coordinate(place.lng)
             external = place.attributes.get("contentId") if place.source == "tourapi" else place.place_id.split(":", 1)[1]
+            coordinate_source = source
+            if candidate.coordinate_document is not None:
+                # The text came from a curated source; the point coordinates keep their own source row.
+                coordinate_source = _source_row(candidate.coordinate_document, verified_at)
+                sources.append(coordinate_source)
             places.append({"placeId": place_id, "name": place.name[:500], "aliases": [], "latitude": lat, "longitude": lng,
-                           "coordinateSystem": "WGS84", "coordinateSourceRevisionId": source["sourceRevisionId"],
-                           "coordinateReviewBasis": f"{source['provider']} 좌표(WGS84) 그대로",
+                           "coordinateSystem": "WGS84", "coordinateSourceRevisionId": coordinate_source["sourceRevisionId"],
+                           "coordinateReviewBasis": f"{coordinate_source['provider']} 좌표(WGS84) 그대로",
                            "externalIds": [{"provider": "kto-tourapi" if place.source == "tourapi" else "khs-heritage",
                                             "externalId": external, "verifiedAt": verified_at}]})
         landmarks.append({"placeId": place_id, "name": spoken_name(place.name), "latitude": lat, "longitude": lng,
@@ -296,16 +314,20 @@ def _existing_places(base_bundle):
 
 
 def build_route_pack(*, scenario_id, pack_id, version, route_points, base_bundle, adapters, regions,
-                     intro_writer, scorer=None, log=print):
+                     intro_writer, scorer=None, curated=None, include=None, notes=None, log=print):
     scorer = scorer or RuleScorer()
     route = Route(route_points)
     verified_at = int(time.time() * 1000)
     raw = collect_route_candidates(route, tourapi=adapters.get("tourapi"), heritage=adapters.get("heritage"),
                                    regions=regions, log=log)
-    candidates = describe_candidates(raw, adapters=adapters, regions=regions, log=log)
+    candidates = describe_candidates(raw, adapters=adapters, regions=regions, curated=curated,
+                                     include=set(include) if include is not None else None, log=log)
     selected = select(candidates, scorer, log=log)
     sources, facts, places, landmarks, report = landmark_rows(
-        selected, intro_writer=intro_writer, existing_places=_existing_places(base_bundle), verified_at=verified_at, log=log)
+        selected, intro_writer=intro_writer, existing_places=_existing_places(base_bundle), verified_at=verified_at,
+        notes=notes, log=log)
+    if include is not None and {c.place.place_id for c in selected} != set(include):
+        log(f"  WARNING: listed but not built: {sorted(set(include) - {c.place.place_id for c in selected})}")
     pack = assemble_pack(base_bundle, pack_id=pack_id, version=version, scope=route_scope(scenario_id, route_points, regions),
                          sources=sources, facts=facts, places=places, landmarks=landmarks,
                          prompt_version=intro_writer.version, scorer=scorer)

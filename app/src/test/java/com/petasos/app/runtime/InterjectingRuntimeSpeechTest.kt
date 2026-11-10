@@ -27,7 +27,7 @@ class InterjectingRuntimeSpeechTest {
     private val speech = InterjectingRuntimeSpeech(adapter, post = { it() })
     private val events = mutableListOf<RuntimeOutputEvent>()
     private val token = OperationToken("s", 0, "p1")
-    private fun announcement(text: String = "오른쪽 창밖으로 한빛탑이 있어요.") =
+    private fun announcement(text: String = "잠시 후 오른쪽으로 한빛탑이 보여요.") =
         InterjectingRuntimeSpeech.Interjection(RuntimeText(text), "오른쪽 · 한빛탑", "intro")
 
     @Test fun paragraphIsSpokenSentenceBySentenceAsOneOutput() {
@@ -47,7 +47,7 @@ class InterjectingRuntimeSpeechTest {
         speech.interject({ announcement() }) { done = it }
         assertEquals(1, adapter.spoken.size) // never cuts the sentence being spoken
         adapter.complete()
-        assertEquals("오른쪽 창밖으로 한빛탑이 있어요.", adapter.spoken[1])
+        assertEquals("잠시 후 오른쪽으로 한빛탑이 보여요.", adapter.spoken[1])
         assertEquals("오른쪽 · 한빛탑", speech.currentInterjection()?.label)
         adapter.complete()
         assertEquals(InterjectingRuntimeSpeech.Outcome.SPOKEN, done)
@@ -67,8 +67,8 @@ class InterjectingRuntimeSpeechTest {
     }
 
     @Test fun idleAnnouncementIsSpokenAloneAndALaterOutputWaitsForIt() {
-        speech.interject({ announcement("왼쪽 창밖으로 청계산이 있어요.") }) { }
-        assertEquals(listOf("왼쪽 창밖으로 청계산이 있어요."), adapter.spoken)
+        speech.interject({ announcement("잠시 후 왼쪽으로 청계산이 보여요.") }) { }
+        assertEquals(listOf("잠시 후 왼쪽으로 청계산이 보여요."), adapter.spoken)
         speech.startOutput(token, RuntimeText("이야기예요.")) { events += it }
         assertEquals(1, adapter.spoken.size)
         adapter.complete()
@@ -80,7 +80,7 @@ class InterjectingRuntimeSpeechTest {
     @Test fun aSecondRequestWhileOneIsSpeakingIsBusyNotDropped() {
         var second: InterjectingRuntimeSpeech.Outcome? = null
         speech.interject({ announcement() }) { }
-        speech.interject({ announcement("왼쪽 창밖으로 청계산이 있어요.") }) { second = it }
+        speech.interject({ announcement("잠시 후 왼쪽으로 청계산이 보여요.") }) { second = it }
         assertEquals(InterjectingRuntimeSpeech.Outcome.BUSY, second)
         assertEquals(1, adapter.spoken.size)
     }

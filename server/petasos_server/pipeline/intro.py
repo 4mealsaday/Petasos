@@ -15,6 +15,8 @@ from ..prompts import landmark_intro_prompt
 MAX_INTRO_CHARS = 130
 # The app informs; it never tells the driver to look (6장).
 INSTRUCTIONS = re.compile(r"(보세요|보시|돌아보|살펴|확인해|바라보|방문해|들러)")
+# Operating state is seasonal / time-of-day dependent: never claim something is happening right now.
+NOW = re.compile(r"(지금|오늘|매일|가동|운영 중|운영중|뿜어|솟아)")
 SCHEMA = {"type": "object", "additionalProperties": False, "required": ["intro", "factRevisionIds"],
           "properties": {"intro": {"type": "string", "minLength": 1, "maxLength": 200},
                          "factRevisionIds": {"type": "array", "minItems": 1, "maxItems": 6, "items": {"type": "string"}}}}
@@ -23,7 +25,7 @@ SCHEMA = {"type": "object", "additionalProperties": False, "required": ["intro",
 def validate_intro(result, evidence):
     """Same rule as evidence.validate_semantics for answers: every cited id must be supplied evidence."""
     intro, ids = result.get("intro"), result.get("factRevisionIds")
-    if (not isinstance(intro, str) or not intro.strip() or len(intro) > MAX_INTRO_CHARS or INSTRUCTIONS.search(intro)
+    if (not isinstance(intro, str) or not intro.strip() or len(intro) > MAX_INTRO_CHARS or INSTRUCTIONS.search(intro) or NOW.search(intro)
             or not isinstance(ids, list) or not ids or len(set(ids)) != len(ids) or not set(ids) <= evidence.facts.keys()):
         raise Failure("INVALID_MODEL_OUTPUT", 422)
     return intro.strip(), ids
@@ -56,7 +58,7 @@ class IntroWriter:
                     await self.provider.close()
         return asyncio.run(run())
 
-    async def write(self, name, category, facts, allows_generation):
+    async def write(self, name, category, facts, allows_generation, note=None):
         """facts: [{factRevisionId, factId, statement, sourceRevisionId}] -> (intro, factIds, method) or None."""
         if allows_generation and self.provider is not None:
             evidence = EvidenceContext(
@@ -64,6 +66,8 @@ class IntroWriter:
                 facts={f["factRevisionId"]: {"factRevisionId": f["factRevisionId"], "factId": f["factId"], "kind": "fact",
                                              "text": f["statement"], "sourceRevisionIds": [f["sourceRevisionId"]]} for f in facts})
             payload = {"landmarkName": name, "category": category}
+            if note:
+                payload["editorNote"] = note
             for _ in range(2):
                 try:
                     generated = await self.provider.generate("landmark_intro", payload, evidence, SCHEMA, system_prompt=self.prompt)

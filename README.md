@@ -49,8 +49,8 @@ adb emu geo fix 126.9698291 37.5547273
 
 재생 방법은 둘 중 하나를 쓴다.
 
-- **GPX 재생**: 에뮬레이터 Extended controls(⋯) → Location → Routes → **Load GPX/KML** → `demo/route.gpx` 선택 → **Play route**. 약 5분 코스다.
-- **스크립트 재생**: `python3 scripts/demo_route.py --video` (`adb emu geo fix`로 같은 경로를 약 5분에 재생). `--pause`를 붙이면 Enter로 일시정지/재개한다.
+- **GPX 재생**: 에뮬레이터 Extended controls(⋯) → Location → Routes → **Load GPX/KML** → `demo/scenarios/seoul-daejeon/route.gpx` 선택 → **Play route**. 약 9분 코스다.
+- **스크립트 재생**: `python3 scripts/demo_route.py --video` (`adb emu geo fix`로 같은 경로를 약 9분에 재생, 기본 시나리오는 `demo/scenarios/seoul-daejeon/`). `--pause`를 붙이면 Enter로 일시정지/재개한다.
 
 서울 중구에서 이야기가 시작되고, 용인·안성·천안·대전을 지나며 지역마다 이야기와 음악이 이어진다.
 
@@ -188,7 +188,7 @@ adb shell am broadcast --user 10 -f 0x20 -p com.petasos.app -a com.petasos.app.d
 
 ## 스크립트
 
-- `scripts/demo_route.py`: GPS 재생. `--video`(영상 프리셋 속도), `--gpx demo/route.gpx`(타임스탬프 GPX 내보내기), `--speed`, `--pause`.
+- `scripts/demo_route.py`: GPS 재생. `--video`(영상 프리셋 속도), `--gpx demo/scenarios/seoul-daejeon/route.gpx`(타임스탬프 GPX 내보내기), `--speed`, `--pause`.
 - `scripts/build-region-dataset.py`, `scripts/region-boundaries.py`: 시·군·구 경계 데이터 변환.
 - `server/provision-local.py`, `server/dev-local-https.py`: 로컬 서버 설정과 HTTPS 개발 서버.
 - 에뮬레이터를 재부팅하면 `adb reverse`, `adb emu avd hostmicon`, overlay 권한을 다시 확인한다. 부팅은 `emulator -avd Pleos_Connect_v2.1.0 -no-snapshot-load -no-boot-anim`.

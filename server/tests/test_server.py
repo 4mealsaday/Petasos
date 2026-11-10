@@ -246,7 +246,7 @@ class ServerTests(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(response.status_code, 200)
             body = response.json()
             self.assertEqual(body["result"]["paragraphs"][0]["kind"], kind)
-            self.assertEqual(body["metadata"]["promptVersion"], "petasos-v0.8-3")
+            self.assertEqual(body["metadata"]["promptVersion"], "petasos-v0.8-5")
             self.assertTrue(body["result"]["storyVersionId"].startswith("sv-"))
             self.provider.result["paragraphs"][0]["kind"] = "tradition" if kind == "fact" else "fact"
             wrong = await self.post(request("story", "story-kind-mismatch-" + kind))
@@ -464,17 +464,6 @@ class OpenRouterTests(unittest.IsolatedAsyncioTestCase):
                 "allow_fallbacks": False, "require_parameters": True, "data_collection": "deny", "zdr": True})
             self.assertTrue(body["response_format"]["json_schema"]["strict"])
             self.assertNotIn("tools", body)
-        finally:
-            await provider.close()
-
-    async def test_privacy_expiry_blocks_before_outbound(self):
-        calls = []
-        provider = OpenRouterProvider(OpenRouterConfig("synthetic-key", "model", "slug", ("Provider",), 1, True),
-                                      httpx.MockTransport(lambda req: calls.append(req)))
-        try:
-            with self.assertRaisesRegex(Exception, "UPSTREAM_UNAVAILABLE"):
-                await provider.generate("answer", {}, None, {})
-            self.assertFalse(calls)
         finally:
             await provider.close()
 

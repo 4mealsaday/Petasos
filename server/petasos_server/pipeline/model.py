@@ -8,6 +8,9 @@ class License:
     url: str           # https page that states the terms
     allows_generation: bool  # may a model paraphrase it (KOGL-3 forbids modification)
     basis: str         # why this license applies (human-readable)
+    # False for 변경금지 terms (KOGL-3) and for unconfirmed types: such text is never used as a landmark intro,
+    # not even quoted verbatim (CONTENT_PIPELINE.md 6장 후보 기준).
+    allows_modification: bool = True
 
 
 @dataclass(frozen=True)
@@ -21,6 +24,8 @@ class SourceDocument:
     license: License
     fetched_at: int    # epoch ms
     updated_raw: str | None = None
+    attribution: str | None = None   # replaces the default "<provider> (<license type>)" line
+    uses_basis: str | None = None    # replaces the default allowedUses review basis (curated sources)
 
 
 @dataclass(frozen=True)

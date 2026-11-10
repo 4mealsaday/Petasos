@@ -5,7 +5,7 @@ import com.petasos.app.playback.OperationToken
 /**
  * Speaks every output sentence by sentence through [delegate], so a short window announcement
  * (CONTENT_PIPELINE.md 6장) can be inserted exactly at the end of the current sentence:
- * story sentence ... | "오른쪽 창밖으로 OO이 있어요. intro" | next story sentence ...
+ * story sentence ... | "잠시 후 오른쪽으로 OO이 보여요. intro" | next story sentence ...
  *
  * The runtime above sees one output attempt per paragraph, unchanged: one STARTED (first sentence), then one
  * COMPLETED (last sentence) or STOPPED/FAILED. A paragraph with an insertion simply takes longer. When nothing is

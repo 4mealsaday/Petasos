@@ -40,7 +40,7 @@ internal class BundledStoryCatalog(context: Context) {
     companion object {
         /** The seoul-daejeon Content Pack (server/tools/build_pack.py): the v2 stories unchanged + window landmarks. */
         const val ASSET = "content/packs/seoul-daejeon.json"
-        const val SHA256 = "b277e020b530afa67546691efdc21cd1afd9f6503290266bddd3e6cb5e68b015"
+        const val SHA256 = "e0ebcf20a19cfc61d72af538da814f28b15aef456c8fa4a5688d7c54807ffca1"
         private const val MAX_BYTES = 262_144
     }
 }

@@ -1,16 +1,48 @@
 {
   "scenarioId": "seoul-daejeon",
   "name": "서울역 → 대전엑스포과학공원 (경부축)",
-  "origin": {"name": "서울역", "longitude": 126.9707, "latitude": 37.5547},
-  "destination": {"name": "대전엑스포과학공원", "longitude": 127.3866, "latitude": 36.3765},
+  "origin": {
+    "name": "서울역",
+    "longitude": 126.9707,
+    "latitude": 37.5547
+  },
+  "destination": {
+    "name": "대전엑스포과학공원",
+    "longitude": 127.3866,
+    "latitude": 36.3765
+  },
   "packId": "seoul-daejeon",
   "route": "route.json",
   "gpx": "route.gpx",
   "video": {
-    "storyTitles": ["역이 문화공간으로", "용구와 처인에서 용인으로", "안성맞춤과 두 가지 유기", "철도와 함께 자란 대전", "박람회가 남긴 과학공원"],
-    "landmarks": ["반포대교 달빛무지개분수", "청계산", "용인포은아트홀", "한빛탑"],
+    "storyTitles": [
+      "역이 문화공간으로",
+      "용구와 처인에서 용인으로",
+      "안성맞춤과 두 가지 유기",
+      "철도와 함께 자란 대전",
+      "박람회가 남긴 과학공원"
+    ],
+    "landmarks": [
+      "반포대교 달빛무지개분수",
+      "청계산",
+      "용인포은아트홀",
+      "한빛탑"
+    ],
     "landmarkPassSpeedMps": 28,
     "landmarkSlowBeforeM": 500,
     "landmarkSlowAfterM": 150
+  },
+  "landmarks": {
+    "include": [
+      "tourapi:729167",
+      "tourapi:125452",
+      "tourapi:1753401",
+      "tourapi:2779504"
+    ],
+    "curatedSources": "curated_sources.json",
+    "notes": {
+      "tourapi:729167": "기네스북에 '세계에서 가장 긴 교량분수'로 등재된 사실 중심으로 쓴다. 분수가 지금 나오거나 켜져 있다는 표현, 조명·야경·공연 언급은 쓰지 않는다(계절·시간대 운영).",
+      "tourapi:1753401": "이름이 포은 정몽주 선생의 아호에서 왔다는 사실 중심으로 쓴다. 정몽주에 대한 설명(시대·직위·평가)은 제공된 사실에 없으므로 덧붙이지 않는다. 좌석 수·면적·교통 정보는 쓰지 않는다."
+    }
   }
 }

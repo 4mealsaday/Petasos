@@ -20,27 +20,33 @@ data class WindowLandmark(
     override fun toString() = "WindowLandmark([redacted])"
 }
 
-/** Relative bearing bands (6장): ±20° ahead, 20-60° front side, 60-120° side; further back is never said. */
+/**
+ * Where the landmark is said to be (CONTENT_PIPELINE.md 6장): the side it passes on -- the sign of its lateral
+ * position relative to the travel line, not the angle at announcement time -- or, for a large landmark that is
+ * still far ahead and within +-20 degrees of the heading, straight ahead.
+ */
 enum class WindowDirection(val words: String) {
-    FRONT("앞쪽"), FRONT_RIGHT("오른쪽 앞"), FRONT_LEFT("왼쪽 앞"), RIGHT("오른쪽"), LEFT("왼쪽");
+    AHEAD_FAR("앞쪽 멀리"), RIGHT("오른쪽"), LEFT("왼쪽");
 
     companion object {
-        /** bearing: degrees clockwise from the heading, -180..180. */
-        fun of(bearing: Double): WindowDirection? {
-            val side = abs(bearing)
-            return when {
-                side <= 20.0 -> FRONT
-                side <= 60.0 -> if (bearing > 0) FRONT_RIGHT else FRONT_LEFT
-                side <= 120.0 -> if (bearing > 0) RIGHT else LEFT
-                else -> null
-            }
-        }
+        const val AHEAD_HALF_ANGLE_DEG = 20.0
+        /** "Still far": at least this far along the heading (a place due in 12 s at 17 m/s or more). */
+        const val FAR_FORWARD_M = 200.0
+
+        fun of(landmark: WindowLandmark, forwardM: Double, lateralM: Double, bearingDeg: Double): WindowDirection =
+            if (landmark.visibility.radiusM >= WindowLandmark.Visibility.LARGE.radiusM &&
+                abs(bearingDeg) <= AHEAD_HALF_ANGLE_DEG && forwardM >= FAR_FORWARD_M) AHEAD_FAR
+            else if (lateralM >= 0) RIGHT else LEFT
     }
 }
 
 /** What the app says and shows. The sentence informs; it never tells the driver to look (6장). */
 data class WindowAnnouncement(val landmark: WindowLandmark, val direction: WindowDirection) {
-    val spoken: String get() = "${direction.words} 창밖으로 ${landmark.name}${subjectParticle(landmark.name)} 있어요. ${landmark.intro}"
+    private val subject get() = "${landmark.name}${subjectParticle(landmark.name)}"
+    val spoken: String get() = when (direction) {
+        WindowDirection.AHEAD_FAR -> "앞쪽 멀리 $subject 보여요. ${landmark.intro}"
+        else -> "잠시 후 ${direction.words}으로 $subject 보여요. ${landmark.intro}"
+    }
     /** Caption card label line: "오른쪽 · 한빛탑". The body is the intro. */
     val label: String get() = "${direction.words} · ${landmark.name}"
     override fun toString() = "WindowAnnouncement([redacted])"
@@ -119,19 +125,18 @@ class WindowLandmarkGuide(
                 val position = relative(landmark, motion)
                 val seconds = position.forwardM / motion.speedMps
                 if (position.forwardM <= 0.0 || abs(position.lateralM) > landmark.visibility.radiusM ||
-                    seconds * 1000 > leadMaxMs || WindowDirection.of(position.bearingDeg) == null) null
+                    seconds * 1000 > leadMaxMs) null
                 else landmark to seconds
             }
             .minByOrNull { it.second }?.first
     }
 
-    /** At speaking time: the direction from the latest fix, or null when it is already behind (> 120°). */
+    /** At speaking time, from the latest fix; null when it is already behind or out of its visibility radius. */
     @Synchronized fun announcementNow(landmark: WindowLandmark): WindowAnnouncement? {
         val motion = motion() ?: return null
         val position = relative(landmark, motion)
-        if (abs(position.lateralM) > landmark.visibility.radiusM) return null
-        val direction = WindowDirection.of(position.bearingDeg) ?: return null
-        return WindowAnnouncement(landmark, direction)
+        if (position.forwardM <= 0.0 || abs(position.lateralM) > landmark.visibility.radiusM) return null
+        return WindowAnnouncement(landmark, WindowDirection.of(landmark, position.forwardM, position.lateralM, position.bearingDeg))
     }
 
     /** Once per trip: spoken, dropped (user talking, passed) or skipped, it is never repeated. */

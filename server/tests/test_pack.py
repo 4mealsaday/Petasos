@@ -13,7 +13,8 @@ from petasos_server.pipeline.geo import Route
 from petasos_server.pipeline.intro import quote_intro, validate_intro
 from petasos_server.evidence import EvidenceContext
 from petasos_server.contracts import Failure
-from petasos_server.pipeline.model import License, Place
+from petasos_server.pipeline.model import License, Place, SourceDocument
+from petasos_server.pipeline.pack import describe_candidates
 from petasos_server.pipeline.scoring import Candidate, NoInterestScorer, RuleScorer
 from petasos_server.pipeline.visibility import visibility
 
@@ -39,7 +40,7 @@ class PromptFileTests(unittest.TestCase):
         for name in ("guide_persona", "story", "answer", "summary_resume", "landmark_intro"):
             version, body = prompts.load(name)
             self.assertTrue(version and body.strip(), name)
-        self.assertEqual(prompts.landmark_intro_prompt()[0], "landmark-intro-v1")
+        self.assertEqual(prompts.landmark_intro_prompt()[0], "landmark-intro-v2")
 
 
 @unittest.skipUnless(PACK.exists(), "build the demo pack first")
@@ -109,6 +110,37 @@ class VisibilityAndScoringTests(unittest.TestCase):
         self.assertGreater(scorer.score(near), scorer.score(far))
         self.assertGreater(scorer.score(near), scorer.score(local))
         self.assertEqual(NoInterestScorer().interest_scores({}), {})
+
+
+class ModifiableTextOnlyTests(unittest.TestCase):
+    """CONTENT_PIPELINE.md 6장: 변경금지(KOGL-3)·유형 미확인 원문은 랜드마크 intro로 쓰지 않는다."""
+
+    class Adapter:
+        def __init__(self, license):
+            self.license = license
+
+        def document(self, place):
+            return SourceDocument("tourapi:1", "p", "https://example.org", place.name,
+                                  "이곳은 1993년에 세운 전망대로 지금도 많은 사람이 찾는다.", self.license, 0)
+
+    class Regions:
+        def containing_code(self, lon, lat):
+            return "30200", "유성구"
+
+    def describe(self, license, curated=None):
+        raw = [(place("한빛탑"), (50.0, 0.0, 1))]
+        return describe_candidates(raw, adapters={"tourapi": self.Adapter(license)}, regions=self.Regions(),
+                                   curated=curated, log=lambda *_: None)
+
+    def test_kogl3_and_unknown_types_are_dropped_unless_a_curated_source_replaces_them(self):
+        kogl3 = License("KOGL-3", "https://www.kogl.or.kr/info/license.do", False, "t", allows_modification=False)
+        self.assertEqual(self.describe(kogl3), [])
+        self.assertEqual(len(self.describe(LICENSE)), 1)
+        curated = {"tourapi:1": {"document": SourceDocument("x:1", "공식", "https://example.org/x", "한빛탑",
+                                                            "한빛탑은 대전 유성구에 있는 전망대이다.", LICENSE, 0), "coordinates": None}}
+        kept = self.describe(kogl3, curated)
+        self.assertEqual(len(kept), 1)
+        self.assertEqual(kept[0].document.source_id, "x:1")
 
 
 class GeometryTests(unittest.TestCase):

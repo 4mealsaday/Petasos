@@ -14,7 +14,8 @@ CONTENT_TYPES = ("12", "14")  # 관광지, 문화시설. Food/stay/shopping/even
 # 공공누리 types reported per item in cpyrhtDivCd. Type3 forbids modification, so a model may not paraphrase it.
 LICENSES = {
     "Type1": License("KOGL-1", "https://www.kogl.or.kr/info/license.do", True, "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"),
-    "Type3": License("KOGL-3", "https://www.kogl.or.kr/info/license.do", False, "TourAPI cpyrhtDivCd=Type3: 공공누리 제3유형(출처표시·변경금지)"),
+    "Type3": License("KOGL-3", "https://www.kogl.or.kr/info/license.do", False, "TourAPI cpyrhtDivCd=Type3: 공공누리 제3유형(출처표시·변경금지)",
+                     allows_modification=False),
 }
 # lclsSystm1 (신분류체계 대분류) -> pipeline category.
 CATEGORIES = {"HS": "heritage", "VE": "culture", "NA": "nature", "LS": "leisure", "EX": "culture"}
@@ -22,7 +23,7 @@ CATEGORIES = {"HS": "heritage", "VE": "culture", "NA": "nature", "LS": "leisure"
 
 def _license(code):
     return LICENSES.get(code) or License(f"TOURAPI-{code or 'UNKNOWN'}", "https://www.kogl.or.kr/info/license.do", False,
-                                         f"TourAPI cpyrhtDivCd={code or '-'}: 유형 미확인, 생성 근거로 쓰지 않음")
+                                         f"TourAPI cpyrhtDivCd={code or '-'}: 유형 미확인, 생성 근거로 쓰지 않음", allows_modification=False)
 
 
 class TourApiAdapter:

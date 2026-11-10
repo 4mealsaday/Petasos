@@ -19,6 +19,7 @@ sys.path.insert(0, str(ROOT / "server"))
 
 from petasos_server.content_bundle import validate_bundle  # noqa: E402
 from petasos_server.local_env import load_environment  # noqa: E402
+from petasos_server.pipeline import curated as curated_sources  # noqa: E402
 from petasos_server.pipeline.cache import SourceCache  # noqa: E402
 from petasos_server.pipeline.intro import IntroWriter, provider_from_config  # noqa: E402
 from petasos_server.pipeline.pack import build_route_pack, pack_bytes, pack_sha256  # noqa: E402
@@ -77,9 +78,14 @@ def main():
     provider = None if args.no_model or not args.server_config.exists() else provider_from_config(args.server_config, environment)
     print(f"Scenario {args.scenario}: {len(route['path'])} route points; model intros: {'on' if provider else 'off'}")
 
+    # scenario.json "landmarks": the reviewed allowlist ("include": place ids), per-place editor notes for the intro
+    # ("notes") and curated replacement sources ("curatedSources" file) -- CONTENT_PIPELINE.md 6장 후보 기준.
+    review = scenario.get("landmarks", {})
+    curated = curated_sources.load(scenario_dir / review["curatedSources"]) if review.get("curatedSources") else {}
     pack, report = build_route_pack(
         scenario_id=args.scenario, pack_id=scenario["packId"], version=args.version, route_points=route["path"],
-        base_bundle=base, adapters=adapters, regions=RegionIndex(), intro_writer=IntroWriter(provider))
+        base_bundle=base, adapters=adapters, regions=RegionIndex(), intro_writer=IntroWriter(provider),
+        curated=curated, include=review.get("include"), notes=review.get("notes"))
     print(f"Cache: {cache.hits} hits, {cache.misses} fetched")
 
     # Stories must be byte-for-byte the reviewed ones (재생성하지 않음).

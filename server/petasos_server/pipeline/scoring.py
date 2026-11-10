@@ -21,6 +21,7 @@ class Candidate:
     document: object = None  # model.SourceDocument
     facts: list = field(default_factory=list)
     heritage_grade: str | None = None
+    coordinate_document: object = None  # curated places only: a separate source row for the place's point coordinates
 
 
 class Scorer(Protocol):

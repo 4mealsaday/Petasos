@@ -1,0 +1,37 @@
+{
+ "places": {
+  "tourapi:125452": {
+   "fetchedAt": 1794326367809,
+   "document": {
+    "sourceId": "encykorea:E0056245",
+    "provider": "한국학중앙연구원 한국민족문화대백과사전",
+    "url": "https://encykorea.aks.ac.kr/Article/E0056245",
+    "title": "청계산 — 지리 사실",
+    "text": "청계산은 서울특별시와 경기도 성남시, 과천시, 의왕시에 걸쳐 있는 산이다. 청계산의 높이는 618m이다. 청계산은 청룡산이라고도 불렸다. 청계산의 동쪽으로는 경부고속도로가 지나간다.",
+    "attribution": "사실 확인: 한국학중앙연구원, 청계산, 한국민족문화대백과사전, https://encykorea.aks.ac.kr/Article/E0056245. Petasos 자체 사실문장; 원문 표현 복제 없음.",
+    "usesBasis": "검토 대상은 text의 자체 작성 사실문장 4개에 한정한다(소속 지역·높이·이칭·고속도로 위치라는 단순 사실). 한국민족문화대백과사전은 공공저작물로서 공공누리 제도에 따라 이용 가능하다고 밝히나 항목 본문의 유형 표시는 확인하지 못했고, 변경 금지 여부가 불명확하므로 원문 문장·배열·해설은 쓰지 않고 사실만 새 문장으로 작성했다. 2026-11-11 해당 항목 본문과 대조했다.",
+    "license": {
+     "type": "INDEPENDENT_FACT_STATEMENTS_ONLY",
+     "url": "https://encykorea.aks.ac.kr/Article/E0056245",
+     "allowsGeneration": true,
+     "basis": "청계산 지리 사실(소속 지역·높이·이칭·고속도로 위치)만 새 문장으로 작성한 범위. 원문 표현·배열·해설에 이용허락이 있다고 주장하지 않는다. TourAPI 청계산 설명(공공누리 제3유형, 변경금지)은 쓰지 않는다."
+    }
+   },
+   "coordinates": {
+    "sourceId": "tourapi:125452:coordinates",
+    "provider": "한국관광공사 TourAPI",
+    "url": "https://www.data.go.kr/data/15101578/openapi.do#contentId=125452",
+    "title": "청계산 — 대표 좌표",
+    "text": "청계산의 대표 좌표(WGS84)는 경도 127.0553147, 위도 37.4437532이다.",
+    "attribution": "좌표 사실: 한국관광공사 TourAPI 청계산(contentId 125452) 대표 좌표. 설명 본문(공공누리 제3유형)은 쓰지 않음.",
+    "usesBasis": "점 좌표라는 단순 사실만 새 문장으로 기록한다. TourAPI 청계산 설명 본문은 변경 금지 유형이라 이 팩에 넣지 않는다.",
+    "license": {
+     "type": "COORDINATE_FACT_ONLY",
+     "url": "https://www.data.go.kr/data/15101578/openapi.do",
+     "allowsGeneration": false,
+     "basis": "대표점 좌표 한 쌍만. 생성 근거로 쓰지 않는다."
+    }
+   }
+  }
+ }
+}

@@ -11,8 +11,8 @@ class WindowLandmarkGuideTest {
     private fun landmark(id: String, lat: Double, lng: Double, visibility: WindowLandmark.Visibility = WindowLandmark.Visibility.SMALL) =
         WindowLandmark(id, "한빛탑", lat, lng, visibility, "1993년에 세운 전망대예요.")
 
-    @Test fun dueAboutTwelveSecondsBeforeClosestApproachOnTheRight() {
-        // 100 m east of the road, 500 m ahead of the start.
+    @Test fun smallLandmarkIsSaidBySideItPassesOnEvenWhenAheadAtAnnouncement() {
+        // 100 m east of the road, 500 m ahead of the start: about 17 degrees ahead when it is due.
         val target = landmark("a", 37.0 + 500 / 111_195.0, 127.0 + 100 / 88_800.0)
         val guide = WindowLandmarkGuide(listOf(target))
         drive(guide, 37.0, 3) // at ~84 m: 416 m ahead = 14.9 s
@@ -20,14 +20,31 @@ class WindowLandmarkGuideTest {
         guide.observe(37.0 + 4 * 28 / 111_195.0, 127.0, 4000) // 112 m: 388 m = 13.9 s
         guide.observe(37.0 + 6 * 28 / 111_195.0, 127.0, 6000) // 168 m: 332 m = 11.9 s
         assertEquals("a", guide.due()?.placeId)
-        // 332 m ahead, 100 m right: about 17 degrees, still "ahead".
-        assertEquals(WindowDirection.FRONT, guide.announcementNow(target)!!.direction)
-        // Speaking a few seconds later (after the current sentence): 220 m ahead -> about 24 degrees.
-        guide.observe(37.0 + 280 / 111_195.0, 127.0, 10_000)
         val now = guide.announcementNow(target)!!
-        assertEquals(WindowDirection.FRONT_RIGHT, now.direction)
-        assertEquals("오른쪽 앞 창밖으로 한빛탑이 있어요. 1993년에 세운 전망대예요.", now.spoken)
-        assertEquals("오른쪽 앞 · 한빛탑", now.label)
+        assertEquals(WindowDirection.RIGHT, now.direction)
+        assertEquals("잠시 후 오른쪽으로 한빛탑이 보여요. 1993년에 세운 전망대예요.", now.spoken)
+        assertEquals("오른쪽 · 한빛탑", now.label)
+    }
+
+    @Test fun largeLandmarkStillFarAndWithinTwentyDegreesIsAheadFar() {
+        val tower = landmark("t", 37.0 + 500 / 111_195.0, 127.0 - 100 / 88_800.0, WindowLandmark.Visibility.LARGE)
+        val guide = WindowLandmarkGuide(listOf(tower))
+        drive(guide, 37.0, 6) // 168 m driven: 332 m ahead, 100 m left = 17 degrees
+        val now = guide.announcementNow(tower)!!
+        assertEquals(WindowDirection.AHEAD_FAR, now.direction)
+        assertEquals("앞쪽 멀리 한빛탑이 보여요. 1993년에 세운 전망대예요.", now.spoken)
+        assertEquals("앞쪽 멀리 · 한빛탑", now.label)
+        // The same tower, said later when it is under 200 m ahead: the side it passes on.
+        guide.observe(37.0 + 330 / 111_195.0, 127.0, 12_000)
+        assertEquals(WindowDirection.LEFT, guide.announcementNow(tower)!!.direction)
+        assertEquals("잠시 후 왼쪽으로 한빛탑이 보여요. 1993년에 세운 전망대예요.", guide.announcementNow(tower)!!.spoken)
+    }
+
+    @Test fun largeLandmarkOutsideTwentyDegreesUsesItsSide() {
+        val mountain = landmark("m", 37.0 + 500 / 111_195.0, 127.0 + 250 / 88_800.0, WindowLandmark.Visibility.LARGE)
+        val guide = WindowLandmarkGuide(listOf(mountain))
+        drive(guide, 37.0, 6) // 332 m ahead, 250 m right = 37 degrees
+        assertEquals(WindowDirection.RIGHT, guide.announcementNow(mountain)!!.direction)
     }
 
     @Test fun lateralDistanceUsesTheVisibilityRadius() {
@@ -38,6 +55,7 @@ class WindowLandmarkGuideTest {
         val large = WindowLandmarkGuide(listOf(far.copy(visibility = WindowLandmark.Visibility.LARGE)))
         drive(large, 37.0, 3)
         assertEquals("far", large.due()?.placeId)
+        // 400 m to the left and about 216 m ahead is 62 degrees: not ahead, so by the side it passes on.
         assertEquals(WindowDirection.LEFT, large.announcementNow(far.copy(visibility = WindowLandmark.Visibility.LARGE))!!.direction)
     }
 
@@ -67,11 +85,7 @@ class WindowLandmarkGuideTest {
         assertNull(guide.due())
     }
 
-    @Test fun bearingBandsAndParticles() {
-        assertEquals(WindowDirection.FRONT, WindowDirection.of(-19.0))
-        assertEquals(WindowDirection.FRONT_LEFT, WindowDirection.of(-45.0))
-        assertEquals(WindowDirection.RIGHT, WindowDirection.of(119.0))
-        assertNull(WindowDirection.of(121.0))
+    @Test fun particles() {
         assertEquals("이", WindowAnnouncement.subjectParticle("숭례문"))
         assertEquals("가", WindowAnnouncement.subjectParticle("반포대교 달빛무지개분수"))
         assertEquals("가", WindowAnnouncement.subjectParticle("서울타워"))

@@ -129,7 +129,8 @@ class LiveGenerationProbeTests(unittest.TestCase):
         self.assertFalse(self.calls)
 
     def test_invalid_privacy_approval_blocks_before_any_upstream_call(self):
-        for changes in ({"privacy_reviewed_until": 1}, {"account_content_logging_disabled": False}):
+        # Review expiry no longer blocks (DEMO_PLAN step 1 removed it); only the logging-disabled attestation does.
+        for changes in ({"account_content_logging_disabled": False},):
             with self.subTest(changes=changes):
                 provider = self.provider(**changes)
                 code, result, _ = self.run_probe(provider)
