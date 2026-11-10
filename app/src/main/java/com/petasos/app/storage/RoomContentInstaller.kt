@@ -43,7 +43,7 @@ class RoomContentInstaller internal constructor(
                 if (it.isNull(5)) null else it.getLong(5), it.getLong(6), it.getString(7), emptyList())
         }
         val paragraphs = mutableListOf<ContentParagraph>()
-        val stableFacts = mutableSetOf<String>()
+        val stableFacts = mutableMapOf<String, String>()
         query("SELECT paragraph_id,ordinal,required,text,audio_ref,estimated_duration_ms FROM paragraph WHERE story_version_id=? ORDER BY ordinal", storyVersionId).use {
             while (it.moveToNext()) {
                 val text = it.getString(3)
@@ -53,7 +53,7 @@ class RoomContentInstaller internal constructor(
                 val facts = mutableListOf<String>()
                 query("SELECT pf.fact_revision_id,f.fact_id FROM paragraph_fact pf JOIN fact_revision f ON f.fact_revision_id=pf.fact_revision_id WHERE pf.paragraph_id=? ORDER BY pf.fact_revision_id", it.getString(0)).use { row ->
                     while (row.moveToNext()) {
-                        if (!stableFacts.add(row.getString(1))) fail("CONTENT_UNAVAILABLE")
+                        if (stableFacts.getOrPut(row.getString(1)) { row.getString(0) } != row.getString(0)) fail("CONTENT_UNAVAILABLE")
                         facts += row.getString(0)
                     }
                 }

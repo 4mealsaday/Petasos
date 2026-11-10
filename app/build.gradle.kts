@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -32,8 +34,8 @@ android {
         applicationId = "com.petasos.app"
         minSdk = 28
         targetSdk = 34
-        versionCode = 36
-        versionName = "0.8.0-dev.36"
+        versionCode = 37
+        versionName = "1.0.0-demo"
         // The current verified Pleos target is ARM64. Do not package untested host ABIs.
         ndk { abiFilters += "arm64-v8a" }
     }
@@ -43,6 +45,16 @@ android {
             // Studio and the CLI must sign updates with the same local key.
             storeFile = rootProject.file(".local/android/debug.keystore")
         }
+        // Local, git-ignored release key; passwords live in .local/android/release-signing.properties.
+        val releaseProps = Properties().apply {
+            rootProject.file(".local/android/release-signing.properties").takeIf { it.isFile }?.inputStream()?.use(::load)
+        }
+        if (releaseProps.isNotEmpty()) create("release") {
+            storeFile = rootProject.file(".local/android/release.keystore")
+            storePassword = releaseProps.getProperty("storePassword")
+            keyPassword = releaseProps.getProperty("keyPassword")
+            keyAlias = releaseProps.getProperty("keyAlias")
+        }
     }
 
     buildTypes {
@@ -50,7 +62,10 @@ android {
             buildConfigField("boolean", "DEMO", "true")
         }
         getByName("release") {
-            buildConfigField("boolean", "DEMO", "false")
+            // The submitted APK is the demo: virtual-location consent, short music gap, trip-end OFF.
+            // Debug-only helpers (receivers under src/debug) are not part of this build type.
+            buildConfigField("boolean", "DEMO", "true")
+            signingConfigs.findByName("release")?.let { signingConfig = it }
         }
     }
 

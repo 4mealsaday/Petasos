@@ -10,6 +10,9 @@ assets -- not a separate/divergent geometry implementation.
 Usage:
     python3 scripts/demo_route.py [--serial emulator-5554] [--start-index N] [--pause] [--speed X] [--video]
 
+--gpx FILE: write the --video pacing as a timestamped GPX track (no adb needed) and exit. Load it in the
+emulator: Extended controls -> Location -> Routes -> Load GPX/KML -> Play route (demo/route.gpx is committed).
+
 --video: recording preset (~4-5 min total). Pair it with the app's DEMO video mode so each region
 plays one representative story (S01/S03/S05/S08/S10) + one 15 s music bridge:
     adb shell am broadcast --user 10 -f 0x20 -p com.petasos.app -a com.petasos.app.debug.SET_VIDEO_MODE --ez enabled true
@@ -240,6 +243,27 @@ class PauseController:
             time.sleep(0.1)
 
 
+def write_gpx(path, runs, speed):
+    """Same pacing as the live --video replay: each point is stamped with the cumulative replay time."""
+    from datetime import datetime, timedelta, timezone
+    clock = datetime(2026, 1, 1, 9, 0, 0, tzinfo=timezone.utc)
+    lines = ['<?xml version="1.0" encoding="UTF-8"?>',
+             '<gpx version="1.1" creator="petasos demo_route.py" xmlns="http://www.topografix.com/GPX/1/1">',
+             '  <trk><name>Seoul Station to Daejeon Expo (demo pacing)</name><trkseg>']
+    count = 0
+    for run_item in runs:
+        interval = run_interval(run_item, speed, True)
+        for i, (lon, lat, *_rest) in enumerate(run_item["items"]):
+            if count:
+                clock += timedelta(seconds=interval if i else 1.0)
+            lines.append(f'    <trkpt lat="{lat:.7f}" lon="{lon:.7f}"><ele>0</ele><time>{clock.strftime("%Y-%m-%dT%H:%M:%SZ")}</time></trkpt>')
+            count += 1
+    lines += ['  </trkseg></trk>', '</gpx>', '']
+    path.write_text("\n".join(lines))
+    total = (clock - datetime(2026, 1, 1, 9, 0, 0, tzinfo=timezone.utc)).total_seconds()
+    print(f"Wrote {count} points, {total / 60:.1f} minutes, to {path}")
+
+
 def geo_fix(serial, lon, lat):
     run(["adb", "-s", serial, "emu", "geo", "fix", f"{lon:.7f}", f"{lat:.7f}"],
         check=True, capture_output=True)
@@ -252,7 +276,10 @@ def main():
     parser.add_argument("--pause", action="store_true", help="Enter toggles pause/resume mid-run")
     parser.add_argument("--speed", type=float, default=1.0, help="Overall speed multiplier (default 1.0)")
     parser.add_argument("--video", action="store_true", help="Recording preset: ~45 s per story region, ~4-5 min total")
+    parser.add_argument("--gpx", type=Path, help="Write the video-paced route as a timestamped GPX file and exit")
     args = parser.parse_args()
+    if args.gpx:
+        args.video = True
 
     if args.speed <= 0:
         parser.error("--speed must be positive")
@@ -271,6 +298,10 @@ def main():
     runs = build_runs(points, index)
     if args.video:
         runs = [thin_run(r, True) for r in video_targets(runs)]
+
+    if args.gpx:
+        write_gpx(args.gpx, runs, args.speed)
+        return
 
     total_seconds = sum(run_interval(run, args.speed, args.video) * max(1, len(run["items"]) - 1) for run in runs)
     story_runs = [r for r in runs if r["key"][0] == "story"]

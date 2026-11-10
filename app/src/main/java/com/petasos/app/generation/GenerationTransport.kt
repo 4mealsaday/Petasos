@@ -25,7 +25,12 @@ internal fun interface GenerationTransport {
 
 /** Platform trust + hostname verification stay intact. Redirects never carry a bearer token onward. */
 internal class HttpsGenerationTransport(
-    private val open: (URL) -> HttpsURLConnection = { it.openConnection() as HttpsURLConnection },
+    private val open: (URL) -> HttpsURLConnection = { url ->
+        (url.openConnection() as HttpsURLConnection).also { connection ->
+            // DEMO only: a pushed local-server CA applies to localhost, hostname checks stay on.
+            if (url.host == "localhost") DemoServerSetup.localTrust?.let { connection.sslSocketFactory = it }
+        }
+    },
 ) : GenerationTransport {
     override fun execute(configuration: DeviceGenerationConfiguration, path: String, body: ByteArray?, exchange: GenerationExchange): GenerationHttpResponse {
         if (body != null && body.size > StrictJson.MAX_BYTES) throw GenerationException(GenerationFailureKind.INVALID_REQUEST)

@@ -7,6 +7,8 @@
     <color name="glass_surface_pressed">#C5E6FC</color>
     <color name="glass_surface_selected_top">#BDE7FF</color>
     <color name="glass_surface_selected_bottom">#E4F5FF</color>
+    <color name="glass_card_top">#FFFFFF</color>
+    <color name="glass_card_bottom">#EAF7FF</color>
     <color name="glass_border">#F5FFFFFF</color>
     <color name="glass_text">#184D77</color>
     <color name="glass_disabled">#DCE5EB</color>

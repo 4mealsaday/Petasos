@@ -255,7 +255,7 @@ def _validate_bundle(bundle, now_epoch_ms):
         _duration(version["estimatedDurationMs"])
         paragraphs = _rows(version["paragraphs"])
         _need(1 <= len(paragraphs) <= 64, "MISSING_REQUIRED_PARAGRAPH")
-        stable_facts = set()
+        stable_facts = {}  # one fact revision may back several paragraphs; two revisions of one fact may not mix
         for index, paragraph in enumerate(paragraphs):
             _obj(paragraph, _PARAGRAPH)
             _id(paragraph["paragraphId"])
@@ -270,8 +270,7 @@ def _validate_bundle(bundle, now_epoch_ms):
             _refs(paragraph["factRevisionIds"], facts)
             for fact_id in paragraph["factRevisionIds"]:
                 stable_id = facts[fact_id]["factId"]
-                _need(stable_id not in stable_facts, "DUPLICATE_STABLE_FACT")
-                stable_facts.add(stable_id)
+                _need(stable_facts.setdefault(stable_id, fact_id) == fact_id, "DUPLICATE_STABLE_FACT")
         _need(any(paragraph["required"] for paragraph in paragraphs), "MISSING_REQUIRED_PARAGRAPH")
         _need(version["estimatedDurationMs"] == sum(paragraph["estimatedDurationMs"] for paragraph in paragraphs), "INVALID_DURATION")
         _need(version["contentHash"] == version_content_hash(version["storyId"], version["version"], paragraphs), "STORY_HASH_MISMATCH")

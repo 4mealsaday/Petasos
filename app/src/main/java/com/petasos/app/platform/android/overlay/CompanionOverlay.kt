@@ -16,8 +16,9 @@ import com.petasos.app.playback.PlaybackMode
 /**
  * Two TYPE_APPLICATION_OVERLAY windows drawn on top of whatever screen (Pleos Navigation included)
  * is currently in front. Owned by a foreground service, never an Activity, so both windows survive
- * the host Activity going away. The button window is touchable; the card window passes every touch
- * through to the screen beneath it.
+ * the host Activity going away. Both windows are opaque and touchable, and each is sized exactly to
+ * its visible shape (the card's side/bottom margins are window offsets, not transparent padding), so
+ * touches anywhere else still reach the map beneath.
  */
 class CompanionOverlay(private val context: Context, private val host: PetasosSessionHost) {
     private val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
@@ -76,7 +77,9 @@ class CompanionOverlay(private val context: Context, private val host: PetasosSe
             PlaybackMode.TALK_PENDING -> context.getString(R.string.playback_talk_pending)
             PlaybackMode.PROMPT -> context.getString(R.string.overlay_card_speak_now)
             PlaybackMode.LISTENING -> context.getString(R.string.playback_listening)
-            PlaybackMode.GENERATING -> host.lastHeardText()?.let { context.getString(R.string.overlay_card_heard, it) }
+            // While the failure notice ("answer server unreachable") is being spoken it owns the card.
+            PlaybackMode.GENERATING -> host.currentOverlayCaption(this)?.value
+                ?: host.lastHeardText()?.let { context.getString(R.string.overlay_card_heard, it) }
                 ?: context.getString(R.string.overlay_card_thinking)
             PlaybackMode.MUSIC -> snapshot.musicCheckpoint?.track?.assetId?.let { assetId ->
                 context.getString(R.string.journey_title_music, host.musicTitle(assetId), host.musicArtist(assetId))
@@ -102,14 +105,24 @@ class CompanionOverlay(private val context: Context, private val host: PetasosSe
         x = context.resources.getDimensionPixelSize(R.dimen.overlay_button_margin_end)
     }
 
-    private fun cardParams() = WindowManager.LayoutParams(
-        WindowManager.LayoutParams.MATCH_PARENT,
-        WindowManager.LayoutParams.WRAP_CONTENT,
-        WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-        PixelFormat.TRANSLUCENT,
-    ).apply {
-        gravity = Gravity.BOTTOM
-        alpha = 0.75f
+    /** The whole display, not the app resources' metrics (those can report a narrower area on Pleos). */
+    @Suppress("DEPRECATION")
+    private fun screenWidth(): Int =
+        if (android.os.Build.VERSION.SDK_INT >= 30) windowManager.maximumWindowMetrics.bounds.width()
+        else android.util.DisplayMetrics().also { windowManager.defaultDisplay.getRealMetrics(it) }.widthPixels
+
+    private fun cardParams(): WindowManager.LayoutParams {
+        val resources = context.resources
+        val margin = resources.getDimensionPixelSize(R.dimen.overlay_card_margin_horizontal)
+        return WindowManager.LayoutParams(
+            screenWidth() - 2 * margin,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+            PixelFormat.TRANSLUCENT,
+        ).apply {
+            gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
+            y = resources.getDimensionPixelSize(R.dimen.overlay_card_margin_bottom)
+        }
     }
 }

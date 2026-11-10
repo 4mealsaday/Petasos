@@ -137,14 +137,15 @@ internal object ContentBundleCodec {
             need(v.validUntil == null || v.validUntil > now,"EXPIRED_VERSION")
             need(v.estimatedDurationMs in 1..3_600_000,"INVALID_DURATION")
             need(v.paragraphs.size in 1..64 && v.paragraphs.any { it.required },"MISSING_REQUIRED_PARAGRAPH")
-            val stableFacts = mutableSetOf<String>()
+            // One fact revision may back several paragraphs (a split story); two revisions of one fact may not mix.
+            val stableFacts = mutableMapOf<String, String>()
             v.paragraphs.forEachIndexed { index, p ->
                 id(p.paragraphId); need(paragraphIds.add(p.paragraphId),"DUPLICATE_PARAGRAPH")
                 need(p.ordinal == index,"INVALID_ORDINAL"); text(p.text,4000)
                 need(p.audioRef == null,"UNVERIFIED_MEDIA")
                 need(p.estimatedDurationMs in 1..3_600_000,"INVALID_DURATION")
                 refs(p.factRevisionIds,facts.keys)
-                p.factRevisionIds.forEach { need(stableFacts.add(facts.getValue(it).factId),"DUPLICATE_STABLE_FACT") }
+                p.factRevisionIds.forEach { need(stableFacts.getOrPut(facts.getValue(it).factId) { it } == it,"DUPLICATE_STABLE_FACT") }
             }
             need(v.estimatedDurationMs == v.paragraphs.sumOf { it.estimatedDurationMs },"INVALID_DURATION")
             need(v.contentHash == versionHash(v.storyId,v.version,v.paragraphs),"STORY_HASH_MISMATCH")

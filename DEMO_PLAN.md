@@ -92,7 +92,15 @@
 - 영상: `SET_VIDEO_MODE` + `demo_route.py --video` → S01·S03·S05·S08·S10, 중간 대화 1회 포함 ON→도착→OFF→기록까지 5분 38초 무개입 1회 통과. 스크린샷은 `Claude outputs/step4-rehearsal/`.
 - 환경 이슈: 에뮬레이터 네트워크가 VALIDATED가 아니면 내비 자체 서버 호출 실패 → `requestRoute` CAUSE_SEARCH_ROUTE + 내비 "경로 탐색 오류" 대화상자(닫기로 진행, 앱 흐름엔 영향 없음).
 
-**5단계 — 제출물**: release APK(`apk/팀명_Petasos_release.apk`, 100MB 미만), README(실행 방법·서버·adb 명령), 시연 영상 녹화.
+**5단계 — 제출물** (진행: release APK·README·GPX·비밀값 검사 완료, 시연 영상 녹화는 남음)
+- 이야기 2문단: S01·S03·S05·S08·S10을 문장 경계에서 2문단으로 분리(새 사실 없음), version 2·콘텐츠 해시 갱신. 사실이 하나뿐이라 "한 사실은 한 문단" 검사를 "같은 리비전 재사용 허용, 다른 리비전 혼용 거부"로 완화(서버·`ContentBundleCodec`·`RoomContentInstaller`). release에서 S01 1문단 중 말하기 → 실패 안내 → S01 2문단 복귀 확인(서버 답변 경로의 2문단 복귀는 직접 보지 못함, 복귀 로직은 공유).
+- release APK: `apk/Petasos_Petasos_release.apk`(60MB, git 제외 → GitHub Release 첨부). release도 `BuildConfig.DEMO=true`, debug 전용 receiver는 미포함, 로컬 키(`.local/android/`)로 서명. 앱 삭제 후 새 설치 → 서버·reverse 없이 ON → GPS 전 구간 → 이야기 → OFF → 기록(지역 17·이야기 카드 8, 오류 표시 없음) 통과. 서버 없는 말하기는 카드에 "지금은 답변 서버에 연결할 수 없어요." 후 이야기 복귀.
+- 서버 연결(release 포함): 토큰·CA를 `/data/local/tmp/petasos-demo/`에 `adb push`하면 `DemoServerSetup`이 읽어 암호화 저장·localhost 한정 CA 신뢰(사용자 10의 앱 저장소는 adb 접근 불가라 이 경로). release + 로컬 서버로 질문 1회 성공(인식 "서울역은 언제 지어졌어?" → "…1925년에 완공…", 인식 후 약 2.3초).
+- 카드: 터치 가능·불투명 1.0, 창 크기를 카드 모양에 맞춤(투명 여백이 터치를 먹지 않음), 카드 밖 지도 터치 통과 확인. 서버 실패 문구가 카드에 보이도록 GENERATING 중 캡션 우선 표시.
+- GPX: `demo/route.gpx`(255점, 4.8분, `demo_route.py --gpx`). Extended controls에서의 실제 재생은 미확인.
+- 비밀값 검사: git 전체 이력 29커밋에서 `.env` 값·토큰·서명 비밀번호 일치 0, OpenRouter/AWS/개인키 패턴 0, 추적된 인증서는 debug 공개 CA뿐. 원격 저장소 없음(push 명령만 준비).
+- 내비 GPS 조사: 에뮬레이터 NMEA 체크섬이 `*47` 고정이라 내비 `NmeaParser`가 전부 거부(원인 확정). 올바른 체크섬 NMEA(`adb emu geo nmea`, 에뮬레이터와 같은 필드 형식)는 HAL이 받지만 내비 엔진 위치(`[mm] org(127.094681,37.4127212) sat(0)`)는 고정 → 해결 못 함, `demo_route.py` 옵션 없음. `getCurrentLocationInfo`는 활성 경로가 없어 확인 못 함.
+- 환경 메모: Mac 출력 볼륨이 낮으면(50%) `say` 음성이 STT에 안 잡힘(85% 정상). ON 직후 첫 출력은 음악이라 이야기를 한 문단 듣기 전 말하면 답변 근거가 없어 같은 실패 문구가 나옴.
 
 ## 5. 개발 원칙 (이전 방식에서 바꾸는 점)
 - 새 기능마다 문서·증거 JSON·probe를 만들지 않는다. 변경 내역은 git 커밋 메시지로 충분.
@@ -106,4 +114,4 @@
 - [x] 이야기 → 음악 → 다음 지역 이야기 자동 전환이 대전까지 이어진다.
 - [x] OFF → overlay·위치·오디오가 모두 정리된다.
 - [x] 나의 기록에 경로선·통과 지역·들은 이야기가 표시된다.
-- [ ] release APK 설치 후 위 흐름 재현.
+- [x] release APK 설치 후 위 흐름 재현(서버 없이 전체 흐름 + 서버 켠 상태 대화 1회; 사람 목소리 확인은 4단계 항목과 함께 남음).

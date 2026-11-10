@@ -39,7 +39,7 @@ internal class BundledStoryCatalog(context: Context) {
 
     companion object {
         const val ASSET = "content/p0-stories-v2.json"
-        const val SHA256 = "c8f34431486e0581c2f2a9916eba2db17e6511259f47b4f7ee7a31d70cd7862b"
+        const val SHA256 = "ed5b8ec72eadd055820473a5b8f5146d92c4d82b6b45342585eea7fd14e2d569"
         private const val MAX_BYTES = 262_144
     }
 }

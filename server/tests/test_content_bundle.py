@@ -186,12 +186,12 @@ class ContentBundleTests(unittest.TestCase):
         review = review_fixture(); review["versions"][0]["createdAt"] = True
         self.assert_review_error(review, "INVALID_BUNDLE")
 
-    def test_duplicate_stable_fact_is_rejected_within_version_but_allowed_across_versions(self):
+    def test_one_fact_revision_may_back_several_paragraphs_and_across_versions(self):
         review = review_fixture()
         extra = deepcopy(review["versions"][0]["paragraphs"][0]); extra.update(stableKey="repeat", ordinal=1)
         review["versions"][0]["paragraphs"].append(extra)
         review["versions"][0]["estimatedDurationMs"] *= 2
-        self.assert_review_error(review, "DUPLICATE_STABLE_FACT")
+        self.assertEqual(len(build_reviewed_bundle(review, NOW)["versions"][0]["paragraphs"]), 2)
         review = review_fixture()
         second_version = deepcopy(review["versions"][0]); second_version["version"] = 2
         review["versions"].append(second_version)

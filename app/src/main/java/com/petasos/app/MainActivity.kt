@@ -19,7 +19,7 @@ class MainActivity : Activity() {
     }
 
     override fun onStart() { super.onStart(); controls.start() }
-    override fun onResume() { super.onResume(); controls.setResumed(true) }
+    override fun onResume() { super.onResume(); controls.setResumed(true); com.petasos.app.generation.DemoServerSetup.start(this) }
     override fun onPause() { controls.setResumed(false); super.onPause() }
     override fun onStop() { controls.stop(); super.onStop() }
     override fun onLowMemory() { controls.onLowMemory(); super.onLowMemory() }
