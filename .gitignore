@@ -17,3 +17,6 @@ __pycache__/
 *.pyc
 
 
+
+# Local screenshots and design reviews
+Claude outputs/

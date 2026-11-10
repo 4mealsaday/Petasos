@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Petasos app icon, concept A (winged hat). Background #0078FF, symbol #FFFFFF. -->
+  <rect width="200" height="200" rx="46" fill="#0078FF"/>
+  <g fill="#FFFFFF" transform="translate(100,104) scale(1.05) translate(-100,-100)">
+    <path d="M72 112 C50 108 30 92 20 62 C35 71 46 73 55 71 C44 61 39 49 40 36 C55 50 69 64 80 96 Z"/>
+    <path transform="translate(200,0) scale(-1,1)" d="M72 112 C50 108 30 92 20 62 C35 71 46 73 55 71 C44 61 39 49 40 36 C55 50 69 64 80 96 Z"/>
+    <path d="M60 126 C60 72 140 72 140 126 Z"/>
+    <ellipse cx="100" cy="127" rx="62" ry="12"/>
+  </g>
+</svg>
