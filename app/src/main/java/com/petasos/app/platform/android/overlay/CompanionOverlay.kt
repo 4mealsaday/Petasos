@@ -45,6 +45,7 @@ class CompanionOverlay(serviceContext: Context, private val host: PetasosSession
     private var regionLabel: CurrentRegionLabel? = null
     private var restricted = false
     private val refreshListener: () -> Unit = { refresh() }
+    private val frontListener: () -> Unit = { applyAppInFront() }
 
     // Sentence pacing: the caption is a whole paragraph, the card shows one sentence at a time.
     private var pacedText: String? = null
@@ -74,6 +75,8 @@ class CompanionOverlay(serviceContext: Context, private val host: PetasosSession
         host.setOverlayCaptionVisible(this, true)
         host.setOverlayTalkVisible(this, true)
         host.addUiListener(refreshListener)
+        AppInFront.add(frontListener)
+        applyAppInFront()
         regionLabel = CurrentRegionLabel(context, host) { refresh() }.also { it.start() }
         carPolicy = CarPolicySource(context, onUx = { value ->
             restricted = value.requiresDistractionOptimization
@@ -85,6 +88,7 @@ class CompanionOverlay(serviceContext: Context, private val host: PetasosSession
     fun detach() {
         check(Looper.myLooper() == Looper.getMainLooper())
         host.removeUiListener(refreshListener)
+        AppInFront.remove(frontListener)
         host.setOverlayTalkVisible(this, false)
         host.setOverlayCaptionVisible(this, false)
         handler.removeCallbacks(advance); handler.removeCallbacks(cautionEnd)
@@ -95,6 +99,19 @@ class CompanionOverlay(serviceContext: Context, private val host: PetasosSession
         cardView?.let { safeRemove(it) }
         buttonView = null
         cardView = null
+    }
+
+    /** Hidden and untouchable while Petasos itself is in front; shown again over navigation. */
+    private fun applyAppInFront() {
+        val hide = AppInFront.value
+        listOf(buttonView, cardView).forEach { view ->
+            view ?: return@forEach
+            view.visibility = if (hide) View.GONE else View.VISIBLE
+            val params = view.layoutParams as? WindowManager.LayoutParams ?: return@forEach
+            params.flags = if (hide) params.flags or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                else params.flags and WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE.inv()
+            try { windowManager.updateViewLayout(view, params) } catch (_: Exception) { /* Already detached. */ }
+        }
     }
 
     private fun safeRemove(view: View) {
@@ -270,13 +287,13 @@ class CompanionOverlay(serviceContext: Context, private val host: PetasosSession
         }
     }
 
+    /** Lower right of the map: right of navigation's search/guidance panel, left of its volume/settings buttons. */
     private fun cardParams(): WindowManager.LayoutParams {
         val resources = context.resources
-        val margin = resources.getDimensionPixelSize(R.dimen.overlay_card_margin_horizontal)
-        val strip = resources.getDimensionPixelSize(R.dimen.overlay_system_strip)
-        val left = mapLeft() + margin
+        val left = mapLeft() + resources.getDimensionPixelSize(R.dimen.overlay_card_start_inset)
+        val right = screenWidth() - resources.getDimensionPixelSize(R.dimen.overlay_card_margin_end)
         return WindowManager.LayoutParams(
-            screenWidth() - strip - margin - left,
+            right - left,
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,

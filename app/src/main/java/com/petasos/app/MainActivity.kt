@@ -24,8 +24,8 @@ class MainActivity : Activity() {
     }
 
     override fun onStart() { super.onStart(); controls.start() }
-    override fun onResume() { super.onResume(); controls.setResumed(true); com.petasos.app.generation.DemoServerSetup.start(this) }
-    override fun onPause() { controls.setResumed(false); super.onPause() }
+    override fun onResume() { super.onResume(); com.petasos.app.platform.android.overlay.AppInFront.value = true; controls.setResumed(true); com.petasos.app.generation.DemoServerSetup.start(this) }
+    override fun onPause() { com.petasos.app.platform.android.overlay.AppInFront.value = false; controls.setResumed(false); super.onPause() }
     override fun onStop() { controls.stop(); super.onStop() }
     override fun onLowMemory() { controls.onLowMemory(); super.onLowMemory() }
     override fun onSaveInstanceState(outState: Bundle) { controls.saveTransientState(); super.onSaveInstanceState(outState) }
