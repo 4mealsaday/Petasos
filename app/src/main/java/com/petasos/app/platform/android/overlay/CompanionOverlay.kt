@@ -225,8 +225,10 @@ class CompanionOverlay(serviceContext: Context, private val host: PetasosSession
         handler.removeCallbacks(cautionEnd)
         if (state.ring == Ring.CAUTION) handler.postDelayed(cautionEnd, (cautionUntil - SystemClock.elapsedRealtime()).coerceAtLeast(50))
         dots.visibility = if (state.dots) View.VISIBLE else View.GONE
-        // The hat moves up a little so the three dots sit below it.
-        mark.translationY = if (state.dots) -10f * context.resources.displayMetrics.density else 0f
+        // The microphone shrinks and moves up a little so the three dots sit below it.
+        mark.translationY = if (state.dots) -12f * context.resources.displayMetrics.density else 0f
+        mark.scaleX = if (state.dots) 0.75f else 1f
+        mark.scaleY = mark.scaleX
         if (state.dots && blink == null) {
             val views = listOf(R.id.overlay_dot_1, R.id.overlay_dot_2, R.id.overlay_dot_3).map { button.findViewById<View>(it) }
             blink = ValueAnimator.ofFloat(0f, 3f).apply {
