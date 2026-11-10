@@ -9,6 +9,8 @@ class AutomaticStoryCandidate(
     val reason: CandidateReason,
     val regionId: String?,
     val eligibilityKey: String,
+    /** The story's tags match an explicit interest. Ranking only: it never makes a story eligible. */
+    val interestMatch: Boolean = false,
 ) {
     val story: PreparedStory = story.copy(paragraphIds = Collections.unmodifiableList(story.paragraphIds.toList()))
 
@@ -19,9 +21,10 @@ class AutomaticStoryCandidate(
     }
 
     override fun equals(other: Any?): Boolean = other is AutomaticStoryCandidate &&
-        story == other.story && reason == other.reason && regionId == other.regionId && eligibilityKey == other.eligibilityKey
+        story == other.story && reason == other.reason && regionId == other.regionId && eligibilityKey == other.eligibilityKey &&
+        interestMatch == other.interestMatch
 
-    override fun hashCode(): Int = arrayOf(story, reason, regionId, eligibilityKey).contentHashCode()
+    override fun hashCode(): Int = arrayOf(story, reason, regionId, eligibilityKey, interestMatch).contentHashCode()
 
     override fun toString(): String = "AutomaticStoryCandidate(reason=$reason, content=redacted, eligibility=redacted)"
 }

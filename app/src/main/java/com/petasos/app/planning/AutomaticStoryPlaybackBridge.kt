@@ -72,7 +72,8 @@ class AutomaticStoryPlaybackBridge(
             candidates(region, excluded).filter { candidate ->
                 candidate.story.storyId !in excludedStoryIds &&
                     (candidate.reason == CandidateReason.INTEREST || eligibleRegion(context, candidate.regionId))
-            }.sortedBy { if (it.reason == CandidateReason.CURRENT_REGION) 0 else 1 }
+            }.sortedWith(compareBy<AutomaticStoryCandidate>({ if (it.reason == CandidateReason.CURRENT_REGION) 0 else 1 },
+                { if (it.interestMatch) 0 else 1 }))
                 .distinctBy { it.story.storyId }
         } catch (failure: Exception) {
             clear()
@@ -91,7 +92,8 @@ class AutomaticStoryPlaybackBridge(
             val predicted = entry.candidate.reason == CandidateReason.CURRENT_REGION && context.regionalTarget != null
             planner.offer(StoryCandidate(entry.id, entry.story,
                 if (predicted) CandidateReason.UPCOMING_REGION else entry.candidate.reason, entry.candidate.regionId,
-                routeDependency = if (predicted) context.regionalTarget?.routeDependency else null, expiresAtElapsedMs = null))
+                routeDependency = if (predicted) context.regionalTarget?.routeDependency else null, expiresAtElapsedMs = null,
+                interestMatch = entry.candidate.interestMatch))
         }
 
         val selectedId = if (allowOffer) planner.chooseAtBoundary(checkedContext) {

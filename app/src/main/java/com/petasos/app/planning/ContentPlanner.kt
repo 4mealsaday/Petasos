@@ -14,6 +14,8 @@ data class StoryCandidate(
     /** Null means current-position mode. GPS changes never change this revision. */
     val routeDependency: Long?,
     val expiresAtElapsedMs: Long?,
+    /** Within one region, stories matching an explicit interest are chosen first. */
+    val interestMatch: Boolean = false,
 ) {
     init {
         require(candidateId.isNotBlank())
@@ -87,7 +89,7 @@ class ContentPlanner(private val clockScopeId: String) {
                 context.regionalTarget?.allowsStoryRegion(it.regionId) == true }
                 .minWithOrNull(compareBy<StoryCandidate> {
                     context.regionalTarget?.storyScope?.eligibleStoryRegionIds?.indexOf(it.regionId) ?: 0
-                }.thenBy { it.story.storyId }) ?:
+                }.thenBy { if (it.interestMatch) 0 else 1 }.thenBy { it.story.storyId }) ?:
             candidates.values.firstOrNull { freshLocation(context) && regionAuthorized(context) && it.reason == CandidateReason.CURRENT_REGION &&
                 it.regionId != null && it.regionId == context.currentRegionId } ?:
             candidates.values.firstOrNull { it.reason == CandidateReason.INTEREST }

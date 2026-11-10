@@ -28,7 +28,11 @@ class RoomAutomaticStoryStore internal constructor(
     private val preferences = RoomVehiclePreferenceStore(database, wallTime, ownsDatabase = false)
     private val regionBindings = RoomRegionalContentBindings(database, wallTime)
 
-    /** Region first, then exact explicit-interest tags; no keyword inference or implicit preference writes. */
+    /**
+     * Only stories bound to the confirmed region. Explicit interest tags rank them ([AutomaticStoryCandidate.interestMatch])
+     * but never make a story of another place eligible: an interest-only candidate would start before the region is
+     * confirmed and lose its offer to the startup revocations. No keyword inference or implicit preference writes.
+     */
     fun candidates(currentRegionId: String?, excludedStoryIds: Set<String> = emptySet()): List<AutomaticStoryCandidate> = read(emptyList()) {
         val region = currentRegionId?.takeIf { it.isNotBlank() }
         val scope = region?.let(hierarchy::scope)
@@ -37,16 +41,13 @@ class RoomAutomaticStoryStore internal constructor(
         val result = mutableListOf<AutomaticStoryCandidate>()
         // Apply reviewed regional eligibility before priority and the result cap. Raw region_id
         // alone could otherwise put 64 unreviewed interest rows ahead of a valid regional story.
-        val searches = (scope?.eligibleStoryRegionIds ?: emptyList()).map { CandidateReason.CURRENT_REGION to it } +
-            listOf(CandidateReason.INTEREST to null)
-        for ((reason, storyRegion) in searches) {
-            val statement = "${RoomAutomaticStoryEligibility.SELECT}" + (if (storyRegion != null) " AND s.region_id=?" else "") + " ORDER BY s.story_id"
-            val arguments = if (storyRegion != null) arrayOf<Any?>(storyRegion) else emptyArray()
-            query(statement, *arguments).use { rows ->
+        for (storyRegion in scope?.eligibleStoryRegionIds ?: emptyList()) {
+            val statement = "${RoomAutomaticStoryEligibility.SELECT} AND s.region_id=? ORDER BY s.story_id"
+            query(statement, storyRegion).use { rows ->
                 while (result.size < MAX_CANDIDATES && rows.moveToNext()) {
                     val storyId = rows.getString(rows.getColumnIndexOrThrow("story_id"))
                     if (storyId in excluded || DemoVideoMode.excludes(storyId)) continue
-                    readCandidate(rows, scope, interest)?.takeIf { it.reason == reason }?.let(result::add)
+                    readCandidate(rows, scope, interest)?.takeIf { it.reason == CandidateReason.CURRENT_REGION }?.let(result::add)
                 }
             }
         }
@@ -150,7 +151,8 @@ class RoomAutomaticStoryStore internal constructor(
             ) else null,
         )))
         return AutomaticStoryCandidate(prepared, reason,
-            if (reason == CandidateReason.CURRENT_REGION) storyRegion else null, key)
+            if (reason == CandidateReason.CURRENT_REGION) storyRegion else null, key,
+            interestMatch = interest != null && tags.any { it in interest.keywords })
     }
 
     private fun matchesHierarchyRevision(storyId: String, regionId: String): Boolean {
