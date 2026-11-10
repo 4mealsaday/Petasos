@@ -579,7 +579,10 @@ class PetasosSessionHost(
         main.post { navigation?.close() }
         synchronized(captionLock) {
             captionVisibility.clear()
-            talkVisibility.clear()
+            // Only the overlay goes away with the companion. The Activity's own visibility is driven by its
+            // lifecycle and is never re-sent while unchanged; clearing it here (e.g. on a first run without
+            // location permission) left every settings/interest save refused as "not visible".
+            talkVisibility.revokeOverlay()
             refreshTalkVisibilityLocked()
             refreshCaptionVisibilityLocked()
         }
