@@ -8,20 +8,31 @@
             android:layout_marginStart="@dimen/space_8" android:text="@string/sources_title" />
     </LinearLayout>
     <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
-        <LinearLayout style="@style/Widget.Petasos.Card" android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_margin="@dimen/screen_padding" android:orientation="vertical">
-            <TextView style="@style/Text.Title" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/sources_public_title" />
-            <TextView style="@style/Text.Body" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_8"
-                android:text="@string/sources_public_body" />
-            <TextView style="@style/Text.Title" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_24" android:text="@string/sources_map_title" />
-            <TextView style="@style/Text.Body" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_8"
-                android:text="@string/sources_map_body" />
-            <TextView style="@style/Text.Title" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_24" android:text="@string/sources_music_title" />
-            <TextView android:id="@+id/sources_music" style="@style/Text.Body" android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_8" android:text="@string/sources_music_loading" android:saveEnabled="false" />
-            <TextView style="@style/Text.Title" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_24" android:text="@string/sources_font_title" />
-            <TextView style="@style/Text.Body" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_8"
-                android:text="@string/sources_font_body" />
+        <!-- Two columns: public data / map·font on the left, music on the right. Rows are built by SourcesControls. -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal"
+            android:padding="@dimen/screen_padding" android:baselineAligned="false">
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                android:orientation="vertical">
+                <LinearLayout android:id="@+id/sources_public_list" style="@style/Widget.Petasos.Card" android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:orientation="vertical">
+                    <TextView style="@style/Text.Title" android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:text="@string/sources_public_title" />
+                </LinearLayout>
+                <LinearLayout android:id="@+id/sources_misc_list" style="@style/Widget.Petasos.Card" android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:layout_marginTop="@dimen/card_gap" android:orientation="vertical">
+                    <TextView style="@style/Text.Title" android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:text="@string/sources_map_title" />
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout android:id="@+id/sources_music_list" style="@style/Widget.Petasos.Card" android:layout_width="0dp"
+                android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="@dimen/card_gap"
+                android:orientation="vertical">
+                <TextView style="@style/Text.Title" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="@string/sources_music_title" />
+                <TextView android:id="@+id/sources_music" style="@style/Text.Caption" android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:layout_marginTop="@dimen/space_16" android:text="@string/sources_music_loading"
+                    android:saveEnabled="false" />
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
