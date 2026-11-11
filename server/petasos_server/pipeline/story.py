@@ -20,6 +20,7 @@ from ..content_bundle import version_content_hash
 from ..contracts import Failure, model_schema
 from ..evidence import EvidenceContext, validate_semantics
 from ..prompts import story_prompt, system_prompt
+from .grounding import GroundingJudge, judgment_reasons, location_reasons
 
 LEGACY_VERSION = system_prompt()[0]
 CHARS_PER_SECOND = 5.0          # the demo pack's reviewed stories: about 165 characters per 34 seconds
@@ -43,6 +44,8 @@ _KOREAN_NUMBER = re.compile(r"([일이삼사오육칠팔구십백천만]{2,})(?=
 _KOREAN_DIGIT = {"일": 1, "이": 2, "삼": 3, "사": 4, "오": 5, "육": 6, "칠": 7, "팔": 8, "구": 9}
 _KOREAN_UNIT = {"십": 10, "백": 100, "천": 1000}
 _SENTENCE = re.compile(r"[^.?!。]+[.?!。]?")
+OPENINGS = ("place", "person", "scene", "question")   # 장소 이름 / 사람 이야기 / 장면 / 물음
+ENDINGS = ("question", "afterglow", "fact")              # 가벼운 물음 / 한 줄 여운 / 사실로 마무리
 
 
 @dataclass(frozen=True)
@@ -66,6 +69,9 @@ class StoryDraft:
     review_status: str = "draft"
     attempts: list = field(default_factory=list)   # [{"reasons": [...]}] for every rejected attempt before success
     model_id: str | None = None
+    opening: str | None = None      # place | person | scene | question (story guide v2+)
+    ending: str | None = None       # question | afterglow | fact
+    judgments: list = field(default_factory=list)  # grounding rows of the accepted output
 
     @property
     def chars(self):
@@ -74,12 +80,14 @@ class StoryDraft:
     def to_dict(self):
         return {"title": self.title, "coreQuestion": self.core_question, "paragraphs": copy.deepcopy(self.paragraphs),
                 "chars": self.chars, "promptVersion": self.prompt_version, "reviewStatus": self.review_status,
-                "rejectedAttempts": copy.deepcopy(self.attempts), "modelId": self.model_id}
+                "rejectedAttempts": copy.deepcopy(self.attempts), "modelId": self.model_id,
+                "opening": self.opening, "ending": self.ending, "judgments": copy.deepcopy(self.judgments)}
 
     @classmethod
     def from_dict(cls, value):
         return cls(value["title"], value["coreQuestion"], copy.deepcopy(value["paragraphs"]), value["promptVersion"],
-                   value.get("reviewStatus", "draft"), copy.deepcopy(value.get("rejectedAttempts", [])), value.get("modelId"))
+                   value.get("reviewStatus", "draft"), copy.deepcopy(value.get("rejectedAttempts", [])), value.get("modelId"),
+                   value.get("opening"), value.get("ending"), copy.deepcopy(value.get("judgments", [])))
 
     def bundle_version(self, story_id, version, now_ms):
         """The story in the reviewed bundle format (versions[] row), ready for a pack."""
@@ -158,7 +166,7 @@ def _repeated(paragraphs):
     return None
 
 
-def check_story(result, evidence, *, schema, target_seconds=None, existing=()):
+def check_story(result, evidence, *, schema, target_seconds=None, existing=(), region_name=None):
     """-> list of human-readable reasons (empty = accepted). Never raises for model output."""
     if not Draft202012Validator(schema).is_valid(result):
         return ["형식(스키마) 불일치"]
@@ -190,6 +198,10 @@ def check_story(result, evidence, *, schema, target_seconds=None, existing=()):
     repeated = _repeated(paragraphs)
     if repeated:
         reasons.append(f"같은 내용 반복: '{repeated[:30]}'")
+    reasons += location_reasons(paragraphs, region_name)
+    previous = existing[-1] if existing else None
+    if previous and result.get("opening") and (previous.get("opening"), previous.get("ending")) == (result.get("opening"), result.get("ending")):
+        reasons.append(f"직전 이야기와 같은 시작·끝 조합({result['opening']}/{result['ending']})")
     used = {evidence.facts[f]["factId"] for p in paragraphs for f in p["factRevisionIds"] if f in evidence.facts}
     for story in existing:
         if used and used == set(story.get("factIds", ())):
@@ -214,13 +226,18 @@ def lab_schema():
     schema = model_schema("story")
     schema["properties"]["title"] = {"type": "string", "minLength": 1, "maxLength": 60}
     schema["properties"]["coreQuestion"] = {"type": "string", "minLength": 1, "maxLength": 160}
-    schema["required"] = [*schema["required"], "title", "coreQuestion"]
+    schema["properties"]["opening"] = {"enum": list(OPENINGS)}
+    schema["properties"]["ending"] = {"enum": list(ENDINGS)}
+    schema["required"] = [*schema["required"], "title", "coreQuestion", "opening", "ending"]
     return schema
 
 
 class StoryWriter:
-    def __init__(self, provider=None, prompt_version=None):
+    def __init__(self, provider=None, prompt_version=None, judge=None):
+        """judge: a GroundingJudge, or True for one on the same provider. Off by default: the app's story API keeps one
+        model call per request (no timing change); the lab and pack builds turn it on."""
         self.provider = provider
+        self.judge = GroundingJudge(provider) if judge is True else judge
         self.guide_version, self.guide_prompt = story_prompt()
         self.prompt_version = prompt_version or LEGACY_VERSION
         self._prompt(self.prompt_version)
@@ -233,7 +250,7 @@ class StoryWriter:
             return self.guide_prompt
         raise ValueError(f"UNKNOWN_PROMPT_VERSION: {version} (available: {LEGACY_VERSION}, {self.guide_version})")
 
-    async def _attempts(self, provider, payload, evidence, schema, version, target_seconds, existing):
+    async def _attempts(self, provider, payload, evidence, schema, version, target_seconds, existing, region_name=None):
         prompt = self._prompt(version)
         attempts = []
         for _ in range(2):
@@ -244,10 +261,16 @@ class StoryWriter:
             else:
                 generated = await provider.generate("story", body, evidence, schema, system_prompt=prompt)
             result = copy.deepcopy(generated.result)
-            reasons = check_story(result, evidence, schema=schema, target_seconds=target_seconds, existing=existing)
+            reasons = check_story(result, evidence, schema=schema, target_seconds=target_seconds, existing=existing,
+                                  region_name=region_name)
+            judgments = []
+            if not reasons and self.judge is not None:
+                judgments = await self.judge.judge(result["paragraphs"], evidence, region_name)
+                reasons = judgment_reasons(judgments)
             if not reasons:
+                result["_judgments"] = judgments
                 return generated, result, attempts
-            attempts.append({"reasons": reasons, "output": result})
+            attempts.append({"reasons": reasons, "output": result, "judgments": judgments})
         raise StoryRejected(attempts, version)
 
     async def write(self, request: StoryRequest) -> StoryDraft:
@@ -260,9 +283,11 @@ class StoryWriter:
                    "targetChars": target_window(request.target_seconds),
                    "interestFocus": list(request.interest_focus), "existingStories": list(request.existing)}
         generated, result, attempts = await self._attempts(self.provider, payload, evidence, lab_schema(), version,
-                                                           request.target_seconds, request.existing)
+                                                           request.target_seconds, request.existing, request.region_name)
         return StoryDraft(result["title"], result["coreQuestion"], result["paragraphs"], version,
-                          attempts=[{"reasons": a["reasons"]} for a in attempts], model_id=generated.model_id)
+                          attempts=[{"reasons": a["reasons"], "judgments": a["judgments"]} for a in attempts],
+                          model_id=generated.model_id, opening=result["opening"], ending=result["ending"],
+                          judgments=result.get("_judgments", []))
 
     async def generate_api(self, payload, evidence, provider):
         """The app's story API (task=story): same request, same v0.8 result schema, plus the writer's checks and one
@@ -272,4 +297,5 @@ class StoryWriter:
                                                                 self.prompt_version, None, ())
         except StoryRejected:
             raise Failure("INVALID_MODEL_OUTPUT", 422) from None
+        result.pop("_judgments", None)
         return type(generated)(result, generated.model_id, generated.provider, generated.input_tokens, generated.output_tokens)
