@@ -45,7 +45,7 @@ adb emu geo fix 126.9698291 37.5547273
 ```
 
 6. **앱 실행** — 에뮬레이터 하단 바의 Petasos 아이콘(또는 `adb shell am start --user 10 -n com.petasos.app/.MainActivity`). 처음이면 "계속하기" → 관심사 선택(또는 "건너뛰기").
-7. **청취 기록 초기화** — 새로 설치한 직후에는 필요 없다. 다시 시연할 때는 ⚙ 설정 → "청취 기록 초기화"를 누르고, 한 번 더 누르면 지운다.
+7. **청취 기록 초기화** — 새로 설치한 직후에는 필요 없다. 다시 시연할 때는 ⚙ 설정 → "청취 기록 초기화"를 누르고, 한 번 더 누르면 지운다. **초기화하면 여정 기록(내 여행 지도의 갈래)도 지워진다.** 아래 "여정 기록 만들기"를 마친 뒤에는 누르지 않는다.
 8. **영상 모드 + 동행 시작** — 홈에서 **동행 시작**을 누르고 권한 대화상자를 모두 허용한다(오디오 녹음 → "알 수 없는 작업"(Pleos 권한) → 위치). 내비가 앞으로 나오고 오른쪽에 둥근 말하기 버튼, 아래에 자막 카드가 뜬다. 내비에 "경로 탐색 오류"가 뜨면 **닫기**를 누른다(앱 동작과 무관). 지역이 확정되기 전에는 카드에 "출발하면 이야기를 들려드릴게요"만 나온다.
 9. **GPS 재생** — 둘 중 하나를 고른다. 약 9분 코스다.
 
@@ -60,6 +60,15 @@ python3 scripts/demo_route.py --video
 **말하기**: 오른쪽 둥근 버튼을 누른다. 이야기 중이면 현재 문장이 끝난 뒤, 아니면 바로 **말씀해 주세요 → 듣는 중… → 인식한 질문 → 답변 자막** 순으로 나오고, 답변이 끝나면 이야기(없으면 음악 → 다음 이야기)로 돌아온다. AI 서버가 없으면 카드에 "지금은 답변 서버에 연결할 수 없어요."가 나온 뒤 돌아온다. Mac 출력 볼륨이 낮으면(50% 이하) 음성이 인식되지 않으니 85% 이상으로 둔다.
 
 **끝내기**: 도착하면 홈에서 **동행 끝내기**를 누른다. "내 여행"에서 지나온 길, 이야기를 끝까지 들은 지역, 이야기 카드를 볼 수 있다.
+
+**여정 기록 만들기(내 여행 지도용, 녹화 전에 한 번)** — 순서: ① 필요하면 7단계 초기화 → ② 위 서울→대전 주행과 동행 끝내기 → ③ 아래 세 경로를 하나씩 "출발 위치 고정 → 동행 시작 → 재생 → 동행 끝내기" → ④ **그 뒤에는 초기화하지 않는다.** 경로 시나리오(`demo/scenarios/seoul-chuncheon`·`seoul-incheon`·`daejeon-jeonju`)는 이야기 없이 경로만 있고, 각각 내 여행의 별도 여정이 된다. 이야기를 듣지 않은 지역은 회색으로 남는다.
+
+```sh
+adb emu geo fix 126.9698291 37.5547273 && python3 scripts/demo_route.py --scenario seoul-chuncheon   # 서울역 → 춘천역, 약 6분
+adb emu geo fix 126.9698291 37.5547273 && python3 scripts/demo_route.py --scenario seoul-incheon     # 서울역 → 송도 센트럴파크, 약 5분
+adb emu geo fix 127.3866 36.3765 && python3 scripts/demo_route.py --scenario daejeon-jeonju          # 대전엑스포과학공원 → 전주 한옥마을, 약 6분
+```
+(각 줄마다 geo fix 뒤 앱에서 **동행 시작**을 누르고 재생을 시작하며, 재생이 끝나면 **동행 끝내기**를 누른다.)
 
 > release 빌드에는 영상용 대표 이야기 필터(지역당 1편)가 없다. 그래서 지역마다 준비된 이야기가 모두 나오고 `--video` 코스가 약 9분 걸린다. 그 필터와 청취 기록 초기화 브로드캐스트는 debug 빌드 전용이다("개발자용" 참고).
 
@@ -169,7 +178,7 @@ adb shell rm -r /data/local/tmp/petasos-demo                        # 읽은 뒤
 
 ## APK
 
-- **최신 APK는 [GitHub Releases](https://github.com/4mealsaday/Petasos/releases)**에서 받는다. `apk/`에는 **제출용 최종본**(`apk/Petasos_Petasos_release.apk`)만 두며, 개발 중 새로 빌드한 APK로 교체하지 않는다. 로컬 release 키로 서명한 데모용 빌드이며 위 "DEMO" 동작이 켜져 있다. 용량이 커서(약 79 MB) git 이력에는 한 버전만 남겨 두었다.
+- **최신 APK는 [GitHub Releases](https://github.com/4mealsaday/Petasos/releases)**에서 받는다. `apk/`에는 **제출용 최종본**(`apk/Petasos_Petasos_release.apk`)만 두며, 개발 중 새로 빌드한 APK로 교체하지 않는다. 로컬 release 키로 서명한 데모용 빌드이며 위 "DEMO" 동작이 켜져 있다. 용량이 커서(약 80 MB) 교체는 꼭 필요할 때만 한다(교체할 때마다 git 이력이 그만큼 커진다).
 
 ---
 
@@ -305,6 +314,7 @@ PYTHONPATH=server .local/server-venv/bin/python server/tools/build_pack.py --sce
 
 ## 스크립트
 
+- `scripts/fetch-scenario-route.py`: 시나리오 경로를 서버의 네이버 길찾기로 1회 조회해 `route.json`으로 고정(이미 있으면 덮어쓰지 않음).
 - `scripts/demo_route.py`: GPS 재생. `--scenario`(기본 seoul-daejeon), `--video`(영상 프리셋 속도), `--gpx demo/scenarios/seoul-daejeon/route.gpx`(타임스탬프 GPX 내보내기), `--speed`, `--pause`.
 - `server/tools/build_pack.py`: 시나리오 경로 주변 장소를 모아 콘텐츠 팩과 랜드마크 검토표를 만든다.
 - `scripts/build-region-dataset.py`, `scripts/region-boundaries.py`: 시·군·구 경계 데이터 변환.
