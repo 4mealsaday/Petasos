@@ -26,6 +26,7 @@ ROOT = Path(__file__).resolve().parents[2]
 PACK = ROOT / "demo" / "packs" / "seoul-daejeon.json"
 APP_PACK = ROOT / "app" / "src" / "main" / "assets" / "content" / "packs" / "seoul-daejeon.json"
 # BundledStoryCatalog.SHA256: the demo pack's 10 stories stay as reviewed until a story is approved on purpose.
+GUIDE = prompts.story_prompt()[0]
 APP_PACK_SHA256 = "e0ebcf20a19cfc61d72af538da814f28b15aef456c8fa4a5688d7c54807ffca1"
 
 FACTS = (
@@ -35,6 +36,7 @@ FACTS = (
      "statement": "한빛탑은 엑스포과학공원 안의 전망대이다."},
 )
 GOOD = {"title": "박람회가 남긴 공원", "coreQuestion": "박람회 뒤에 무엇이 남았을까요?", "estimatedDurationMs": 30000,
+        "opening": "place", "ending": "question",
         "paragraphs": [
             {"text": "대전 유성구를 지나고 있어요. 이 동네에 엑스포과학공원이 있어요. 천구백구십삼년 대전세계박람회를 기념해 만든 공원이에요.",
              "kind": "fact", "factRevisionIds": ["f1-r1"], "sourceRevisionIds": ["s1"]},
@@ -74,9 +76,9 @@ class PromptSetTests(unittest.TestCase):
 
     def test_story_guide_prompt_carries_rules_persona_composition_and_examples(self):
         version, text = prompts.story_prompt()
-        self.assertEqual(version, "story-guide-v1")
+        self.assertTrue(version.startswith("story-guide-"))
         self.assertNotEqual(version, LEGACY_VERSION)
-        for part in ("untrusted DATA", "## 말투", "## 이야기 구성", "문화역 서울 이팔사", "천안삼거리"):
+        for part in ("untrusted DATA", "## 말투", "## 이야기 구성", "문화역 서울 284", "천안삼거리", "## 근거"):
             self.assertIn(part, text)
         # The safety rules apply to stories too, but the conversation-only task rules do not.
         self.assertNotIn("For answer", text)
@@ -122,13 +124,13 @@ class CheckTests(unittest.TestCase):
 
 
 class WriterTests(unittest.TestCase):
-    def request(self, version="story-guide-v1"):
+    def request(self, version=GUIDE):
         return StoryRequest("30200", "대전 유성구", FACTS, 35, prompt_version=version)
 
     def test_retry_once_with_the_reasons_then_accept(self):
         provider = ScriptedProvider(bad(text="대전 유성구를 지나요! 공원이 있어요."), GOOD)
         draft = asyncio.run(StoryWriter(provider).write(self.request()))
-        self.assertEqual((draft.title, draft.prompt_version, draft.review_status), (GOOD["title"], "story-guide-v1", "draft"))
+        self.assertEqual((draft.title, draft.prompt_version, draft.review_status), (GOOD["title"], GUIDE, "draft"))
         self.assertEqual(len(draft.attempts), 1)
         self.assertIn("느낌표", provider.calls[1]["payload"]["retryReason"])
         self.assertEqual(provider.calls[0]["kwargs"]["system_prompt"], prompts.story_prompt()[1])
@@ -153,6 +155,56 @@ class WriterTests(unittest.TestCase):
                                        "sourceRevisionIds": []}], "story-guide-v1")
         pack["versions"][9] = draft.bundle_version(version["storyId"], version["version"] + 1, 1_800_000_000_000)
         validate_bundle(pack, now_epoch_ms=1_800_000_000_001)
+
+
+class GroundingTests(unittest.TestCase):
+    def test_claim_criteria_and_location_check(self):
+        from petasos_server.pipeline.grounding import is_claim, location_reasons
+        self.assertFalse(is_claim("다음에 이 길을 지날 때 그 탑이 떠오르지 않을까요?"))
+        self.assertFalse(is_claim("박람회가 열리던 풍경을 떠올려 보세요."))
+        self.assertFalse(is_claim("대전 유성구를 지나고 있어요."))
+        self.assertTrue(is_claim("1993년의 풍경을 떠올려 보세요."))
+        self.assertTrue(is_claim("이름 하나에 그 시대의 바람이 담겨 있는 셈이죠."))
+        self.assertEqual(location_reasons([{"text": "대전 유성구를 지나고 있어요."}], "대전 유성구"), [])
+        self.assertTrue(location_reasons([{"text": "용인 해곡동을 지나고 있어요."}], "용인"))
+        self.assertTrue(location_reasons([{"text": "서울역 근처, 서울 중구를 지나고 있어요."}], "서울 중구"))
+        self.assertEqual(location_reasons([{"text": "이 지역에 있는 와우정사는 사찰이에요."}], "용인"), [])
+
+    def test_judge_rejects_insufficient_sentences_then_retries_and_skips_non_claims(self):
+        judged = {"verdicts": [{"id": "p1s2", "verdict": "supported", "reason": ""},
+                               {"id": "p1s3", "verdict": "insufficient", "reason": "조성 이유는 근거에 없음"},
+                               {"id": "p2s1", "verdict": "supported", "reason": ""},
+                               {"id": "p2s2", "verdict": "supported", "reason": ""}]}
+        ok = {"verdicts": [{"id": i, "verdict": "supported", "reason": ""} for i in ("p1s2", "p1s3", "p2s1", "p2s2")]}
+        provider = ScriptedProvider(GOOD, judged, GOOD, ok)
+        writer = StoryWriter(provider, judge=True)
+        draft = asyncio.run(writer.write(StoryRequest("30200", "대전 유성구", FACTS, 35, prompt_version=GUIDE)))
+        tasks = [c["task"] for c in provider.calls]
+        self.assertEqual(tasks, ["story", "grounding", "story", "grounding"])
+        self.assertIn("근거 불충분", draft.attempts[0]["reasons"][0])
+        self.assertIn("근거 불충분", provider.calls[2]["payload"]["retryReason"])
+        # The current-location line and the closing question are never sent to the judge.
+        sent = [item["text"] for item in provider.calls[1]["payload"]["sentences"]]
+        self.assertFalse(any("지나고 있" in t or t.endswith("?") for t in sent))
+        verdicts = {row["verdict"] for row in draft.judgments}
+        self.assertEqual(verdicts, {"supported", "not_claim"})
+
+    def test_location_and_repeated_combination_are_rejected_before_judging(self):
+        value = bad(text="대전 도룡동을 지나고 있어요. 이 동네에 엑스포과학공원이 있어요. 천구백구십삼년 대전세계박람회를 기념해 만든 공원이에요.")
+        reasons = check_story(value, evidence_from_facts(FACTS), schema=lab_schema(), region_name="대전 유성구",
+                              existing=({"title": "앞 이야기", "factIds": [], "opening": "place", "ending": "question"},))
+        self.assertTrue(any("현재 위치" in r for r in reasons))
+        self.assertTrue(any("시작·끝 조합" in r for r in reasons))
+
+    def test_intro_writer_uses_the_same_judge_and_falls_back_to_a_quote(self):
+        from petasos_server.pipeline.intro import IntroWriter
+        intro = {"intro": "천구백구십삼년 박람회 이후 가장 사랑받는 명소예요.", "factRevisionIds": ["f1-r1"]}
+        verdict = {"verdicts": [{"id": "p1s1", "verdict": "insufficient", "reason": "평가는 근거에 없음"}]}
+        provider = ScriptedProvider(intro, verdict, intro, verdict)
+        facts = [{"factRevisionId": "f1-r1", "factId": "f1", "statement": FACTS[0]["statement"], "sourceRevisionId": "s1"}]
+        written = asyncio.run(IntroWriter(provider, judge=True).write("엑스포과학공원", "culture", facts, True))
+        self.assertEqual(written[2], "quote")
+        self.assertEqual([c["task"] for c in provider.calls], ["landmark_intro", "grounding"] * 2)
 
 
 class ApiPathTests(unittest.IsolatedAsyncioTestCase):

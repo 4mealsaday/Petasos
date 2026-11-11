@@ -84,7 +84,7 @@ def main():
     curated = curated_sources.load(scenario_dir / review["curatedSources"]) if review.get("curatedSources") else {}
     pack, report = build_route_pack(
         scenario_id=args.scenario, pack_id=scenario["packId"], version=args.version, route_points=route["path"],
-        base_bundle=base, adapters=adapters, regions=RegionIndex(), intro_writer=IntroWriter(provider),
+        base_bundle=base, adapters=adapters, regions=RegionIndex(), intro_writer=IntroWriter(provider, judge=provider is not None),
         curated=curated, include=review.get("include"), notes=review.get("notes"))
     print(f"Cache: {cache.hits} hits, {cache.misses} fetched")
 
