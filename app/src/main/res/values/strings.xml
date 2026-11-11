@@ -18,9 +18,9 @@
     <string name="home_trips_title">내 여행</string>
     <string name="home_trips_empty">아직 기록이 없어요</string>
     <string name="home_trips_latest">최근 %1$s</string>
-    <string name="home_step_1">시작하면\n내비가 열려요</string>
-    <string name="home_step_2">이야기가\n저절로 나와요</string>
-    <string name="home_step_3">버튼 눌러\n물어보세요</string>
+    <string name="home_step_1">Petasos와\n동행하세요</string>
+    <string name="home_step_2">어느 길이든\n여행처럼</string>
+    <string name="home_step_3">궁금한 건\n물어보세요</string>
     <string name="home_ready_title">준비 상태</string>
     <string name="home_ready_location">위치</string>
     <string name="home_ready_mic">마이크</string>
