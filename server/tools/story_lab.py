@@ -170,8 +170,9 @@ def lab_provider(config_path, environment):
     return provider
 
 
-async def generate_region(writer, region, version, count, target_seconds):
-    stories, existing = [], []
+async def generate_region(writer, region, version, count, target_seconds, previous=None):
+    """previous: the story played just before on the route (another region) -- only its opening/ending matter."""
+    stories, existing = [], ([previous] if previous else [])
     for _ in range(count):
         request = StoryRequest(region["regionCode"], region["regionName"], tuple(region["facts"]), target_seconds,
                                existing=tuple(existing), prompt_version=version)
@@ -184,22 +185,27 @@ async def generate_region(writer, region, version, count, target_seconds):
             stories.append({"status": "error", "code": failure.code})
             continue
         facts = {f["factRevisionId"]: f["factId"] for f in region["facts"]}
-        existing.append({"title": draft.title, "factIds": sorted({facts[f] for p in draft.paragraphs for f in p["factRevisionIds"]})})
+        existing.append({"title": draft.title, "factIds": sorted({facts[f] for p in draft.paragraphs for f in p["factRevisionIds"]}),
+                         "opening": draft.opening, "ending": draft.ending})
         stories.append({"status": "ok", **draft.to_dict()})
     return stories
 
 
 def generate(args):
     environment = load_environment(args.env_file) if args.env_file.exists() else {}
-    writer = StoryWriter(lab_provider(args.server_config, environment), prompt_version=args.prompt_version)
-    regions = eval_regions(set(args.region) if args.region else None)
+    writer = StoryWriter(lab_provider(args.server_config, environment), prompt_version=args.prompt_version, judge=True)
+    order = [code for code, _name, _codes in EVAL_REGIONS]   # the demo route: 서울 → 용인 → 안성 → 천안 → 대전
+    regions = sorted(eval_regions(set(args.region) if args.region else None), key=lambda r: order.index(r["regionCode"]))
     out = OUT / args.prompt_version
 
     async def run():
         try:
+            previous = None
             for region in regions:
                 started = time.monotonic()
-                stories = await generate_region(writer, region, args.prompt_version, args.count, args.target_seconds)
+                stories = await generate_region(writer, region, args.prompt_version, args.count, args.target_seconds, previous)
+                last = next((s for s in reversed(stories) if s["status"] == "ok"), None)
+                previous = {"title": last["title"], "factIds": [], "opening": last.get("opening"), "ending": last.get("ending")} if last else None
                 _write_json(out / f"{region['regionCode']}.json", {
                     "promptVersion": args.prompt_version, "regionCode": region["regionCode"], "regionName": region["regionName"],
                     "targetSeconds": args.target_seconds, "targetChars": target_window(args.target_seconds),
@@ -233,23 +239,82 @@ def _status(story):
     return "거부 — " + " / ".join(lines)
 
 
+MARKS = {"supported": "✅", "insufficient": "⚠️불충분", "contradicted": "❌모순", "not_claim": "·"}
+
+
 def _paragraphs(story, labels):
+    """Each paragraph as its sentences with the grounding verdict (✅ 지지, ⚠️ 불충분, ❌ 모순, · 판정 제외)."""
     if story is None:
         return []
     if story["status"] == "ok":
-        paragraphs = story["paragraphs"]
+        paragraphs, judgments = story["paragraphs"], story.get("judgments") or []
     elif story["status"] == "rejected" and story["rejectedAttempts"][-1].get("output", {}).get("paragraphs"):
-        paragraphs = story["rejectedAttempts"][-1]["output"]["paragraphs"]   # last rejected output, shown for review
+        last = story["rejectedAttempts"][-1]   # last rejected output, shown for review
+        paragraphs, judgments = last["output"]["paragraphs"], last.get("judgments") or []
     else:
         return []
-    return [f"{p['text']} `[{', '.join(labels.get(f, '?') for f in p['factRevisionIds'])}]`" for p in paragraphs]
+    cells = []
+    for number, p in enumerate(paragraphs, 1):
+        rows = [r for r in judgments if r["paragraph"] == number]
+        text = "<br>".join(f"{MARKS[r['verdict']]} {r['sentence']}" + (f" _({r['reason']})_" if r["reason"] else "") for r in rows) if rows else p["text"]
+        cells.append(f"{text} `[{', '.join(labels.get(f, '?') for f in p['factRevisionIds'])}]`")
+    return cells
+
+
+def _results(version):
+    out = []
+    for region in eval_regions():
+        path = OUT / version / f"{region['regionCode']}.json"
+        out += _json(path)["stories"] if path.exists() else []
+    return out
+
+
+def _final_rows(story):
+    if story["status"] == "ok":
+        return story.get("judgments") or []
+    return (story.get("rejectedAttempts") or [{}])[-1].get("judgments") or []
+
+
+def _summary_pass(version):
+    stories = _results(version)
+    return f"{sum(s['status'] == 'ok' for s in stories)}/{len(stories)}"
+
+
+def _summary_location(version):
+    """Accepted stories whose first paragraph still names a place other than the region as the current location."""
+    from petasos_server.pipeline.grounding import location_reasons
+    names = {r["regionCode"]: r["regionName"] for r in eval_regions()}
+    count = 0
+    for region in eval_regions():
+        path = OUT / version / f"{region['regionCode']}.json"
+        for story in (_json(path)["stories"] if path.exists() else []):
+            if story["status"] == "ok" and location_reasons(story["paragraphs"], names[region["regionCode"]]):
+                count += 1
+    attempts = sum(any("현재 위치" in r for a in s.get("rejectedAttempts") or [] for r in a["reasons"]) for s in _results(version))
+    return f"{count}건 (거부된 시도 {attempts}회)"
+
+
+def _summary_bad(version):
+    accepted = sum(r["verdict"] in ("insufficient", "contradicted") for s in _results(version) if s["status"] == "ok" for r in _final_rows(s))
+    attempts = sum(r["verdict"] in ("insufficient", "contradicted") for s in _results(version)
+                   for a in s.get("rejectedAttempts") or [] for r in a.get("judgments") or [])
+    return f"통과본 {accepted}문장 (거부된 시도 {attempts}문장)"
+
+
+def _summary_openings(version):
+    names = {"place": "장소", "person": "사람", "scene": "장면", "question": "물음"}
+    openings = [names.get(s.get("opening"), s.get("opening") or "?") for s in _results(version) if s["status"] == "ok"]
+    passing = sum(s["paragraphs"][0]["text"].lstrip().split(".")[0].find("지나고 있") >= 0 for s in _results(version) if s["status"] == "ok")
+    return f"{len(set(openings))}가지 ({', '.join(openings)}) · 첫 문장 '지나고 있' {passing}편"
 
 
 def compare(args):
     lines = [f"# 이야기 비교: `{args.a}` ↔ `{args.b}`", "",
              f"평가 세트 `server/eval/regions/` · 목표 길이는 각 결과의 targetChars · 검증 기준: 근거 연결, 근거 밖 숫자, "
              f"금지 표현({', '.join(label for _, label in BANNED)}), 문단·전체 길이, 반복", "",
-             "문단 끝 `[F#]`은 그 문단이 인용한 근거 사실 번호다. 거부된 결과는 마지막 시도의 문장을 보여 준다.", ""]
+             "문단 끝 `[F#]`은 그 문단이 인용한 근거 사실 번호다. 거부된 결과는 마지막 시도의 문장을 보여 준다.",
+             "문장 앞 표시는 근거 판정이다: ✅ 지지 · ⚠️불충분 · ❌모순 · `·` 판정 제외(물음, 숫자 없는 상상·여운, 현재 위치 문장 — "
+             "`server/petasos_server/pipeline/grounding.py`). 판정이 없는 결과(판정 전 규칙 검사에서 거부)는 문단 원문만 보인다.", ""]
     for region in eval_regions():
         code = region["regionCode"]
         results = {}
@@ -270,6 +335,7 @@ def compare(args):
             lines += [f"| | `{args.a}` | `{args.b}` |", "|---|---|---|",
                       f"| 검증 | {_cell(_status(a))} | {_cell(_status(b))} |",
                       f"| 제목 | {_cell((a or {}).get('title', '-'))} | {_cell((b or {}).get('title', '-'))} |",
+                      f"| 시작·끝 | {(a or {}).get('opening') or '-'} / {(a or {}).get('ending') or '-'} | {(b or {}).get('opening') or '-'} / {(b or {}).get('ending') or '-'} |",
                       f"| 글자 수 | {(a or {}).get('chars', '-')} | {(b or {}).get('chars', '-')} |"]
             pa, pb = _paragraphs(a, labels), _paragraphs(b, labels)
             for number in range(max(len(pa), len(pb))):
@@ -277,6 +343,11 @@ def compare(args):
                 right = pb[number] if number < len(pb) else ""
                 lines.append(f"| 문단 {number + 1} | {_cell(left)} | {_cell(right)} |")
             lines.append("")
+    lines += ["## 요약", "", "| | " + " | ".join(f"`{v}`" for v in (args.a, args.b)) + " |", "|---|---|---|"]
+    for label, fn in (("통과", _summary_pass), ("현재 위치 지어내기", _summary_location), ("판정 불충분·모순 문장", _summary_bad),
+                      ("시작 방식", _summary_openings)):
+        lines.append(f"| {label} | " + " | ".join(fn(v) for v in (args.a, args.b)) + " |")
+    lines.append("")
     path = OUT / f"compare-{args.a}-{args.b}.md"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text("\n".join(lines), encoding="utf-8")

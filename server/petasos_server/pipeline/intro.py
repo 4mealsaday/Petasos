@@ -11,6 +11,7 @@ import re
 from ..contracts import Failure
 from ..evidence import EvidenceContext
 from ..prompts import landmark_intro_prompt
+from .grounding import GroundingJudge, judgment_reasons
 
 MAX_INTRO_CHARS = 130
 # The app informs; it never tells the driver to look (6장).
@@ -44,8 +45,10 @@ def quote_intro(facts):
 
 
 class IntroWriter:
-    def __init__(self, provider=None):
+    def __init__(self, provider=None, judge=None):
+        """judge: GroundingJudge or True (same provider) -- every intro sentence must be supported by its facts."""
         self.provider = provider
+        self.judge = GroundingJudge(provider) if judge is True and provider is not None else (judge or None)
         self.version, self.prompt = landmark_intro_prompt()
 
     def write_many(self, requests):
@@ -68,13 +71,20 @@ class IntroWriter:
             payload = {"landmarkName": name, "category": category}
             if note:
                 payload["editorNote"] = note
+            reasons = []
             for _ in range(2):
+                body = {**payload, "retryReason": "; ".join(reasons)} if reasons else payload
                 try:
-                    generated = await self.provider.generate("landmark_intro", payload, evidence, SCHEMA, system_prompt=self.prompt)
+                    generated = await self.provider.generate("landmark_intro", body, evidence, SCHEMA, system_prompt=self.prompt)
                     intro, ids = validate_intro(generated.result, evidence)
-                    return intro, ids, "model"
                 except Failure:
+                    reasons = ["형식·근거 연결 오류"]
                     continue
+                if self.judge is not None:
+                    reasons = judgment_reasons(await self.judge.judge([{"text": intro, "factRevisionIds": ids}], evidence))
+                    if reasons:
+                        continue
+                return intro, ids, "model"
         return quote_intro(facts)
 
 
