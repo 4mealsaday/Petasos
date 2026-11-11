@@ -171,6 +171,14 @@
 - 비밀값 검사(전체 42커밋 + 작업 트리 + APK): `.env`의 API 키·서비스 키·네이버 클라이언트 시크릿·서명 비밀번호·기기 토큰·CA 개인키 모두 0건. APK에는 공개 지도 식별자(NCP 키 ID)만 있고 시크릿은 없음. 비밀 패턴(개인키·sk-or-·AKIA·ghp_ 등) 0건. 추적되는 인증서는 debug용 공개 CA뿐. 원격 저장소는 아직 없음.
 - 알려진 가장자리: 안내 시점에 내비 음성 등으로 일시 정지 상태이면 그 안내는 버려지고 같은 장소는 다시 하지 않는다(1회차 재현 시 한 번 발생, 재시도에서는 정상).
 
+**11단계 — 팀 공유용 비공개 저장소 준비** (push 전 단계, 원격 `ByungwooChoi/Petasos`)
+- 이력 정리: 전체 백업 `../petasos-backup.bundle`(213 MB) 후 `git filter-repo --path apk/ --invert-paths`로 과거 apk 9버전 제거, 최신 커밋에만 `apk/Petasos_Petasos_release.apk` 재커밋. 커밋 43 → 44(APK 재커밋), `.git` 403 MB → 139 MB(새 clone 178 MB). 정리 전후 최신 트리 해시 동일(`b4e86ce`, 파일 503개·blob 일치). 문서 2개(DESIGN·CONTENT_PIPELINE)는 작업 폴더 최신본 그대로 확인·커밋(내용 수정 없음). filter-repo가 커밋 안 된 변경을 되돌리므로 사전 복사본으로 복원.
+- 새 컴퓨터 빌드: debug 키 없으면 AGP 기본 키 자동 생성, release 키 없으면 release 변형 생략(`assemble`은 debug만), `scripts/gradle.sh`의 JDK 17 탐색을 하드코딩 경로 대신 환경변수·java_home·brew로. `.env.example`은 코드가 읽는 항목 10개와 일치 확인, 항목당 한 줄 설명. 지도 키가 없어도 빌드되고 내 여행은 내장 지도로 동작(에뮬레이터 확인).
+- README "개발 환경 구성" 절 추가(도구·버전·Pleos 에뮬레이터 링크·clone→설치→서버→데모 재생·브랜치 규칙). 새 clone으로 따라 하다 발견해 고친 것: 근거 파일 출력 폴더 권한(`.local` 포함 0700 필요), 서버는 `.env` 키와 provider가 있어야 기동, `prepare`가 추적 파일(debug CA)을 덮어씀(`git restore`).
+- 확인(빈 Gradle 캐시·빈 Android 사용자 홈의 새 clone, `.env`만 복사): debug 빌드 6분 35초 성공, 에뮬레이터 설치·권한·실행 확인. 서버 테스트 319개(Python 3.11)·provision·근거 파일·prepare·serve·health 통과.
+- 원격은 이미 `Initial commit`(README.md만, 공통 조상 없음)이 있어 단순 push는 거절됨 → 병합 후 push(README 충돌은 우리 쪽 유지, 새 clone에서 시험).
+- 남은 것: 실제 push, 커밋 작성자 메일((KAIST 메일)) 공개 여부 확인, 초기 커밋 문서 3개에 남은 로컬 경로(~) 처리 여부, Windows 명령은 미검증.
+
 ## 5. 개발 원칙 (이전 방식에서 바꾸는 점)
 - 새 기능마다 문서·증거 JSON·probe를 만들지 않는다. 변경 내역은 git 커밋 메시지로 충분.
 - "검증 전이면 기능을 끈다" 대신 "데모에서 동작하게 하고, 한계는 README에 한 줄".

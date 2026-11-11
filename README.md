@@ -69,14 +69,15 @@ AI 답변은 Mac에서 도는 로컬 HTTPS 서버(`server/`)가 OpenRouter를 �
 
 ```sh
 # 1) 의존성과 키
-python3 -m venv .local/server-venv && .local/server-venv/bin/pip install -r server/requirements.txt
+python3.11 -m venv .local/server-venv && .local/server-venv/bin/pip install -r server/requirements.txt   # Python 3.11 이상
 cp .env.example .env        # PETASOS_OPENROUTER_API_KEY 만 채우면 된다 (.env는 git에 올라가지 않는다)
 
 # 2) 기기 토큰·설정 생성 (토큰은 24시간 유효, 값은 출력되지 않는다)
-python3 server/provision-local.py --directory .local/server
+python3.11 server/provision-local.py --directory .local/server
 
 # 3) 앱에 번들된 이야기에서 서버용 근거 파일 생성
 mkdir -p .local/content/bundles .local/content/evidence
+chmod 700 .local .local/content .local/content/bundles .local/content/evidence   # 출력 폴더는 소유자 전용이어야 한다
 cp app/src/main/assets/content/p0-stories-v2.json .local/content/bundles/p0-stories-v2.json && chmod 600 .local/content/bundles/p0-stories-v2.json
 .local/server-venv/bin/python scripts/build-content-bundle.py \
   --evidence-from-bundle .local/content/bundles/p0-stories-v2.json \
@@ -168,34 +169,110 @@ adb shell rm -r /data/local/tmp/petasos-demo                        # 읽은 뒤
 
 ## APK
 
-- 위치: `apk/Petasos_Petasos_release.apk` (git에 포함). 로컬 release 키로 서명한 데모용 빌드이며 위 "DEMO" 동작이 켜져 있다.
+- 위치: `apk/Petasos_Petasos_release.apk` (git에 포함). 로컬 release 키로 서명한 데모용 빌드이며 위 "DEMO" 동작이 켜져 있다. 용량이 커서(약 79 MB) git 이력에는 현재 한 버전만 남겨 두었다.
 
 ---
 
 # 개발자용
 
-## 개발 환경
+## 개발 환경 구성
 
-| 항목 | 고정값 |
-| --- | --- |
-| JDK | 17 (`PETASOS_JAVA_HOME`로 경로 지정, 기본 Homebrew openjdk@17) |
-| Gradle Wrapper / AGP / Kotlin | 8.11.1 / 8.10.1 / 2.2.21 |
-| Room / WorkManager / Media3 / NaviHelper | 2.8.5 / 2.12.0 / 1.11.1 / 3.0.5 |
-| compileSdk / minSdk / targetSdk | 36 / 28 / 34 |
+macOS(Apple Silicon) 기준이다. Windows에서 다른 명령은 괄호로 적었다(Windows 명령은 이 저장소에서 실행해 보지 않았다). 팀원이 새 컴퓨터에서 처음부터 따라 하는 순서다.
 
-프로젝트 루트의 비추적 `local.properties`에 `sdk.dir=<Android SDK 경로>`를 둔다. 의존성은 `.gradle-user-home/`, 서명 키는 `.local/android/`에 보관하며 둘 다 git에서 제외된다. `.env`의 `PETASOS_NAVER_MAPS_ANDROID_KEY_ID` 같은 공개 지도 식별자만 APK에 들어간다.
+### 필요한 도구
+
+| 도구 | 버전 | 설치 |
+| --- | --- | --- |
+| JDK | 17 | `brew install openjdk@17` (Windows: Temurin 17 설치 프로그램) |
+| Android SDK | Platform 36(`android-36`), Build-Tools 35.0.0, Platform-Tools, Emulator | Android Studio → SDK Manager (Windows도 동일) |
+| Gradle | 8.11.1 (AGP 8.10.1, Kotlin 2.2.21) | 저장소의 `./gradlew`가 알아서 받는다. 따로 설치하지 않는다 |
+| Python | 3.11 이상 (3.11·3.14에서 서버 테스트 통과) | `brew install python@3.11` (Windows: python.org 설치 프로그램, 이후 `python3` 대신 `py -3.11`) |
+| Pleos Connect 에뮬레이터 | 2.1.0 (Android 14 / API 34, ARM64) | [공식 설치 가이드](https://document.pleos.ai/docs/connect/guide/getting-started/application-development/setup-connect-sdk-emulator) |
+| Git | 2.x | `brew install git` |
+
+Pleos 에뮬레이터는 SDK Manager → SDK Update Sites에 `https://nexus-playground.pleos.ai/repository/raw-releases/connect-avd/2.x/crp-arm64-sys-img.xml`을 추가한 뒤, API 34의 Pleos Connect 이미지를 설치하고 AVD를 만든다(Automotive → Pleos Connect, RAM 4 GB, **Cold boot**). AVD 이름은 아래 명령과 같게 `Pleos_Connect_v2.1.0`으로 한다. Windows용 이미지 주소는 공식 가이드를 따른다. Pleos SDK(Maven)는 빌드가 `nexus-playground.pleos.ai`에서 받는다.
+
+### 순서
+
+```sh
+# 1) 받기
+git clone https://github.com/ByungwooChoi/Petasos.git && cd Petasos
+
+# 2) .env 받기 — 팀 안에서 따로 전달받아 프로젝트 루트에 둔다. git에 올라가지 않으며 커밋하지 않는다.
+#    항목 설명은 .env.example. 없어도 빌드·실행된다(지도 키가 없으면 내장 지도, AI 서버 키가 없으면 대화만 불가).
+cp /받은/경로/.env .env                                   # (Windows: copy C:\받은\경로\.env .env)
+
+# 3) local.properties — Android SDK 위치(비추적 파일). 환경변수 ANDROID_HOME으로 대신해도 된다.
+echo "sdk.dir=$HOME/Library/Android/sdk" > local.properties  # (Windows: sdk.dir=C\:\\Users\\<이름>\\AppData\\Local\\Android\\Sdk 를 이 파일에 적는다)
+
+# 4) JDK 17 지정 후 debug 빌드 — 처음에는 의존성을 받느라 몇 분 걸린다
+export JAVA_HOME="$(brew --prefix openjdk@17)/libexec/openjdk.jdk/Contents/Home"   # (Windows: set JAVA_HOME=C:\Program Files\Eclipse Adoptium\jdk-17...)
+./gradlew assembleDebug                                    # (Windows: gradlew.bat assembleDebug)
+# 결과: app/build/outputs/apk/debug/app-debug.apk
+```
+
+debug 서명 키는 `.local/android/debug.keystore`가 있으면 그것을, 없으면 Android 기본 debug 키(`~/.android/debug.keystore`, 첫 빌드에 자동 생성)를 쓴다. release 서명 키는 개발자 개인 키라 팀원에게는 없으며, 없으면 release 변형이 만들어지지 않고 debug만 빌드된다(빌드 로그에 안내가 나온다). `./scripts/gradle.sh`는 JDK 17 탐색·프로젝트 안 캐시를 대신해 주는 선택 래퍼이다(macOS·Linux).
+
+```sh
+# 5) 에뮬레이터 부팅 — adb가 PATH에 있어야 한다: export PATH="$HOME/Library/Android/sdk/platform-tools:$PATH"
+#    (Windows: %LOCALAPPDATA%\Android\Sdk\platform-tools 를 PATH에 추가, 실행 파일은 emulator.exe)
+~/Library/Android/sdk/emulator/emulator -avd Pleos_Connect_v2.1.0 -no-snapshot-load -no-boot-anim -dns-server 8.8.8.8,1.1.1.1 &
+adb wait-for-device
+until [ "$(adb shell getprop sys.boot_completed | tr -d '\r')" = 1 ]; do sleep 2; done   # (Windows PowerShell: 부팅 완료까지 adb shell getprop sys.boot_completed 가 1이 될 때까지 반복 확인)
+
+# 6) 설치·권한 — 사용자 ID가 10이 아니면(`adb shell pm list users`) --user 값을 바꾼다.
+#    저장소의 release APK(apk/)와 서명이 달라 서로 덮어쓸 수 없으므로 먼저 지운다.
+adb uninstall com.petasos.app 2>/dev/null
+adb install --user 10 app/build/outputs/apk/debug/app-debug.apk
+adb shell appops set --user 10 com.petasos.app SYSTEM_ALERT_WINDOW allow
+adb shell pm grant --user 10 com.petasos.app android.permission.SYSTEM_ALERT_WINDOW
+adb emu avd hostmicon                                      # 호스트 마이크 입력(부팅할 때마다)
+adb emu geo fix 126.9698291 37.5547273                     # 출발 위치: 서울역
+adb shell am start --user 10 -n com.petasos.app/.MainActivity
+```
+
+앱을 처음 켜면 "계속하기" → 관심사 선택(또는 "건너뛰기") → 홈에서 **동행 시작**을 누르고 권한을 허용한다(위 "설치·실행" 8단계).
+
+**서버(선택)** — AI 대화를 쓸 때만 필요하다. `.env`에 `PETASOS_OPENROUTER_API_KEY`가 있어야 하고, 앱이 `https://localhost:8443`으로 고정 연결하므로 포트는 8443을 쓴다. 각 단계의 설명과 provider 설정(5단계의 JSON, 개인정보 설정 확인 책임)은 위 "(선택) AI 대화용 로컬 서버" 절을 따른다.
+
+```sh
+python3.11 -m venv .local/server-venv                      # (Windows: py -3.11 -m venv .local\server-venv, 이후 .local\server-venv\Scripts\python)
+.local/server-venv/bin/pip install -r server/requirements.txt
+python3.11 server/provision-local.py --directory .local/server
+mkdir -p .local/content/bundles .local/content/evidence
+chmod 700 .local .local/content .local/content/bundles .local/content/evidence   # 근거 파일 출력 폴더는 소유자 전용이어야 한다
+cp app/src/main/assets/content/p0-stories-v2.json .local/content/bundles/ && chmod 600 .local/content/bundles/p0-stories-v2.json
+.local/server-venv/bin/python scripts/build-content-bundle.py --evidence-from-bundle .local/content/bundles/p0-stories-v2.json \
+  --allow-device-id local-development-device --output .local/content/evidence/demo.json
+PYTHONPATH=server .local/server-venv/bin/python server/dev-local-https.py prepare      # (Windows: set PYTHONPATH=server 후 실행)
+git restore app/src/debug/res/raw/dev_local_generation_ca.pem                          # prepare가 덮어쓴 추적 파일은 커밋하지 않는다(서버 연결은 CA 파일 전달로 된다)
+# .local/server/config.json 의 evidenceFile(절대 경로)과 provider 를 채운 뒤:
+PYTHONPATH=server .local/server-venv/bin/python server/dev-local-https.py serve --port 8443 &
+curl -sk https://127.0.0.1:8443/v1/health                  # {"status":"ok",...}
+adb reverse tcp:8443 tcp:8443                              # 에뮬레이터를 재부팅할 때마다
+# 토큰·CA를 에뮬레이터로 전달하는 adb push 명령은 위 "(선택) AI 대화용 로컬 서버" 6)과 같다
+```
+
+```sh
+# 7) 데모 재생 — 에뮬레이터에서 동행 시작을 켠 뒤. 약 9분, Python 표준 라이브러리만 쓴다
+python3 scripts/demo_route.py --video                      # (Windows: py scripts\demo_route.py --video)
+```
+
+**테스트**: `./gradlew :app:testDebugUnitTest`(앱), `PYTHONPATH=server .local/server-venv/bin/python -m unittest discover -s server/tests -t .`(서버).
+
+**브랜치 규칙**: `main`은 항상 빌드되는 상태로 두고, 작업은 브랜치에서 하고 PR로 합친다.
 
 ## 빌드
 
 ```sh
-./scripts/gradle.sh :app:assembleDebug            # app/build/outputs/apk/debug/app-debug.apk
-./scripts/gradle.sh :app:assembleRelease          # app/build/outputs/apk/release/app-release.apk
-./scripts/gradle.sh :app:testDebugUnitTest
+./gradlew assembleDebug                           # app/build/outputs/apk/debug/app-debug.apk
+./gradlew assembleRelease                         # app/build/outputs/apk/release/app-release.apk (release 서명 키가 있을 때만)
+./gradlew :app:testDebugUnitTest
 ```
 
-빌드 유형은 debug/release 둘뿐이고 둘 다 `BuildConfig.DEMO=true`다. debug에는 개발용 도구(`app/src/debug`)와 로그가 더 있다.
+빌드 유형은 debug/release 둘뿐이고 둘 다 `BuildConfig.DEMO=true`다. debug에는 개발용 도구(`app/src/debug`)와 로그가 더 있다. `.env`의 `PETASOS_NAVER_MAPS_ANDROID_KEY_ID` 같은 공개 지도 식별자만 APK에 들어가고 서버 비밀값은 들어가지 않는다.
 
-release 서명은 `.local/android/release.keystore`와 `.local/android/release-signing.properties`(`storePassword`, `keyPassword`, `keyAlias`)를 읽는다. 없으면 서명 없이 빌드된다. 새 키는 `keytool -genkeypair -keystore .local/android/release.keystore -storetype PKCS12 -alias petasos-release -keyalg RSA -keysize 2048 -validity 9125`로 만든다. 빌드 후 `apk/Petasos_Petasos_release.apk`로 복사한다.
+release 서명은 `.local/android/release.keystore`와 `.local/android/release-signing.properties`(`storePassword`, `keyPassword`, `keyAlias`)가 모두 있을 때만 쓰며, 하나라도 없으면 release 변형을 만들지 않는다(`./gradlew assemble`은 debug만 빌드하고, `assembleRelease`를 직접 부르면 `Task 'assembleRelease' not found`로 끝난다). 새 키는 `keytool -genkeypair -keystore .local/android/release.keystore -storetype PKCS12 -alias petasos-release -keyalg RSA -keysize 2048 -validity 9125`로 만든다. 빌드 후 `apk/Petasos_Petasos_release.apk`로 복사한다. 이 파일은 저장소의 이력 중 한 번만 들어 있어야 저장소가 커지지 않으므로, 교체는 개발자(키 보유자)가 합의한 때에만 한다.
 
 호스트 디스크가 부족하면 `rm -rf app/build`로 회수한다(재생성됨).
 
