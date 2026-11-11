@@ -29,7 +29,7 @@ Petasos는 차량 내비게이션 위에서 **지금 지나는 지역의 이야�
 adb wait-for-device
 until [ "$(adb shell getprop sys.boot_completed | tr -d '\r')" = 1 ]; do sleep 2; done
 
-# 2) APK 설치 (이전 설치가 있으면 서명이 달라 먼저 지운다)
+# 2) APK 설치 (이전 설치가 있으면 서명이 달라 먼저 지운다). apk/의 파일은 제출용 최종본이다 — 최신 APK는 GitHub Releases에서 받는다
 adb uninstall com.petasos.app 2>/dev/null
 adb install --user 10 apk/Petasos_Petasos_release.apk
 
@@ -169,7 +169,7 @@ adb shell rm -r /data/local/tmp/petasos-demo                        # 읽은 뒤
 
 ## APK
 
-- 위치: `apk/Petasos_Petasos_release.apk` (git에 포함). 로컬 release 키로 서명한 데모용 빌드이며 위 "DEMO" 동작이 켜져 있다. 용량이 커서(약 79 MB) git 이력에는 현재 한 버전만 남겨 두었다.
+- **최신 APK는 [GitHub Releases](https://github.com/4mealsaday/Petasos/releases)**에서 받는다. `apk/`에는 **제출용 최종본**(`apk/Petasos_Petasos_release.apk`)만 두며, 개발 중 새로 빌드한 APK로 교체하지 않는다. 로컬 release 키로 서명한 데모용 빌드이며 위 "DEMO" 동작이 켜져 있다. 용량이 커서(약 79 MB) git 이력에는 한 버전만 남겨 두었다.
 
 ---
 
@@ -272,7 +272,7 @@ python3 scripts/demo_route.py --video                      # (Windows: py script
 
 빌드 유형은 debug/release 둘뿐이고 둘 다 `BuildConfig.DEMO=true`다. debug에는 개발용 도구(`app/src/debug`)와 로그가 더 있다. `.env`의 `PETASOS_NAVER_MAPS_ANDROID_KEY_ID` 같은 공개 지도 식별자만 APK에 들어가고 서버 비밀값은 들어가지 않는다.
 
-release 서명은 `.local/android/release.keystore`와 `.local/android/release-signing.properties`(`storePassword`, `keyPassword`, `keyAlias`)가 모두 있을 때만 쓰며, 하나라도 없으면 release 변형을 만들지 않는다(`./gradlew assemble`은 debug만 빌드하고, `assembleRelease`를 직접 부르면 `Task 'assembleRelease' not found`로 끝난다). 새 키는 `keytool -genkeypair -keystore .local/android/release.keystore -storetype PKCS12 -alias petasos-release -keyalg RSA -keysize 2048 -validity 9125`로 만든다. 빌드 후 `apk/Petasos_Petasos_release.apk`로 복사한다. 이 파일은 저장소의 이력 중 한 번만 들어 있어야 저장소가 커지지 않으므로, 교체는 개발자(키 보유자)가 합의한 때에만 한다.
+release 서명은 `.local/android/release.keystore`와 `.local/android/release-signing.properties`(`storePassword`, `keyPassword`, `keyAlias`)가 모두 있을 때만 쓰며, 하나라도 없으면 release 변형을 만들지 않는다(`./gradlew assemble`은 debug만 빌드하고, `assembleRelease`를 직접 부르면 `Task 'assembleRelease' not found`로 끝난다). 새 키는 `keytool -genkeypair -keystore .local/android/release.keystore -storetype PKCS12 -alias petasos-release -keyalg RSA -keysize 2048 -validity 9125`로 만든다. 새로 빌드한 release APK는 `apk/`에 복사하지 말고 GitHub Releases에 올린다(`apk/`에는 제출용 최종본만 있어야 이력이 커지지 않는다).
 
 호스트 디스크가 부족하면 `rm -rf app/build`로 회수한다(재생성됨).
 
