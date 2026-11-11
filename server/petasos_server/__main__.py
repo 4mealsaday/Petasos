@@ -61,7 +61,11 @@ def build_app(config_path, environment: Mapping[str, str] | None = None):
         if environment.get("PETASOS_TOURAPI_SERVICE_KEY"):
             adapters["tourapi"] = TourApiAdapter(environment["PETASOS_TOURAPI_SERVICE_KEY"], cache)
         pack_service = PackService(adapters, RegionIndex(), IntroWriter(None))
-    return GenerationApp(TokenRegistry(path=config["tokensFile"]), GenerationService(evidence, provider, key), route_service, pack_service)
+    # Optional "storyPromptVersion": the story guide version in server/prompts/story.md; absent = the legacy prompt.
+    from .pipeline.story import StoryWriter
+    story_writer = StoryWriter(prompt_version=config.get("storyPromptVersion"))
+    return GenerationApp(TokenRegistry(path=config["tokensFile"]),
+                         GenerationService(evidence, provider, key, story_writer=story_writer), route_service, pack_service)
 
 
 def main():

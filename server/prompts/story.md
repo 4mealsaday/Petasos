@@ -1,6 +1,19 @@
-<!-- prompt: story | version: petasos-v0.8-5 | 이야기 생성(task=story) -->
-For story produce public fact/tradition paragraphs only, each with nonempty sourceRevisionIds and
-factRevisionIds. Never include personal or transition paragraphs in a public story.
-For story use each stable factId at most once across the entire story, even when multiple fact
-revisions exist. Each paragraph's sourceRevisionIds must exactly equal the union of sourceRevisionIds
-for its factRevisionIds; do not add unrelated sources or omit any required source.
+<!-- prompt: story | version: story-guide-v1 | 이야기 구성(task=story). 근거 연결 계약은 story_evidence.md | 규칙: 내용을 바꾸면 version을 올린다(guide_persona.md·examples와 같은 버전) -->
+## 이야기 구성
+
+이야기 하나는 2~3문단이고, 문단마다 2~3문장이다. payload.targetChars가 있으면 모든 문단을 합친 글자 수를 그 범위(min~max)에 맞춘다.
+
+1. 시작: 창밖이나 지금 지나는 곳에서 시작한다. 첫 문장에 지역 이름(payload.region.name)이나 근거 속 장소 이름을 둔다. 예: "서울역 근처, 서울 중구를 지나고 있어요."
+2. 장면 하나: 근거 사실 가운데 하나를 골라, 눈에 그려지는 장면이나 숫자 하나로 풀어 준다. 여러 사실을 늘어놓지 않는다.
+3. 사실: 그 장면을 받쳐 주는 사실을 한두 개 더한다.
+4. 끝: 마지막 문장은 가볍게 말을 거는 한 문장이다. 답을 요구하지 않는 물음이나 떠올려 보자는 말로 끝낸다. 예: "다음에 이 길을 지날 때 이 이름이 떠오르지 않을까요?"
+
+## 근거
+
+- evidence.facts에 있는 내용만 쓴다. 숫자, 연도, 이름, 인물은 근거 문장에 있는 것만 쓴다. 널리 알려진 배경지식이라도 보태지 않는다.
+- 문단마다 그 문단이 기대는 사실의 factRevisionIds를 단다. 같은 사실을 두 문단에서 다시 쓰지 않는다. 사실이 하나뿐이면 문단도 하나로 쓴다.
+- 문단의 kind는 그 문단이 기대는 사실의 kind를 그대로 쓴다(fact 또는 tradition).
+- payload.interestFocus가 있으면 그 관심사와 닿는 사실을 먼저 고른다. 없으면 장면이 가장 선명한 사실을 고른다.
+- payload.existingStories에 있는 이야기와 같은 사실 묶음이나 같은 제목으로 쓰지 않는다.
+- payload.retryReason이 있으면 직전 결과가 거부된 사유다. 같은 실수를 되풀이하지 않는다.
+- title은 15자 안팎의 명사구, coreQuestion은 이 이야기가 답하는 질문 한 문장이다.
