@@ -28,9 +28,10 @@ from petasos_server.content_bundle import validate_bundle  # noqa: E402
 from petasos_server.contracts import Failure  # noqa: E402
 from petasos_server.local_env import load_environment  # noqa: E402
 from petasos_server.pipeline.pack import _id, _source_row, pack_bytes, pack_sha256  # noqa: E402
+from petasos_server.pipeline.scoring import StorySeedScorer  # noqa: E402
 from petasos_server.pipeline.sources.text import sentences  # noqa: E402
 from petasos_server.pipeline.story import (LEGACY_VERSION, BANNED, StoryDraft, StoryRejected, StoryRequest,  # noqa: E402
-                                           StoryWriter, target_window)
+                                           StoryWriter, next_ending, target_window)
 
 EVAL = ROOT / "server" / "eval"
 EVAL_REGIONS_DIR = EVAL / "regions"
@@ -43,6 +44,7 @@ EVAL_REGIONS = (("11140", "서울 중구", ("11140",)), ("41460", "용인", ("41
                 ("41550", "안성", ("41550",)), ("44130", "천안", ("44130", "44131", "44133")),
                 ("30200", "대전 유성구", ("30200",)))
 TOURAPI_PLACES_PER_REGION = 3
+LAB_TEMPERATURE = 0.4   # story generation in the lab; the grounding judge always runs at 0
 TOURAPI_FACTS_PER_PLACE = 3
 TOURAPI_DOCUMENTS_PER_REGION = 25
 STORY_CATEGORIES = {"heritage": 1.6, "nature": 1.4, "culture": 1.3, "building": 1.2}
@@ -152,6 +154,43 @@ def eval_regions(only=None):
     return [r for r in regions if only is None or r["regionCode"] in only]
 
 
+# ----------------------------------------------------------------------------------------------- seeds
+
+def build_seeds(region):
+    """Story seeds = fact bundles: facts sharing a source, merged with the facts of the same existing story."""
+    parent = {f["factRevisionId"]: f["factRevisionId"] for f in region["facts"]}
+
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    def union(a, b):
+        parent[find(a)] = find(b)
+
+    by_source = {}
+    for fact in region["facts"]:
+        for source in fact["sourceRevisionIds"]:
+            by_source.setdefault(source, []).append(fact["factRevisionId"])
+    for ids in by_source.values():
+        for other in ids[1:]:
+            union(ids[0], other)
+    for story in region["existingStories"]:
+        ids = [f for f in story["factRevisionIds"] if f in parent]
+        for other in ids[1:]:
+            union(ids[0], other)
+    titles = {s["sourceRevisionId"]: s["title"] for s in region["sources"]}
+    groups = {}
+    for fact in region["facts"]:
+        groups.setdefault(find(fact["factRevisionId"]), []).append(fact)
+    seeds = []
+    for facts in groups.values():
+        seeds.append({"id": facts[0]["factRevisionId"], "title": titles.get(facts[0]["sourceRevisionIds"][0], "?"),
+                      "facts": facts, "statements": [f["statement"] for f in facts]})
+    return seeds
+
+
 # ----------------------------------------------------------------------------------------------- generate
 
 def lab_provider(config_path, environment):
@@ -165,30 +204,53 @@ def lab_provider(config_path, environment):
         api_key=environment["PETASOS_OPENROUTER_API_KEY"], model=config["model"], provider_slug=config["providerSlug"],
         accepted_provider_names=tuple(config["acceptedProviderNames"]), privacy_reviewed_until=config["privacyReviewedUntil"],
         account_content_logging_disabled=config["accountContentLoggingDisabled"],
-        max_output_tokens=min(4096, config.get("maxOutputTokens", 2048)), accepted_model_ids=tuple(config.get("acceptedModelIds", []))))
+        max_output_tokens=min(4096, config.get("maxOutputTokens", 2048)), accepted_model_ids=tuple(config.get("acceptedModelIds", [])),
+        temperature=LAB_TEMPERATURE))
     provider.client = httpx.AsyncClient(timeout=httpx.Timeout(90.0), follow_redirects=False, trust_env=False)
     return provider
 
 
-async def generate_region(writer, region, version, count, target_seconds, previous=None):
-    """previous: the story played just before on the route (another region) -- only its opening/ending matter."""
+async def generate_region(writer, region, version, count, target_seconds, previous=None, use_seeds=True):
+    """previous: the story played just before on the route (another region) -- its opening/ending and whether its seed
+    was a religious facility matter. With seeds, StorySeedScorer picks the fact bundle; otherwise every fact is offered."""
     stories, existing = [], ([previous] if previous else [])
+    scorer, used = StorySeedScorer(), set()
+    previous_religious = bool(previous and previous.get("religious"))
     for _ in range(count):
-        request = StoryRequest(region["regionCode"], region["regionName"], tuple(region["facts"]), target_seconds,
-                               existing=tuple(existing), prompt_version=version)
+        seed = None
+        facts = region["facts"]
+        if use_seeds:
+            ranked = scorer.select(build_seeds(region), previous_religious=previous_religious, used=used)
+            if not ranked:
+                break
+            seed = ranked[0]
+            used.add(seed["id"])
+            facts = seed["facts"]
+            previous_religious = seed["religious"]
+        info = None if seed is None else {key: seed[key] for key in ("id", "title", "score", "reasons", "rank", "candidates", "heavy", "religious")}
+        ending = None
+        if writer.guide_typed and version == writer.guide_version:
+            ending = next_ending(existing[-1].get("ending") if existing else None, ENDINGS_USED)
+        request = StoryRequest(region["regionCode"], region["regionName"], tuple(facts), target_seconds,
+                               existing=tuple(existing), prompt_version=version, ending=ending)
         try:
             draft = await writer.write(request)
         except StoryRejected as rejected:
-            stories.append({"status": "rejected", "rejectedAttempts": rejected.attempts})
+            stories.append({"status": "rejected", "rejectedAttempts": rejected.attempts, "seed": info})
             continue
         except Failure as failure:
-            stories.append({"status": "error", "code": failure.code})
+            stories.append({"status": "error", "code": failure.code, "seed": info})
             continue
         facts = {f["factRevisionId"]: f["factId"] for f in region["facts"]}
         existing.append({"title": draft.title, "factIds": sorted({facts[f] for p in draft.paragraphs for f in p["factRevisionIds"]}),
                          "opening": draft.opening, "ending": draft.ending})
-        stories.append({"status": "ok", **draft.to_dict()})
+        stories.append({"status": "ok", **draft.to_dict(), "seed": info})
+        if draft.ending:
+            ENDINGS_USED.append(draft.ending)
     return stories
+
+
+ENDINGS_USED = []   # endings of this generate run, for the even rotation
 
 
 def generate(args):
@@ -203,9 +265,11 @@ def generate(args):
             previous = None
             for region in regions:
                 started = time.monotonic()
-                stories = await generate_region(writer, region, args.prompt_version, args.count, args.target_seconds, previous)
+                stories = await generate_region(writer, region, args.prompt_version, args.count, args.target_seconds, previous,
+                                                use_seeds=not args.all_facts)
                 last = next((s for s in reversed(stories) if s["status"] == "ok"), None)
-                previous = {"title": last["title"], "factIds": [], "opening": last.get("opening"), "ending": last.get("ending")} if last else None
+                previous = {"title": last["title"], "factIds": [], "opening": last.get("opening"), "ending": last.get("ending"),
+                            "religious": bool((last.get("seed") or {}).get("religious"))} if last else None
                 _write_json(out / f"{region['regionCode']}.json", {
                     "promptVersion": args.prompt_version, "regionCode": region["regionCode"], "regionName": region["regionName"],
                     "targetSeconds": args.target_seconds, "targetChars": target_window(args.target_seconds),
@@ -240,6 +304,7 @@ def _status(story):
 
 
 MARKS = {"supported": "✅", "insufficient": "⚠️불충분", "contradicted": "❌모순", "not_claim": "·"}
+TYPE_MARKS = {"fact": "[F]", "bridge": "[B]", "bridge→fact": "[B→F]"}
 
 
 def _paragraphs(story, labels):
@@ -256,7 +321,8 @@ def _paragraphs(story, labels):
     cells = []
     for number, p in enumerate(paragraphs, 1):
         rows = [r for r in judgments if r["paragraph"] == number]
-        text = "<br>".join(f"{MARKS[r['verdict']]} {r['sentence']}" + (f" _({r['reason']})_" if r["reason"] else "") for r in rows) if rows else p["text"]
+        text = "<br>".join(f"{TYPE_MARKS.get(r.get('type'), '')}{MARKS[r['verdict']]} {r['sentence']}" + (f" _({r['reason']})_" if r["reason"] else "")
+                             for r in rows) if rows else p.get("text") or " ".join(x["text"] for x in p.get("sentences", []))
         cells.append(f"{text} `[{', '.join(labels.get(f, '?') for f in p['factRevisionIds'])}]`")
     return cells
 
@@ -273,6 +339,38 @@ def _final_rows(story):
     if story["status"] == "ok":
         return story.get("judgments") or []
     return (story.get("rejectedAttempts") or [{}])[-1].get("judgments") or []
+
+
+def _seed(story):
+    seed = (story or {}).get("seed")
+    if not seed:
+        return "전체 사실(소재 선택 없음)"
+    return f"{seed['title']} — {seed['score']:g}점, 후보 {seed['candidates']}개 중 {seed['rank']}위 ({', '.join(seed['reasons'])})"
+
+
+def _summary_bridges(version):
+    ok = [s for s in _results(version) if s["status"] == "ok"]
+    typed = [s for s in ok if any("sentences" in p for p in s["paragraphs"])]
+    if not typed:
+        return "type 없음(v2 이하)"
+    good = 0
+    for s in typed:
+        rows = s.get("judgments") or []
+        if rows and rows[0].get("type") == "bridge" and rows[-1].get("type") == "bridge":
+            good += 1
+    return f"{good}/{len(ok)}편"
+
+
+def _summary_endings(version):
+    endings = [s.get("ending") or "?" for s in _results(version) if s["status"] == "ok"]
+    return f"{len(set(endings))}가지 ({', '.join(endings)})"
+
+
+def _summary_topics(version):
+    seeds = [s.get("seed") for s in _results(version) if s["status"] == "ok"]
+    if not any(seeds):
+        return "소재 선택 없음"
+    return f"무거운 {sum(bool(x and x['heavy']) for x in seeds)}편 / 종교 {sum(bool(x and x['religious']) for x in seeds)}편"
 
 
 def _summary_pass(version):
@@ -314,7 +412,9 @@ def compare(args):
              f"금지 표현({', '.join(label for _, label in BANNED)}), 문단·전체 길이, 반복", "",
              "문단 끝 `[F#]`은 그 문단이 인용한 근거 사실 번호다. 거부된 결과는 마지막 시도의 문장을 보여 준다.",
              "문장 앞 표시는 근거 판정이다: ✅ 지지 · ⚠️불충분 · ❌모순 · `·` 판정 제외(물음, 숫자 없는 상상·여운, 현재 위치 문장 — "
-             "`server/petasos_server/pipeline/grounding.py`). 판정이 없는 결과(판정 전 규칙 검사에서 거부)는 문단 원문만 보인다.", ""]
+             "`server/petasos_server/pipeline/grounding.py`). 판정이 없는 결과(판정 전 규칙 검사에서 거부)는 문단 원문만 보인다.",
+             "문장 type(v3+): `[F]` 사실 · `[B]` 연결(판정 제외) · `[B→F]` 숫자·장소 이름이 든 연결 문장(사실로 보고 판정). "
+             "소재 = StorySeedScorer(story-seed-rules-v0)가 고른 사실 묶음, 점수와 이유.", ""]
     for region in eval_regions():
         code = region["regionCode"]
         results = {}
@@ -335,6 +435,7 @@ def compare(args):
             lines += [f"| | `{args.a}` | `{args.b}` |", "|---|---|---|",
                       f"| 검증 | {_cell(_status(a))} | {_cell(_status(b))} |",
                       f"| 제목 | {_cell((a or {}).get('title', '-'))} | {_cell((b or {}).get('title', '-'))} |",
+                      f"| 소재 | {_cell(_seed(a))} | {_cell(_seed(b))} |",
                       f"| 시작·끝 | {(a or {}).get('opening') or '-'} / {(a or {}).get('ending') or '-'} | {(b or {}).get('opening') or '-'} / {(b or {}).get('ending') or '-'} |",
                       f"| 글자 수 | {(a or {}).get('chars', '-')} | {(b or {}).get('chars', '-')} |"]
             pa, pb = _paragraphs(a, labels), _paragraphs(b, labels)
@@ -345,13 +446,62 @@ def compare(args):
             lines.append("")
     lines += ["## 요약", "", "| | " + " | ".join(f"`{v}`" for v in (args.a, args.b)) + " |", "|---|---|---|"]
     for label, fn in (("통과", _summary_pass), ("현재 위치 지어내기", _summary_location), ("판정 불충분·모순 문장", _summary_bad),
-                      ("시작 방식", _summary_openings)):
+                      ("시작 방식", _summary_openings), ("연결 문장으로 시작·끝", _summary_bridges), ("끝맺음", _summary_endings),
+                      ("무거운 소재 / 종교 시설 소재", _summary_topics)):
         lines.append(f"| {label} | " + " | ".join(fn(v) for v in (args.a, args.b)) + " |")
     lines.append("")
     path = OUT / f"compare-{args.a}-{args.b}.md"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text("\n".join(lines), encoding="utf-8")
     print(f"-> {path.relative_to(ROOT)}")
+
+
+# ----------------------------------------------------------------------------------------------- judge-examples
+
+def parse_example(path):
+    """examples/NN-*.md -> (region name, facts, paragraphs with typed sentences)."""
+    import re
+    text = Path(path).read_text(encoding="utf-8")
+    region = re.search(r"^### 예시: ([^(\n]+?) \(", text, re.M).group(1).strip()
+    facts, paragraphs = {}, []
+    for line in text.splitlines():
+        fact = re.match(r"- (F\d+) \((fact|tradition)\): (.+)$", line)
+        head = re.match(r"문단 \d+ \(([^)]*)\)", line)
+        unit = re.match(r"- \[(fact|bridge)\] (.+)$", line)
+        if fact:
+            facts[fact.group(1)] = {"factRevisionId": f"example-{fact.group(1)}", "factId": f"example-{fact.group(1)}",
+                                    "kind": fact.group(2), "statement": fact.group(3), "sourceRevisionIds": ["example-source"]}
+        elif head:
+            ids = [f"example-{x.strip()}" for x in head.group(1).split(",")]
+            paragraphs.append({"factRevisionIds": ids, "sentences": []})
+        elif unit and paragraphs:
+            paragraphs[-1]["sentences"].append({"text": unit.group(2).strip(), "type": unit.group(1)})
+    return region, list(facts.values()), paragraphs
+
+
+def judge_examples(args):
+    """Run the grounding stage on the prompt examples (same judge as generate)."""
+    from petasos_server.pipeline.grounding import GroundingJudge, VERDICT_LABELS, fact_names
+    from petasos_server.pipeline.story import evidence_from_facts, structure_reasons
+    from petasos_server.prompts import DIRECTORY, example_names
+    environment = load_environment(args.env_file) if args.env_file.exists() else {}
+    provider = lab_provider(args.server_config, environment)
+    judge = GroundingJudge(provider)
+
+    async def run():
+        try:
+            for name in example_names():
+                region, facts, paragraphs = parse_example(DIRECTORY / f"{name}.md")
+                rows = await judge.judge(paragraphs, evidence_from_facts(facts), region)
+                evidence = evidence_from_facts(facts)
+                structure = structure_reasons({"paragraphs": paragraphs}, region, fact_names(evidence))
+                print(f"\n## {name} ({region})" + (f" — 구조: {'; '.join(structure)}" if structure else ""))
+                for row in rows:
+                    print(f"- {TYPE_MARKS.get(row.get('type'), '')} {VERDICT_LABELS[row['verdict']]}: {row['sentence']}"
+                          + (f" — {row['reason']}" if row["reason"] else ""))
+        finally:
+            await provider.close()
+    asyncio.run(run())
 
 
 # ----------------------------------------------------------------------------------------------- approve
@@ -432,6 +582,8 @@ def main(argv=None):
     gen.add_argument("--region", action="append", help="eval region code (repeatable); default: all")
     gen.add_argument("--count", type=int, default=1, help="stories per region")
     gen.add_argument("--target-seconds", type=int, default=35)
+    gen.add_argument("--all-facts", action="store_true", help="offer every region fact instead of the scored story seed")
+    commands.add_parser("judge-examples", help="grounding-judge the prompt examples")
     cmp_ = commands.add_parser("compare")
     cmp_.add_argument("--a", required=True)
     cmp_.add_argument("--b", required=True)
@@ -446,7 +598,8 @@ def main(argv=None):
     args = parser.parse_args(argv)
     if getattr(args, "stories", None) is not None and str(args.stories) in ("", "."):
         args.stories = None
-    {"build-eval": build_eval, "generate": generate, "compare": compare, "approve": approve}[args.command](args)
+    {"build-eval": build_eval, "generate": generate, "compare": compare, "approve": approve,
+     "judge-examples": judge_examples}[args.command](args)
 
 
 if __name__ == "__main__":
