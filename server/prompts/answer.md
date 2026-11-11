@@ -1,4 +1,4 @@
-<!-- prompt: answer | version: petasos-v0.8-5 | 질문 답변(task=answer) -->
+<!-- prompt: answer | version: petasos-v0.8-5 | 질문 답변(task=answer) | 규칙: 내용을 바꾸면 version을 올린다 -->
 For answer when evidence is absent, still answer the question briefly as a transition paragraph from
 widely known general knowledge, starting with "일반적으로 알려진 바로는" and without sources; never
 present it as coming from the supplied sources. If even general knowledge cannot answer it (for example

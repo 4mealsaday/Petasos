@@ -13,6 +13,7 @@ from jsonschema import Draft202012Validator
 
 from .contracts import Failure, META_KEYS, VALIDATORS, model_schema
 from .evidence import validate_semantics
+from .pipeline.story import StoryWriter
 from .provider import PROMPT_VERSION
 
 
@@ -29,10 +30,12 @@ class Entry:
 
 
 class GenerationService:
-    def __init__(self, evidence, provider, fingerprint_key, clock=time.monotonic, timeout=14.0, ttl=60.0):
+    def __init__(self, evidence, provider, fingerprint_key, clock=time.monotonic, timeout=14.0, ttl=60.0, story_writer=None):
         if len(fingerprint_key) < 32 or not 0 < ttl <= 60 or not 0 < timeout <= 60:
             raise ValueError("INVALID_SERVICE_CONFIGURATION")
         self.evidence, self.provider, self.key = evidence, provider, fingerprint_key
+        # Every story goes through the shared StoryWriter (CONTENT_PIPELINE.md 9장); default = the legacy prompt.
+        self.story_writer = story_writer or StoryWriter()
         self.clock, self.timeout, self.ttl = clock, timeout, ttl
         self.entries, self.active, self.starts = {}, defaultdict(int), defaultdict(deque)
         self.lock = asyncio.Lock()
@@ -120,7 +123,10 @@ class GenerationService:
                 raise Failure("CANCELLED", 409)
             self._check_evidence(key[0], request, entry)
             async with asyncio.timeout(self.timeout):
-                generated = await self.provider.generate(request["task"], request["payload"], evidence, schema)
+                if request["task"] == "story":
+                    generated = await self.story_writer.generate_api(request["payload"], evidence, self.provider)
+                else:
+                    generated = await self.provider.generate(request["task"], request["payload"], evidence, schema)
             self._check_evidence(key[0], request, entry)
             result = copy.deepcopy(generated.result)
             if not Draft202012Validator(schema).is_valid(result):
@@ -134,7 +140,8 @@ class GenerationService:
                 result["storyVersionId"] = "sv-" + uuid.uuid4().hex
             body = {key: copy.deepcopy(request[key]) for key in META_KEYS}
             body.update(status="ok", result=result, metadata={"modelId": generated.model_id,
-                        "provider": generated.provider, "promptVersion": PROMPT_VERSION,
+                        "provider": generated.provider,
+                        "promptVersion": self.story_writer.prompt_version if request["task"] == "story" else PROMPT_VERSION,
                         "inputTokens": generated.input_tokens, "outputTokens": generated.output_tokens})
             if not VALIDATORS["SuccessResponse"].is_valid(body):
                 raise Failure("INVALID_MODEL_OUTPUT", 422)

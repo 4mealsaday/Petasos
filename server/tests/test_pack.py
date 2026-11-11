@@ -37,7 +37,7 @@ class PromptFileTests(unittest.TestCase):
         self.assertEqual(hashlib.sha256(text.encode()).hexdigest(), PRE_SPLIT_PROMPT_SHA256)
 
     def test_every_prompt_file_has_a_version(self):
-        for name in ("guide_persona", "story", "answer", "summary_resume", "landmark_intro"):
+        for name in ("rules", "story_evidence", "guide_persona", "story", "answer", "summary_resume", "landmark_intro"):
             version, body = prompts.load(name)
             self.assertTrue(version and body.strip(), name)
         self.assertEqual(prompts.landmark_intro_prompt()[0], "landmark-intro-v2")
