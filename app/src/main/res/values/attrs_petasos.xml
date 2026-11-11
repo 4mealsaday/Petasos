@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Settings shows the 12 interests on their own page, so its chips are larger than onboarding's. -->
+    <declare-styleable name="InterestGridView">
+        <attr name="chipHeight" format="dimension" />
+        <attr name="chipTextSize" format="dimension" />
+    </declare-styleable>
+</resources>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/page_interests"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/page_interests"
     android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:visibility="gone">
     <LinearLayout style="@style/Widget.Petasos.TopBar">
         <ImageButton android:id="@+id/interests_back" style="@style/Widget.Petasos.IconButton"
@@ -11,9 +11,10 @@
         <LinearLayout style="@style/Widget.Petasos.Card" android:layout_width="match_parent" android:layout_height="wrap_content"
             android:layout_margin="@dimen/screen_padding" android:orientation="vertical">
             <TextView style="@style/Text.Body" android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:text="@string/interests_hint" android:layout_marginBottom="@dimen/space_24" />
+                android:text="@string/settings_interests_hint" android:layout_marginBottom="@dimen/space_24" />
             <com.petasos.app.presentation.interests.InterestGridView android:id="@+id/settings_interest_grid"
-                android:layout_width="match_parent" android:layout_height="wrap_content" />
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                app:chipHeight="136dp" app:chipTextSize="@dimen/text_title" />
         </LinearLayout>
     </ScrollView>
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical"
