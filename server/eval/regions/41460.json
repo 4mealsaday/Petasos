@@ -1,0 +1,363 @@
+{
+ "regionCode": "41460",
+ "regionName": "용인",
+ "codes": [
+  "41460",
+  "41461",
+  "41463",
+  "41465"
+ ],
+ "pack": "seoul-daejeon",
+ "createdAt": 1794363995701,
+ "note": "평가 세트(고정). 팩의 검토된 사실 + TourAPI 공공누리 제1유형 개요 문장. 바꾸면 이전 결과와 비교할 수 없다.",
+ "existingStories": [
+  {
+   "label": "S03",
+   "storyId": "d87ba5a6-04d1-54b7-8f75-cf58dfe89ef8",
+   "title": "용구와 처인에서 용인으로",
+   "factRevisionIds": [
+    "a7e34148-57ab-5bd2-99de-c4a8255e448f"
+   ]
+  },
+  {
+   "label": "S04",
+   "storyId": "088b7514-07e1-530e-b6dc-979da12c1aee",
+   "title": "다시 불리게 된 양지와 백암",
+   "factRevisionIds": [
+    "03970925-d308-5bee-9aca-462698ba2b47"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "allowedUses": {
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "allowGeneration": true,
+    "reviewBasis": "검토 대상은 normalizedText의 자체 작성 사실문장에 한정한다. 저작물은 창작적 표현이라는 저작권법 제2조 기준에 따라, 지명 대응·날짜·행정 소속이라는 단순 사실만 새 문장으로 작성한 범위의 개발 검토다. 용인시 연혁 전체·배열·해설·의회 발언에 공공누리 허락이 있다고 주장하지 않는다. 연혁 표와 용인군의회 제44회 내무위원회 제1차의 개칭 조례안 기록을 직접 대조했다. 초안 조례를 이미 공포된 법령으로 간주하여 제7조를 적용하지 않는다."
+   },
+   "attribution": "사실 확인: 용인시, 용인시 연혁, https://www.yongin.go.kr/home/yiIf/yiIfProd/yiIfProd02.jsp; 용인군의회 제44회 내무위원회 제1차, https://council.yongin.go.kr/viewer/minutes.do?uid=425. Petasos 자체 사실문장; 원문 표현·표 복제 없음.",
+   "contentHash": "62d76b6821b49a9e1203dd655f03644326b24b484148517fb8adb724865c0fb5",
+   "fetchedAt": 1794154239017,
+   "license": {
+    "reviewBasis": "저작물은 창작적 표현이라는 저작권법 제2조 기준에 따라, 지명 대응·날짜·행정 소속이라는 단순 사실만 새 문장으로 작성한 범위의 개발 검토다. 용인시 연혁 전체·배열·해설·의회 발언에 공공누리 허락이 있다고 주장하지 않는다. 연혁 표와 용인군의회 제44회 내무위원회 제1차의 개칭 조례안 기록을 직접 대조했다. 초안 조례를 이미 공포된 법령으로 간주하여 제7조를 적용하지 않는다.",
+    "scope": "text",
+    "type": "INDEPENDENT_FACT_STATEMENTS_ONLY",
+    "url": "https://www.law.go.kr/lsInfoP.do?lsiSeq=285693"
+   },
+   "normalizedText": "용인시 연혁은 용구와 처인을 합쳐 용인이라는 이름을 사용한 사실을 기록한다. 1996년 3월 1일 당시 용인지역의 내사면은 양지면으로, 외사면은 백암면으로 이름이 바뀌었다.",
+   "provider": "용인시",
+   "reviewStatus": "verified",
+   "sourceId": "7c187c0c-2e4f-56b5-8db6-c334c3a4846b",
+   "sourceRevisionId": "3a4fe8ae-0e59-5b47-b798-644f813726fc",
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": null,
+   "sourceUrl": "https://www.yongin.go.kr/home/yiIf/yiIfProd/yiIfProd02.jsp",
+   "title": "용인시 연혁의 지명·행정변경 사실",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "allowedUses": {
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "allowGeneration": true,
+    "reviewBasis": "검토 대상은 normalizedText의 자체 작성 사실문장에 한정한다. 국사편찬위원회 실록원문 공식 공공데이터 카탈로그는 출처표시 제1유형을 명시한다. 원문에 있는 용구·처인 통합과 용인 명칭이라는 사실만 자체 서술했다. 현대 국역문 전체와 이미지·DB 구조는 복제하지 않았다. 통합 연도 1413/1414 차이는 이 대본에서 제외한다."
+   },
+   "attribution": "국사편찬위원회, 조선왕조실록 태종실록 28권 태종 14년 8월 21일 기사4, https://sillok.history.go.kr/id/kca_11408021_004. 원문 공공누리 제1유형; Petasos 사실 선별·자체 서술.",
+   "contentHash": "626d83bcced36773050b2d239f3f097745e31e00df38c6b48637b314285c64e8",
+   "fetchedAt": 1794153964163,
+   "license": {
+    "reviewBasis": "국사편찬위원회 실록원문 공식 공공데이터 카탈로그는 출처표시 제1유형을 명시한다. 원문에 있는 용구·처인 통합과 용인 명칭이라는 사실만 자체 서술했다. 현대 국역문 전체와 이미지·DB 구조는 복제하지 않았다. 통합 연도 1413/1414 차이는 이 대본에서 제외한다.",
+    "scope": "text",
+    "type": "KOGL_TYPE_1_ORIGINAL_FACT_SUMMARY",
+    "url": "https://www.data.go.kr/catalog/15053647/fileData.json"
+   },
+   "normalizedText": "조선시대에 용구와 처인을 합쳐 용인이라는 이름을 사용한 사실이 태종실록에 기록되어 있다.",
+   "provider": "국사편찬위원회",
+   "reviewStatus": "verified",
+   "sourceId": "6bbc7ecf-a34e-5221-b92d-35081e654d71",
+   "sourceRevisionId": "0de160ec-0c6e-565e-b396-755259eab427",
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": null,
+   "sourceUrl": "https://sillok.history.go.kr/id/kca_11408021_004",
+   "title": "태종실록 28권 태종 14년 8월 21일 네 번째 기사",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "sourceRevisionId": "a3a2363f-06a9-514d-9d59-22a8c6a6cd21",
+   "sourceId": "tourapi:1753401",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=1753401",
+   "title": "용인포은아트홀",
+   "fetchedAt": 1794322381036,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20260921172810",
+   "verifiedAt": 1794326392017,
+   "contentHash": "ede6bdb9d2a99e35b5b18f420971b9d9e483ddb2c7048a6fc88f731923d1cbe0",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "용인아르피아종합운동장 부지 내에 있는 용인포은아트홀은 용인 시민의 여가와 문화생활 증진을 위해 2004년 4월 개관하였으며 용인문화재단이 운영하고 있다. 포은아트홀의 이름은 포은 정몽주 선생의 아호에서 따왔으며 첨단 시설을 갖춘 세계적인 수준의 공연장이다. 총면적 13,826㎡, 무대 면적 1,109㎡, 객석 1,258석을 갖추고 있으며 공연 활동을 완벽하게 지원할 수 있는 환경과 편안하게 감상할 수 있는 객석, 휴식을 즐길 수 있는 시민들의 생활 속 쉼터이자 품격 있는 공연을 즐길 수 있는 문화체험장이다. 판교 IC에서 차량으로 약 17분, 수인분당선 죽전역(단국대)에서 도보로 약 5분(345m) 소요된다. 인근에 에버랜드, 한국민속촌, 한국잡월드, 세계문화유산 융건릉, 물향기수목원, 용인농촌테마파크, 덕평공룡수목원 등이 있다."
+  },
+  {
+   "sourceRevisionId": "e306ca61-1f50-5f14-a672-1f24f116962d",
+   "sourceId": "tourapi:127675",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=127675",
+   "title": "와우정사(용인)",
+   "fetchedAt": 1794364000399,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261111084802",
+   "verifiedAt": 1794363995701,
+   "contentHash": "91231b7b0a770eedb1590c692e144d81107f1a330511a2893894dc2d5f6787ac",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "와우정사(臥牛精舍)는 경기 용인시 해곡동 연화산의 48개 봉우리가 마치 병풍처럼 둘러쳐진 곳에 위치한 사찰로 1970년 실향민인 해월삼장법사 (속명 김해근)가 부처님의 공덕을 빌어 민족화합을 이루기 위해 세운 호국사찰이며 대한불교 열반종의 본산으로 3천여 점의 불상이 봉안되어 있다. 여러 불상 중 절 입구에 세워진 불두(佛頭)와 산중턱에 있는 와불(臥佛)이 유명하다. 높이가 8m 인 불두는 초대형이며, 와불(누워있는 불상)은 높이 3m, 길이 12m에 이르는 것으로 인도네시아에서 들여온 향나무를 깎아 만든 것이다. 경내에 있는 거대한 불두와 황동 10만 근으로 10년간 만든 장육오존불, 무게가 12톤에 이르는 통일의 종(88 서울올림픽 때 타종), 그리고 우리나라 최대의 청동미륵반가사유상이 있으며, 석조약사여래불 등이 있다. 세계최대이며, 유일한 석가모니 불고행상(佛苦行像)도 와우정사의 자랑거리이다. 이 불고행상의 본체는 백옥, 좌대는 청옥으로 구성되어 있다. 열반 전에 이르는 계단옆의 통일의 돌탑은 세계각국 성지에서 가져온 돌 한 개 한 개를 모아 쌓아가고 있다.\n와우정사에는 인도·미얀마·스리랑카·중국·태국 등에서 모셔온 불상 3천 여점이 전시되어 있어 세계 각국의 불교문화를 한눈에 살펴볼 수 있다. 이 세계만불전(萬佛殿)은 세계평화를 기원하는 뜻을 담고 있다. 와우정사는 삼보(三寶)를 다 봉안하고 있다. 인도·스리랑카·미얀마에서 들여온 석가모니 불진신사리(佛眞身舍利), 파리어 대장경과 산스크리스트어 장경(藏經) 등이 봉안되어 있다."
+  },
+  {
+   "sourceRevisionId": "1a38c558-e368-5a32-89a9-fbc54e028543",
+   "sourceId": "tourapi:2612873",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=2612873",
+   "title": "은이성지(청년 김대건길)",
+   "fetchedAt": 1794364000637,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20251031102647",
+   "verifiedAt": 1794363995701,
+   "contentHash": "1876083f1624e29ef5b5fbf26d7cfd039425ce165424cfd9691ed5b67dcb1fa1",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "은이는 ‘숨어 있는 동네’라는 뜻으로, 천주교 박해 시기에 숨어 살던 천주교 신자들에 의해 형성된 교우촌이다. 산으로 둘러싸여 조용하고 한적한 성지 가운데 작은 마당에는 김대건 신부의 조각상이 서 있고, 안쪽으로 김대건 신부 기념관과 김가항 성당이 자리하고 있다. 이곳은 김대건 신부가 1836년 모방 신부로부터 세례 성사와 첫 영성체를 받은 장소이며, 15세 때 신학생으로 선발되어 마카오로 파견된 곳이다. 또한 사제 서품을 받고 귀국 후 최초로 한국인 사제로서 김대건 신부의 첫 사목지이자 순교 전 공식적으로 마지막 미사를 드린 곳으로, 조선 천주교회 역사 상 방인 사제가 사목한 최초의 본당이라고 할 수 있다. 2016년에는 김대건 신부가 사제 서품을 받았던 중국 상해의 김가항 성당을 그대로 복원 건립하여 신자들에게 더욱 뜻깊은 성지가 되고 있다.\n청년 김대건길은 은한국인 최초의 사제 성 김대건 안드레아 신부가 박해의 위험 속에서 밤마다 조심스럽게 삼덕고개를 걸어 다니며 사목활동을 전개하던 길이다. 이 길은 신부의 발자취가 서려 있는 곳으로 청년 김대건이 사제로서 신자들을 위해 열정을 불태운 길이며 순교 후 신부의 시신을 안장하기까지의 이장 경로이다. 청년 김대건길을 걸으며 민족을 사랑했던 김대건 신부의 삶과 열정을 되새길 수 있고, 시원하게 흐르는 은이계곡을 시작으로 울창하게 우거진 숲길을 걸으며 일상에 지친 마음 속 이야기에 귀 기울일 시간을 가질 수 있다."
+  },
+  {
+   "sourceRevisionId": "8c049dcc-9ea0-5ab1-8e80-42cc9ccdd165",
+   "sourceId": "tourapi:304686",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=304686",
+   "title": "동도사(용인)",
+   "fetchedAt": 1794363999893,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261109143544",
+   "verifiedAt": 1794363995701,
+   "contentHash": "570f92075a02cf425814bbcb6ec1d595ab7d389abca4f5e3dc9f9c5685026a27",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "동도사는 한국대중불교 불이종(不二宗) 소속의 사찰로 경기도 용인시 이동면에 위치해 있다. 주변은 남쪽의 신선봉(308m), 동남쪽의 봉황산(256m), 동북쪽의 묘봉(228.6m) 등 높고 낮은 산이 감싸고 있다. 북쪽은 이동저수지에 바로 면하고 있다. 산이 저수지와 어울려 아름다운 풍경을 자아내고 있는 곳이다. 절이 위치한 곳은 용인의 산속 깊고 높은 곳으로 앞의 이동저수지를 비롯하여 주변의 산을 한눈에 내려다볼 수 있다. 시야가 탁 트여 시원스러움을 맛볼 수 있다.\n동도사는 1963년에 옛 어비리사지가 이동저수지 조성으로 수몰될 때 車壯業 居士가 절터에 있던 석탑과 석불, 석등 등을 현재의 위치로 옮겨와 창건하였다. 어비리사지가 이동저수지 조성으로 수몰되기에 이르자 차장업 거사는 석탑과 석불, 석등 등이 수몰되는 것을 안타까워하여 원력을 발휘하여 옛 절터의 유물을 모두 이곳 동도사로 옮겨온다. 그리하여 동도사는 새로이 창건된 사찰이지만 신라 때 사찰의 법등을 새로이 잇게 된 것이다."
+  }
+ ],
+ "facts": [
+  {
+   "factId": "a413538c-5aff-5ca7-8a3d-151eb9d01099",
+   "factRevisionId": "17e887c1-11b6-5954-8365-2da61d828efb",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "3a4fe8ae-0e59-5b47-b798-644f813726fc",
+    "0de160ec-0c6e-565e-b396-755259eab427"
+   ],
+   "statement": "용구·처인의 통합과 용인 명칭은 현재 용인시가 공식 연혁에 기록하는 해당 지역의 역사이다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "f0f32b5d-1e6b-5b97-8c24-13c8cd51c46f",
+   "factRevisionId": "a7e34148-57ab-5bd2-99de-c4a8255e448f",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "0de160ec-0c6e-565e-b396-755259eab427"
+   ],
+   "statement": "조선시대 용구와 처인을 합쳐 용인이라는 이름을 사용한 사실이 태종실록에 기록되어 있다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "247d4087-ea06-5b4f-a8e6-a64403c6914e",
+   "factRevisionId": "cc2411f2-e51d-572c-9b59-ecdc0e07d380",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "3a4fe8ae-0e59-5b47-b798-644f813726fc"
+   ],
+   "statement": "내사면·외사면에서 양지면·백암면으로의 개칭은 용인지역의 행정지명 변경이다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "15f289d5-2d24-5903-9741-c79d039dda88",
+   "factRevisionId": "03970925-d308-5bee-9aca-462698ba2b47",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "3a4fe8ae-0e59-5b47-b798-644f813726fc"
+   ],
+   "statement": "1996년 3월 1일 당시 용인지역 내사면이 양지면으로, 외사면이 백암면으로 개칭되었다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factRevisionId": "a3fe82b8-aa1e-5d9e-9bce-1ffef228aeb5",
+   "factId": "18a33036-405e-55c2-83a2-0316d2a5ef3a",
+   "version": 1,
+   "statement": "포은아트홀의 이름은 포은 정몽주 선생의 아호에서 따왔으며 첨단 시설을 갖춘 세계적인 수준의 공연장이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794326392017,
+   "sourceRevisionIds": [
+    "a3a2363f-06a9-514d-9d59-22a8c6a6cd21"
+   ]
+  },
+  {
+   "factRevisionId": "62206cb8-03ae-5757-b115-047f4f3164e0",
+   "factId": "80df7253-156c-5877-a28e-1eb541140448",
+   "version": 1,
+   "statement": "용인아르피아종합운동장 부지 내에 있는 용인포은아트홀은 용인 시민의 여가와 문화생활 증진을 위해 2004년 4월 개관하였으며 용인문화재단이 운영하고 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794326392017,
+   "sourceRevisionIds": [
+    "a3a2363f-06a9-514d-9d59-22a8c6a6cd21"
+   ]
+  },
+  {
+   "factRevisionId": "f20259d0-d222-5fa9-a283-c9623dfbcc5f",
+   "factId": "fed4fbfe-affd-56f5-beb5-6f4e199ea255",
+   "version": 1,
+   "statement": "와우정사(臥牛精舍)는 경기 용인시 해곡동 연화산의 48개 봉우리가 마치 병풍처럼 둘러쳐진 곳에 위치한 사찰로 1970년 실향민인 해월삼장법사 (속명 김해근)가 부처님의 공덕을 빌어 민족화합을 이루기 위해 세운 호국사찰이며 대한불교 열반종의 본산으로 3천여 점의 불상이 봉안되어 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "e306ca61-1f50-5f14-a672-1f24f116962d"
+   ]
+  },
+  {
+   "factRevisionId": "8bf32867-2b7e-5d0a-a3d3-282bda120ee1",
+   "factId": "1c0a50b4-78a6-5108-a43a-893b3168a6a1",
+   "version": 1,
+   "statement": "여러 불상 중 절 입구에 세워진 불두(佛頭)와 산중턱에 있는 와불(臥佛)이 유명하다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "e306ca61-1f50-5f14-a672-1f24f116962d"
+   ]
+  },
+  {
+   "factRevisionId": "dacaa71d-0a01-5539-bb3a-140882fd7323",
+   "factId": "f4f6f40b-6942-5db3-a0c2-13232dbb84e7",
+   "version": 1,
+   "statement": "높이가 8m 인 불두는 초대형이며, 와불(누워있는 불상)은 높이 3m, 길이 12m에 이르는 것으로 인도네시아에서 들여온 향나무를 깎아 만든 것이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "e306ca61-1f50-5f14-a672-1f24f116962d"
+   ]
+  },
+  {
+   "factRevisionId": "fa808c04-fd1a-5c53-a11e-494fac5c4da3",
+   "factId": "9fd19d94-7f03-5dec-87f5-e8be5f2bbbfd",
+   "version": 1,
+   "statement": "은이는 ‘숨어 있는 동네’라는 뜻으로, 천주교 박해 시기에 숨어 살던 천주교 신자들에 의해 형성된 교우촌이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "1a38c558-e368-5a32-89a9-fbc54e028543"
+   ]
+  },
+  {
+   "factRevisionId": "5854cdb3-0627-547a-9c29-7340a6bfece1",
+   "factId": "04a46a60-ac92-56fd-a1ad-b61ad01e2b8e",
+   "version": 1,
+   "statement": "산으로 둘러싸여 조용하고 한적한 성지 가운데 작은 마당에는 김대건 신부의 조각상이 서 있고, 안쪽으로 김대건 신부 기념관과 김가항 성당이 자리하고 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "1a38c558-e368-5a32-89a9-fbc54e028543"
+   ]
+  },
+  {
+   "factRevisionId": "54f5b2d3-a5b8-5a88-991b-a16adbc679dd",
+   "factId": "fb1539a4-4c5d-59b6-8884-8924553841da",
+   "version": 1,
+   "statement": "2016년에는 김대건 신부가 사제 서품을 받았던 중국 상해의 김가항 성당을 그대로 복원 건립하여 신자들에게 더욱 뜻깊은 성지가 되고 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "1a38c558-e368-5a32-89a9-fbc54e028543"
+   ]
+  },
+  {
+   "factRevisionId": "a49f65fc-362c-5260-81fe-b7f2939c3269",
+   "factId": "7ad8c25d-98f1-5566-81b9-0cb6b7a182ab",
+   "version": 1,
+   "statement": "동도사는 한국대중불교 불이종(不二宗) 소속의 사찰로 경기도 용인시 이동면에 위치해 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "8c049dcc-9ea0-5ab1-8e80-42cc9ccdd165"
+   ]
+  },
+  {
+   "factRevisionId": "de2967b6-9a6c-5255-b107-2c633dfd8635",
+   "factId": "ed0ac63c-caea-5025-9be2-802cdbe64637",
+   "version": 1,
+   "statement": "주변은 남쪽의 신선봉(308m), 동남쪽의 봉황산(256m), 동북쪽의 묘봉(228.6m) 등 높고 낮은 산이 감싸고 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "8c049dcc-9ea0-5ab1-8e80-42cc9ccdd165"
+   ]
+  },
+  {
+   "factRevisionId": "16768f07-833f-53df-9753-de7f2793be50",
+   "factId": "48697dab-26b2-5288-b195-bbe97ddd2339",
+   "version": 1,
+   "statement": "북쪽은 이동저수지에 바로 면하고 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "8c049dcc-9ea0-5ab1-8e80-42cc9ccdd165"
+   ]
+  }
+ ]
+}

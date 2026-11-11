@@ -334,8 +334,63 @@ def build_route_pack(*, scenario_id, pack_id, version, route_points, base_bundle
     return pack, report
 
 
-def build_region_pack(region_code, *, adapters, regions, intro_writer, scorer=None, log=print):
-    """GET /v1/packs/region/{code} (뼈대): landmarks only, no stories yet (2차 generates the story pool)."""
+def region_story_rows(candidates, scorer, *, story_writer, count, region_code, region_name=None, target_seconds=35,
+                      verified_at, log=print):
+    """Up to `count` stories from the region's facts (one place each, best-scored first, generation-allowed text only).
+    -> (sources, facts, stories, versions, drafts). A story the StoryWriter rejects is skipped, never weakened."""
+    import asyncio
+    from .story import StoryRejected, StoryRequest
+
+    usable = [c for c in sorted(candidates, key=lambda c: (-scorer.score(c), c.place.place_id))
+              if c.document is not None and c.document.license.allows_generation and c.facts]
+    sources, facts, stories, versions, drafts, existing = [], [], [], [], [], []
+
+    async def run():
+        try:
+            for candidate in usable:
+                if len(stories) >= count:
+                    break
+                source = _source_row(candidate.document, verified_at)
+                rows = [{"factRevisionId": f["factRevisionId"], "factId": f["factId"], "version": 1, "statement": f["statement"],
+                         "kind": "verified_fact", "verifiedAt": verified_at, "sourceRevisionIds": [source["sourceRevisionId"]]}
+                        for f in candidate.facts]
+                request = StoryRequest(region_code, region_name or region_code, tuple(rows), target_seconds,
+                                       existing=tuple(existing))
+                try:
+                    draft = await story_writer.write(request)
+                except StoryRejected as rejected:
+                    log(f"  story rejected for {candidate.place.name}: {rejected.attempts[-1]['reasons']}")
+                    continue
+                story_id = _id("story", region_code, candidate.place.place_id, draft.prompt_version)
+                used = {f for p in draft.paragraphs for f in p["factRevisionIds"]}
+                stories.append({"storyId": story_id, "topicId": _id("topic", story_id), "title": draft.title,
+                                "coreQuestion": draft.core_question, "interestTags": [], "placeId": None})
+                versions.append(draft.bundle_version(story_id, 1, verified_at))
+                sources.append(source)
+                facts.extend(rows)
+                drafts.append(draft)
+                existing.append({"title": draft.title, "factIds": sorted({r["factId"] for r in rows if r["factRevisionId"] in used})})
+        finally:
+            if story_writer.provider is not None:
+                await story_writer.provider.close()
+    asyncio.run(run())
+    log(f"  stories: {len(stories)} of {count} requested")
+    return sources, facts, stories, versions, drafts
+
+
+def _merge_rows(*groups, key):
+    out, seen = [], set()
+    for group in groups:
+        for row in group:
+            if row[key] not in seen:
+                seen.add(row[key])
+                out.append(row)
+    return out
+
+
+def build_region_pack(region_code, *, adapters, regions, intro_writer, scorer=None, stories=0, story_writer=None,
+                      log=print):
+    """GET /v1/packs/region/{code} (뼈대): landmarks, plus `stories` StoryWriter stories when asked (default 0 = off)."""
     scorer = scorer or RuleScorer()
     verified_at = int(time.time() * 1000)
     raw = collect_area_candidates(region_code, tourapi=adapters.get("tourapi"), heritage=adapters.get("heritage"),
@@ -345,6 +400,13 @@ def build_region_pack(region_code, *, adapters, regions, intro_writer, scorer=No
     sources, facts, places, landmarks, report = landmark_rows(
         selected, intro_writer=intro_writer, existing_places={}, verified_at=verified_at, log=log)
     empty = {"sources": [], "facts": [], "places": [], "stories": [], "versions": [], "regionBindings": []}
+    if stories and story_writer is not None:
+        story_sources, story_facts, story_rows, version_rows, _drafts = region_story_rows(
+            candidates, scorer, story_writer=story_writer, count=stories, region_code=region_code,
+            verified_at=verified_at, log=log)
+        empty = {**empty, "stories": story_rows, "versions": version_rows}
+        sources = _merge_rows(sources, story_sources, key="sourceRevisionId")
+        facts = _merge_rows(facts, story_facts, key="factRevisionId")
     if not sources:
         raise LookupError("NO_LANDMARKS")
     pack = assemble_pack(empty, pack_id=f"region-{region_code}", version=1,

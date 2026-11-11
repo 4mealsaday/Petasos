@@ -183,6 +183,15 @@
 - `git filter-repo`로 모든 커밋의 작성자·커미터 메일을 GitHub noreply 주소로 바꾸고(이름 유지), 이력 속 파일·커밋 메시지의 로컬 홈 경로를 `~`로, 이전 개인 메일 문자열을 `(KAIST 메일)`로 치환. 최신 트리는 치환 대상이 있던 `DEMO_PLAN.md` 한 줄을 빼고 정리 전과 동일(파일 목록 일치). 브랜치·태그 47커밋 전체에서 메일·홈 경로 0건. 커밋 해시가 모두 바뀌어 위 단계들에 적힌 옛 해시는 더는 일치하지 않는다.
 - README APK 안내: 최신 APK는 GitHub Releases, `apk/`에는 제출용 최종본만.
 
+**13단계 — 이야기 생성 모듈(StoryWriter)과 검수 도구** (브랜치 `feature/story-writer`, `docs/CONTENT_PIPELINE.md` 9장)
+- 저장소 준비: 이 저장소 git 메일을 noreply로 설정, GitHub Release `v0.1-demo`(main의 release APK, SHA-256 `999f5189…`).
+- `pipeline/story.py`: StoryRequest → StoryDraft(기존 번들 형식으로 변환, promptVersion, reviewStatus=draft). 모델 호출 → 검증 → 사유를 붙여 1회 재시도 → 거부. 검증: 스키마, 서버 근거 검사(`validate_semantics` 재사용: factId·출처·같은 사실 반복), 근거 밖 숫자(아라비아·한글 숫자), 금지 표현(느낌표·감탄/과장·"~라고 할 수 있습니다"·오늘/운영 중·보라는 지시), 문단 10~240자·최대 4문단, 전체 길이(목표 초×5자 ±30%), 문장 반복, 기존 이야기와 같은 사실 묶음.
+- 서버 이야기 API(task=story)는 StoryWriter를 거친다. 요청·응답 스키마와 모델에 가는 요청은 그대로, 기본 프롬프트는 기존 v0.8-5(설정 `storyPromptVersion`으로 새 프롬프트 선택). `build_region_pack(stories=N)` 옵션(기본 0).
+- 프롬프트: 기존 공통 규칙 → `rules.md`, 이야기 근거 계약 → `story_evidence.md`(대화 시스템 프롬프트는 바이트 동일, sha256 테스트 유지). 새 `guide_persona.md`(말투)·`story.md`(구성)·`examples/`(S01·S08 새 말투 초안, 사람 검토 대기) = `story-guide-v1`. 모든 파일 첫 줄에 버전과 "바꾸면 version을 올린다".
+- `server/tools/story_lab.py`: build-eval(5개 지역 근거 사실 고정 `server/eval/regions/`, 팩의 검토된 사실 + TourAPI 공공누리 1유형 개요, 지역당 12~15개) / generate / compare / approve(팩 story version +1, 팩 version +1, build_pack 기준 번들도 같이 갱신).
+- 결과(`compare-petasos-v0.8-5-story-guide-v1.md`): v0.8-5 통과 3/5(모두 재시도 후, 거부 2 — 길이 초과·근거 밖 숫자 699·"오늘"), story-guide-v1 통과 5/5(1곳 재시도). 새 말투도 근거 밖 추론("광덕산 호두 → 천안 호두과자")은 검증기가 못 잡음 → 사람 검토 필요.
+- 확인: 서버 테스트 335개·앱 JVM 941개 통과. 데모 팩 이야기 10편·SHA-256(`e0ebcf20…`) 그대로. 서버 켠 상태(새 코드 서버를 18443에 띄우고 `adb reverse tcp:8443 tcp:18443`) release에서 질문 1회 → 답변 자막 → 음악 복귀.
+
 ## 5. 개발 원칙 (이전 방식에서 바꾸는 점)
 - 새 기능마다 문서·증거 JSON·probe를 만들지 않는다. 변경 내역은 git 커밋 메시지로 충분.
 - "검증 전이면 기능을 끈다" 대신 "데모에서 동작하게 하고, 한계는 README에 한 줄".

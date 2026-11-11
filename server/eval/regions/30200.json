@@ -1,0 +1,302 @@
+{
+ "regionCode": "30200",
+ "regionName": "대전 유성구",
+ "codes": [
+  "30200"
+ ],
+ "pack": "seoul-daejeon",
+ "createdAt": 1794363995701,
+ "note": "평가 세트(고정). 팩의 검토된 사실 + TourAPI 공공누리 제1유형 개요 문장. 바꾸면 이전 결과와 비교할 수 없다.",
+ "existingStories": [
+  {
+   "label": "S10",
+   "storyId": "666b77d3-aba4-5ea6-b9fc-1a4c6556eef5",
+   "title": "박람회가 남긴 과학공원",
+   "factRevisionIds": [
+    "3ce2057c-bd6b-5e57-822a-3464a5ab4000"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "allowedUses": {
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "allowGeneration": true,
+    "reviewBasis": "검토 대상은 normalizedText의 자체 작성 사실문장에 한정한다. 공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다."
+   },
+   "attribution": "한국관광공사, 대전엑스포과학공원, TourAPI contentId=125994, https://www.data.go.kr/data/15101578/openapi.do. 사실을 선별하여 Petasos가 자체 문장으로 작성함.",
+   "contentHash": "46e6d4b26506a6eddf52f0f92fb87a562171ceb70feb9f7ba82559083cca62b0",
+   "fetchedAt": 1794152983000,
+   "license": {
+    "reviewBasis": "공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다.",
+    "scope": "text",
+    "type": "DATA_GO_KR_UNRESTRICTED_TEXT",
+    "url": "https://www.data.go.kr/catalog/15101578/openapi.json"
+   },
+   "normalizedText": "대전엑스포과학공원은 1993년 대전세계박람회를 기념하고 박람회 시설과 부지를 과학교육에 활용하기 위해 조성되었다. 공원 주소는 대전광역시 유성구 대덕대로 480 도룡동이다.",
+   "provider": "한국관광공사 TourAPI",
+   "reviewStatus": "verified",
+   "sourceId": "fe20db2a-e68c-5af0-baff-6ebcdfebae3d",
+   "sourceRevisionId": "7ce22da2-4f74-58c9-a660-8624f4452277",
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261026143817",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do",
+   "title": "대전엑스포과학공원",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "sourceRevisionId": "ea335396-c08e-5058-bd96-35d76b7ccd93",
+   "sourceId": "tourapi:2779504",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=2779504",
+   "title": "한빛탑",
+   "fetchedAt": 1794322381515,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20260212100226",
+   "verifiedAt": 1794326392017,
+   "contentHash": "43b647000736a3377e03d6e02e19fc475f9119da02042fc2fe888681313bfada",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "한빛탑은 대전 유성구 엑스포과학공원 내에 위치한 과학과 우주를 모티브로 하여 조형화한 전망대이다. 이 탑은 1993년에 열린 대전엑스포를 기념하기 위해 건립된 상징 조형물로, 현재와 미래를 잇는 한 줄기 빛이라는 뜻에서 한빛탑이라 불린다. 한빛탑은 엑스포과학공원과 대전시 주요 지역 등을 한눈에 조망할 수 있는 공간으로 한 번에 20명이 탑승할 수 있는 승강기가 운영중이며 전면 유리창을 통해 다양한 모습을 감상할 수 있다. 1층에는 전시실에서는 대전을 상징하는 주요 관광명소 사진과 시청각 영상물을 관람할 수 있다. 한빛탑은 유등로, 대덕대로에서 엑스포로를 통해 접근할 수 있으며 주변에는 엑스포과학공원 외에 대전신세계아트앤사이언스, 국립중앙과학관, 대전컨벤션센터, 한밭수목원 등이 있다."
+  },
+  {
+   "sourceRevisionId": "65e278da-192f-56a7-86a5-6185d49496fe",
+   "sourceId": "tourapi:741957",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=741957",
+   "title": "대전솔로몬로파크",
+   "fetchedAt": 1794322381262,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20260703092341",
+   "verifiedAt": 1794363995701,
+   "contentHash": "c6955da966d719cbb993ecc8cd3f0a4fee4595121b89a1151f1bb9697f5dc55c",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "대전 솔로몬로파크는 법무부에서 운영하는 법교육 테마 공원이다. 어린이, 청소년, 그리고 일반 국민들이 법을 쉽고 재미있게 배우고 체험할 수 있도록, 법무부가 조성하고 직접 운영하는 법과 정의의 배움터이자 법교육의 장이다. 놀면서 직접 법을 체험할 수 있도록 어린이, 청소년, 지역 시민들에게 다양한 법 체험 및 연수 프로그램을 무료로 제공한다. 솔로몬 왕이 재판을 통해 지혜롭게 정의를 실현했듯, 솔로몬로파크는 법치사회의 자유, 지혜, 정의를 느끼고 체험함으로써 국민 누구나 신뢰하는 법치국가를 만들어가는 데 필요한 민주시민의 자질과 소양을 쌓을 수 있도록 한다. 법체험관에서는 세계의 법 역사와 우리나라의 법제도를 폭넓게 이해하고 직접 체험할 수 있도록 입법체험실, 과학수사실, 모의법정실, 교도소체험 등이 마련되어 있다. 미취학 아동을 위한 ‘법짱마을’도 운영되며, 솔로몬로파크 내 법체험관과 법연수관을 중심으로 다양한 법 체험 및 법연수 프로그램이 국민에게 제공되고 있다."
+  },
+  {
+   "sourceRevisionId": "ef077b40-2728-5f4d-a284-b55d9b374c97",
+   "sourceId": "tourapi:128878",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=128878",
+   "title": "자광사(대전)",
+   "fetchedAt": 1794364014545,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261022133453",
+   "verifiedAt": 1794363995701,
+   "contentHash": "be8566ea88e9fb6f8b492f8025e950f7553a1f771b40fb1a9e045fbf30d194e1",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "자광사는 탄허불교문화재단 소속의 조계종 사찰로서 1969년 12월 20일 탄허 대종사가 인재양성을 목표로 창건하였다. 자광사가 소재한 대전의 학하동은 학이 내려온 동네라는 곳으로 신선과 도인들이 내려와 머물던 곳이라는 유래가 있는 곳이다. 자광사 터는 일찍이 우암 송시열 선생이 이곳에서 후학을 기르면 나라의 큰 인재를 얻을 수 있는 길지라면서 서당을 짓고 후학을 기르던 곳으로, 서당을 지으시면서 심으신 300년 묶은 향나무와 이곳이 송시열 선생이 후학을 양성한 곳임을 알리는 ‘성전영당지’라 쓰여 있는 비석이 있다."
+  },
+  {
+   "sourceRevisionId": "466e6e5a-fc07-5921-8272-0631fe80acbd",
+   "sourceId": "tourapi:2758282",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=2758282",
+   "title": "광수사",
+   "fetchedAt": 1794364014303,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261019172234",
+   "verifiedAt": 1794363995701,
+   "contentHash": "0dbd4adf615f3ee1c7a7101830c30c9cab1174d9f937e069cb4062a1168df054",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "대전광역시 유성구에 위치한 광수사는 대한불교천태종 사찰로 1995년 지어졌다. 생활불교, 대중불교의 삼대지표를 행하고 있는 관음기도 도량이다. 사찰에는 웅장함이 느껴지는 3층 높이의 대적광전을 비롯해 포대화상, 대자대비 관음보살상 등이 있다. 대적광전으로 향하는 길에 거대한 규모의 관세음보살 좌상과 드넓은 연꽃밭을 만날 수 있다. 광수사는 대전 유성구 연꽃 명소로도 유명하며, 연꽃의 개화시기인 7월과 8월에 이곳을 방문하면 아름다운 연꽃의 향연을 감상할 수 있다."
+  }
+ ],
+ "facts": [
+  {
+   "factId": "f7f4e600-7c23-592d-b871-d21e833f9026",
+   "factRevisionId": "9a43805b-fef1-5b68-a434-71e13a8cf048",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "7ce22da2-4f74-58c9-a660-8624f4452277"
+   ],
+   "statement": "대전엑스포과학공원은 대전광역시 유성구에 있다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "276f408d-2e8d-511a-9d51-2b92b8b37367",
+   "factRevisionId": "3ce2057c-bd6b-5e57-822a-3464a5ab4000",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "7ce22da2-4f74-58c9-a660-8624f4452277"
+   ],
+   "statement": "대전엑스포과학공원은 1993년 대전세계박람회를 기념하고 시설과 부지를 과학교육에 활용하기 위해 조성되었다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factRevisionId": "82e8891f-f1f1-54f1-a020-bc822f74265c",
+   "factId": "06642c25-8ad5-5541-84f7-3089072c4281",
+   "version": 1,
+   "statement": "이 탑은 1993년에 열린 대전엑스포를 기념하기 위해 건립된 상징 조형물로, 현재와 미래를 잇는 한 줄기 빛이라는 뜻에서 한빛탑이라 불린다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794326392017,
+   "sourceRevisionIds": [
+    "ea335396-c08e-5058-bd96-35d76b7ccd93"
+   ]
+  },
+  {
+   "factRevisionId": "68e709b8-c0e0-5e59-8ba2-2dda39a0fdc9",
+   "factId": "4c50fab8-4e46-5657-bde5-6821382df6a9",
+   "version": 1,
+   "statement": "한빛탑은 대전 유성구 엑스포과학공원 내에 위치한 과학과 우주를 모티브로 하여 조형화한 전망대이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794326392017,
+   "sourceRevisionIds": [
+    "ea335396-c08e-5058-bd96-35d76b7ccd93"
+   ]
+  },
+  {
+   "factRevisionId": "05f7477b-c0c9-52a6-bfee-e8e7471aad99",
+   "factId": "4c7d613a-e091-5713-8b09-6d7d135bc773",
+   "version": 1,
+   "statement": "놀면서 직접 법을 체험할 수 있도록 어린이, 청소년, 지역 시민들에게 다양한 법 체험 및 연수 프로그램을 무료로 제공한다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "65e278da-192f-56a7-86a5-6185d49496fe"
+   ]
+  },
+  {
+   "factRevisionId": "9527b01a-8212-5884-98d4-3bf8e6cd651d",
+   "factId": "5ce8a44b-039e-5593-9ece-2f89c7b460c1",
+   "version": 1,
+   "statement": "솔로몬 왕이 재판을 통해 지혜롭게 정의를 실현했듯, 솔로몬로파크는 법치사회의 자유, 지혜, 정의를 느끼고 체험함으로써 국민 누구나 신뢰하는 법치국가를 만들어가는 데 필요한 민주시민의 자질과 소양을 쌓을 수 있도록 한다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "65e278da-192f-56a7-86a5-6185d49496fe"
+   ]
+  },
+  {
+   "factRevisionId": "c39fbc54-ff1d-5eee-81ef-415d628387e8",
+   "factId": "7b232df3-12cc-53b1-8b13-6826184c6d9b",
+   "version": 1,
+   "statement": "법체험관에서는 세계의 법 역사와 우리나라의 법제도를 폭넓게 이해하고 직접 체험할 수 있도록 입법체험실, 과학수사실, 모의법정실, 교도소체험 등이 마련되어 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "65e278da-192f-56a7-86a5-6185d49496fe"
+   ]
+  },
+  {
+   "factRevisionId": "913aee78-145b-5d17-8a3e-c2c31da392b7",
+   "factId": "77a6201c-a0cb-55f2-abf1-9cc2183dc332",
+   "version": 1,
+   "statement": "자광사는 탄허불교문화재단 소속의 조계종 사찰로서 1969년 12월 20일 탄허 대종사가 인재양성을 목표로 창건하였다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "ef077b40-2728-5f4d-a284-b55d9b374c97"
+   ]
+  },
+  {
+   "factRevisionId": "7028d9f9-4b12-581d-b5e7-94d1734c5868",
+   "factId": "98b445a4-8de8-5586-9fa3-1b0725077ba4",
+   "version": 1,
+   "statement": "자광사가 소재한 대전의 학하동은 학이 내려온 동네라는 곳으로 신선과 도인들이 내려와 머물던 곳이라는 유래가 있는 곳이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "ef077b40-2728-5f4d-a284-b55d9b374c97"
+   ]
+  },
+  {
+   "factRevisionId": "149deb39-c78e-5b7a-af5d-f7efa90be2de",
+   "factId": "3bf311fe-9a99-5613-ab94-1d37d8521637",
+   "version": 1,
+   "statement": "자광사 터는 일찍이 우암 송시열 선생이 이곳에서 후학을 기르면 나라의 큰 인재를 얻을 수 있는 길지라면서 서당을 짓고 후학을 기르던 곳으로, 서당을 지으시면서 심으신 300년 묶은 향나무와 이곳이 송시열 선생이 후학을 양성한 곳임을 알리는 ‘성전영당지’라 쓰여 있는 비석이 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "ef077b40-2728-5f4d-a284-b55d9b374c97"
+   ]
+  },
+  {
+   "factRevisionId": "65200c2b-5e4b-5928-a34f-2e7975639eac",
+   "factId": "f3990aef-ce91-5ada-aa40-9a793d5b84f8",
+   "version": 1,
+   "statement": "대전광역시 유성구에 위치한 광수사는 대한불교천태종 사찰로 1995년 지어졌다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "466e6e5a-fc07-5921-8272-0631fe80acbd"
+   ]
+  },
+  {
+   "factRevisionId": "3f627254-65d7-5568-9749-8d19657841ff",
+   "factId": "13638a96-43cb-51ff-bcdc-7763ecc134b3",
+   "version": 1,
+   "statement": "생활불교, 대중불교의 삼대지표를 행하고 있는 관음기도 도량이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "466e6e5a-fc07-5921-8272-0631fe80acbd"
+   ]
+  },
+  {
+   "factRevisionId": "817e1582-9c90-5656-a7d7-f4e45267a33f",
+   "factId": "c31aeaa7-ce99-5843-862c-a9db1fb6ca12",
+   "version": 1,
+   "statement": "사찰에는 웅장함이 느껴지는 3층 높이의 대적광전을 비롯해 포대화상, 대자대비 관음보살상 등이 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "466e6e5a-fc07-5921-8272-0631fe80acbd"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,299 @@
+{
+ "regionCode": "11140",
+ "regionName": "서울 중구",
+ "codes": [
+  "11140"
+ ],
+ "pack": "seoul-daejeon",
+ "createdAt": 1794363995701,
+ "note": "평가 세트(고정). 팩의 검토된 사실 + TourAPI 공공누리 제1유형 개요 문장. 바꾸면 이전 결과와 비교할 수 없다.",
+ "existingStories": [
+  {
+   "label": "S01",
+   "storyId": "03849d89-1640-5603-be8b-9835d371ed02",
+   "title": "역이 문화공간으로",
+   "factRevisionIds": [
+    "483cfc22-d83a-5346-9adc-69b756075edf"
+   ]
+  },
+  {
+   "label": "S02",
+   "storyId": "126af9cc-2003-5d75-b33d-7ef66bd42c8d",
+   "title": "이름에 남은 숫자 284",
+   "factRevisionIds": [
+    "c0483580-6179-5a93-9f84-e700924762bf"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "allowedUses": {
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "allowGeneration": true,
+    "reviewBasis": "검토 대상은 normalizedText의 자체 작성 사실문장에 한정한다. 공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다."
+   },
+   "attribution": "한국관광공사, 문화역 서울 284, TourAPI contentId=250364, https://www.data.go.kr/data/15101578/openapi.do. 사실을 선별하여 Petasos가 자체 문장으로 작성함.",
+   "contentHash": "a96cc38082d305c393cc858aed2f6b9e0a930fb2bd2a3bbbb258133ca876260e",
+   "fetchedAt": 1794153008000,
+   "license": {
+    "reviewBasis": "공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다.",
+    "scope": "text",
+    "type": "DATA_GO_KR_UNRESTRICTED_TEXT",
+    "url": "https://www.data.go.kr/catalog/15101578/openapi.json"
+   },
+   "normalizedText": "문화역 서울 284는 옛 서울역 건물을 복원하여 만든 복합문화공간이다. 주소는 서울특별시 중구 통일로 1이다.",
+   "provider": "한국관광공사 TourAPI",
+   "reviewStatus": "verified",
+   "sourceId": "f5c8d2ad-f9d8-5f02-ae88-56879e655b99",
+   "sourceRevisionId": "6444b061-3726-5aab-9c4d-8207d3c09331",
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261020154516",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do",
+   "title": "문화역 서울 284",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "allowedUses": {
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "allowGeneration": true,
+    "reviewBasis": "검토 대상은 normalizedText의 자체 작성 사실문장에 한정한다. 개별 공식 자료의 공공누리 제1유형 표시를 확인했다. 출처를 표시하며 선택한 사실을 자체 문장으로 정리한다. 사진·도표·첨부파일은 포함하지 않는다."
+   },
+   "attribution": "문화체육관광부, 2011 구 서울역사, 복원 마치고 문화역 서울 284로 재탄생, https://www.mcst.go.kr/site/s_notice/press/pressView.jsp?pSeq=11498. 공공누리 제1유형; Petasos 사실 선별·자체 서술.",
+   "contentHash": "816fb714bdb17fe26beb34e4411c906f0860317c1814c7a5bf65f3164ddfb1bd",
+   "fetchedAt": 1794153964139,
+   "license": {
+    "reviewBasis": "개별 공식 자료의 공공누리 제1유형 표시를 확인했다. 출처를 표시하며 선택한 사실을 자체 문장으로 정리한다. 사진·도표·첨부파일은 포함하지 않는다.",
+    "scope": "text",
+    "type": "KOGL_TYPE_1_TEXT",
+    "url": "https://www.kogl.or.kr/info/licenseType1.do"
+   },
+   "normalizedText": "문화역 서울 284의 숫자 284는 옛 서울역사의 사적 번호에서 온 이름이다.",
+   "provider": "문화체육관광부",
+   "reviewStatus": "verified",
+   "sourceId": "32cda16b-350f-5f2c-a862-4bfa9890dd19",
+   "sourceRevisionId": "e5777bcb-69f7-51f6-8842-237706a399ce",
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "2011-07-14",
+   "sourceUrl": "https://www.mcst.go.kr/site/s_notice/press/pressView.jsp?pSeq=11498",
+   "title": "구 서울역사, 복원 마치고 문화역 서울 284로 재탄생",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "sourceRevisionId": "90eafb13-99e6-552b-b9b5-2174c2f53ef4",
+   "sourceId": "tourapi:126509",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=126509",
+   "title": "덕수궁",
+   "fetchedAt": 1794363996696,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20260923172756",
+   "verifiedAt": 1794363995701,
+   "contentHash": "260052536976562e1ca012984f54c28019065b01d01975d19d186ab74a2c8f7e",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "덕수궁은 1897년에 선포된 황제국, 대한제국의 황궁으로 옛 이름은 경운궁이다. 덕수궁은 원래 조선 제 9대 성종의 형인 월산대군의 사저였고, 그 후에도 월산대군의 후손이 살던 곳이었다. 1592년(선조 25) 임진왜란으로 도성의 궁들이 모두 소실되자 1593년(선조 26)부터 임시 궁궐로 사용하여 정릉동 행궁(貞陵洞 行宮)이라 불렸다.\n이후 1611년(광해군 3) 경운궁(慶運宮)으로 이름이 정해지면서 정식 궁궐이 되었다가, 창덕궁이 중건되면서 다시 별궁으로 남게 되었다. 그러다가 1897년(광무 1) 고종이 대한제국을 선포하고 황제의 자리에 오르자 대한제국의 황궁으로 사용하였다. 이후 황궁에 맞게 규모를 확장하고 격식을 높였으며, 궁궐 내 서양식 건물을 짓기 시작하여 전통 건축물과 서양식 건축물이 조화를 이루게 되었다. 그러나 1904년(광무 8) 대화재로 많은 건물이 소실되었고, 1907년 일제에 의해 고종이 황위에서 물러나자 궁의 이름이 덕수궁으로 바뀌게 되었다. 일제 강점기 이후에는 덕수궁의 규모가 대폭 축소되어 대부분의 건물들이 철거되었다. 동시에 공원화가 진행되어 궁궐로서의 면모를 잃게 되었다. 1946~47년에는 덕수궁 석조전에서 제1·2차 미소공동위원회를 개최하기도 하였다. 이후 덕수궁의 복원이 꾸준히 이루어져 현재의 모습이 되었다."
+  },
+  {
+   "sourceRevisionId": "355d950d-4067-558d-82b1-ed1f73414639",
+   "sourceId": "tourapi:126747",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=126747",
+   "title": "남산골한옥마을",
+   "fetchedAt": 1794363996441,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261111084802",
+   "verifiedAt": 1794363995701,
+   "contentHash": "e5af29c9f0c1064aae57b93d51a1966db03e3d442b5c4ca051a1efba0cad3665",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "1998년 조성된 남산골한옥마을은 남산 북측 옛 수도방위사령부 부지 총 79,934m²(24,180평)에 한옥 5동, 전통공예관, 천우각, 전통정원, 서울남산국악당, 새천년타임캡슐 광장으로 구성되어 시민과 관광객을 맞이하고 있다. 번화한 도심 한가운데에서 한국 전통문화를 소재로 한 다양한 체험거리를 만나볼 수 있으며, 남산 자락을 따라 전통조경 양식으로 조성된 계곡과 정자, 각종 화초가 만들어내는 아름다운 풍경을 만날 수 있다. 전통정원 가장 높은 곳에는 서울정도 600년을 기념하고 400년 후 서울정도 천년을 기대하며 1994년 당대의 기억을 매설한 서울천년타입캡슐 광장이 조성되어 있다. 옛 가옥을 복원해 놓은 남산골한옥마을 안으로 들어서면 연못 청학지와 그 곁으로 천우각이 있다. 천우각 광장을 지나 돌계단을 오르면 서울 곳곳에 있던 한옥이 이전·복원되어 옛사람들의 생활방식을 볼 수 있게 한 예스러운 공간이 나타난다.\n모두 다섯 채의 한옥으로서 삼각동 도편수 이승업 가옥, 삼청동 오위장 김춘영 가옥, 관훈동 민 씨 가옥, 제기동 해풍부원군 윤택영 재실, 옥인동 윤 씨 가옥이 있다. 이 중 건물 이전이 불가능할 정도로 낡은 옥인동 윤 씨 가옥만 새 자재를 사용해 복원했고 나머지 건물은 종래의 집 부재를 그대로 이전했다. 남산골한옥마을에서 즐기는 다양한 체험거리 남산골한옥마을에는 다양한 체험거리가 마련되어 있다. 한옥 다섯 채를 활용하여 한옥실내 공간을 체험하면서 동시에 한국 전통문화프로그램을 접할 수 있다. 한복 입기, 한지 접기, 한글 쓰기, 전통차 마시기를 체험할 수 있고, 전통예절학교와 한방체험도 운영하고 있다. 토요일과 일요일 양일에는 전통혼례가 실제로 치러지고 전통혼례체험도 운영하고 있다. 그 밖에도 천우각 맞은편 원두막에서는 짚공예 시연이 이루어지고 있으며, 천우각 무대에서는 태권도 시범공연과 체험 행사에 참여할 수 있다. 피금정 마당에서는 제기차기, 윷놀이, 비석치기 등과 같은 민속놀이를 즐길 수 있어 가족이 함께 즐거운 시간을 보낼 수 있다. 또한 남산골한옥마을 곳곳을 동행하며 설명해주는 전통문화유산해설사가 상주해 있어 도움을 받을 수도 있다."
+  },
+  {
+   "sourceRevisionId": "7c41d8b1-bea8-5d6c-baa2-44e60db9441e",
+   "sourceId": "tourapi:1836287",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=1836287",
+   "title": "한국유림독립운동파리장서비",
+   "fetchedAt": 1794363997474,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261007172248",
+   "verifiedAt": 1794363995701,
+   "contentHash": "a82574c43f859184ac7ebf1020a5ce0d86eef60c5ee6f013a7eb7f9444c4e5a7",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "한국유림독립운동파리장서비는 세계평화회의에 한국의 독립을 위해 제출되었던 서한을 기념하는 비이다. 1919년 3·1운동이 일어나자, 한국 유림은 파리에서 열린 세계평화회의에 한국의 독립을 호소하는 서한을 제출해 독립 의지를 세계만방에 떨친 공헌을 했다. 이를 기념하기 위해 대통령희사금과 국민의 성금 등으로 서울 중구 장충단공원에 비를 건립하였다. 세계평화회의에 제출된 서한은 파리장서로서 일제의 한국 주권 찬탈 과정을 폭로하고 식민 지배의 불법성과 한국 독립의 정당성을 주장하여 한국의 모든 계층과 사회 집단이 독립을 열망하고 있음을 국내외에 널리 알렸던 서한이다. 곽종석, 김복한을 비롯하여 유림 대표 137명이 연서한 이 장서를 김창숙이 상해로 가져가도록 하였고 이를 다시 김규식을 통하여 파리 강화회의에 제출되었다. 또한, 각국 대표와 외국 공관과 국내 각지의 향교에도 배포되었다. 일본은 파리장서 운동에 참여한 유림을 체포 투옥하는 등 가혹하게 탄압하였으며(제1차 유림단 사건), 이 사건을 계기로 유림계는 한 말 구국운동의 전통을 계승하여 독립운동에 적극적으로 참여하게 되었다.\n장충단공원에 처음 기념비가 세워진 이후 1977년 경상남도 거창, 1997년 대구 월곡역사공원, 2008년 전라북도 정읍사공원, 2014년 경상북도 봉화군 송록서원 등 곳곳에도 기념비가 세워지게 되었다."
+  }
+ ],
+ "facts": [
+  {
+   "factId": "ff8acee3-b6a0-57f6-8b93-bff1f6fb9270",
+   "factRevisionId": "550e8570-4e6e-56c8-b751-31ab030fa788",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "6444b061-3726-5aab-9c4d-8207d3c09331"
+   ],
+   "statement": "문화역 서울 284는 서울특별시 중구에 있다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "e87751fd-65e5-50a7-be3e-36b331663387",
+   "factRevisionId": "483cfc22-d83a-5346-9adc-69b756075edf",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "6444b061-3726-5aab-9c4d-8207d3c09331"
+   ],
+   "statement": "옛 서울역 건물을 복원하여 문화역 서울 284라는 복합문화공간으로 사용하고 있다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "84e831f1-162c-588e-b4f3-2a0ba2023af9",
+   "factRevisionId": "c0483580-6179-5a93-9f84-e700924762bf",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "e5777bcb-69f7-51f6-8842-237706a399ce"
+   ],
+   "statement": "문화역 서울 284의 284는 옛 서울역사의 사적 번호에서 온 이름이다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factRevisionId": "15ba3756-7459-507e-902c-6211527860f4",
+   "factId": "2abe7ae3-ffcc-58b1-bfc6-1dba10bbab7d",
+   "version": 1,
+   "statement": "덕수궁은 1897년에 선포된 황제국, 대한제국의 황궁으로 옛 이름은 경운궁이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "90eafb13-99e6-552b-b9b5-2174c2f53ef4"
+   ]
+  },
+  {
+   "factRevisionId": "c93f3c33-893c-57b6-9d72-7d430d574371",
+   "factId": "6c24ff62-d942-5edb-930e-a7467a24f000",
+   "version": 1,
+   "statement": "덕수궁은 원래 조선 제 9대 성종의 형인 월산대군의 사저였고, 그 후에도 월산대군의 후손이 살던 곳이었다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "90eafb13-99e6-552b-b9b5-2174c2f53ef4"
+   ]
+  },
+  {
+   "factRevisionId": "f665f863-0966-579c-8de9-c9dd24ff0dd5",
+   "factId": "7691e75f-4ac3-5078-b1ac-165067828f05",
+   "version": 1,
+   "statement": "1592년(선조 25) 임진왜란으로 도성의 궁들이 모두 소실되자 1593년(선조 26)부터 임시 궁궐로 사용하여 정릉동 행궁(貞陵洞 行宮)이라 불렸다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "90eafb13-99e6-552b-b9b5-2174c2f53ef4"
+   ]
+  },
+  {
+   "factRevisionId": "d16bfa69-ccc3-54dd-b90a-142812121c48",
+   "factId": "c421a231-53de-5bff-82ce-f8a495550e10",
+   "version": 1,
+   "statement": "1998년 조성된 남산골한옥마을은 남산 북측 옛 수도방위사령부 부지 총 79,934m²(24,180평)에 한옥 5동, 전통공예관, 천우각, 전통정원, 서울남산국악당, 새천년타임캡슐 광장으로 구성되어 시민과 관광객을 맞이하고 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "355d950d-4067-558d-82b1-ed1f73414639"
+   ]
+  },
+  {
+   "factRevisionId": "a6993dd3-a3b2-510a-b7d0-02982adf389f",
+   "factId": "12e27068-8e24-5737-bf81-6c7f69e83c06",
+   "version": 1,
+   "statement": "번화한 도심 한가운데에서 한국 전통문화를 소재로 한 다양한 체험거리를 만나볼 수 있으며, 남산 자락을 따라 전통조경 양식으로 조성된 계곡과 정자, 각종 화초가 만들어내는 아름다운 풍경을 만날 수 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "355d950d-4067-558d-82b1-ed1f73414639"
+   ]
+  },
+  {
+   "factRevisionId": "5ef7535f-2a5a-53f3-ae57-b4a3d16b1b72",
+   "factId": "5cd84bed-f28d-5bf7-a70b-3af97cdb1f3e",
+   "version": 1,
+   "statement": "전통정원 가장 높은 곳에는 서울정도 600년을 기념하고 400년 후 서울정도 천년을 기대하며 1994년 당대의 기억을 매설한 서울천년타입캡슐 광장이 조성되어 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "355d950d-4067-558d-82b1-ed1f73414639"
+   ]
+  },
+  {
+   "factRevisionId": "f1ec626d-966a-5fb5-ae81-eb9f3b503284",
+   "factId": "04dad10a-96e9-510a-b764-4d9c5e93f03e",
+   "version": 1,
+   "statement": "한국유림독립운동파리장서비는 세계평화회의에 한국의 독립을 위해 제출되었던 서한을 기념하는 비이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "7c41d8b1-bea8-5d6c-baa2-44e60db9441e"
+   ]
+  },
+  {
+   "factRevisionId": "0b3d5a97-55af-5b18-8d0d-8bf169448e70",
+   "factId": "1af4c488-8682-5357-9b01-50a0df18cea3",
+   "version": 1,
+   "statement": "1919년 3·1운동이 일어나자, 한국 유림은 파리에서 열린 세계평화회의에 한국의 독립을 호소하는 서한을 제출해 독립 의지를 세계만방에 떨친 공헌을 했다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "7c41d8b1-bea8-5d6c-baa2-44e60db9441e"
+   ]
+  },
+  {
+   "factRevisionId": "fe2cc09f-84b3-514d-b679-15101db26e3f",
+   "factId": "1fcadf80-bb7f-559a-983d-617f30c8957b",
+   "version": 1,
+   "statement": "이를 기념하기 위해 대통령희사금과 국민의 성금 등으로 서울 중구 장충단공원에 비를 건립하였다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "7c41d8b1-bea8-5d6c-baa2-44e60db9441e"
+   ]
+  }
+ ]
+}
