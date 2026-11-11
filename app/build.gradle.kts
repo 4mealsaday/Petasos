@@ -24,6 +24,18 @@ require(naverMapPublicKeyId.isEmpty() || naverMapPublicKeyId.matches(Regex("[A-Z
     "Invalid public Naver Android map identifier format"
 }
 
+// Local, git-ignored release key; passwords live in .local/android/release-signing.properties.
+// Without the complete key set the release variant is not created (debug is unaffected).
+val releaseKeystore = rootProject.file(".local/android/release.keystore")
+val releaseProps = Properties().apply {
+    rootProject.file(".local/android/release-signing.properties").takeIf { it.isFile }?.inputStream()?.use(::load)
+}
+val hasReleaseKey = releaseKeystore.isFile &&
+    listOf("storePassword", "keyPassword", "keyAlias").all { !releaseProps.getProperty(it).isNullOrBlank() }
+if (!hasReleaseKey) {
+    logger.lifecycle("Petasos: release signing key not found under .local/android; the release variant is skipped (debug builds normally).")
+}
+
 android {
     namespace = "com.petasos.app"
     compileSdk = 36
@@ -42,15 +54,13 @@ android {
 
     signingConfigs {
         getByName("debug") {
-            // Studio and the CLI must sign updates with the same local key.
-            storeFile = rootProject.file(".local/android/debug.keystore")
+            // Use the shared local key when it exists. Otherwise AGP falls back to its standard debug key
+            // ($ANDROID_USER_HOME or ~/.android/debug.keystore) and creates it on first build, so a fresh
+            // checkout builds without any setup.
+            rootProject.file(".local/android/debug.keystore").takeIf { it.isFile }?.let { storeFile = it }
         }
-        // Local, git-ignored release key; passwords live in .local/android/release-signing.properties.
-        val releaseProps = Properties().apply {
-            rootProject.file(".local/android/release-signing.properties").takeIf { it.isFile }?.inputStream()?.use(::load)
-        }
-        if (releaseProps.isNotEmpty()) create("release") {
-            storeFile = rootProject.file(".local/android/release.keystore")
+        if (hasReleaseKey) create("release") {
+            storeFile = releaseKeystore
             storePassword = releaseProps.getProperty("storePassword")
             keyPassword = releaseProps.getProperty("keyPassword")
             keyAlias = releaseProps.getProperty("keyAlias")
@@ -107,6 +117,12 @@ dependencies {
     implementation("ai.pleos.playground:NaviHelper:3.0.5")
     implementation("androidx.media3:media3-exoplayer:1.11.1")
     implementation("androidx.media3:media3-session:1.11.1")
+}
+
+androidComponents {
+    beforeVariants(selector().withBuildType("release")) { variant ->
+        if (!hasReleaseKey) variant.enable = false
+    }
 }
 
 room {

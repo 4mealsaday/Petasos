@@ -2,10 +2,21 @@
 set -euo pipefail
 
 project_dir="$(cd "$(dirname "$0")/.." && pwd)"
-jdk_dir="${PETASOS_JAVA_HOME:-/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home}"
+is_jdk17() { [[ -x "$1/bin/java" ]] && [[ "$("$1/bin/java" -version 2>&1)" == *'version "17.'* ]]; }
 
-if [[ ! -x "$jdk_dir/bin/java" ]]; then
-    echo "Set PETASOS_JAVA_HOME to a JDK 17 directory." >&2
+# JDK 17 lookup: PETASOS_JAVA_HOME, then JAVA_HOME, then the macOS java_home helper, then Homebrew openjdk@17.
+jdk_dir="${PETASOS_JAVA_HOME:-}"
+if [[ -z "$jdk_dir" ]]; then
+    candidates=("${JAVA_HOME:-}")
+    [[ -x /usr/libexec/java_home ]] && candidates+=("$(/usr/libexec/java_home -v 17 2>/dev/null || true)")
+    command -v brew >/dev/null 2>&1 && candidates+=("$(brew --prefix openjdk@17 2>/dev/null || true)/libexec/openjdk.jdk/Contents/Home")
+    for candidate in "${candidates[@]}"; do
+        if [[ -n "$candidate" ]] && is_jdk17 "$candidate"; then jdk_dir="$candidate"; break; fi
+    done
+fi
+
+if [[ -z "$jdk_dir" || ! -x "$jdk_dir/bin/java" ]]; then
+    echo "JDK 17 not found. Set PETASOS_JAVA_HOME (or JAVA_HOME) to a JDK 17 directory." >&2
     exit 1
 fi
 
