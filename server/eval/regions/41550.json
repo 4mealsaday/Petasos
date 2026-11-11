@@ -1,0 +1,300 @@
+{
+ "regionCode": "41550",
+ "regionName": "안성",
+ "codes": [
+  "41550"
+ ],
+ "pack": "seoul-daejeon",
+ "createdAt": 1794363995701,
+ "note": "평가 세트(고정). 팩의 검토된 사실 + TourAPI 공공누리 제1유형 개요 문장. 바꾸면 이전 결과와 비교할 수 없다.",
+ "existingStories": [
+  {
+   "label": "S05",
+   "storyId": "84cae426-7167-515c-b28f-808e5886f298",
+   "title": "안성맞춤과 두 가지 유기",
+   "factRevisionIds": [
+    "7297891c-3417-556a-a914-8ce3a1e0cc21"
+   ]
+  },
+  {
+   "label": "S06",
+   "storyId": "07a9db6f-b2a5-5bbe-91ff-68e905e86125",
+   "title": "장이 서던 고장의 물건들",
+   "factRevisionIds": [
+    "4b5b50b4-91ba-53f2-866c-661541378fa0"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "allowedUses": {
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "allowGeneration": true,
+    "reviewBasis": "검토 대상은 normalizedText의 자체 작성 사실문장에 한정한다. 공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다."
+   },
+   "attribution": "한국관광공사, 안성맞춤의 도시 안성, Odii stid=5682, stlid=16680, https://www.data.go.kr/data/15101971/openapi.do. 사실을 선별하여 Petasos가 자체 문장으로 작성함.",
+   "contentHash": "cd7734ed3a43c44bbf5d7046e79af593f385d0cea56e91daaacf45d05bea6aee",
+   "fetchedAt": 1794153042000,
+   "license": {
+    "reviewBasis": "공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다.",
+    "scope": "text",
+    "type": "DATA_GO_KR_UNRESTRICTED_TEXT",
+    "url": "https://www.data.go.kr/catalog/15101971/openapi.json"
+   },
+   "normalizedText": "안성에서는 장에 내다 팔기 위해 대량으로 만든 장내기 유기와 주문받아 만든 맞춤 유기를 생산했다. 안성은 큰 장이 서던 상업의 요지였고, 그 장에서 안성지역에서 만든 유기가 거래되었다.",
+   "provider": "한국관광공사 Odii",
+   "reviewStatus": "verified",
+   "sourceId": "8266ff94-8fee-5822-b377-392e494f6d1b",
+   "sourceRevisionId": "b56714a2-92bd-5a44-a3c5-544f13fbb018",
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20230905122413",
+   "sourceUrl": "https://www.data.go.kr/data/15101971/openapi.do",
+   "title": "안성맞춤의 도시 안성",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "allowedUses": {
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "allowGeneration": true,
+    "reviewBasis": "검토 대상은 normalizedText의 자체 작성 사실문장에 한정한다. 공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다."
+   },
+   "attribution": "한국관광공사, 안성맞춤박물관, TourAPI contentId=130440, https://www.data.go.kr/data/15101578/openapi.do. 사실을 선별하여 Petasos가 자체 문장으로 작성함.",
+   "contentHash": "242d05f69fc7311b84ecf5d1a0d0657674293f4f73dd525f05988ae41630837e",
+   "fetchedAt": 1794152981000,
+   "license": {
+    "reviewBasis": "공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다.",
+    "scope": "text",
+    "type": "DATA_GO_KR_UNRESTRICTED_TEXT",
+    "url": "https://www.data.go.kr/catalog/15101578/openapi.json"
+   },
+   "normalizedText": "안성맞춤박물관은 경기도 안성시 대덕면에 있다. 박물관은 유기의 역사와 제작 방법, 생활 속 쓰임을 전시한다.",
+   "provider": "한국관광공사 TourAPI",
+   "reviewStatus": "verified",
+   "sourceId": "6ce0c208-7902-51a7-8a24-b363908f7c38",
+   "sourceRevisionId": "dc580b0b-19e9-57c4-828c-59802d399461",
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261103132015",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do",
+   "title": "안성맞춤박물관",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "sourceRevisionId": "306a0406-97ea-5b38-a4cc-0c34c2f5ac34",
+   "sourceId": "tourapi:127556",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=127556",
+   "title": "미리내성지",
+   "fetchedAt": 1794364003647,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20260205165216",
+   "verifiedAt": 1794363995701,
+   "contentHash": "30a58d46782568126ad9f1c60aeed339ba1fb6da5a18111a6f86d5d51bb95f0a",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "경기도 안성에서 북쪽으로 40리쯤 떨어져 은하수라는 뜻의 아름다운 우리말로 불리고 있는 미리내성지는 한국 최초의 사제 김대건 신부의 묘소와 그의 어머니 우르술라, 김 신부에게 사제품을 준 조선 교구 제3대 교구장 페레올 주교 그리고 김 신부의 시신을 이곳에 안장했던 이민식 빈첸시오의 묘가 나란히 자리 잡고 있다. 이곳이 미리내로 불리게 된 것은 천주교 신자들이 신유박해와 기해박해를 피해 이곳으로 숨어 들어와 교우촌을 형성하면서 밤이면 집집에서 흘러나오는 불빛이 달빛 아래 비치는 냇물과 어우러져 마치 은하수처럼 보였다고 하여 붙여졌다.\n본래 미리내는 경기도 광주, 시흥, 용인, 양평, 화성, 안성 일대 등 초기 천주교 선교지역을 이루었던 곳의 하나로, 김 신부가 미리내에 묻힌 지 50년 후인 1896년 본당이 설정됐을 때는 이곳에는 1천6백여 명의 신자가 있었다. 26세의 나이에 순교한 김대건 신부는 조정에서 장례마저 치르지 못하게 하여 처형당한 지 40일이 지난 다음에야 이민식 빈체시오가 간신히 시신을 빼내어 남의눈을 피하며 일주일을 등에 지고 이곳 미리내로 옮겨와 안장할 수 있었다.\n미리내는 1972년부터 본격적인 성역화 작업이 시작되고 1989년에 103위 성인 기념 대성전이 완성되었다. 성지에 들어서면 제일 먼저 눈에 들어오는 것은 성지 한가운데 서있는 기념 성당이다. 이 성당은 천주교 103위의 시성을 기념하기 위해 세운 것이고 기념 성당 뒤쪽으로 난 십자가의 길에는 예수가 로마 병사에게 붙잡혀 십자가에 매달려 고통받고, 죽으시고 무덤에 묻히기까지의 과정이 담겨 있는 청동 조각 15점이 서 있다. 김대건 신부의 무덤과 하악골(아래턱뼈)이 모셔져 있는 미리내 성당, 김 신부의 동상, 성모 성당, 게쎄마니 동산(바위를 자연 그대로 이용한 동산) 등을 돌아보는데 2~3시간이 소요된다."
+  },
+  {
+   "sourceRevisionId": "2ed98451-2a36-5b5e-9f34-4caadab43250",
+   "sourceId": "tourapi:128287",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=128287",
+   "title": "죽주산성",
+   "fetchedAt": 1794364007713,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261029080822",
+   "verifiedAt": 1794363995701,
+   "contentHash": "f6551954218e6627f9457178c1c9ac580ec10d7ca26f942b32263da4bbba0405",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "안성 죽주산성은 중부지역을 남북으로 통과하는 길과 동서방향으로 서해로 연결되는 길이 서로 만나는 교통과 군사의 요충지를 통제하기 위해 삼국시대에 쌓아서 조선시대까지 사용한 산성이다.\n죽주산성은 중성(본성), 외성, 내성으로 구성된 3중성이다. 죽주산성이 가진 군사적 중요성 때문에 여러 시기에 걸쳐 고쳐서 쌓으면서 만들어진 구조이다. 죽주산성에서 가장 이른 시기에 쌓은 중성은 그 높이가 6~10m에 달하며, 성벽 바깥으로 도랑을 파서 방어력을 높였다. 한강유역으로 북진한 신라가 6세기 후반 이후에 죽주산성을 쌓았고, 이후 몇 차례 고쳐 쌓았다. 이와 같이 여러 시기에 걸쳐 다시 쌓은 것은 죽주산성이 품은 시간의 켜를 보여주는 것이다.\n외성은 고려 초에 축조되었는데, 신라 산성의 북벽에 새로 성벽을 쌓아 규모를 넓혔다. 고려 고종 23년(1236)에는\n죽주방호별감인 송문주(宋文冑) 장군이 죽주산성에서 몽고군의 공격을 막아내었다. 이러한 역사적 중요성을 반영하듯이 산성 내에는 송문주 장군의 사당이 설치되어 있다. 임진왜란 기간인 조선 선조 26년(1593)에는 황희 정승의 5대손인 충청병마절도사 황진(黄進)이 죽주산성에 주둔한 왜군을 물리치기도 하였다.\n임진왜란 이후에는 죽주산성의 방어력을 높이고자 중성 내부의 높은 지점에는 내성을 쌓아 최종적으로 3중성이 되었다. 이러한 중복된 산성의 구조뿐만 아니라 성벽을 쌓은 방식도 중요한 의미가 있다. 조선시대에는 모두 4개의 문이 설치되었고, 남벽의 양 끝에는 각각 1개의 치성이 설치되어 있다. 치성은 돌로 하단부를 60도 정도 경사지게 쌓아 올렸는데, 임진왜란을 겪으면서 일본이 한반도 남부지역에 쌓은 왜성의 축조기법을 적용한 결과이다. 또한 중성에는 조선시대 화약무기의 발달에 따른 새로운 군사 시설인 포루가 설치된 것도 눈여겨볼 필요가 있다.\n한편 죽주산성 내부의 계곡에는 6기 이상의 신라 집수시설이 배치되어 있음이 발굴조사를 통해서 확인되었다. 산성이 반드시 갖추어야 하는 물자원과 관련된 전통 토목기술과 조경의 중요성을 보여주고자, 원형을 참고하여 집수시설의 모습을 복원하였다."
+  },
+  {
+   "sourceRevisionId": "d7f0acdc-0930-50a3-9fbe-8bb25817a6b1",
+   "sourceId": "tourapi:128516",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=128516",
+   "title": "안성 남사당 바우덕이 묘",
+   "fetchedAt": 1794364004161,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261103120625",
+   "verifiedAt": 1794363995701,
+   "contentHash": "7295b782d66f15252498261655fe275cb0cfa0b418b10cf9982344abaf8ff235",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "안성 남사당 바우덕이 묘는 남사당(男寺黨) 바우덕이(1848~1870)라는 사람이 묻혀 있다. 바우덕이의 본명은 김암덕으로 조선 말기에 서운면 청룡리 불당골에서 염불, 소고춤, 줄타기 등 온갖 기예를 익혀 뛰어난 기량으로 유명하였고, 세상에 나가 놀이판을 벌이니 그 이름을 모르는 이가 없었다. 불당골은 조선 초기부터 사당패의 본거지로 유명하였다. 고종 2년(1865) 흥선대원군이 팔도 장정들을 동원하여 경복궁을 증수할 적에 안성 남사당패가 유명하다는 소문을 듣고 그를 불러 놀이판을 벌이니 인부들의 위로에 큰 공을 세웠다. 이에 정3품에 해당하는 옥관자를 하사 받으니 그의 영기를 세상에 이르기를 ‘옥관자받은기‘라 하여 우러러봤다.\n남사당패는 여섯 마당[풍물놀이, 버나, 살판, 어름(줄타기), 덧뵈기(탈놀음), 덜미(꼭두각시놀음)]의 기예가 뛰어났다. 바우덕이의 개다리패가 유명해지자 안성에는 복만이패, 원윤덕패, 이원보패 등 많은 남사당패가 생기게 되었고 이로 말미암아 안성은 풍물의 고장이 되었다.\n안성 남사당풍물놀이는 전국민속경연대회에 출전하여 대통령상을 받았고, 1997년 9월 30일에 경기도 무형유산 제21호로 지정되었다. 이러한 영광의 근원이 바우덕이에 있는지라 안성 유지(有志)들이 나서서 버려진 바우덕이 묘를 찾아냈고 이를 정화하고 1990년에 묘비를 세웠다. 바우덕이는 이곳에 묻혀 있지만, 그의 공덕은 안성 남사당풍물놀이와 함께 길이 빛나고 있다."
+  }
+ ],
+ "facts": [
+  {
+   "factId": "0e03bd85-633e-51d7-8e75-6f8aa2386c0c",
+   "factRevisionId": "2878a3b3-0033-58da-840c-98b26f005ebe",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "b56714a2-92bd-5a44-a3c5-544f13fbb018",
+    "dc580b0b-19e9-57c4-828c-59802d399461"
+   ],
+   "statement": "안성 유기 제작과 안성 장의 거래는 경기도 안성지역에 관한 역사 소재이다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "28a4241f-e4e5-53e3-9421-906dc85bca5f",
+   "factRevisionId": "7297891c-3417-556a-a914-8ce3a1e0cc21",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "b56714a2-92bd-5a44-a3c5-544f13fbb018"
+   ],
+   "statement": "안성에서는 시장 판매를 위해 대량으로 만든 장내기 유기와 주문을 받아 만든 맞춤 유기를 생산했다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "825a2abf-44c9-5812-85ec-656f584deede",
+   "factRevisionId": "4b5b50b4-91ba-53f2-866c-661541378fa0",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "b56714a2-92bd-5a44-a3c5-544f13fbb018"
+   ],
+   "statement": "안성은 큰 장이 서던 상업의 요지였으며 안성 장에서는 지역에서 제작한 유기가 거래되었다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factRevisionId": "2adcb555-00ed-5869-b8d7-b15ed78f7f3a",
+   "factId": "b11f5588-5076-520a-ab53-223c7c17b0c2",
+   "version": 1,
+   "statement": "경기도 안성에서 북쪽으로 40리쯤 떨어져 은하수라는 뜻의 아름다운 우리말로 불리고 있는 미리내성지는 한국 최초의 사제 김대건 신부의 묘소와 그의 어머니 우르술라, 김 신부에게 사제품을 준 조선 교구 제3대 교구장 페레올 주교 그리고 김 신부의 시신을 이곳에 안장했던 이민식 빈첸시오의 묘가 나란히 자리 잡고 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "306a0406-97ea-5b38-a4cc-0c34c2f5ac34"
+   ]
+  },
+  {
+   "factRevisionId": "2a34dcd9-f7a2-57fd-b346-c39a5937dce3",
+   "factId": "a8005c5c-3943-5286-88ae-ad904c0fa71b",
+   "version": 1,
+   "statement": "본래 미리내는 경기도 광주, 시흥, 용인, 양평, 화성, 안성 일대 등 초기 천주교 선교지역을 이루었던 곳의 하나로, 김 신부가 미리내에 묻힌 지 50년 후인 1896년 본당이 설정됐을 때는 이곳에는 1천6백여 명의 신자가 있었다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "306a0406-97ea-5b38-a4cc-0c34c2f5ac34"
+   ]
+  },
+  {
+   "factRevisionId": "fbde5e6b-342d-50f4-895b-1c8e4ef9caa4",
+   "factId": "b3d49219-56ff-5521-a477-bcda43ab923f",
+   "version": 1,
+   "statement": "26세의 나이에 순교한 김대건 신부는 조정에서 장례마저 치르지 못하게 하여 처형당한 지 40일이 지난 다음에야 이민식 빈체시오가 간신히 시신을 빼내어 남의눈을 피하며 일주일을 등에 지고 이곳 미리내로 옮겨와 안장할 수 있었다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "306a0406-97ea-5b38-a4cc-0c34c2f5ac34"
+   ]
+  },
+  {
+   "factRevisionId": "2e8fb115-3721-5cac-9d9d-69de1c1c9082",
+   "factId": "4edbf080-9bc0-54dd-a300-496df9d82cda",
+   "version": 1,
+   "statement": "안성 죽주산성은 중부지역을 남북으로 통과하는 길과 동서방향으로 서해로 연결되는 길이 서로 만나는 교통과 군사의 요충지를 통제하기 위해 삼국시대에 쌓아서 조선시대까지 사용한 산성이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "2ed98451-2a36-5b5e-9f34-4caadab43250"
+   ]
+  },
+  {
+   "factRevisionId": "a603ed7f-6855-5e11-b21a-7bb3122587f2",
+   "factId": "f1166535-fc78-5f8f-a567-444b997899ea",
+   "version": 1,
+   "statement": "죽주산성은 중성(본성), 외성, 내성으로 구성된 3중성이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "2ed98451-2a36-5b5e-9f34-4caadab43250"
+   ]
+  },
+  {
+   "factRevisionId": "f2b619f7-c88c-5b7a-9969-2252b7564da8",
+   "factId": "dead95c5-a71d-59df-8e00-a6b54e22416b",
+   "version": 1,
+   "statement": "죽주산성이 가진 군사적 중요성 때문에 여러 시기에 걸쳐 고쳐서 쌓으면서 만들어진 구조이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "2ed98451-2a36-5b5e-9f34-4caadab43250"
+   ]
+  },
+  {
+   "factRevisionId": "a9a70c95-40b4-5873-9daf-e54968888a14",
+   "factId": "af28ab66-b030-5eaa-8d50-78deb48746d0",
+   "version": 1,
+   "statement": "안성 남사당 바우덕이 묘는 남사당(男寺黨) 바우덕이(1848~1870)라는 사람이 묻혀 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "d7f0acdc-0930-50a3-9fbe-8bb25817a6b1"
+   ]
+  },
+  {
+   "factRevisionId": "a1b63867-e7f0-5d32-bc53-2dc7ac3733d1",
+   "factId": "e14f0682-0bd4-5da0-b51e-4567410f70b3",
+   "version": 1,
+   "statement": "바우덕이의 본명은 김암덕으로 조선 말기에 서운면 청룡리 불당골에서 염불, 소고춤, 줄타기 등 온갖 기예를 익혀 뛰어난 기량으로 유명하였고, 세상에 나가 놀이판을 벌이니 그 이름을 모르는 이가 없었다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "d7f0acdc-0930-50a3-9fbe-8bb25817a6b1"
+   ]
+  },
+  {
+   "factRevisionId": "efbdb9d4-0856-5f4e-9c65-2f096152a83e",
+   "factId": "8ad1fcfc-ebc2-5479-a52b-885e0e6c919a",
+   "version": 1,
+   "statement": "불당골은 조선 초기부터 사당패의 본거지로 유명하였다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794363995701,
+   "sourceRevisionIds": [
+    "d7f0acdc-0930-50a3-9fbe-8bb25817a6b1"
+   ]
+  }
+ ]
+}

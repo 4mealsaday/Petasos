@@ -297,6 +297,12 @@ PYTHONPATH=server .local/server-venv/bin/python server/tools/build_pack.py --sce
 
 `demo/scenarios/seoul-daejeon/scenario.json`의 `landmarks.include`(허용 목록)·`notes`(intro 강조 메모)·`curatedSources`(변경 금지 원문 대체 출처)를 고친 뒤 다시 만들고, 검토표 `demo/packs/seoul-daejeon.review.md`를 읽어 확정한다. `--install`이 팩을 앱 asset으로 복사하면 출력되는 SHA-256을 `BundledStoryCatalog.SHA256`에 넣는다. 이미 설치된 (이야기, 버전)은 바뀔 수 없으므로 내용을 바꾸면 `version`을 올린다. TourAPI·OpenRouter 키가 필요하고 출처 응답은 `.local/content/cache`에 캐시된다.
 
+**이야기 프롬프트 고치고 비교하기** (`server/tools/story_lab.py`, 에뮬레이터 불필요, 서버 설정·OpenRouter 키 필요. 아래 `lab` = `PYTHONPATH=server .local/server-venv/bin/python server/tools/story_lab.py`)
+1. 고치기 전 결과를 만든다: `lab generate --prompt-version <지금 버전>`(지금 버전은 `server/prompts/story.md` 첫 줄, 결과는 `server/eval/out/<버전>/`, git 제외).
+2. `server/prompts/`의 `guide_persona.md`(말투)·`story.md`(구성)·`examples/`를 고치고, 세 곳 첫 줄의 version을 같은 새 값으로 올린다.
+3. `lab generate --prompt-version <새 버전>` → `lab compare --a <이전> --b <새>` → `server/eval/out/compare-<이전>-<새>.md`를 읽는다(지역 5곳 나란히, 검증 실패 사유 포함).
+4. 마음에 드는 이야기만 `lab approve --pack seoul-daejeon --story S01 --from <새 버전> --install`로 팩에 넣고, 출력된 SHA-256을 `BundledStoryCatalog.SHA256`에 넣는다(팩 version +1).
+
 ## 스크립트
 
 - `scripts/demo_route.py`: GPS 재생. `--scenario`(기본 seoul-daejeon), `--video`(영상 프리셋 속도), `--gpx demo/scenarios/seoul-daejeon/route.gpx`(타임스탬프 GPX 내보내기), `--speed`, `--pause`.
