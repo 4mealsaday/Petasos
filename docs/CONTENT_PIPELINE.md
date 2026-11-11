@@ -103,3 +103,38 @@ packs/<packId>.json  # 파이프라인으로 만든 팩(앱 assets로 복사)
 2. **1차 후**: 가이드 프롬프트 다듬기 → 데모 팩 재생성·비교·검토.
 3. **1차 후**: `interestScores` v0(규칙 기반) + 앱 선택 점수로 교체 → 임베딩 v1로 교체 → 지역당 이야기 풀 동적 생성(점수 상위부터).
 4. **2차 전**: 지역 팩 서버 엔드포인트 + 목적지 경로 예측으로 앞 지역 팩 미리 받기(재생·수집은 실제 GPS 확정만 인정).
+
+## 8. 현재 구현 상태 (2026-11-11, 6a07495 이후)
+
+| 부분 | 상태 |
+| --- | --- |
+| 출처 어댑터(TourAPI·국가유산·직접 작성), 출처 캐시, Place/Fact | 구현됨 |
+| 팩 형식(stories·landmarks·scope·promptVersion·scoringVersion), 앱 설치 | 구현됨 |
+| 랜드마크 후보 점수(`RuleScorer` rules-v0), 보임 등급, intro 생성·검증(KOGL-3 제외, 근거 밖 금지) | 구현됨 |
+| `build_route_pack`(데모) / `build_region_pack` + `PackService`(서비스 뼈대, 메모리 캐시) | 구현됨, 앱 미연결 |
+| 앱 창밖 안내(팩의 landmarks만 사용) | 구현됨 |
+| 랜드마크 자동 선별 품질(사람 검토 없이 서비스에 쓸 수준) | **미구현** — 데모는 scenario.json의 include·notes로 수동 확정 |
+| 이야기 생성 풀(지역별 사실 → 점수 → 생성 → 근거 검사 → 공용 캐시) | **미구현** — 데모 이야기 10편은 기존 대본을 옮긴 것 |
+| 가이드 말투 프롬프트 | **미구현** — 현재 guide_persona.md는 안전 규칙, story.md는 형식 규칙뿐 |
+| `InterestScorer`(관심사 점수)·앱 선택 점수 | **자리만** — NoInterestScorer, 앱은 관심 태그 우선 |
+| 서버 팩 영구 캐시, 앱의 서버 팩 조회·오프라인 대체, 목적지 경로 예측 | **미구현** |
+
+## 9. 이야기 생성 모듈과 검수 흐름
+
+**StoryWriter (`server/petasos_server/pipeline/story.py`)** — 랜드마크의 `IntroWriter`와 같은 위치의 공용 모듈. 데모 팩 빌드, 서버 지역 팩, 앱의 기존 이야기 생성 API가 모두 이것 하나를 호출한다.
+
+- 입력: `StoryRequest` — 지역 코드(또는 장소), 근거 사실 목록(Fact), 목표 길이(초), 관심사 초점(선택), 이미 만든 이야기 요약(중복 방지), 프롬프트 버전.
+- 처리: 프롬프트 조립(`guide_persona.md` 말투 + `story.md` 구성 + `examples/` 예시) → 모델 호출 → 검증.
+- 검증: 근거 factId 연결(기존 evidence 검사), 근거 밖 사실 금지, 금지 표현(감탄사 남발·"~라고 할 수 있습니다"·지금/오늘 등), 문단 길이·전체 길이, 같은 사실 반복 금지. 실패하면 사유와 함께 1회 재시도 후 거부.
+- 출력: 기존 이야기 번들 형식 + `promptVersion` + `reviewStatus`(draft/approved).
+
+**프롬프트 파일**
+- `guide_persona.md`: 말투(사람 가이드가 차 안에서 말하듯). 안전 규칙은 `rules.md`로 분리.
+- `story.md`: 구성(창밖·지금 위치에서 시작 → 장면 하나 → 사실 → 가볍게 말 걸기로 끝).
+- `examples/`: 사람이 쓴 좋은 예시 2~3편(말투 기준점).
+
+**검수·튜닝 도구 (`server/tools/story_lab.py`)** — 에뮬레이터 없이 터미널에서 돌린다.
+- `generate --region 11140 --prompt-version X`: 고정 평가 세트(지역 5곳의 사실 묶음)로 이야기 생성.
+- `compare --a X --b Y`: 두 프롬프트 버전 결과를 지역별로 나란히 담은 `review/compare-X-Y.md` 출력.
+- `approve --pack seoul-daejeon --story S01 --version N`: 검수 통과한 버전만 팩에 반영. 데모 팩의 기존 10편은 승인 전까지 바뀌지 않는다.
+
