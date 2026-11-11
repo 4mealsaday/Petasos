@@ -58,5 +58,10 @@ def story_prompt():
     return version, "\n\n".join(parts) + "\n"
 
 
+def story_output_typed():
+    """True when the current story.md asks for sentence-level types (paragraphs[].sentences with fact/bridge)."""
+    return "paragraphs[].sentences" in load("story")[1]
+
+
 def landmark_intro_prompt():
     return load("landmark_intro")

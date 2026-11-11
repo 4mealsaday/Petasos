@@ -60,6 +60,7 @@ class OpenRouterConfig:
     account_content_logging_disabled: bool
     max_output_tokens: int = 4096
     accepted_model_ids: tuple[str, ...] = ()
+    temperature: float | None = None   # None = not sent (the server's requests stay as they were)
 
     def validate(self):
         if (not isinstance(self.api_key, str) or not self.api_key
@@ -88,8 +89,8 @@ class OpenRouterProvider:
     async def close(self):
         await self.client.aclose()
 
-    async def generate(self, task, payload, evidence, schema, system_prompt=None):
-        """system_prompt is only for offline pack builds (e.g. landmark_intro); the server uses SYSTEM_PROMPT."""
+    async def generate(self, task, payload, evidence, schema, system_prompt=None, temperature=None):
+        """system_prompt / temperature are only for offline tools (pack builds, story lab); the server sends neither."""
         self.config.validate()  # Structural config checks fail before any outbound request.
         c = self.config
         body = {"model": c.model, "stream": False, "max_tokens": c.max_output_tokens,
@@ -100,6 +101,10 @@ class OpenRouterProvider:
                                 "evidence": evidence.model_input()}, ensure_ascii=False, allow_nan=False)}],
                 "response_format": {"type": "json_schema", "json_schema": {
                     "name": "petasos_" + task, "strict": True, "schema": provider_schema(c.model, schema)}}}
+        if temperature is None:
+            temperature = c.temperature
+        if temperature is not None:
+            body["temperature"] = float(temperature)
         try:
             # Fixed HTTPS origin, no redirects, environment proxies, tools, or URL retrieval.
             async with self.client.stream("POST", "https://openrouter.ai/api/v1/chat/completions",

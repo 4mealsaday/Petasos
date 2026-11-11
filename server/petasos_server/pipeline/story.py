@@ -19,8 +19,8 @@ from jsonschema import Draft202012Validator
 from ..content_bundle import version_content_hash
 from ..contracts import Failure, model_schema
 from ..evidence import EvidenceContext, validate_semantics
-from ..prompts import story_prompt, system_prompt
-from .grounding import GroundingJudge, judgment_reasons, location_reasons
+from ..prompts import story_output_typed, story_prompt, system_prompt
+from .grounding import GroundingJudge, effective_type, fact_names, judgment_reasons, location_reasons
 
 LEGACY_VERSION = system_prompt()[0]
 CHARS_PER_SECOND = 5.0          # the demo pack's reviewed stories: about 165 characters per 34 seconds
@@ -44,8 +44,10 @@ _KOREAN_NUMBER = re.compile(r"([일이삼사오육칠팔구십백천만]{2,})(?=
 _KOREAN_DIGIT = {"일": 1, "이": 2, "삼": 3, "사": 4, "오": 5, "육": 6, "칠": 7, "팔": 8, "구": 9}
 _KOREAN_UNIT = {"십": 10, "백": 100, "천": 1000}
 _SENTENCE = re.compile(r"[^.?!。]+[.?!。]?")
-OPENINGS = ("place", "person", "scene", "question")   # 장소 이름 / 사람 이야기 / 장면 / 물음
-ENDINGS = ("question", "afterglow", "fact")              # 가벼운 물음 / 한 줄 여운 / 사실로 마무리
+OPENINGS = ("place", "person", "scene", "question")   # v2: 장소 이름 / 사람 이야기 / 장면 / 물음
+ENDINGS = ("question", "afterglow", "fact")              # v2: 가벼운 물음 / 한 줄 여운 / 사실로 마무리
+TYPED_OPENINGS = ("experience", "scene", "question")  # v3 bridge openings: 듣는 사람의 경험·말 / 장면 / 물음
+TYPED_ENDINGS = ("question", "afterglow", "scene")     # v3 bridge endings: 가벼운 물음 / 한 줄 여운 / 장면 떠올리기
 
 
 @dataclass(frozen=True)
@@ -58,6 +60,7 @@ class StoryRequest:
     interest_focus: tuple = ()
     existing: tuple = ()            # ({"title": str, "factIds": [stable factId, ...]}, ...)
     prompt_version: str | None = None
+    ending: str | None = None       # an assigned ending (typed output); see next_ending
 
 
 @dataclass
@@ -166,11 +169,42 @@ def _repeated(paragraphs):
     return None
 
 
-def check_story(result, evidence, *, schema, target_seconds=None, existing=(), region_name=None):
-    """-> list of human-readable reasons (empty = accepted). Never raises for model output."""
-    if not Draft202012Validator(schema).is_valid(result):
-        return ["형식(스키마) 불일치"]
+def next_ending(previous=None, used=()):
+    """Rotate the typed endings evenly: the least used one that differs from the previous story's ending."""
+    counts = {e: list(used).count(e) for e in TYPED_ENDINGS}
+    choices = [e for e in TYPED_ENDINGS if e != previous] or list(TYPED_ENDINGS)
+    return min(choices, key=lambda e: (counts[e], TYPED_ENDINGS.index(e)))
+
+
+def normalize(result):
+    """Typed output: paragraph text = its sentences joined, so every later check and the bundle see plain text."""
+    for paragraph in result.get("paragraphs", []):
+        if "sentences" in paragraph:
+            paragraph["text"] = " ".join(s["text"].strip() for s in paragraph["sentences"])
+    return result
+
+
+def structure_reasons(result, region_name=None, names=None):
+    """Typed output: the story opens and closes with a bridge that claims nothing new."""
+    units = [s for p in result["paragraphs"] for s in p.get("sentences", [])]
+    if not units:
+        return []
     reasons = []
+    for label, unit in (("시작", units[0]), ("끝", units[-1])):
+        kind = effective_type(unit["text"], unit["type"], region_name, names)
+        if kind != "bridge":
+            reasons.append(f"{label} 문장이 연결 문장이 아님({kind}): '{unit['text'][:30]}'")
+    if not any(s["type"] == "fact" for s in units):
+        reasons.append("사실 문장 없음")
+    return reasons
+
+
+def check_story(result, evidence, *, schema=None, target_seconds=None, existing=(), region_name=None):
+    """-> list of human-readable reasons (empty = accepted). Never raises for model output."""
+    if schema is not None and not Draft202012Validator(schema).is_valid(result):
+        return ["형식(스키마) 불일치"]
+    normalize(result)
+    reasons = structure_reasons(result, region_name, fact_names(evidence))
     try:
         validate_semantics({"task": "story", "payload": {}}, result, evidence)
     except Failure:
@@ -221,13 +255,21 @@ def evidence_from_facts(facts):
     return EvidenceContext(sources, rows)
 
 
-def lab_schema():
-    """The server's story model schema plus a title and core question for the pack row."""
+def lab_schema(typed=False):
+    """The server's story model schema plus a title and core question for the pack row. typed (story guide v3+):
+    each paragraph is a list of sentences marked fact/bridge instead of one text."""
     schema = model_schema("story")
+    if typed:
+        paragraph = schema["properties"]["paragraphs"]["items"]
+        del paragraph["properties"]["text"]
+        paragraph["properties"]["sentences"] = {"type": "array", "minItems": 1, "maxItems": 6, "items": {
+            "type": "object", "additionalProperties": False, "required": ["text", "type"],
+            "properties": {"text": {"type": "string", "minLength": 1, "maxLength": 160}, "type": {"enum": ["fact", "bridge"]}}}}
+        paragraph["required"] = ["sentences" if key == "text" else key for key in paragraph["required"]]
     schema["properties"]["title"] = {"type": "string", "minLength": 1, "maxLength": 60}
     schema["properties"]["coreQuestion"] = {"type": "string", "minLength": 1, "maxLength": 160}
-    schema["properties"]["opening"] = {"enum": list(OPENINGS)}
-    schema["properties"]["ending"] = {"enum": list(ENDINGS)}
+    schema["properties"]["opening"] = {"enum": list(TYPED_OPENINGS if typed else OPENINGS)}
+    schema["properties"]["ending"] = {"enum": list(TYPED_ENDINGS if typed else ENDINGS)}
     schema["required"] = [*schema["required"], "title", "coreQuestion", "opening", "ending"]
     return schema
 
@@ -239,6 +281,7 @@ class StoryWriter:
         self.provider = provider
         self.judge = GroundingJudge(provider) if judge is True else judge
         self.guide_version, self.guide_prompt = story_prompt()
+        self.guide_typed = story_output_typed()
         self.prompt_version = prompt_version or LEGACY_VERSION
         self._prompt(self.prompt_version)
 
@@ -250,7 +293,8 @@ class StoryWriter:
             return self.guide_prompt
         raise ValueError(f"UNKNOWN_PROMPT_VERSION: {version} (available: {LEGACY_VERSION}, {self.guide_version})")
 
-    async def _attempts(self, provider, payload, evidence, schema, version, target_seconds, existing, region_name=None):
+    async def _attempts(self, provider, payload, evidence, schema, version, target_seconds, existing, region_name=None,
+                        typed=False):
         prompt = self._prompt(version)
         attempts = []
         for _ in range(2):
@@ -261,8 +305,16 @@ class StoryWriter:
             else:
                 generated = await provider.generate("story", body, evidence, schema, system_prompt=prompt)
             result = copy.deepcopy(generated.result)
+            if typed and Draft202012Validator(schema).is_valid(result):
+                # Derived data: a paragraph's sources are exactly its facts' sources (story_evidence.md). The lab fills
+                # them in instead of failing on bookkeeping; the app API still requires the model's own list.
+                for paragraph in result["paragraphs"]:
+                    paragraph["sourceRevisionIds"] = sorted({sid for f in paragraph["factRevisionIds"] if f in evidence.facts
+                                                             for sid in evidence.facts[f]["sourceRevisionIds"]})
             reasons = check_story(result, evidence, schema=schema, target_seconds=target_seconds, existing=existing,
                                   region_name=region_name)
+            if payload.get("ending") and isinstance(result, dict) and result.get("ending") != payload["ending"]:
+                reasons.append(f"정해진 끝맺음({payload['ending']})과 다름({result.get('ending')})")
             judgments = []
             if not reasons and self.judge is not None:
                 judgments = await self.judge.judge(result["paragraphs"], evidence, region_name)
@@ -282,8 +334,13 @@ class StoryWriter:
         payload = {"region": {"code": request.region_code, "name": request.region_name},
                    "targetChars": target_window(request.target_seconds),
                    "interestFocus": list(request.interest_focus), "existingStories": list(request.existing)}
-        generated, result, attempts = await self._attempts(self.provider, payload, evidence, lab_schema(), version,
-                                                           request.target_seconds, request.existing, request.region_name)
+        if request.ending:
+            payload["ending"] = request.ending
+        if request.existing and request.existing[-1].get("opening"):
+            payload["avoid"] = {"opening": request.existing[-1]["opening"], "ending": request.existing[-1].get("ending")}
+        typed = version == self.guide_version and self.guide_typed
+        generated, result, attempts = await self._attempts(self.provider, payload, evidence, lab_schema(typed), version,
+                                                           request.target_seconds, request.existing, request.region_name, typed)
         return StoryDraft(result["title"], result["coreQuestion"], result["paragraphs"], version,
                           attempts=[{"reasons": a["reasons"], "judgments": a["judgments"]} for a in attempts],
                           model_id=generated.model_id, opening=result["opening"], ending=result["ending"],

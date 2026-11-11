@@ -201,6 +201,14 @@
 - 음성 읽기 변환: 앱에 없음. 자막과 음성이 갈라지는 유일한 지점은 `PleosRuntimeSpeech.kt:104`(`slot.adapter.speak(permit.text.value)`) → `PleosSpeechOutput.speak`(`sdk?.speak(text, true)`). 이번엔 만들지 않음.
 - 확인: 서버 테스트 339개·앱 JVM 941개 통과, 데모 팩 이야기 10편·SHA-256(`e0ebcf20…`) 그대로.
 
+**15단계 — story-guide-v3: 연결/사실 문장, 소재 점수, 말투 기준 예시** (브랜치 `feature/story-guide-v3`, PR #2 병합 후)
+- 문장 두 종류: 출력이 문단마다 sentences[{text, type: fact|bridge}](story.md에 형식 표기 → 랩이 typed 스키마 사용). 첫·끝 문장은 bridge, 근거 판정은 fact 문장만. bridge에 숫자·연도·근거 속 장소 이름·영문이 있으면 사실로 보고 판정("bridge→fact"). 끝맺음 3가지(물음/여운/장면 떠올리기)는 파이프라인이 고르게 돌려 정해 줌(직전과 다르게, 가장 덜 쓴 것).
+- 소재 점수 `StorySeedScorer`(story-seed-rules-v0, scoring.py): 사실 묶음(같은 출처 + 같은 기존 이야기)에 사람·이름 유래·기록·생활 가점, 치수 나열·홍보/안내 문구 감점, 무거운 소재(죽음·처형·순교·전쟁·박해 등) -3, 종교 시설 -0.5·직전도 종교면 추가 -2. compare에 소재·점수·이유 한 줄.
+- 예시: docs/story-voice-examples.md의 예시 1~3을 examples/03~05로 옮김([F]/[B] → [fact]/[bridge]), S01·S08 예시 삭제, "하지 말아야 할 예"를 guide_persona.md에 반영. 근거 판정(`story_lab.py judge-examples`): 사실 문장은 2회 실행 중 1회 전부 지지, 1회는 예시 1의 "두 가지 방식으로 만들었어요"가 불충분(판정 흔들림). 예시 3은 사실 문장으로 시작해 "bridge로 시작" 규칙과 맞지 않음(예시는 고치지 않음, 사용자 확인 필요).
+- 랩 생성 온도 0.4·판정 0(공급자 설정 temperature, 미설정 시 보내지 않음 → 서버 요청 그대로). 랩 typed 경로는 문단 sourceRevisionIds를 factRevisionIds에서 계산.
+- 결과(`compare-story-guide-v2-story-guide-v3.md`, 같은 소재 선택·판정기): v2 4/5 / v3 5/5, v3 연결 문장으로 시작·끝 5/5, 통과본 판정 불충분·모순 0, 무거운 소재 0, 종교 시설 1편(대전 자광사), 끝맺음 3가지. 같은 조건 이전 실행은 4/5·4/5(장소 판별 오탐 "보면/서면/지역" 수정 전·후). bridge 안의 해석("뜻이 두 번 겹쳐 있는 셈")·근거 밖 암시("기차역 앞에서 사 먹던 과자")는 규칙 검사가 못 잡음.
+- 확인: 서버 테스트 344개·앱 JVM 941개 통과, 서버 이야기 API는 v0.8-5·판정 꺼짐, 데모 팩 SHA-256(`e0ebcf20…`) 그대로.
+
 ## 5. 개발 원칙 (이전 방식에서 바꾸는 점)
 - 새 기능마다 문서·증거 JSON·probe를 만들지 않는다. 변경 내역은 git 커밋 메시지로 충분.
 - "검증 전이면 기능을 끈다" 대신 "데모에서 동작하게 하고, 한계는 README에 한 줄".
