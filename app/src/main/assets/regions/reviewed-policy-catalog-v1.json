@@ -1,11 +1,11 @@
 {
   "formatVersion": 1,
-  "manifestSha256": "dc8a212b4028a96397b33a2ad595d423541bdb74cf95eadae82811efd37ce7e5",
+  "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
   "reviews": [
     {
       "formatVersion": 1,
       "regionRevisionId": "kr-sigungu-11140-ngii-d7a3751bd89f-wgs84-stream-v1",
-      "manifestSha256": "dc8a212b4028a96397b33a2ad595d423541bdb74cf95eadae82811efd37ce7e5",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
       "geometrySha256": "7d30130051b57b22710b2a6cb4c3fb3d21cf08fe21162944c4cabae4a6e95d7e",
       "policy": {
         "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
@@ -22,7 +22,7 @@
     {
       "formatVersion": 1,
       "regionRevisionId": "kr-sigungu-41461-ngii-d7a3751bd89f-wgs84-stream-v1",
-      "manifestSha256": "dc8a212b4028a96397b33a2ad595d423541bdb74cf95eadae82811efd37ce7e5",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
       "geometrySha256": "0dd6d52bff78ba38746e811a356a27f5682c4510146d7963782bb0417a622a89",
       "policy": {
         "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
@@ -39,7 +39,7 @@
     {
       "formatVersion": 1,
       "regionRevisionId": "kr-sigungu-41463-ngii-d7a3751bd89f-wgs84-stream-v1",
-      "manifestSha256": "dc8a212b4028a96397b33a2ad595d423541bdb74cf95eadae82811efd37ce7e5",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
       "geometrySha256": "132444f65c5fad227e0f3cabeac59ba781577c97194b2fd3d6a0f8d472361ec0",
       "policy": {
         "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
@@ -56,7 +56,7 @@
     {
       "formatVersion": 1,
       "regionRevisionId": "kr-sigungu-41465-ngii-d7a3751bd89f-wgs84-stream-v1",
-      "manifestSha256": "dc8a212b4028a96397b33a2ad595d423541bdb74cf95eadae82811efd37ce7e5",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
       "geometrySha256": "ebb4c190eb9a3163a2dff8df2324482e8c7db4657c2a389dca2066feac42b0a4",
       "policy": {
         "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
@@ -73,7 +73,7 @@
     {
       "formatVersion": 1,
       "regionRevisionId": "kr-sigungu-41550-ngii-d7a3751bd89f-wgs84-stream-v1",
-      "manifestSha256": "dc8a212b4028a96397b33a2ad595d423541bdb74cf95eadae82811efd37ce7e5",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
       "geometrySha256": "606d522a21eca03ee969e8f6a3b38ed8bc6b8675729c61e276a76bfe121e48df",
       "policy": {
         "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
@@ -90,7 +90,7 @@
     {
       "formatVersion": 1,
       "regionRevisionId": "kr-sigungu-44131-ngii-d7a3751bd89f-wgs84-stream-v1",
-      "manifestSha256": "dc8a212b4028a96397b33a2ad595d423541bdb74cf95eadae82811efd37ce7e5",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
       "geometrySha256": "c2efe5b70febd824f5bf28395c8205b86931ec611dda8b2e41edb6c0c5225244",
       "policy": {
         "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
@@ -107,7 +107,7 @@
     {
       "formatVersion": 1,
       "regionRevisionId": "kr-sigungu-44133-ngii-d7a3751bd89f-wgs84-stream-v1",
-      "manifestSha256": "dc8a212b4028a96397b33a2ad595d423541bdb74cf95eadae82811efd37ce7e5",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
       "geometrySha256": "15d6bcac9f10bacb58d9b7a51364e017c6c5437ede14a0ef48dc7517886c724a",
       "policy": {
         "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
@@ -124,7 +124,7 @@
     {
       "formatVersion": 1,
       "regionRevisionId": "kr-sigungu-30200-ngii-d7a3751bd89f-wgs84-stream-v1",
-      "manifestSha256": "dc8a212b4028a96397b33a2ad595d423541bdb74cf95eadae82811efd37ce7e5",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
       "geometrySha256": "3ba915fd138f206f74cf6d58970d9079ee0b5ab1322fa2bd46c3fd7caa06331e",
       "policy": {
         "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
@@ -141,7 +141,7 @@
     {
       "formatVersion": 1,
       "regionRevisionId": "kr-sigungu-11170-ngii-d7a3751bd89f-wgs84-stream-v1",
-      "manifestSha256": "dc8a212b4028a96397b33a2ad595d423541bdb74cf95eadae82811efd37ce7e5",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
       "geometrySha256": "b20cb8850d2fdb44afa54233ad0467b26a707303cdde2e5f84c859de2557f1bb",
       "policy": {
         "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
@@ -158,7 +158,7 @@
     {
       "formatVersion": 1,
       "regionRevisionId": "kr-sigungu-11650-ngii-d7a3751bd89f-wgs84-stream-v1",
-      "manifestSha256": "dc8a212b4028a96397b33a2ad595d423541bdb74cf95eadae82811efd37ce7e5",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
       "geometrySha256": "3766063fe5dc38ec1c581c95793a30fea9c3da24d4dbfaa9fe5dc07c44abad1a",
       "policy": {
         "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
@@ -175,7 +175,7 @@
     {
       "formatVersion": 1,
       "regionRevisionId": "kr-sigungu-30230-ngii-d7a3751bd89f-wgs84-stream-v1",
-      "manifestSha256": "dc8a212b4028a96397b33a2ad595d423541bdb74cf95eadae82811efd37ce7e5",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
       "geometrySha256": "41b0be066ea70742e316ef250ead5e15738ff470c8dcd231235033378a7865b6",
       "policy": {
         "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
@@ -192,7 +192,7 @@
     {
       "formatVersion": 1,
       "regionRevisionId": "kr-sigungu-41131-ngii-d7a3751bd89f-wgs84-stream-v1",
-      "manifestSha256": "dc8a212b4028a96397b33a2ad595d423541bdb74cf95eadae82811efd37ce7e5",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
       "geometrySha256": "7c5eb700dc45b323c72efc70a2b2952b8dfd096e27549b89edff66f463abd1a9",
       "policy": {
         "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
@@ -209,7 +209,7 @@
     {
       "formatVersion": 1,
       "regionRevisionId": "kr-sigungu-41135-ngii-d7a3751bd89f-wgs84-stream-v1",
-      "manifestSha256": "dc8a212b4028a96397b33a2ad595d423541bdb74cf95eadae82811efd37ce7e5",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
       "geometrySha256": "2e1619edb2b8917943865ba431599244f700d2d696d6ce2414d9d954761a195f",
       "policy": {
         "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
@@ -226,7 +226,7 @@
     {
       "formatVersion": 1,
       "regionRevisionId": "kr-sigungu-41220-ngii-d7a3751bd89f-wgs84-stream-v1",
-      "manifestSha256": "dc8a212b4028a96397b33a2ad595d423541bdb74cf95eadae82811efd37ce7e5",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
       "geometrySha256": "10016e42232194f53fcb15415497dbffb2506c1f85fa91874e96f90fa3d8c483",
       "policy": {
         "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
@@ -243,7 +243,7 @@
     {
       "formatVersion": 1,
       "regionRevisionId": "kr-sigungu-41370-ngii-d7a3751bd89f-wgs84-stream-v1",
-      "manifestSha256": "dc8a212b4028a96397b33a2ad595d423541bdb74cf95eadae82811efd37ce7e5",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
       "geometrySha256": "ef24513ae7f3183c650d255b056db688b9777fceee4674c9e2f89035d9502a7e",
       "policy": {
         "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
@@ -260,7 +260,7 @@
     {
       "formatVersion": 1,
       "regionRevisionId": "kr-sigungu-41460-ngii-d7a3751bd89f-wgs84-stream-v1",
-      "manifestSha256": "dc8a212b4028a96397b33a2ad595d423541bdb74cf95eadae82811efd37ce7e5",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
       "geometrySha256": "f1e21831a3bea99f4ac2871f685cc05fbc511377b78edf72f9ca8b4a12382ef1",
       "policy": {
         "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
@@ -277,7 +277,7 @@
     {
       "formatVersion": 1,
       "regionRevisionId": "kr-sigungu-41590-ngii-d7a3751bd89f-wgs84-stream-v1",
-      "manifestSha256": "dc8a212b4028a96397b33a2ad595d423541bdb74cf95eadae82811efd37ce7e5",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
       "geometrySha256": "d63337b31367eacffe3dbd7ee3e3423130a311a8fcdd041197a31793668ed870",
       "policy": {
         "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
@@ -294,7 +294,7 @@
     {
       "formatVersion": 1,
       "regionRevisionId": "kr-sigungu-43112-ngii-d7a3751bd89f-wgs84-stream-v1",
-      "manifestSha256": "dc8a212b4028a96397b33a2ad595d423541bdb74cf95eadae82811efd37ce7e5",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
       "geometrySha256": "a46b190ba00327a3c783ba2f281c239f44a788f850d1a0ee01f95b071477a6ba",
       "policy": {
         "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
@@ -311,7 +311,7 @@
     {
       "formatVersion": 1,
       "regionRevisionId": "kr-sigungu-43113-ngii-d7a3751bd89f-wgs84-stream-v1",
-      "manifestSha256": "dc8a212b4028a96397b33a2ad595d423541bdb74cf95eadae82811efd37ce7e5",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
       "geometrySha256": "2a67234cf4331b85146fd4effb9f5b47280f4aba786f81ed8d92902768a4ae2a",
       "policy": {
         "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
@@ -328,7 +328,7 @@
     {
       "formatVersion": 1,
       "regionRevisionId": "kr-sigungu-43114-ngii-d7a3751bd89f-wgs84-stream-v1",
-      "manifestSha256": "dc8a212b4028a96397b33a2ad595d423541bdb74cf95eadae82811efd37ce7e5",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
       "geometrySha256": "0110028cff239b1a7c5142857bd2896219e967b86fe099b8300b5af080c207e4",
       "policy": {
         "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
@@ -345,7 +345,7 @@
     {
       "formatVersion": 1,
       "regionRevisionId": "kr-sigungu-44130-ngii-d7a3751bd89f-wgs84-stream-v1",
-      "manifestSha256": "dc8a212b4028a96397b33a2ad595d423541bdb74cf95eadae82811efd37ce7e5",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
       "geometrySha256": "ad5fd1503aae77db8b787efac3e3db1919a4535c437f33a24492fe96c5c84169",
       "policy": {
         "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
@@ -362,7 +362,7 @@
     {
       "formatVersion": 1,
       "regionRevisionId": "kr-sigungu-30110-ngii-d7a3751bd89f-wgs84-stream-v1",
-      "manifestSha256": "dc8a212b4028a96397b33a2ad595d423541bdb74cf95eadae82811efd37ce7e5",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
       "geometrySha256": "e8492947123c464fec182482a503df8a45bca563606e81e08f52413c65aa8a89",
       "policy": {
         "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
@@ -374,6 +374,448 @@
       },
       "verifiedAt": 1794160826875,
       "reviewBasis": "Same reviewed policy parameters (N=2, 1000 ms, margin 5 m) extended to this additional leaf region: the one bundled story's region binding this content ships with (S10), restored into the manifest because the content installer's story_region_binding foreign key requires this region to exist even though this fixed demo route's own polyline never geometrically enters it (verified by exact point-in-polygon test). Not independently re-tested at this margin/duration for this specific region.",
+      "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
+    },
+    {
+      "formatVersion": 1,
+      "regionRevisionId": "kr-sigungu-11440-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
+      "geometrySha256": "ebc67d1dea3740fbdc9a2c6a2354365cb8c0d0d9150c645172008c4344250578",
+      "policy": {
+        "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+        "consecutiveSamples": 2,
+        "minConfirmationDurationMs": 1000,
+        "boundaryMarginMeters": 5,
+        "qualityAdapterVersion": "android-location-v1",
+        "coordinateReferenceSystem": "EPSG:4326"
+      },
+      "verifiedAt": 1794368903826,
+      "reviewBasis": "Same reviewed policy parameters (N=2, 1000 ms, margin 5 m) extended to this additional leaf region along the Seoul-Incheon (Songdo) demo route (route-only scenario for the trip map; no stories). Not independently re-tested at this margin/duration for this specific region.",
+      "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
+    },
+    {
+      "formatVersion": 1,
+      "regionRevisionId": "kr-sigungu-11470-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
+      "geometrySha256": "370505176a776ee119e066179e6c322f36be7a5a3eb3eaf12adcc924389c6c19",
+      "policy": {
+        "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+        "consecutiveSamples": 2,
+        "minConfirmationDurationMs": 1000,
+        "boundaryMarginMeters": 5,
+        "qualityAdapterVersion": "android-location-v1",
+        "coordinateReferenceSystem": "EPSG:4326"
+      },
+      "verifiedAt": 1794368903826,
+      "reviewBasis": "Same reviewed policy parameters (N=2, 1000 ms, margin 5 m) extended to this additional leaf region along the Seoul-Incheon (Songdo) demo route (route-only scenario for the trip map; no stories). Not independently re-tested at this margin/duration for this specific region.",
+      "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
+    },
+    {
+      "formatVersion": 1,
+      "regionRevisionId": "kr-sigungu-11500-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
+      "geometrySha256": "f3ee78196f51a86e8efc7b0647c6085bb2df00d2dcfccdb81d328cf1ee2f7b94",
+      "policy": {
+        "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+        "consecutiveSamples": 2,
+        "minConfirmationDurationMs": 1000,
+        "boundaryMarginMeters": 5,
+        "qualityAdapterVersion": "android-location-v1",
+        "coordinateReferenceSystem": "EPSG:4326"
+      },
+      "verifiedAt": 1794368903826,
+      "reviewBasis": "Same reviewed policy parameters (N=2, 1000 ms, margin 5 m) extended to this additional leaf region along the Seoul-Incheon (Songdo) demo route (route-only scenario for the trip map; no stories). Not independently re-tested at this margin/duration for this specific region.",
+      "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
+    },
+    {
+      "formatVersion": 1,
+      "regionRevisionId": "kr-sigungu-11560-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
+      "geometrySha256": "1addcf6aacb01884f2ae384fc0394b7c8cc6330d9b30d13bc42aec4b55cc2c58",
+      "policy": {
+        "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+        "consecutiveSamples": 2,
+        "minConfirmationDurationMs": 1000,
+        "boundaryMarginMeters": 5,
+        "qualityAdapterVersion": "android-location-v1",
+        "coordinateReferenceSystem": "EPSG:4326"
+      },
+      "verifiedAt": 1794368903826,
+      "reviewBasis": "Same reviewed policy parameters (N=2, 1000 ms, margin 5 m) extended to this additional leaf region along the Seoul-Incheon (Songdo) demo route (route-only scenario for the trip map; no stories). Not independently re-tested at this margin/duration for this specific region.",
+      "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
+    },
+    {
+      "formatVersion": 1,
+      "regionRevisionId": "kr-sigungu-11680-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
+      "geometrySha256": "f313d4fa7ee863a072d339a9a7cb0e4bf01dfcd807f059cd189fb9eb9a26599f",
+      "policy": {
+        "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+        "consecutiveSamples": 2,
+        "minConfirmationDurationMs": 1000,
+        "boundaryMarginMeters": 5,
+        "qualityAdapterVersion": "android-location-v1",
+        "coordinateReferenceSystem": "EPSG:4326"
+      },
+      "verifiedAt": 1794368903826,
+      "reviewBasis": "Same reviewed policy parameters (N=2, 1000 ms, margin 5 m) extended to this additional leaf region along the Seoul-Chuncheon demo route (route-only scenario for the trip map; no stories). Not independently re-tested at this margin/duration for this specific region.",
+      "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
+    },
+    {
+      "formatVersion": 1,
+      "regionRevisionId": "kr-sigungu-11710-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
+      "geometrySha256": "0e8087a2441caf6354276d510fa1da0b27e0479ef4377742b28d7cf30c4525d7",
+      "policy": {
+        "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+        "consecutiveSamples": 2,
+        "minConfirmationDurationMs": 1000,
+        "boundaryMarginMeters": 5,
+        "qualityAdapterVersion": "android-location-v1",
+        "coordinateReferenceSystem": "EPSG:4326"
+      },
+      "verifiedAt": 1794368903826,
+      "reviewBasis": "Same reviewed policy parameters (N=2, 1000 ms, margin 5 m) extended to this additional leaf region along the Seoul-Chuncheon demo route (route-only scenario for the trip map; no stories). Not independently re-tested at this margin/duration for this specific region.",
+      "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
+    },
+    {
+      "formatVersion": 1,
+      "regionRevisionId": "kr-sigungu-11740-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
+      "geometrySha256": "b765c56f991ce5da810960e5a24053c240b63d370e03a5cafa303bf9163d8a08",
+      "policy": {
+        "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+        "consecutiveSamples": 2,
+        "minConfirmationDurationMs": 1000,
+        "boundaryMarginMeters": 5,
+        "qualityAdapterVersion": "android-location-v1",
+        "coordinateReferenceSystem": "EPSG:4326"
+      },
+      "verifiedAt": 1794368903826,
+      "reviewBasis": "Same reviewed policy parameters (N=2, 1000 ms, margin 5 m) extended to this additional leaf region along the Seoul-Chuncheon demo route (route-only scenario for the trip map; no stories). Not independently re-tested at this margin/duration for this specific region.",
+      "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
+    },
+    {
+      "formatVersion": 1,
+      "regionRevisionId": "kr-sigungu-28140-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
+      "geometrySha256": "466f293ef8dac8b9810994498f6043cd10b6ab536bb08574112c642ba0b2876c",
+      "policy": {
+        "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+        "consecutiveSamples": 2,
+        "minConfirmationDurationMs": 1000,
+        "boundaryMarginMeters": 5,
+        "qualityAdapterVersion": "android-location-v1",
+        "coordinateReferenceSystem": "EPSG:4326"
+      },
+      "verifiedAt": 1794368903826,
+      "reviewBasis": "Same reviewed policy parameters (N=2, 1000 ms, margin 5 m) extended to this additional leaf region along the Seoul-Incheon (Songdo) demo route (route-only scenario for the trip map; no stories). Not independently re-tested at this margin/duration for this specific region.",
+      "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
+    },
+    {
+      "formatVersion": 1,
+      "regionRevisionId": "kr-sigungu-28177-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
+      "geometrySha256": "3ec877ac88d77a67442010d36c2e4194e7ff7677af3a51ad97cf364a70704a9a",
+      "policy": {
+        "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+        "consecutiveSamples": 2,
+        "minConfirmationDurationMs": 1000,
+        "boundaryMarginMeters": 5,
+        "qualityAdapterVersion": "android-location-v1",
+        "coordinateReferenceSystem": "EPSG:4326"
+      },
+      "verifiedAt": 1794368903826,
+      "reviewBasis": "Same reviewed policy parameters (N=2, 1000 ms, margin 5 m) extended to this additional leaf region along the Seoul-Incheon (Songdo) demo route (route-only scenario for the trip map; no stories). Not independently re-tested at this margin/duration for this specific region.",
+      "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
+    },
+    {
+      "formatVersion": 1,
+      "regionRevisionId": "kr-sigungu-28185-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
+      "geometrySha256": "b58021136bd631afb3b03d42c50ec452a064244b7ffd2d2a168fa3ac21860f8f",
+      "policy": {
+        "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+        "consecutiveSamples": 2,
+        "minConfirmationDurationMs": 1000,
+        "boundaryMarginMeters": 5,
+        "qualityAdapterVersion": "android-location-v1",
+        "coordinateReferenceSystem": "EPSG:4326"
+      },
+      "verifiedAt": 1794368903826,
+      "reviewBasis": "Same reviewed policy parameters (N=2, 1000 ms, margin 5 m) extended to this additional leaf region along the Seoul-Incheon (Songdo) demo route (route-only scenario for the trip map; no stories). Not independently re-tested at this margin/duration for this specific region.",
+      "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
+    },
+    {
+      "formatVersion": 1,
+      "regionRevisionId": "kr-sigungu-28245-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
+      "geometrySha256": "f23a61868016fe38eefba69219b49254f4d0a845170687bc7778d55647dc38a5",
+      "policy": {
+        "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+        "consecutiveSamples": 2,
+        "minConfirmationDurationMs": 1000,
+        "boundaryMarginMeters": 5,
+        "qualityAdapterVersion": "android-location-v1",
+        "coordinateReferenceSystem": "EPSG:4326"
+      },
+      "verifiedAt": 1794368903826,
+      "reviewBasis": "Same reviewed policy parameters (N=2, 1000 ms, margin 5 m) extended to this additional leaf region along the Seoul-Incheon (Songdo) demo route (route-only scenario for the trip map; no stories). Not independently re-tested at this margin/duration for this specific region.",
+      "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
+    },
+    {
+      "formatVersion": 1,
+      "regionRevisionId": "kr-sigungu-28260-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
+      "geometrySha256": "21b8eb68af72c1cc21bea02bb0bd29d49390155893b2e6f9e4ba6b090006a3a4",
+      "policy": {
+        "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+        "consecutiveSamples": 2,
+        "minConfirmationDurationMs": 1000,
+        "boundaryMarginMeters": 5,
+        "qualityAdapterVersion": "android-location-v1",
+        "coordinateReferenceSystem": "EPSG:4326"
+      },
+      "verifiedAt": 1794368903826,
+      "reviewBasis": "Same reviewed policy parameters (N=2, 1000 ms, margin 5 m) extended to this additional leaf region along the Seoul-Incheon (Songdo) demo route (route-only scenario for the trip map; no stories). Not independently re-tested at this margin/duration for this specific region.",
+      "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
+    },
+    {
+      "formatVersion": 1,
+      "regionRevisionId": "kr-sigungu-30170-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
+      "geometrySha256": "ce9585eef6a2f25906dd92922f57a528a2e4778a76c90a5529a2ea5e98f13323",
+      "policy": {
+        "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+        "consecutiveSamples": 2,
+        "minConfirmationDurationMs": 1000,
+        "boundaryMarginMeters": 5,
+        "qualityAdapterVersion": "android-location-v1",
+        "coordinateReferenceSystem": "EPSG:4326"
+      },
+      "verifiedAt": 1794368903826,
+      "reviewBasis": "Same reviewed policy parameters (N=2, 1000 ms, margin 5 m) extended to this additional leaf region along the Daejeon-Jeonju demo route (route-only scenario for the trip map; no stories). Not independently re-tested at this margin/duration for this specific region.",
+      "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
+    },
+    {
+      "formatVersion": 1,
+      "regionRevisionId": "kr-sigungu-41196-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
+      "geometrySha256": "19f94ddebae0ebd76ee7610b1f6747908356b961eb45943308e6d04340925a56",
+      "policy": {
+        "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+        "consecutiveSamples": 2,
+        "minConfirmationDurationMs": 1000,
+        "boundaryMarginMeters": 5,
+        "qualityAdapterVersion": "android-location-v1",
+        "coordinateReferenceSystem": "EPSG:4326"
+      },
+      "verifiedAt": 1794368903826,
+      "reviewBasis": "Same reviewed policy parameters (N=2, 1000 ms, margin 5 m) extended to this additional leaf region along the Seoul-Incheon (Songdo) demo route (route-only scenario for the trip map; no stories). Not independently re-tested at this margin/duration for this specific region.",
+      "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
+    },
+    {
+      "formatVersion": 1,
+      "regionRevisionId": "kr-sigungu-41360-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
+      "geometrySha256": "eba2195f33a6a1221e1443c679bf340a1905ea3d5f19af2215e4c9a633a6727a",
+      "policy": {
+        "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+        "consecutiveSamples": 2,
+        "minConfirmationDurationMs": 1000,
+        "boundaryMarginMeters": 5,
+        "qualityAdapterVersion": "android-location-v1",
+        "coordinateReferenceSystem": "EPSG:4326"
+      },
+      "verifiedAt": 1794368903826,
+      "reviewBasis": "Same reviewed policy parameters (N=2, 1000 ms, margin 5 m) extended to this additional leaf region along the Seoul-Chuncheon demo route (route-only scenario for the trip map; no stories). Not independently re-tested at this margin/duration for this specific region.",
+      "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
+    },
+    {
+      "formatVersion": 1,
+      "regionRevisionId": "kr-sigungu-41450-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
+      "geometrySha256": "3c917b90ec98545c3739f032009a23d0e13c736dd9508bdbc3b7979d55dcc8f9",
+      "policy": {
+        "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+        "consecutiveSamples": 2,
+        "minConfirmationDurationMs": 1000,
+        "boundaryMarginMeters": 5,
+        "qualityAdapterVersion": "android-location-v1",
+        "coordinateReferenceSystem": "EPSG:4326"
+      },
+      "verifiedAt": 1794368903826,
+      "reviewBasis": "Same reviewed policy parameters (N=2, 1000 ms, margin 5 m) extended to this additional leaf region along the Seoul-Chuncheon demo route (route-only scenario for the trip map; no stories). Not independently re-tested at this margin/duration for this specific region.",
+      "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
+    },
+    {
+      "formatVersion": 1,
+      "regionRevisionId": "kr-sigungu-41820-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
+      "geometrySha256": "6ba7dc0cfd0c19522bf3d1ff7f0b606012cda73961a6b9921b419ec8494f49dd",
+      "policy": {
+        "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+        "consecutiveSamples": 2,
+        "minConfirmationDurationMs": 1000,
+        "boundaryMarginMeters": 5,
+        "qualityAdapterVersion": "android-location-v1",
+        "coordinateReferenceSystem": "EPSG:4326"
+      },
+      "verifiedAt": 1794368903826,
+      "reviewBasis": "Same reviewed policy parameters (N=2, 1000 ms, margin 5 m) extended to this additional leaf region along the Seoul-Chuncheon demo route (route-only scenario for the trip map; no stories). Not independently re-tested at this margin/duration for this specific region.",
+      "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
+    },
+    {
+      "formatVersion": 1,
+      "regionRevisionId": "kr-sigungu-41830-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
+      "geometrySha256": "8b0a70337df2ad1ecb688193eb59dea9ae38d3367f665273db863f57992042b5",
+      "policy": {
+        "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+        "consecutiveSamples": 2,
+        "minConfirmationDurationMs": 1000,
+        "boundaryMarginMeters": 5,
+        "qualityAdapterVersion": "android-location-v1",
+        "coordinateReferenceSystem": "EPSG:4326"
+      },
+      "verifiedAt": 1794368903826,
+      "reviewBasis": "Same reviewed policy parameters (N=2, 1000 ms, margin 5 m) extended to this additional leaf region along the Seoul-Chuncheon demo route (route-only scenario for the trip map; no stories). Not independently re-tested at this margin/duration for this specific region.",
+      "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
+    },
+    {
+      "formatVersion": 1,
+      "regionRevisionId": "kr-sigungu-44230-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
+      "geometrySha256": "73af9db413d773f5ea83540251f8591e9d0722fc90a0467e3590e32ce975a815",
+      "policy": {
+        "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+        "consecutiveSamples": 2,
+        "minConfirmationDurationMs": 1000,
+        "boundaryMarginMeters": 5,
+        "qualityAdapterVersion": "android-location-v1",
+        "coordinateReferenceSystem": "EPSG:4326"
+      },
+      "verifiedAt": 1794368903826,
+      "reviewBasis": "Same reviewed policy parameters (N=2, 1000 ms, margin 5 m) extended to this additional leaf region along the Daejeon-Jeonju demo route (route-only scenario for the trip map; no stories). Not independently re-tested at this margin/duration for this specific region.",
+      "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
+    },
+    {
+      "formatVersion": 1,
+      "regionRevisionId": "kr-sigungu-44250-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
+      "geometrySha256": "a9939e1522bdc0cf99b0cd1fe8318563efbdf43fae5a496f12bb194acf254dce",
+      "policy": {
+        "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+        "consecutiveSamples": 2,
+        "minConfirmationDurationMs": 1000,
+        "boundaryMarginMeters": 5,
+        "qualityAdapterVersion": "android-location-v1",
+        "coordinateReferenceSystem": "EPSG:4326"
+      },
+      "verifiedAt": 1794368903826,
+      "reviewBasis": "Same reviewed policy parameters (N=2, 1000 ms, margin 5 m) extended to this additional leaf region along the Daejeon-Jeonju demo route (route-only scenario for the trip map; no stories). Not independently re-tested at this margin/duration for this specific region.",
+      "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
+    },
+    {
+      "formatVersion": 1,
+      "regionRevisionId": "kr-sigungu-51110-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
+      "geometrySha256": "7beb733839d6eca69575444730a83804c518a35441984d47d9de93772eb6f3f6",
+      "policy": {
+        "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+        "consecutiveSamples": 2,
+        "minConfirmationDurationMs": 1000,
+        "boundaryMarginMeters": 5,
+        "qualityAdapterVersion": "android-location-v1",
+        "coordinateReferenceSystem": "EPSG:4326"
+      },
+      "verifiedAt": 1794368903826,
+      "reviewBasis": "Same reviewed policy parameters (N=2, 1000 ms, margin 5 m) extended to this additional leaf region along the Seoul-Chuncheon demo route (route-only scenario for the trip map; no stories). Not independently re-tested at this margin/duration for this specific region.",
+      "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
+    },
+    {
+      "formatVersion": 1,
+      "regionRevisionId": "kr-sigungu-51720-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
+      "geometrySha256": "3ef9f2a99ecf13e3658f3620c7f65bb37811591ab180a86ede4572e07f6a9da1",
+      "policy": {
+        "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+        "consecutiveSamples": 2,
+        "minConfirmationDurationMs": 1000,
+        "boundaryMarginMeters": 5,
+        "qualityAdapterVersion": "android-location-v1",
+        "coordinateReferenceSystem": "EPSG:4326"
+      },
+      "verifiedAt": 1794368903826,
+      "reviewBasis": "Same reviewed policy parameters (N=2, 1000 ms, margin 5 m) extended to this additional leaf region along the Seoul-Chuncheon demo route (route-only scenario for the trip map; no stories). Not independently re-tested at this margin/duration for this specific region.",
+      "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
+    },
+    {
+      "formatVersion": 1,
+      "regionRevisionId": "kr-sigungu-52111-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
+      "geometrySha256": "f9149ef73b621ead142c28d8eb02f3b79fd687136f50ba9e94f3819298777cc2",
+      "policy": {
+        "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+        "consecutiveSamples": 2,
+        "minConfirmationDurationMs": 1000,
+        "boundaryMarginMeters": 5,
+        "qualityAdapterVersion": "android-location-v1",
+        "coordinateReferenceSystem": "EPSG:4326"
+      },
+      "verifiedAt": 1794368903826,
+      "reviewBasis": "Same reviewed policy parameters (N=2, 1000 ms, margin 5 m) extended to this additional leaf region along the Daejeon-Jeonju demo route (route-only scenario for the trip map; no stories). Not independently re-tested at this margin/duration for this specific region.",
+      "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
+    },
+    {
+      "formatVersion": 1,
+      "regionRevisionId": "kr-sigungu-52113-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
+      "geometrySha256": "6781e0fe53809e5d66f11a17a555ab9b04497ffd33772fd5ebc506748dd39573",
+      "policy": {
+        "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+        "consecutiveSamples": 2,
+        "minConfirmationDurationMs": 1000,
+        "boundaryMarginMeters": 5,
+        "qualityAdapterVersion": "android-location-v1",
+        "coordinateReferenceSystem": "EPSG:4326"
+      },
+      "verifiedAt": 1794368903826,
+      "reviewBasis": "Same reviewed policy parameters (N=2, 1000 ms, margin 5 m) extended to this additional leaf region along the Daejeon-Jeonju demo route (route-only scenario for the trip map; no stories). Not independently re-tested at this margin/duration for this specific region.",
+      "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
+    },
+    {
+      "formatVersion": 1,
+      "regionRevisionId": "kr-sigungu-52140-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
+      "geometrySha256": "60092c017c512b42f065ae93eda661c0d5d5cd27d197c601cd7c35c4c8b8a46a",
+      "policy": {
+        "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+        "consecutiveSamples": 2,
+        "minConfirmationDurationMs": 1000,
+        "boundaryMarginMeters": 5,
+        "qualityAdapterVersion": "android-location-v1",
+        "coordinateReferenceSystem": "EPSG:4326"
+      },
+      "verifiedAt": 1794368903826,
+      "reviewBasis": "Same reviewed policy parameters (N=2, 1000 ms, margin 5 m) extended to this additional leaf region along the Daejeon-Jeonju demo route (route-only scenario for the trip map; no stories). Not independently re-tested at this margin/duration for this specific region.",
+      "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
+    },
+    {
+      "formatVersion": 1,
+      "regionRevisionId": "kr-sigungu-52710-ngii-d7a3751bd89f-wgs84-stream-v1",
+      "manifestSha256": "5624b77723a13e90d1a3867a2456969f1a256c671546c8843ee763de697e839f",
+      "geometrySha256": "ca00b1d0de6a6e1572ae6197f55cf7a55962fd13e90144d341495f9742b1734c",
+      "policy": {
+        "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+        "consecutiveSamples": 2,
+        "minConfirmationDurationMs": 1000,
+        "boundaryMarginMeters": 5,
+        "qualityAdapterVersion": "android-location-v1",
+        "coordinateReferenceSystem": "EPSG:4326"
+      },
+      "verifiedAt": 1794368903826,
+      "reviewBasis": "Same reviewed policy parameters (N=2, 1000 ms, margin 5 m) extended to this additional leaf region along the Daejeon-Jeonju demo route (route-only scenario for the trip map; no stories). Not independently re-tested at this margin/duration for this specific region.",
       "evidenceSha256": "730068a2a886c93429196ef292d1d40467b1960e9a1fc23d55ff573c012b9e7d"
     }
   ]

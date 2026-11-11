@@ -2,6 +2,7 @@ package com.petasos.app.presentation.interests
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
 import android.widget.GridLayout
@@ -18,6 +19,10 @@ class InterestGridView @JvmOverloads constructor(
     private val chips = linkedMapOf<InterestChoice, TextView>()
 
     init {
+        val styled = context.obtainStyledAttributes(attrs, R.styleable.InterestGridView)
+        val chipHeight = styled.getDimensionPixelSize(R.styleable.InterestGridView_chipHeight, dp(56))
+        val chipTextSize = styled.getDimension(R.styleable.InterestGridView_chipTextSize, 0f)
+        styled.recycle()
         columnCount = COLUMNS
         isSaveEnabled = false
         setSaveFromParentEnabled(false)
@@ -31,14 +36,16 @@ class InterestGridView @JvmOverloads constructor(
                 isSaveEnabled = false
                 setSaveFromParentEnabled(false)
                 setOnClickListener { onChoice?.invoke(choice) }
+                if (chipTextSize > 0f) setTextSize(TypedValue.COMPLEX_UNIT_PX, chipTextSize)
             }
             chips[choice] = chip
             addView(chip, LayoutParams().apply {
                 width = 0
-                height = dp(56)
+                height = chipHeight
                 rowSpec = spec(index / COLUMNS)
                 columnSpec = spec(index % COLUMNS, 1f)
-                setMargins(dp(6), dp(6), dp(6), dp(6))
+                val gap = if (chipHeight > dp(56)) dp(10) else dp(6)
+                setMargins(gap, gap, gap, gap)
                 setGravity(Gravity.FILL)
             })
         }
