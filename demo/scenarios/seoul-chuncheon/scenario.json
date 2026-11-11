@@ -1,0 +1,20 @@
+{
+ "scenarioId": "seoul-chuncheon",
+ "name": "서울역 → 춘천역 (경춘축)",
+ "origin": {
+  "name": "서울역",
+  "longitude": 126.9707,
+  "latitude": 37.5547
+ },
+ "destination": {
+  "name": "춘천역",
+  "longitude": 127.7166,
+  "latitude": 37.8846
+ },
+ "note": "내 여행 지도용 경로 시나리오: 이야기·랜드마크 없음(팩 없음). route.json은 scripts/fetch-scenario-route.py로 1회 조회해 고정.",
+ "route": "route.json",
+ "gpx": "route.gpx",
+ "landmarks": {
+  "include": []
+ }
+}

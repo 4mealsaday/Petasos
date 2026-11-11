@@ -1,0 +1,20 @@
+{
+ "scenarioId": "daejeon-jeonju",
+ "name": "대전엑스포과학공원 → 전주 한옥마을 (호남축)",
+ "origin": {
+  "name": "대전엑스포과학공원",
+  "longitude": 127.3866,
+  "latitude": 36.3765
+ },
+ "destination": {
+  "name": "전주 한옥마을",
+  "longitude": 127.153,
+  "latitude": 35.815
+ },
+ "note": "내 여행 지도용 경로 시나리오: 이야기·랜드마크 없음(팩 없음). route.json은 scripts/fetch-scenario-route.py로 1회 조회해 고정.",
+ "route": "route.json",
+ "gpx": "route.gpx",
+ "landmarks": {
+  "include": []
+ }
+}

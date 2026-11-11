@@ -1,0 +1,20 @@
+{
+ "scenarioId": "seoul-incheon",
+ "name": "서울역 → 인천 송도 센트럴파크 (경인축)",
+ "origin": {
+  "name": "서울역",
+  "longitude": 126.9707,
+  "latitude": 37.5547
+ },
+ "destination": {
+  "name": "송도 센트럴파크",
+  "longitude": 126.6392,
+  "latitude": 37.3926
+ },
+ "note": "내 여행 지도용 경로 시나리오: 이야기·랜드마크 없음(팩 없음). route.json은 scripts/fetch-scenario-route.py로 1회 조회해 고정.",
+ "route": "route.json",
+ "gpx": "route.gpx",
+ "landmarks": {
+  "include": []
+ }
+}
