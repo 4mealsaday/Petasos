@@ -68,7 +68,7 @@ class PromptSetTests(unittest.TestCase):
     def test_every_prompt_file_has_a_version_and_the_bump_rule_on_its_first_line(self):
         names = ("rules", "story_evidence", "guide_persona", "story", "answer", "summary_resume", "landmark_intro",
                  *prompts.example_names())
-        self.assertEqual(len(prompts.example_names()), 2)
+        self.assertEqual(len(prompts.example_names()), 3)
         for name in names:
             first = (prompts.DIRECTORY / f"{name}.md").read_text(encoding="utf-8").split("\n", 1)[0]
             self.assertIn("version: ", first, name)
@@ -129,7 +129,9 @@ class WriterTests(unittest.TestCase):
 
     def test_retry_once_with_the_reasons_then_accept(self):
         provider = ScriptedProvider(bad(text="대전 유성구를 지나요! 공원이 있어요."), GOOD)
-        draft = asyncio.run(StoryWriter(provider).write(self.request()))
+        writer = StoryWriter(provider)
+        writer.guide_typed = False   # untyped paragraphs (v2 style); typed output is covered below
+        draft = asyncio.run(writer.write(self.request()))
         self.assertEqual((draft.title, draft.prompt_version, draft.review_status), (GOOD["title"], GUIDE, "draft"))
         self.assertEqual(len(draft.attempts), 1)
         self.assertIn("느낌표", provider.calls[1]["payload"]["retryReason"])
@@ -178,6 +180,7 @@ class GroundingTests(unittest.TestCase):
         ok = {"verdicts": [{"id": i, "verdict": "supported", "reason": ""} for i in ("p1s2", "p1s3", "p2s1", "p2s2")]}
         provider = ScriptedProvider(GOOD, judged, GOOD, ok)
         writer = StoryWriter(provider, judge=True)
+        writer.guide_typed = False
         draft = asyncio.run(writer.write(StoryRequest("30200", "대전 유성구", FACTS, 35, prompt_version=GUIDE)))
         tasks = [c["task"] for c in provider.calls]
         self.assertEqual(tasks, ["story", "grounding", "story", "grounding"])
@@ -205,6 +208,89 @@ class GroundingTests(unittest.TestCase):
         written = asyncio.run(IntroWriter(provider, judge=True).write("엑스포과학공원", "culture", facts, True))
         self.assertEqual(written[2], "quote")
         self.assertEqual([c["task"] for c in provider.calls], ["landmark_intro", "grounding"] * 2)
+
+
+class TypedOutputAndSeedTests(unittest.TestCase):
+    TYPED = {"title": "박람회가 남긴 공원", "coreQuestion": "박람회 뒤에 무엇이 남았을까요?", "estimatedDurationMs": 30000,
+             "opening": "scene", "ending": "afterglow", "paragraphs": [
+                 {"kind": "fact", "factRevisionIds": ["f1-r1"], "sourceRevisionIds": ["s1"], "sentences": [
+                     {"text": "큰 행사가 끝난 자리는 어떻게 될까요?", "type": "bridge"},
+                     {"text": "대전엑스포과학공원은 1993년 대전세계박람회를 기념해 만든 공원이에요.", "type": "fact"}]},
+                 {"kind": "fact", "factRevisionIds": ["f2-r1"], "sourceRevisionIds": ["s1"], "sentences": [
+                     {"text": "공원 안에는 한빛탑이라는 전망대가 있어요.", "type": "fact"},
+                     {"text": "그 탑 아래를 걷던 사람들의 발걸음이 그려지네요.", "type": "bridge"}]}]}
+
+    def test_typed_schema_and_structure(self):
+        from petasos_server.pipeline.story import normalize, structure_reasons
+        from jsonschema import Draft202012Validator
+        self.assertTrue(Draft202012Validator(lab_schema(typed=True)).is_valid(self.TYPED))
+        value = normalize(copy.deepcopy(self.TYPED))
+        self.assertTrue(value["paragraphs"][0]["text"].startswith("큰 행사가"))
+        self.assertEqual(structure_reasons(value, "대전 유성구"), [])
+        self.assertEqual(check_story(value, evidence_from_facts(FACTS), target_seconds=None, region_name="대전 유성구"), [])
+        ends_with_fact = copy.deepcopy(self.TYPED)
+        ends_with_fact["paragraphs"][1]["sentences"].pop()
+        self.assertTrue(any("끝 문장" in r for r in structure_reasons(ends_with_fact)))
+
+    def test_bridges_with_numbers_or_places_are_judged_as_facts(self):
+        from petasos_server.pipeline.grounding import effective_type
+        self.assertEqual(effective_type("딱 맞는 걸 보면 '안성맞춤이네' 하고 말할 때가 있죠.", "bridge", "안성"), "bridge")
+        self.assertEqual(effective_type("길이 나뉘는 곳에 서면 방향을 고르게 되죠.", "bridge", "천안"), "bridge")
+        self.assertEqual(effective_type("여행길에 기념품을 고를 때, 그 지역 이름이 붙은 걸 찾게 되죠.", "bridge", "천안", {"지역", "광덕산"}), "bridge")
+        self.assertEqual(effective_type("이름 끝에 붙은 284, 무슨 숫자일까요?", "bridge", "서울 중구"), "bridge→fact")
+        self.assertEqual(effective_type("한빛탑 아래를 걸어 볼까요?", "bridge", "대전 유성구", {"한빛탑"}), "bridge→fact")
+        self.assertEqual(effective_type("큰 행사가 끝난 자리는 어떻게 될까요?", "bridge", "대전 유성구", {"한빛탑"}), "bridge")
+        self.assertEqual(effective_type("대전 유성구로 들어가 볼까요?", "bridge", "대전 유성구"), "bridge")
+
+    def test_endings_rotate_evenly_and_never_repeat_the_previous_one(self):
+        from petasos_server.pipeline.story import next_ending
+        used, previous = [], None
+        for _ in range(6):
+            ending = next_ending(previous, used)
+            self.assertNotEqual(ending, previous)
+            used.append(ending)
+            previous = ending
+        self.assertEqual(sorted(set(used)), ["afterglow", "question", "scene"])
+        self.assertEqual({used.count(e) for e in set(used)}, {2})
+
+    def test_server_requests_carry_no_temperature_unless_configured(self):
+        import httpx
+        from petasos_server.provider import OpenRouterConfig, OpenRouterProvider
+        bodies = []
+
+        def handler(request):
+            bodies.append(json.loads(request.content))
+            return httpx.Response(500)
+
+        async def call(config, **kwargs):
+            provider = OpenRouterProvider(config, transport=httpx.MockTransport(handler))
+            try:
+                await provider.generate("story", {}, evidence_from_facts(FACTS), model_schema("story"), **kwargs)
+            except Failure:
+                pass
+            await provider.close()
+        base = dict(api_key="k", model="m", provider_slug="p", accepted_provider_names=("P",), privacy_reviewed_until=1,
+                    account_content_logging_disabled=True)
+        asyncio.run(call(OpenRouterConfig(**base)))
+        asyncio.run(call(OpenRouterConfig(**base, temperature=0.4)))
+        asyncio.run(call(OpenRouterConfig(**base, temperature=0.4), temperature=0))
+        self.assertNotIn("temperature", bodies[0])
+        self.assertEqual((bodies[1]["temperature"], bodies[2]["temperature"]), (0.4, 0.0))
+
+    def test_story_seed_scorer(self):
+        from petasos_server.pipeline.scoring import StorySeedScorer
+        scorer = StorySeedScorer()
+        person, _, _ = scorer.score(["포은아트홀의 이름은 포은 정몽주 선생의 아호에서 따왔다."])
+        dimensions, _, _ = scorer.score(["아래층 기단의 4면에는 각 면마다 7개씩의 안상이 조각되어 있다.", "위층 기단의 4면에는 모서리마다 기둥 모양을 새겨 두었다."])
+        heavy, reasons, flags = scorer.score(["26세의 나이에 순교한 신부는 처형당한 지 40일 뒤에 안장되었다."])
+        self.assertGreater(person, dimensions)
+        self.assertGreater(dimensions, heavy)
+        self.assertTrue(flags["heavy"] and any("무거운" in r for r in reasons))
+        self.assertFalse(scorer.score(["안성 장의 거래는 경기도 안성지역에 관한 역사 소재이다."])[2]["religious"])
+        seeds = [{"id": "temple", "title": "사찰", "statements": ["자광사는 1969년 탄허 대종사가 창건한 조계종 사찰이다."]},
+                 {"id": "park", "title": "공원", "statements": ["한빛탑은 엑스포과학공원 안의 전망대이다."]}]
+        self.assertEqual(scorer.select(seeds)[0]["id"], "temple")
+        self.assertEqual(scorer.select(seeds, previous_religious=True)[0]["id"], "park")
 
 
 class ApiPathTests(unittest.IsolatedAsyncioTestCase):
