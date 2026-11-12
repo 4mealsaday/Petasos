@@ -1,0 +1,1426 @@
+{
+ "facts": [
+  {
+   "factId": "ff8acee3-b6a0-57f6-8b93-bff1f6fb9270",
+   "factRevisionId": "550e8570-4e6e-56c8-b751-31ab030fa788",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "6444b061-3726-5aab-9c4d-8207d3c09331"
+   ],
+   "statement": "문화역 서울 284는 서울특별시 중구에 있다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "a413538c-5aff-5ca7-8a3d-151eb9d01099",
+   "factRevisionId": "17e887c1-11b6-5954-8365-2da61d828efb",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "3a4fe8ae-0e59-5b47-b798-644f813726fc",
+    "0de160ec-0c6e-565e-b396-755259eab427"
+   ],
+   "statement": "용구·처인의 통합과 용인 명칭은 현재 용인시가 공식 연혁에 기록하는 해당 지역의 역사이다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "247d4087-ea06-5b4f-a8e6-a64403c6914e",
+   "factRevisionId": "cc2411f2-e51d-572c-9b59-ecdc0e07d380",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "3a4fe8ae-0e59-5b47-b798-644f813726fc"
+   ],
+   "statement": "내사면·외사면에서 양지면·백암면으로의 개칭은 용인지역의 행정지명 변경이다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "0e03bd85-633e-51d7-8e75-6f8aa2386c0c",
+   "factRevisionId": "2878a3b3-0033-58da-840c-98b26f005ebe",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "b56714a2-92bd-5a44-a3c5-544f13fbb018",
+    "dc580b0b-19e9-57c4-828c-59802d399461"
+   ],
+   "statement": "안성 유기 제작과 안성 장의 거래는 경기도 안성지역에 관한 역사 소재이다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "353bcd25-4330-5b56-a74f-7a38360e1c50",
+   "factRevisionId": "08bb3e8a-015c-57d1-8034-11ad3c50cfed",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "b7227b6c-01ca-55ce-b10f-b6a315b0e700"
+   ],
+   "statement": "천안 호두과자는 공식 농촌진흥청 자료가 천안의 이름으로 소개하는 지역 제과 소재이다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "20739bfc-ae18-5c94-9c10-80203afa6bca",
+   "factRevisionId": "3cf667a0-77e7-5d2e-8638-499e3c53e12c",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "150b6f4d-5739-5397-9fe5-c742e8dc3907"
+   ],
+   "statement": "천안삼거리공원은 충청남도 천안시 동남구에 있다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "f14a9e1d-7d84-547d-8178-0b69c789a98e",
+   "factRevisionId": "767625b8-1756-57f9-9bdd-790a0a7af59c",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "68a403ab-25f1-512a-888e-f7ef16013ff4"
+   ],
+   "statement": "대전 철도 이야기의 장소 기준인 대전역 동광장은 대전광역시 동구에 있다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "f7f4e600-7c23-592d-b871-d21e833f9026",
+   "factRevisionId": "9a43805b-fef1-5b68-a434-71e13a8cf048",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "7ce22da2-4f74-58c9-a660-8624f4452277"
+   ],
+   "statement": "대전엑스포과학공원은 대전광역시 유성구에 있다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "e87751fd-65e5-50a7-be3e-36b331663387",
+   "factRevisionId": "483cfc22-d83a-5346-9adc-69b756075edf",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "6444b061-3726-5aab-9c4d-8207d3c09331"
+   ],
+   "statement": "옛 서울역 건물을 복원하여 문화역 서울 284라는 복합문화공간으로 사용하고 있다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "84e831f1-162c-588e-b4f3-2a0ba2023af9",
+   "factRevisionId": "c0483580-6179-5a93-9f84-e700924762bf",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "e5777bcb-69f7-51f6-8842-237706a399ce"
+   ],
+   "statement": "문화역 서울 284의 284는 옛 서울역사의 사적 번호에서 온 이름이다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "f0f32b5d-1e6b-5b97-8c24-13c8cd51c46f",
+   "factRevisionId": "a7e34148-57ab-5bd2-99de-c4a8255e448f",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "0de160ec-0c6e-565e-b396-755259eab427"
+   ],
+   "statement": "조선시대 용구와 처인을 합쳐 용인이라는 이름을 사용한 사실이 태종실록에 기록되어 있다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "15f289d5-2d24-5903-9741-c79d039dda88",
+   "factRevisionId": "03970925-d308-5bee-9aca-462698ba2b47",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "3a4fe8ae-0e59-5b47-b798-644f813726fc"
+   ],
+   "statement": "1996년 3월 1일 당시 용인지역 내사면이 양지면으로, 외사면이 백암면으로 개칭되었다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "28a4241f-e4e5-53e3-9421-906dc85bca5f",
+   "factRevisionId": "7297891c-3417-556a-a914-8ce3a1e0cc21",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "b56714a2-92bd-5a44-a3c5-544f13fbb018"
+   ],
+   "statement": "안성에서는 시장 판매를 위해 대량으로 만든 장내기 유기와 주문을 받아 만든 맞춤 유기를 생산했다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "825a2abf-44c9-5812-85ec-656f584deede",
+   "factRevisionId": "4b5b50b4-91ba-53f2-866c-661541378fa0",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "b56714a2-92bd-5a44-a3c5-544f13fbb018"
+   ],
+   "statement": "안성은 큰 장이 서던 상업의 요지였으며 안성 장에서는 지역에서 제작한 유기가 거래되었다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "3526ae07-9676-5f68-9a00-f99a048726b3",
+   "factRevisionId": "efd53577-97e4-58ba-b677-779757438d00",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "b7227b6c-01ca-55ce-b10f-b6a315b0e700"
+   ],
+   "statement": "천안 호두과자에는 팥을 재료로 만든 제품이 있으며 농촌진흥청이 아라리 팥을 쓴 사례를 소개했다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "cb238ba9-10a5-58c0-b01b-d80bf1bb15e1",
+   "factRevisionId": "486c3f10-9ae3-5c69-88dd-0267ccff1a03",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "150b6f4d-5739-5397-9fe5-c742e8dc3907",
+    "e7d2e436-a609-509a-bd67-43994cb0a30d"
+   ],
+   "statement": "천안삼거리는 북쪽 한양, 남쪽 경상도, 서쪽 전라도 방향으로 가는 길이 나뉘던 삼남대로의 분기점이다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "8247c771-389f-5340-aa6b-1ad39458ea93",
+   "factRevisionId": "249294d7-9cbd-5e20-8b4e-432f852cf4ae",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "9662db55-be7e-53da-af2a-1b69d773491e"
+   ],
+   "statement": "대전은 철도와 함께 성장한 도시이며 경부선과 호남선이 갈라지는 중요한 철도 교통 지역이다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factId": "276f408d-2e8d-511a-9d51-2b92b8b37367",
+   "factRevisionId": "3ce2057c-bd6b-5e57-822a-3464a5ab4000",
+   "kind": "verified_fact",
+   "sourceRevisionIds": [
+    "7ce22da2-4f74-58c9-a660-8624f4452277"
+   ],
+   "statement": "대전엑스포과학공원은 1993년 대전세계박람회를 기념하고 시설과 부지를 과학교육에 활용하기 위해 조성되었다.",
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "factRevisionId": "351d7068-abbc-5fbc-aa2e-5e49566986e4",
+   "factId": "31968191-4afb-598c-9dac-62758031bed5",
+   "version": 1,
+   "statement": "1985년 발굴조사 때 금당터·서회랑터·강당터·부속건물들이 있던 건물터가 확인되었고 ‘흥덕사’라고 새겨진 쇠북(금구) 조각이 나와 절의 이름이 흥덕사였음을 알 수 있었다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794394299679,
+   "sourceRevisionIds": [
+    "db572430-21f3-5f21-aebb-deec20db03b0"
+   ]
+  },
+  {
+   "factRevisionId": "3c85de30-5f33-568c-80cd-40d6d87c9b78",
+   "factId": "e427b9c2-7a5d-5b8b-8220-d5b856815ff6",
+   "version": 1,
+   "statement": "청주 운천동에 있는 통일신라시대의 절터이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794394299679,
+   "sourceRevisionIds": [
+    "db572430-21f3-5f21-aebb-deec20db03b0"
+   ]
+  },
+  {
+   "factRevisionId": "511304f1-5eb3-5ffe-9b5b-4a358ce4a524",
+   "factId": "788b69c4-e540-527d-8b53-ccf488b8641d",
+   "version": 1,
+   "statement": "‘대중 3년명(大中 3年銘)’이라 새겨진 기와와 기타 유물들로 보아 늦어도 9세기에 지어져 고려 후기까지 그 명맥을 유지하였던 것으로 보인다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794394299679,
+   "sourceRevisionIds": [
+    "db572430-21f3-5f21-aebb-deec20db03b0"
+   ]
+  },
+  {
+   "factRevisionId": "4a19a54b-6ead-5c8f-92ff-b7ed39b7ee54",
+   "factId": "01d62c43-3f55-5644-9e62-f18a3b160ee4",
+   "version": 1,
+   "statement": "신탄면옥은 신탄진로변에 있고 신탄진IC에서 가깝다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "52788d0c-edb6-5787-b769-15aa5aa0172a"
+   ]
+  },
+  {
+   "factRevisionId": "5cd65de8-5b41-5fd9-bcc0-419ec666f222",
+   "factId": "6da19e81-3af2-5f12-ad99-4a6b3475c3ae",
+   "version": 1,
+   "statement": "부추해물칼국수식당은 대전 도심과 대청댐 사이에 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "52788d0c-edb6-5787-b769-15aa5aa0172a"
+   ]
+  },
+  {
+   "factRevisionId": "a870921f-67bd-5dbe-b4b1-66b4e5c26eb8",
+   "factId": "f9379a91-2e0b-5993-8080-fc1d95a03b1a",
+   "version": 1,
+   "statement": "신탄면옥은 대전 대덕구 덕암동에 있는 음식점이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "52788d0c-edb6-5787-b769-15aa5aa0172a"
+   ]
+  },
+  {
+   "factRevisionId": "b0a4498d-5585-55ea-b9ef-3fe2f77bdeaa",
+   "factId": "c3490c17-9765-5362-90ff-f6f999a06770",
+   "version": 1,
+   "statement": "부추해물칼국수식당은 칼국수와 주꾸미, 족발을 취급한다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "52788d0c-edb6-5787-b769-15aa5aa0172a"
+   ]
+  },
+  {
+   "factRevisionId": "e9b474f7-c851-5226-8371-71a5f21390bb",
+   "factId": "4ccb466c-9a95-5e9f-8c19-fbd93fc09841",
+   "version": 1,
+   "statement": "신탄면옥은 냉면과 갈비탕을 취급한다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "52788d0c-edb6-5787-b769-15aa5aa0172a"
+   ]
+  },
+  {
+   "factRevisionId": "f59ba675-497e-52c7-9ecd-bf22e6a8a4a2",
+   "factId": "a9996ca4-f1e1-5610-b54d-f024729b44e2",
+   "version": 1,
+   "statement": "부추해물칼국수식당은 대전 대덕구 신탄진동에 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "52788d0c-edb6-5787-b769-15aa5aa0172a"
+   ]
+  }
+ ],
+ "formatVersion": 2,
+ "places": [
+  {
+   "aliases": [],
+   "coordinateReviewBasis": "공식 TourAPI의 동일 contentid에 연결된 title/addr1/mapx/mapy 원문 문자열을 추출해 그대로 보존했다. 국문 관광정보 서비스의 공개 WGS84 경도·위도 필드 규약과 검색/상세 응답 일치를 확인했다. 공급자가 지정한 장소 대표점만 검토하며 입구·도로 접근점·GPS 정확도·실제 통과를 확정하지 않는다.",
+   "coordinateSourceRevisionId": "bbff35a2-9a3d-5829-9479-049b4e679fd8",
+   "coordinateSystem": "WGS84",
+   "externalIds": [
+    {
+     "externalId": "250364",
+     "provider": "kto-tourapi",
+     "verifiedAt": 1794157970529
+    }
+   ],
+   "latitude": "37.5559582569",
+   "longitude": "126.9716093128",
+   "name": "문화역 서울 284",
+   "placeId": "f79e9b40-aa96-5972-b59f-aa99f7bc8522"
+  },
+  {
+   "aliases": [],
+   "coordinateReviewBasis": "공식 TourAPI의 동일 contentid에 연결된 title/addr1/mapx/mapy 원문 문자열을 추출해 그대로 보존했다. 국문 관광정보 서비스의 공개 WGS84 경도·위도 필드 규약과 검색/상세 응답 일치를 확인했다. 공급자가 지정한 장소 대표점만 검토하며 입구·도로 접근점·GPS 정확도·실제 통과를 확정하지 않는다.",
+   "coordinateSourceRevisionId": "21ba8b7c-7016-512f-af79-f7226818273f",
+   "coordinateSystem": "WGS84",
+   "externalIds": [
+    {
+     "externalId": "125994",
+     "provider": "kto-tourapi",
+     "verifiedAt": 1794157970529
+    }
+   ],
+   "latitude": "36.3759480684",
+   "longitude": "127.3802532459",
+   "name": "대전엑스포과학공원",
+   "placeId": "f560a058-6fad-5f6f-9ac9-03ea8743ceb3"
+  }
+ ],
+ "regionBindings": [
+  {
+   "associationFactRevisionId": "550e8570-4e6e-56c8-b751-31ab030fa788",
+   "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionCode": "11140",
+   "regionId": "kr-sigungu-11140",
+   "regionName": "중구",
+   "regionRevisionId": "kr-sigungu-11140-ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionSourceRevisionId": "ngii-sigungu-d7a3751bd89f",
+   "reviewBasis": "S01의 지역 소속은 독립 association fact와 그 원자료를 검토했다. 기존 NGII manifest의 11140 중구 identity를 그대로 사용한다. 원자료의 공식 주소/지역 설명과 행정구역을 대조했다. 좌표·방문 판정 정책·현재 위치·예측 경로를 이 binding으로 승인하지 않는다.",
+   "storyId": "03849d89-1640-5603-be8b-9835d371ed02",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "associationFactRevisionId": "550e8570-4e6e-56c8-b751-31ab030fa788",
+   "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionCode": "11140",
+   "regionId": "kr-sigungu-11140",
+   "regionName": "중구",
+   "regionRevisionId": "kr-sigungu-11140-ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionSourceRevisionId": "ngii-sigungu-d7a3751bd89f",
+   "reviewBasis": "S02의 지역 소속은 독립 association fact와 그 원자료를 검토했다. 기존 NGII manifest의 11140 중구 identity를 그대로 사용한다. 원자료의 공식 주소/지역 설명과 행정구역을 대조했다. 좌표·방문 판정 정책·현재 위치·예측 경로를 이 binding으로 승인하지 않는다.",
+   "storyId": "126af9cc-2003-5d75-b33d-7ef66bd42c8d",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "associationFactRevisionId": "17e887c1-11b6-5954-8365-2da61d828efb",
+   "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionCode": "41460",
+   "regionId": "kr-sigungu-41460",
+   "regionName": "용인시",
+   "regionRevisionId": "kr-sigungu-41460-ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionSourceRevisionId": "ngii-sigungu-d7a3751bd89f",
+   "reviewBasis": "S03의 지역 소속은 독립 association fact와 그 원자료를 검토했다. 기존 NGII manifest의 41460 용인시 identity를 그대로 사용한다. 시 전체 역사·먹거리 소재를 parent 시에 연결하며 특정 구를 임의로 지정하지 않는다. 좌표·방문 판정 정책·현재 위치·예측 경로를 이 binding으로 승인하지 않는다.",
+   "storyId": "d87ba5a6-04d1-54b7-8f75-cf58dfe89ef8",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "associationFactRevisionId": "cc2411f2-e51d-572c-9b59-ecdc0e07d380",
+   "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionCode": "41460",
+   "regionId": "kr-sigungu-41460",
+   "regionName": "용인시",
+   "regionRevisionId": "kr-sigungu-41460-ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionSourceRevisionId": "ngii-sigungu-d7a3751bd89f",
+   "reviewBasis": "S04의 지역 소속은 독립 association fact와 그 원자료를 검토했다. 기존 NGII manifest의 41460 용인시 identity를 그대로 사용한다. 시 전체 역사·먹거리 소재를 parent 시에 연결하며 특정 구를 임의로 지정하지 않는다. 좌표·방문 판정 정책·현재 위치·예측 경로를 이 binding으로 승인하지 않는다.",
+   "storyId": "088b7514-07e1-530e-b6dc-979da12c1aee",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "associationFactRevisionId": "2878a3b3-0033-58da-840c-98b26f005ebe",
+   "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionCode": "41550",
+   "regionId": "kr-sigungu-41550",
+   "regionName": "안성시",
+   "regionRevisionId": "kr-sigungu-41550-ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionSourceRevisionId": "ngii-sigungu-d7a3751bd89f",
+   "reviewBasis": "S05의 지역 소속은 독립 association fact와 그 원자료를 검토했다. 기존 NGII manifest의 41550 안성시 identity를 그대로 사용한다. 원자료의 공식 주소/지역 설명과 행정구역을 대조했다. 좌표·방문 판정 정책·현재 위치·예측 경로를 이 binding으로 승인하지 않는다.",
+   "storyId": "84cae426-7167-515c-b28f-808e5886f298",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "associationFactRevisionId": "2878a3b3-0033-58da-840c-98b26f005ebe",
+   "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionCode": "41550",
+   "regionId": "kr-sigungu-41550",
+   "regionName": "안성시",
+   "regionRevisionId": "kr-sigungu-41550-ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionSourceRevisionId": "ngii-sigungu-d7a3751bd89f",
+   "reviewBasis": "S06의 지역 소속은 독립 association fact와 그 원자료를 검토했다. 기존 NGII manifest의 41550 안성시 identity를 그대로 사용한다. 원자료의 공식 주소/지역 설명과 행정구역을 대조했다. 좌표·방문 판정 정책·현재 위치·예측 경로를 이 binding으로 승인하지 않는다.",
+   "storyId": "07a9db6f-b2a5-5bbe-91ff-68e905e86125",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "associationFactRevisionId": "08bb3e8a-015c-57d1-8034-11ad3c50cfed",
+   "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionCode": "44130",
+   "regionId": "kr-sigungu-44130",
+   "regionName": "천안시",
+   "regionRevisionId": "kr-sigungu-44130-ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionSourceRevisionId": "ngii-sigungu-d7a3751bd89f",
+   "reviewBasis": "S07의 지역 소속은 독립 association fact와 그 원자료를 검토했다. 기존 NGII manifest의 44130 천안시 identity를 그대로 사용한다. 시 전체 역사·먹거리 소재를 parent 시에 연결하며 특정 구를 임의로 지정하지 않는다. 좌표·방문 판정 정책·현재 위치·예측 경로를 이 binding으로 승인하지 않는다.",
+   "storyId": "f5af3604-7b23-50fb-b697-e8c549b68c33",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "associationFactRevisionId": "3cf667a0-77e7-5d2e-8638-499e3c53e12c",
+   "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionCode": "44131",
+   "regionId": "kr-sigungu-44131",
+   "regionName": "동남구",
+   "regionRevisionId": "kr-sigungu-44131-ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionSourceRevisionId": "ngii-sigungu-d7a3751bd89f",
+   "reviewBasis": "S08의 지역 소속은 독립 association fact와 그 원자료를 검토했다. 기존 NGII manifest의 44131 동남구 identity를 그대로 사용한다. 원자료의 공식 주소/지역 설명과 행정구역을 대조했다. 좌표·방문 판정 정책·현재 위치·예측 경로를 이 binding으로 승인하지 않는다.",
+   "storyId": "16b09187-02dd-5655-8d46-4c8f4bb55d2f",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "associationFactRevisionId": "767625b8-1756-57f9-9bdd-790a0a7af59c",
+   "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionCode": "30110",
+   "regionId": "kr-sigungu-30110",
+   "regionName": "동구",
+   "regionRevisionId": "kr-sigungu-30110-ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionSourceRevisionId": "ngii-sigungu-d7a3751bd89f",
+   "reviewBasis": "S09의 지역 소속은 독립 association fact와 그 원자료를 검토했다. 기존 NGII manifest의 30110 동구 identity를 그대로 사용한다. 원자료의 공식 주소/지역 설명과 행정구역을 대조했다. 좌표·방문 판정 정책·현재 위치·예측 경로를 이 binding으로 승인하지 않는다.",
+   "storyId": "5b3a3c95-6d72-5b49-9c5c-8f5487267f37",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "associationFactRevisionId": "9a43805b-fef1-5b68-a434-71e13a8cf048",
+   "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionCode": "30200",
+   "regionId": "kr-sigungu-30200",
+   "regionName": "유성구",
+   "regionRevisionId": "kr-sigungu-30200-ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionSourceRevisionId": "ngii-sigungu-d7a3751bd89f",
+   "reviewBasis": "S10의 지역 소속은 독립 association fact와 그 원자료를 검토했다. 기존 NGII manifest의 30200 유성구 identity를 그대로 사용한다. 원자료의 공식 주소/지역 설명과 행정구역을 대조했다. 좌표·방문 판정 정책·현재 위치·예측 경로를 이 binding으로 승인하지 않는다.",
+   "storyId": "666b77d3-aba4-5ea6-b9fc-1a4c6556eef5",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "associationFactRevisionId": "351d7068-abbc-5fbc-aa2e-5e49566986e4",
+   "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionCode": "43113",
+   "regionId": "kr-sigungu-43113",
+   "regionName": "흥덕구",
+   "regionRevisionId": "kr-sigungu-43113-ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionSourceRevisionId": "ngii-sigungu-d7a3751bd89f",
+   "reviewBasis": "흥덕사지(청주 운천동) 사실의 원자료 주소·행정구역을 NGII manifest의 43113 흥덕구 identity와 대조했다. 기존 흥덕구 경계 정의를 그대로 사용한다. 좌표·방문 판정 정책·현재 위치·예측 경로를 이 binding으로 승인하지 않는다.",
+   "storyId": "6d8eae9e-4e24-5a73-bbdb-3f66d49854d6",
+   "verifiedAt": 1794464324951
+  },
+  {
+   "associationFactRevisionId": "4a19a54b-6ead-5c8f-92ff-b7ed39b7ee54",
+   "datasetVersion": "ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionCode": "30230",
+   "regionId": "kr-sigungu-30230",
+   "regionName": "대덕구",
+   "regionRevisionId": "kr-sigungu-30230-ngii-d7a3751bd89f-wgs84-stream-v1",
+   "regionSourceRevisionId": "ngii-sigungu-d7a3751bd89f",
+   "reviewBasis": "신탄진IC 주변 음식점 사실의 소재지(대덕구 덕암동·신탄진동·목상동)를 NGII manifest의 30230 대덕구 identity와 대조했다. 기존 대덕구 경계 정의를 그대로 사용한다. 좌표·방문 판정 정책·현재 위치·예측 경로를 이 binding으로 승인하지 않는다.",
+   "storyId": "3faab0e7-baf2-58e1-bfa0-e0bece5e2ea0",
+   "verifiedAt": 1794464332360
+  }
+ ],
+ "sources": [
+  {
+   "allowedUses": {
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "allowGeneration": true,
+    "reviewBasis": "검토 대상은 normalizedText의 자체 작성 사실문장에 한정한다. 공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다."
+   },
+   "attribution": "한국관광공사, 문화역 서울 284, TourAPI contentId=250364, https://www.data.go.kr/data/15101578/openapi.do. 사실을 선별하여 Petasos가 자체 문장으로 작성함.",
+   "contentHash": "a96cc38082d305c393cc858aed2f6b9e0a930fb2bd2a3bbbb258133ca876260e",
+   "fetchedAt": 1794153008000,
+   "license": {
+    "reviewBasis": "공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다.",
+    "scope": "text",
+    "type": "DATA_GO_KR_UNRESTRICTED_TEXT",
+    "url": "https://www.data.go.kr/catalog/15101578/openapi.json"
+   },
+   "normalizedText": "문화역 서울 284는 옛 서울역 건물을 복원하여 만든 복합문화공간이다. 주소는 서울특별시 중구 통일로 1이다.",
+   "provider": "한국관광공사 TourAPI",
+   "reviewStatus": "verified",
+   "sourceId": "f5c8d2ad-f9d8-5f02-ae88-56879e655b99",
+   "sourceRevisionId": "6444b061-3726-5aab-9c4d-8207d3c09331",
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261020154516",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do",
+   "title": "문화역 서울 284",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "allowedUses": {
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "allowGeneration": true,
+    "reviewBasis": "검토 대상은 normalizedText의 자체 작성 사실문장에 한정한다. 개별 공식 자료의 공공누리 제1유형 표시를 확인했다. 출처를 표시하며 선택한 사실을 자체 문장으로 정리한다. 사진·도표·첨부파일은 포함하지 않는다."
+   },
+   "attribution": "문화체육관광부, 2011 구 서울역사, 복원 마치고 문화역 서울 284로 재탄생, https://www.mcst.go.kr/site/s_notice/press/pressView.jsp?pSeq=11498. 공공누리 제1유형; Petasos 사실 선별·자체 서술.",
+   "contentHash": "816fb714bdb17fe26beb34e4411c906f0860317c1814c7a5bf65f3164ddfb1bd",
+   "fetchedAt": 1794153964139,
+   "license": {
+    "reviewBasis": "개별 공식 자료의 공공누리 제1유형 표시를 확인했다. 출처를 표시하며 선택한 사실을 자체 문장으로 정리한다. 사진·도표·첨부파일은 포함하지 않는다.",
+    "scope": "text",
+    "type": "KOGL_TYPE_1_TEXT",
+    "url": "https://www.kogl.or.kr/info/licenseType1.do"
+   },
+   "normalizedText": "문화역 서울 284의 숫자 284는 옛 서울역사의 사적 번호에서 온 이름이다.",
+   "provider": "문화체육관광부",
+   "reviewStatus": "verified",
+   "sourceId": "32cda16b-350f-5f2c-a862-4bfa9890dd19",
+   "sourceRevisionId": "e5777bcb-69f7-51f6-8842-237706a399ce",
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "2011-07-14",
+   "sourceUrl": "https://www.mcst.go.kr/site/s_notice/press/pressView.jsp?pSeq=11498",
+   "title": "구 서울역사, 복원 마치고 문화역 서울 284로 재탄생",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "allowedUses": {
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "allowGeneration": true,
+    "reviewBasis": "검토 대상은 normalizedText의 자체 작성 사실문장에 한정한다. 국사편찬위원회 실록원문 공식 공공데이터 카탈로그는 출처표시 제1유형을 명시한다. 원문에 있는 용구·처인 통합과 용인 명칭이라는 사실만 자체 서술했다. 현대 국역문 전체와 이미지·DB 구조는 복제하지 않았다. 통합 연도 1413/1414 차이는 이 대본에서 제외한다."
+   },
+   "attribution": "국사편찬위원회, 조선왕조실록 태종실록 28권 태종 14년 8월 21일 기사4, https://sillok.history.go.kr/id/kca_11408021_004. 원문 공공누리 제1유형; Petasos 사실 선별·자체 서술.",
+   "contentHash": "626d83bcced36773050b2d239f3f097745e31e00df38c6b48637b314285c64e8",
+   "fetchedAt": 1794153964163,
+   "license": {
+    "reviewBasis": "국사편찬위원회 실록원문 공식 공공데이터 카탈로그는 출처표시 제1유형을 명시한다. 원문에 있는 용구·처인 통합과 용인 명칭이라는 사실만 자체 서술했다. 현대 국역문 전체와 이미지·DB 구조는 복제하지 않았다. 통합 연도 1413/1414 차이는 이 대본에서 제외한다.",
+    "scope": "text",
+    "type": "KOGL_TYPE_1_ORIGINAL_FACT_SUMMARY",
+    "url": "https://www.data.go.kr/catalog/15053647/fileData.json"
+   },
+   "normalizedText": "조선시대에 용구와 처인을 합쳐 용인이라는 이름을 사용한 사실이 태종실록에 기록되어 있다.",
+   "provider": "국사편찬위원회",
+   "reviewStatus": "verified",
+   "sourceId": "6bbc7ecf-a34e-5221-b92d-35081e654d71",
+   "sourceRevisionId": "0de160ec-0c6e-565e-b396-755259eab427",
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": null,
+   "sourceUrl": "https://sillok.history.go.kr/id/kca_11408021_004",
+   "title": "태종실록 28권 태종 14년 8월 21일 네 번째 기사",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "allowedUses": {
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "allowGeneration": true,
+    "reviewBasis": "검토 대상은 normalizedText의 자체 작성 사실문장에 한정한다. 저작물은 창작적 표현이라는 저작권법 제2조 기준에 따라, 지명 대응·날짜·행정 소속이라는 단순 사실만 새 문장으로 작성한 범위의 개발 검토다. 용인시 연혁 전체·배열·해설·의회 발언에 공공누리 허락이 있다고 주장하지 않는다. 연혁 표와 용인군의회 제44회 내무위원회 제1차의 개칭 조례안 기록을 직접 대조했다. 초안 조례를 이미 공포된 법령으로 간주하여 제7조를 적용하지 않는다."
+   },
+   "attribution": "사실 확인: 용인시, 용인시 연혁, https://www.yongin.go.kr/home/yiIf/yiIfProd/yiIfProd02.jsp; 용인군의회 제44회 내무위원회 제1차, https://council.yongin.go.kr/viewer/minutes.do?uid=425. Petasos 자체 사실문장; 원문 표현·표 복제 없음.",
+   "contentHash": "62d76b6821b49a9e1203dd655f03644326b24b484148517fb8adb724865c0fb5",
+   "fetchedAt": 1794154239017,
+   "license": {
+    "reviewBasis": "저작물은 창작적 표현이라는 저작권법 제2조 기준에 따라, 지명 대응·날짜·행정 소속이라는 단순 사실만 새 문장으로 작성한 범위의 개발 검토다. 용인시 연혁 전체·배열·해설·의회 발언에 공공누리 허락이 있다고 주장하지 않는다. 연혁 표와 용인군의회 제44회 내무위원회 제1차의 개칭 조례안 기록을 직접 대조했다. 초안 조례를 이미 공포된 법령으로 간주하여 제7조를 적용하지 않는다.",
+    "scope": "text",
+    "type": "INDEPENDENT_FACT_STATEMENTS_ONLY",
+    "url": "https://www.law.go.kr/lsInfoP.do?lsiSeq=285693"
+   },
+   "normalizedText": "용인시 연혁은 용구와 처인을 합쳐 용인이라는 이름을 사용한 사실을 기록한다. 1996년 3월 1일 당시 용인지역의 내사면은 양지면으로, 외사면은 백암면으로 이름이 바뀌었다.",
+   "provider": "용인시",
+   "reviewStatus": "verified",
+   "sourceId": "7c187c0c-2e4f-56b5-8db6-c334c3a4846b",
+   "sourceRevisionId": "3a4fe8ae-0e59-5b47-b798-644f813726fc",
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": null,
+   "sourceUrl": "https://www.yongin.go.kr/home/yiIf/yiIfProd/yiIfProd02.jsp",
+   "title": "용인시 연혁의 지명·행정변경 사실",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "allowedUses": {
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "allowGeneration": true,
+    "reviewBasis": "검토 대상은 normalizedText의 자체 작성 사실문장에 한정한다. 공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다."
+   },
+   "attribution": "한국관광공사, 안성맞춤박물관, TourAPI contentId=130440, https://www.data.go.kr/data/15101578/openapi.do. 사실을 선별하여 Petasos가 자체 문장으로 작성함.",
+   "contentHash": "242d05f69fc7311b84ecf5d1a0d0657674293f4f73dd525f05988ae41630837e",
+   "fetchedAt": 1794152981000,
+   "license": {
+    "reviewBasis": "공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다.",
+    "scope": "text",
+    "type": "DATA_GO_KR_UNRESTRICTED_TEXT",
+    "url": "https://www.data.go.kr/catalog/15101578/openapi.json"
+   },
+   "normalizedText": "안성맞춤박물관은 경기도 안성시 대덕면에 있다. 박물관은 유기의 역사와 제작 방법, 생활 속 쓰임을 전시한다.",
+   "provider": "한국관광공사 TourAPI",
+   "reviewStatus": "verified",
+   "sourceId": "6ce0c208-7902-51a7-8a24-b363908f7c38",
+   "sourceRevisionId": "dc580b0b-19e9-57c4-828c-59802d399461",
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261103132015",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do",
+   "title": "안성맞춤박물관",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "allowedUses": {
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "allowGeneration": true,
+    "reviewBasis": "검토 대상은 normalizedText의 자체 작성 사실문장에 한정한다. 공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다."
+   },
+   "attribution": "한국관광공사, 안성맞춤의 도시 안성, Odii stid=5682, stlid=16680, https://www.data.go.kr/data/15101971/openapi.do. 사실을 선별하여 Petasos가 자체 문장으로 작성함.",
+   "contentHash": "cd7734ed3a43c44bbf5d7046e79af593f385d0cea56e91daaacf45d05bea6aee",
+   "fetchedAt": 1794153042000,
+   "license": {
+    "reviewBasis": "공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다.",
+    "scope": "text",
+    "type": "DATA_GO_KR_UNRESTRICTED_TEXT",
+    "url": "https://www.data.go.kr/catalog/15101971/openapi.json"
+   },
+   "normalizedText": "안성에서는 장에 내다 팔기 위해 대량으로 만든 장내기 유기와 주문받아 만든 맞춤 유기를 생산했다. 안성은 큰 장이 서던 상업의 요지였고, 그 장에서 안성지역에서 만든 유기가 거래되었다.",
+   "provider": "한국관광공사 Odii",
+   "reviewStatus": "verified",
+   "sourceId": "8266ff94-8fee-5822-b377-392e494f6d1b",
+   "sourceRevisionId": "b56714a2-92bd-5a44-a3c5-544f13fbb018",
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20230905122413",
+   "sourceUrl": "https://www.data.go.kr/data/15101971/openapi.do",
+   "title": "안성맞춤의 도시 안성",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "allowedUses": {
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "allowGeneration": true,
+    "reviewBasis": "검토 대상은 normalizedText의 자체 작성 사실문장에 한정한다. 개별 공식 자료의 공공누리 제1유형 표시를 확인했다. 출처를 표시하며 선택한 사실을 자체 문장으로 정리한다. 사진·도표·첨부파일은 포함하지 않는다."
+   },
+   "attribution": "농촌진흥청·대한민국 정책브리핑, 2016 우리 밥상에 건강 더하는 밭작물 전시회에 놀러오세요, https://m.korea.kr/briefing/pressReleaseView.do?newsId=156153724&pWise=sub&pWiseSub=J2. 공공누리 제1유형; Petasos 사실 선별·자체 서술.",
+   "contentHash": "4f94f1b0098e64564973e355eb86d839a72117149c23c4bde8f84d04a4df31f0",
+   "fetchedAt": 1794153964992,
+   "license": {
+    "reviewBasis": "개별 공식 자료의 공공누리 제1유형 표시를 확인했다. 출처를 표시하며 선택한 사실을 자체 문장으로 정리한다. 사진·도표·첨부파일은 포함하지 않는다.",
+    "scope": "text",
+    "type": "KOGL_TYPE_1_TEXT",
+    "url": "https://www.kogl.or.kr/info/licenseType1.do"
+   },
+   "normalizedText": "천안 호두과자에는 팥을 재료로 만든 제품이 있다. 농촌진흥청은 2016년 밭작물 전시회 안내에서 아라리 팥으로 만든 천안 호두과자를 소개했다.",
+   "provider": "농촌진흥청·대한민국 정책브리핑",
+   "reviewStatus": "verified",
+   "sourceId": "154ee563-e74b-5f78-84af-1124b1db6864",
+   "sourceRevisionId": "b7227b6c-01ca-55ce-b10f-b6a315b0e700",
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "2016-09-07",
+   "sourceUrl": "https://m.korea.kr/briefing/pressReleaseView.do?newsId=156153724&pWise=sub&pWiseSub=J2",
+   "title": "우리 밥상에 건강 더하는 밭작물 전시회에 놀러오세요",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "allowedUses": {
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "allowGeneration": true,
+    "reviewBasis": "검토 대상은 normalizedText의 자체 작성 사실문장에 한정한다. 공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다."
+   },
+   "attribution": "한국관광공사, 천안삼거리공원, TourAPI contentId=126922, https://www.data.go.kr/data/15101578/openapi.do. 사실을 선별하여 Petasos가 자체 문장으로 작성함.",
+   "contentHash": "223154492bfcb901f740382a2f2b2df9770b119ef9e1ce85499203ea0b77ac92",
+   "fetchedAt": 1794152982000,
+   "license": {
+    "reviewBasis": "공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다.",
+    "scope": "text",
+    "type": "DATA_GO_KR_UNRESTRICTED_TEXT",
+    "url": "https://www.data.go.kr/catalog/15101578/openapi.json"
+   },
+   "normalizedText": "천안삼거리는 한양·경상도·전라도 방면의 길이 나뉘던 삼남대로의 분기점이다. 천안삼거리공원은 충청남도 천안시 동남구 삼룡동에 있다.",
+   "provider": "한국관광공사 TourAPI",
+   "reviewStatus": "verified",
+   "sourceId": "e526b6d4-f148-5ec6-bee7-9f01ac26fc9e",
+   "sourceRevisionId": "150b6f4d-5739-5397-9fe5-c742e8dc3907",
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20260927115418",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do",
+   "title": "천안삼거리공원",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "allowedUses": {
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "allowGeneration": true,
+    "reviewBasis": "검토 대상은 normalizedText의 자체 작성 사실문장에 한정한다. 공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다."
+   },
+   "attribution": "한국관광공사, 제3경 천안삼거리공원, Odii stid=6698, stlid=18759, https://www.data.go.kr/data/15101971/openapi.do. 사실을 선별하여 Petasos가 자체 문장으로 작성함.",
+   "contentHash": "671c605e5a19a64b451f6038920bbeafbc07dd75094b5b611fc195e820739694",
+   "fetchedAt": 1794153062000,
+   "license": {
+    "reviewBasis": "공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다.",
+    "scope": "text",
+    "type": "DATA_GO_KR_UNRESTRICTED_TEXT",
+    "url": "https://www.data.go.kr/catalog/15101971/openapi.json"
+   },
+   "normalizedText": "천안삼거리는 북쪽 한양, 남쪽 경상도, 서쪽 전라도 방향으로 가는 길이 갈라지는 삼남대로의 분기점으로 알려져 있다.",
+   "provider": "한국관광공사 Odii",
+   "reviewStatus": "verified",
+   "sourceId": "1e35147d-effe-566a-96b2-da5e4333e7f8",
+   "sourceRevisionId": "e7d2e436-a609-509a-bd67-43994cb0a30d",
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20241106102537",
+   "sourceUrl": "https://www.data.go.kr/data/15101971/openapi.do",
+   "title": "제3경 천안삼거리공원",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "allowedUses": {
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "allowGeneration": true,
+    "reviewBasis": "검토 대상은 normalizedText의 자체 작성 사실문장에 한정한다. 개별 공식 자료의 공공누리 제1유형 표시를 확인했다. 출처를 표시하며 선택한 사실을 자체 문장으로 정리한다. 사진·도표·첨부파일은 포함하지 않는다."
+   },
+   "attribution": "국토교통부·대한민국 정책브리핑, 대한민국을 혁신하는 과학기술 수도 대전 민생토론회 주요내용 발표, https://www.korea.kr/briefing/policyBriefingView.do?newsId=156615822. 공공누리 제1유형; Petasos 사실 선별·자체 서술.",
+   "contentHash": "43b02075dcceb5d690337037ea197f4e69d89d6055b29208d3de1761428ff11a",
+   "fetchedAt": 1794153964845,
+   "license": {
+    "reviewBasis": "개별 공식 자료의 공공누리 제1유형 표시를 확인했다. 출처를 표시하며 선택한 사실을 자체 문장으로 정리한다. 사진·도표·첨부파일은 포함하지 않는다.",
+    "scope": "text",
+    "type": "KOGL_TYPE_1_TEXT",
+    "url": "https://www.kogl.or.kr/info/licenseType1.do"
+   },
+   "normalizedText": "대전은 철도와 함께 성장한 도시이며 경부선과 호남선이 갈라지는 철도 교통의 중요한 지역이다.",
+   "provider": "국토교통부·대한민국 정책브리핑",
+   "reviewStatus": "verified",
+   "sourceId": "5c515306-5759-51ef-ba4b-2599a0e42854",
+   "sourceRevisionId": "9662db55-be7e-53da-af2a-1b69d773491e",
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": null,
+   "sourceUrl": "https://www.korea.kr/briefing/policyBriefingView.do?newsId=156615822",
+   "title": "대한민국을 혁신하는 과학기술 수도 대전 민생토론회 주요내용 발표",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "allowedUses": {
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "allowGeneration": true,
+    "reviewBasis": "검토 대상은 normalizedText의 자체 작성 사실문장에 한정한다. 공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다."
+   },
+   "attribution": "한국관광공사, 대전역 동광장, TourAPI contentId=2775503, https://www.data.go.kr/data/15101578/openapi.do. 사실을 선별하여 Petasos가 자체 문장으로 작성함.",
+   "contentHash": "177e60ba846b789d2ab8f7ade05cd65dcf1d143469c82eab07d28e38c96c9270",
+   "fetchedAt": 1794153009000,
+   "license": {
+    "reviewBasis": "공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다.",
+    "scope": "text",
+    "type": "DATA_GO_KR_UNRESTRICTED_TEXT",
+    "url": "https://www.data.go.kr/catalog/15101578/openapi.json"
+   },
+   "normalizedText": "대전역 동광장은 대전광역시 동구 소제동에 있다.",
+   "provider": "한국관광공사 TourAPI",
+   "reviewStatus": "verified",
+   "sourceId": "ab939014-5b9b-59bd-809f-d96ad94a40f8",
+   "sourceRevisionId": "68a403ab-25f1-512a-888e-f7ef16013ff4",
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261026091256",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do",
+   "title": "대전역 동광장",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "allowedUses": {
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "allowGeneration": true,
+    "reviewBasis": "검토 대상은 normalizedText의 자체 작성 사실문장에 한정한다. 공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다."
+   },
+   "attribution": "한국관광공사, 대전엑스포과학공원, TourAPI contentId=125994, https://www.data.go.kr/data/15101578/openapi.do. 사실을 선별하여 Petasos가 자체 문장으로 작성함.",
+   "contentHash": "46e6d4b26506a6eddf52f0f92fb87a562171ceb70feb9f7ba82559083cca62b0",
+   "fetchedAt": 1794152983000,
+   "license": {
+    "reviewBasis": "공식 공공데이터 카탈로그의 이용허락범위 제한 없음 확인. 원문 중 검토한 짧은 사실·주소만 자체 문장으로 정리했다. 사진·음성·연기 대사·전체 대본은 포함하지 않는다. cpyrhtDivCd는 모든 매체의 일괄 허가로 해석하지 않았다.",
+    "scope": "text",
+    "type": "DATA_GO_KR_UNRESTRICTED_TEXT",
+    "url": "https://www.data.go.kr/catalog/15101578/openapi.json"
+   },
+   "normalizedText": "대전엑스포과학공원은 1993년 대전세계박람회를 기념하고 박람회 시설과 부지를 과학교육에 활용하기 위해 조성되었다. 공원 주소는 대전광역시 유성구 대덕대로 480 도룡동이다.",
+   "provider": "한국관광공사 TourAPI",
+   "reviewStatus": "verified",
+   "sourceId": "fe20db2a-e68c-5af0-baff-6ebcdfebae3d",
+   "sourceRevisionId": "7ce22da2-4f74-58c9-a660-8624f4452277",
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261026143817",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do",
+   "title": "대전엑스포과학공원",
+   "verifiedAt": 1794154239017
+  },
+  {
+   "allowedUses": {
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "allowGeneration": false,
+    "reviewBasis": "공식 공공데이터 카탈로그의 이용허락범위 제한 없음과 사진 1·3유형 별도 안내를 확인했다. 허용 범위는 해당 항목의 이름·주소·WGS84 좌표를 텍스트로 보존한 메타데이터이며 사진·음성·설명문을 포함하지 않는다. 좌표 원문 문자열을 수정하지 않는다. 모델 입력·좌표 기반 추론 허용은 부여하지 않는다."
+   },
+   "attribution": "한국관광공사 TourAPI, 문화역 서울 284, contentId=250364, https://www.data.go.kr/data/15101578/openapi.do. 공급자 대표점 좌표·이름·주소 원문 필드 보존.",
+   "contentHash": "8be844fbde88f4ace3bc3113d1453c1c7387c247c014553eb80576b360a0ed32",
+   "fetchedAt": 1794153008000,
+   "license": {
+    "reviewBasis": "공식 공공데이터 카탈로그의 이용허락범위 제한 없음과 사진 1·3유형 별도 안내를 확인했다. 허용 범위는 해당 항목의 이름·주소·WGS84 좌표를 텍스트로 보존한 메타데이터이며 사진·음성·설명문을 포함하지 않는다. 좌표 원문 문자열을 수정하지 않는다.",
+    "scope": "text",
+    "type": "DATA_GO_KR_UNRESTRICTED_METADATA_TEXT",
+    "url": "https://www.data.go.kr/catalog/15101578/openapi.json"
+   },
+   "normalizedText": "TourAPI contentId=250364; title=문화역 서울 284; addr1=서울특별시 중구 통일로 1 (봉래동2가); mapx=126.9716093128; mapy=37.5559582569; coordinateSystem=WGS84.",
+   "provider": "한국관광공사 TourAPI",
+   "reviewStatus": "verified",
+   "sourceId": "13c74812-0b20-528d-a699-ede2d1e82fa3",
+   "sourceRevisionId": "bbff35a2-9a3d-5829-9479-049b4e679fd8",
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261020154516",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do",
+   "title": "문화역 서울 284 — 공식 대표점 좌표 메타데이터",
+   "verifiedAt": 1794157970529
+  },
+  {
+   "allowedUses": {
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "allowGeneration": false,
+    "reviewBasis": "공식 공공데이터 카탈로그의 이용허락범위 제한 없음과 사진 1·3유형 별도 안내를 확인했다. 허용 범위는 해당 항목의 이름·주소·WGS84 좌표를 텍스트로 보존한 메타데이터이며 사진·음성·설명문을 포함하지 않는다. 좌표 원문 문자열을 수정하지 않는다. 모델 입력·좌표 기반 추론 허용은 부여하지 않는다."
+   },
+   "attribution": "한국관광공사 TourAPI, 대전엑스포과학공원, contentId=125994, https://www.data.go.kr/data/15101578/openapi.do. 공급자 대표점 좌표·이름·주소 원문 필드 보존.",
+   "contentHash": "0240654ff318c965b63e3726dbe23b1f0434e92c5c9cf047a4fda05b09093918",
+   "fetchedAt": 1794152983000,
+   "license": {
+    "reviewBasis": "공식 공공데이터 카탈로그의 이용허락범위 제한 없음과 사진 1·3유형 별도 안내를 확인했다. 허용 범위는 해당 항목의 이름·주소·WGS84 좌표를 텍스트로 보존한 메타데이터이며 사진·음성·설명문을 포함하지 않는다. 좌표 원문 문자열을 수정하지 않는다.",
+    "scope": "text",
+    "type": "DATA_GO_KR_UNRESTRICTED_METADATA_TEXT",
+    "url": "https://www.data.go.kr/catalog/15101578/openapi.json"
+   },
+   "normalizedText": "TourAPI contentId=125994; title=대전엑스포과학공원; addr1=대전광역시 유성구 대덕대로 480 (도룡동); mapx=127.3802532459; mapy=36.3759480684; coordinateSystem=WGS84.",
+   "provider": "한국관광공사 TourAPI",
+   "reviewStatus": "verified",
+   "sourceId": "3b78dcca-1c1f-5528-a693-c07bce69bfcc",
+   "sourceRevisionId": "21ba8b7c-7016-512f-af79-f7226818273f",
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261026143817",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do",
+   "title": "대전엑스포과학공원 — 공식 대표점 좌표 메타데이터",
+   "verifiedAt": 1794157970529
+  },
+  {
+   "sourceRevisionId": "db572430-21f3-5f21-aebb-deec20db03b0",
+   "sourceId": "tourapi:125970",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=125970",
+   "title": "청주 흥덕사지",
+   "fetchedAt": 1794391146968,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261111084802",
+   "verifiedAt": 1794394299679,
+   "contentHash": "35f020bbec5471805f35395d1b0e0827e6ce1ff4e4d1e78870d742c6aa0ec001",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "청주 운천동에 있는 통일신라시대의 절터이다. 1985년 발굴조사 때 금당터·서회랑터·강당터·부속건물들이 있던 건물터가 확인되었고 ‘흥덕사’라고 새겨진 쇠북(금구) 조각이 나와 절의 이름이 흥덕사였음을 알 수 있었다. ‘대중 3년명(大中 3年銘)’이라 새겨진 기와와 기타 유물들로 보아 늦어도 9세기에 지어져 고려 후기까지 그 명맥을 유지하였던 것으로 보인다. 치미·기와조각·그릇 들과 청동제품이 많이 출토되었고, 현재 남아있는 세계에서 가장 오래된 금속활자본인 『직지심체요절』을 찍은 곳이다.\n(출처 : 국가유산청)"
+  },
+  {
+   "sourceRevisionId": "52788d0c-edb6-5787-b769-15aa5aa0172a",
+   "sourceId": "tourapi:sintanjin-ic-food:plain-facts",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do",
+   "title": "신탄진IC 주변 음식점 — 소재지·취급 음식 사실",
+   "fetchedAt": 1794414787914,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": null,
+   "verifiedAt": 1794414787914,
+   "contentHash": "1baf90f99312a98c93a5ddbfefd81d526f4dd631acd4dc17ec4f10177c9a4e4a",
+   "license": {
+    "type": "INDEPENDENT_FACT_STATEMENTS_ONLY",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "검토 대상은 normalizedText의 자체 작성 사실문장 9개에 한정한다. 소재지·취급 음식 종류·인접 도로라는 단순 사실만 새 문장으로 작성했다. 원자료인 TourAPI 항목 2581586(신탄면옥), 2913089(찌글이짜글이 본점), 2581103(부추해물칼국수식당)의 설명 본문은 모두 공공누리 제3유형(변경 금지)이므로 문장·배열·표현을 복제하지 않았고 이 출처에 포함하지 않는다. 2026-11-12 각 항목 본문과 대조했다. 영업 상태·영업 시간·메뉴 구성·가격·품질 평가·추천 여부는 확인 대상이 아니며 이 출처로 승인하지 않는다."
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "검토 대상은 normalizedText의 자체 작성 사실문장 9개에 한정한다. 소재지·취급 음식 종류·인접 도로라는 단순 사실만 새 문장으로 작성했다. 원자료인 TourAPI 항목 2581586(신탄면옥), 2913089(찌글이짜글이 본점), 2581103(부추해물칼국수식당)의 설명 본문은 모두 공공누리 제3유형(변경 금지)이므로 문장·배열·표현을 복제하지 않았고 이 출처에 포함하지 않는다. 2026-11-12 각 항목 본문과 대조했다. 영업 상태·영업 시간·메뉴 구성·가격·품질 평가·추천 여부는 확인 대상이 아니며 이 출처로 승인하지 않는다."
+   },
+   "attribution": "사실 확인: 한국관광공사 TourAPI 2581586(신탄면옥), 2913089(찌글이짜글이 본점), 2581103(부추해물칼국수식당), https://www.data.go.kr/data/15101578/openapi.do. Petasos 자체 사실문장; 제3유형 원문 표현 복제 없음.",
+   "reviewStatus": "verified",
+   "normalizedText": "경부고속도로 신탄진IC 주변인 대전 대덕구에는 음식점이 여럿 있다. 신탄면옥은 대전 대덕구 덕암동에 있는 음식점이다. 신탄면옥은 냉면과 갈비탕을 취급한다. 신탄면옥은 신탄진로변에 있고 신탄진IC에서 가깝다. 찌글이짜글이 본점은 대전 대덕구 목상동에 있고 신탄진IC에서 가깝다. 찌글이짜글이 본점은 돼지고기를 넣고 끓인 찌개를 취급한다. 부추해물칼국수식당은 대전 대덕구 신탄진동에 있다. 부추해물칼국수식당은 칼국수와 주꾸미, 족발을 취급한다. 부추해물칼국수식당은 대전 도심과 대청댐 사이에 있다."
+  }
+ ],
+ "stories": [
+  {
+   "coreQuestion": "기차역 건물은 어떻게 문화공간이 되었을까요?",
+   "interestTags": [
+    "history",
+    "culture"
+   ],
+   "placeId": null,
+   "storyId": "03849d89-1640-5603-be8b-9835d371ed02",
+   "title": "역이 문화공간으로",
+   "topicId": "9f2feae7-8e4a-55a0-badd-ed09c50d4ca1"
+  },
+  {
+   "coreQuestion": "문화역 서울 284의 숫자는 어디에서 왔을까요?",
+   "interestTags": [
+    "history",
+    "culture"
+   ],
+   "placeId": null,
+   "storyId": "126af9cc-2003-5d75-b33d-7ef66bd42c8d",
+   "title": "이름에 남은 숫자 284",
+   "topicId": "a6f1a274-6436-595c-8e2a-67e926f7550a"
+  },
+  {
+   "coreQuestion": "용인이라는 이름에는 어떤 옛 지명이 담겨 있을까요?",
+   "interestTags": [
+    "history",
+    "place_names"
+   ],
+   "placeId": null,
+   "storyId": "d87ba5a6-04d1-54b7-8f75-cf58dfe89ef8",
+   "title": "용구와 처인에서 용인으로",
+   "topicId": "aad405af-36ed-50ba-a8ef-07f959b030a9"
+  },
+  {
+   "coreQuestion": "양지와 백암은 예전에도 같은 이름이었을까요?",
+   "interestTags": [
+    "history",
+    "place_names"
+   ],
+   "placeId": null,
+   "storyId": "088b7514-07e1-530e-b6dc-979da12c1aee",
+   "title": "다시 불리게 된 양지와 백암",
+   "topicId": "81e3d13d-a0a5-5821-b54e-3dd7ac37f139"
+  },
+  {
+   "coreQuestion": "안성의 유기는 어떻게 만들어 팔았을까요?",
+   "interestTags": [
+    "history",
+    "craft"
+   ],
+   "placeId": null,
+   "storyId": "84cae426-7167-515c-b28f-808e5886f298",
+   "title": "안성맞춤과 두 가지 유기",
+   "topicId": "d2b6466c-0822-5f2d-8370-78448a8077a8"
+  },
+  {
+   "coreQuestion": "안성 장에서는 어떤 물건이 오갔을까요?",
+   "interestTags": [
+    "history",
+    "trade"
+   ],
+   "placeId": null,
+   "storyId": "07a9db6f-b2a5-5bbe-91ff-68e905e86125",
+   "title": "장이 서던 고장의 물건들",
+   "topicId": "ec158fee-7536-5143-8a44-88dfadc20db3"
+  },
+  {
+   "coreQuestion": "천안의 호두과자에는 어떤 재료가 만날까요?",
+   "interestTags": [
+    "food",
+    "travel"
+   ],
+   "placeId": null,
+   "storyId": "f5af3604-7b23-50fb-b697-e8c549b68c33",
+   "title": "여행길에 떠올리는 호두과자",
+   "topicId": "513dedf3-e9d3-5c57-b970-64f29d6eb87d"
+  },
+  {
+   "coreQuestion": "천안삼거리에서는 어디로 길이 이어졌을까요?",
+   "interestTags": [
+    "history",
+    "travel"
+   ],
+   "placeId": null,
+   "storyId": "16b09187-02dd-5655-8d46-4c8f4bb55d2f",
+   "title": "천안삼거리에서 갈라진 길",
+   "topicId": "4543f17a-0d3a-5f0c-9058-cc0515c68a70"
+  },
+  {
+   "coreQuestion": "철도는 대전의 도시 이야기와 어떻게 이어질까요?",
+   "interestTags": [
+    "history",
+    "transport"
+   ],
+   "placeId": null,
+   "storyId": "5b3a3c95-6d72-5b49-9c5c-8f5487267f37",
+   "title": "철도와 함께 자란 대전",
+   "topicId": "83283380-14fd-574b-bfe3-e2268b12ae76"
+  },
+  {
+   "coreQuestion": "1993년 박람회 뒤에는 무엇이 남았을까요?",
+   "interestTags": [
+    "history",
+    "science"
+   ],
+   "placeId": null,
+   "storyId": "666b77d3-aba4-5ea6-b9fc-1a4c6556eef5",
+   "title": "박람회가 남긴 과학공원",
+   "topicId": "104bbccf-5468-5a88-b0b4-7c29c5395105"
+  },
+  {
+   "storyId": "6d8eae9e-4e24-5a73-bbdb-3f66d49854d6",
+   "topicId": "babe0203-e81c-573e-bb2a-9f74e63c46cd",
+   "title": "운천동 흥덕사 터",
+   "coreQuestion": "운천동 절터의 이름은 어떻게 알려지게 됐을까?",
+   "interestTags": [
+    "history",
+    "culture"
+   ],
+   "placeId": null
+  },
+  {
+   "storyId": "3faab0e7-baf2-58e1-bfa0-e0bece5e2ea0",
+   "topicId": "b9d6367a-2ed7-5dc7-8a4b-f48c46da29fa",
+   "title": "신탄진 길목의 식당들",
+   "coreQuestion": "대전 대덕구 신탄진 일대에는 어떤 음식점들이 있나요?",
+   "interestTags": [
+    "food"
+   ],
+   "placeId": null
+  }
+ ],
+ "versions": [
+  {
+   "contentHash": "62954bdde0b5ddb8f8e6c6d2522f7687bc145b80d4717abb75510ce61f7ea2c8",
+   "createdAt": 1794154239017,
+   "estimatedDurationMs": 34000,
+   "paragraphs": [
+    {
+     "audioRef": null,
+     "estimatedDurationMs": 18000,
+     "factRevisionIds": [
+      "483cfc22-d83a-5346-9adc-69b756075edf"
+     ],
+     "ordinal": 0,
+     "paragraphId": "f7dfe200-ae9d-5605-9946-b6b89f7a50dc",
+     "required": true,
+     "text": "서울역에는 기차를 타러 들어가는 역사와 함께, 다른 만남을 품은 옛 역사도 있어요. 옛 서울역 건물을 복원해 만든 문화역 서울 이팔사는 복합문화공간입니다."
+    },
+    {
+     "audioRef": null,
+     "estimatedDurationMs": 16000,
+     "factRevisionIds": [
+      "483cfc22-d83a-5346-9adc-69b756075edf"
+     ],
+     "ordinal": 1,
+     "paragraphId": "0eb128a0-27ad-574c-9bba-f26e22b09698",
+     "required": true,
+     "text": "열차를 기다리던 건물이 문화를 만나는 공간으로 쓰이게 된 거죠. 같은 건물도 시간이 흐르면 새로운 역할을 맡을 수 있다는 이야기를 들려줍니다."
+    }
+   ],
+   "status": "published",
+   "storyId": "03849d89-1640-5603-be8b-9835d371ed02",
+   "storyVersionId": "fbee5b73-7527-527d-a470-c2538b42a002",
+   "validUntil": null,
+   "verifiedAt": 1794154239017,
+   "version": 2
+  },
+  {
+   "contentHash": "9371c634a75600fc24f0d868611833d783e3b0f85a7713c345263831ef39aa6c",
+   "createdAt": 1794154239017,
+   "estimatedDurationMs": 30000,
+   "paragraphs": [
+    {
+     "audioRef": null,
+     "estimatedDurationMs": 30000,
+     "factRevisionIds": [
+      "c0483580-6179-5a93-9f84-e700924762bf"
+     ],
+     "ordinal": 0,
+     "paragraphId": "4f457b2f-2607-523a-aac9-8aaa9221c7b4",
+     "required": true,
+     "text": "문화역 서울 이팔사라는 이름에서, 마지막 숫자가 눈에 띄죠. 이팔사는 건물 높이나 열차 번호가 아니라 옛 서울역사의 사적 번호에서 온 이름이에요. 장소의 이름 속에 그 건물을 기억하던 번호가 남은 셈입니다. 짧은 숫자 세 자리에도 건물의 지난 시간이 담겨 있네요."
+    }
+   ],
+   "status": "published",
+   "storyId": "126af9cc-2003-5d75-b33d-7ef66bd42c8d",
+   "storyVersionId": "f8871267-60eb-5695-83d7-78941f20307e",
+   "validUntil": null,
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "contentHash": "161862894c98c1c0752b521f6a0a77c62da091add656df11575568563aaa7e2c",
+   "createdAt": 1794154239017,
+   "estimatedDurationMs": 32000,
+   "paragraphs": [
+    {
+     "audioRef": null,
+     "estimatedDurationMs": 15000,
+     "factRevisionIds": [
+      "a7e34148-57ab-5bd2-99de-c4a8255e448f"
+     ],
+     "ordinal": 0,
+     "paragraphId": "7574c72b-964b-5609-9708-feb39a3ce522",
+     "required": true,
+     "text": "용인이라는 이름 앞에는 용구와 처인이라는 두 지명이 있었어요. 태종실록에는 두 지역을 합쳐 용인으로 삼는 내용이 기록되어 있습니다."
+    },
+    {
+     "audioRef": null,
+     "estimatedDurationMs": 17000,
+     "factRevisionIds": [
+      "a7e34148-57ab-5bd2-99de-c4a8255e448f"
+     ],
+     "ordinal": 1,
+     "paragraphId": "e0493a78-b129-5879-9099-ae91d542a0b4",
+     "required": true,
+     "text": "용구의 용, 처인의 인을 떠올리면 두 이름이 새 이름에 어떻게 이어졌는지 보이죠. 지금의 짧은 지명에서 옛 지역들의 흔적을 찾아보는 재미가 있습니다."
+    }
+   ],
+   "status": "published",
+   "storyId": "d87ba5a6-04d1-54b7-8f75-cf58dfe89ef8",
+   "storyVersionId": "f79911da-a096-5323-bb83-e025bb20cc46",
+   "validUntil": null,
+   "verifiedAt": 1794154239017,
+   "version": 2
+  },
+  {
+   "contentHash": "4c360535e6eea333f996c91a2a3472dbb787263cdc2a5fe62bd65638b1f3ddbb",
+   "createdAt": 1794154239017,
+   "estimatedDurationMs": 35000,
+   "paragraphs": [
+    {
+     "audioRef": null,
+     "estimatedDurationMs": 35000,
+     "factRevisionIds": [
+      "03970925-d308-5bee-9aca-462698ba2b47"
+     ],
+     "ordinal": 0,
+     "paragraphId": "c44c1e49-f808-5d4c-b7c2-d098cebd4738",
+     "required": true,
+     "text": "용인의 양지와 백암에는 행정지명이 달라진 시간이 있어요. 천구백구십육년 삼월 일일, 당시 내사면은 양지면으로, 외사면은 백암면으로 이름이 바뀌었습니다. 같은 고장을 찾더라도 오래된 기록에는 다른 이름이 나올 수 있는 이유죠. 지명을 따라가다 보면 지도 위의 장소뿐 아니라 그 장소를 부르던 시대도 만나게 됩니다."
+    }
+   ],
+   "status": "published",
+   "storyId": "088b7514-07e1-530e-b6dc-979da12c1aee",
+   "storyVersionId": "35d81d47-1886-5ce1-abc0-0f9f0df243fb",
+   "validUntil": null,
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "contentHash": "c78c916ec1d5421f2d256612396e3269136b9d0eec87ef2b06a121bd2ffd593e",
+   "createdAt": 1794154239017,
+   "estimatedDurationMs": 35000,
+   "paragraphs": [
+    {
+     "audioRef": null,
+     "estimatedDurationMs": 17000,
+     "factRevisionIds": [
+      "7297891c-3417-556a-a914-8ce3a1e0cc21"
+     ],
+     "ordinal": 0,
+     "paragraphId": "b9c3582b-9d16-5d25-ad7d-5113e6f97224",
+     "required": true,
+     "text": "안성의 유기는 만드는 목적에 따라 부르는 이름도 달랐어요. 장에 내다 팔려고 대량으로 만든 것은 장내기 유기, 주문을 받아 만든 것은 맞춤 유기였죠."
+    },
+    {
+     "audioRef": null,
+     "estimatedDurationMs": 18000,
+     "factRevisionIds": [
+      "7297891c-3417-556a-a914-8ce3a1e0cc21"
+     ],
+     "ordinal": 1,
+     "paragraphId": "62e1e0e2-9343-53c2-bba9-9de01f573dfd",
+     "required": true,
+     "text": "같은 유기라도 누구에게 어떻게 전할 것인지가 달랐던 셈입니다. 안성맞춤이라는 익숙한 말을 떠올리며, 그 뒤에 있던 제작과 주문의 풍경도 함께 그려볼 수 있겠네요."
+    }
+   ],
+   "status": "published",
+   "storyId": "84cae426-7167-515c-b28f-808e5886f298",
+   "storyVersionId": "b013b564-b36f-515d-9304-76b1e273b4a0",
+   "validUntil": null,
+   "verifiedAt": 1794154239017,
+   "version": 2
+  },
+  {
+   "contentHash": "a5997475be9af55d3639ebc8993af94375300538e5abfe3cf75d5a18491cd49e",
+   "createdAt": 1794154239017,
+   "estimatedDurationMs": 35000,
+   "paragraphs": [
+    {
+     "audioRef": null,
+     "estimatedDurationMs": 35000,
+     "factRevisionIds": [
+      "4b5b50b4-91ba-53f2-866c-661541378fa0"
+     ],
+     "ordinal": 0,
+     "paragraphId": "cb0bab26-d6ec-5ebd-ab9e-7c84beddc0cd",
+     "required": true,
+     "text": "안성의 옛 이야기를 장터 쪽에서 들여다볼까요. 안성은 큰 장이 서던 상업의 고장이었고, 그 장에서는 지역에서 만든 유기도 거래되었어요. 물건을 만드는 일과 사고파는 일이 한 고장의 이야기로 이어지는 거죠. 유기를 장인의 손끝에서만 보지 않고, 물건이 오가던 장터까지 넓혀 보면 안성의 또 다른 모습이 보입니다."
+    }
+   ],
+   "status": "published",
+   "storyId": "07a9db6f-b2a5-5bbe-91ff-68e905e86125",
+   "storyVersionId": "52658b14-87a1-51a8-bd25-e1b9d3b5ff7b",
+   "validUntil": null,
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "contentHash": "9230fcf1d9b621b91e4477600f0aa83078ba72554165f07ac7b465d926a1f689",
+   "createdAt": 1794154239017,
+   "estimatedDurationMs": 31000,
+   "paragraphs": [
+    {
+     "audioRef": null,
+     "estimatedDurationMs": 31000,
+     "factRevisionIds": [
+      "efd53577-97e4-58ba-b677-779757438d00"
+     ],
+     "ordinal": 0,
+     "paragraphId": "b6566154-5c6e-54f7-8656-dfd316230408",
+     "required": true,
+     "text": "여행길 간식을 하나 떠올려 볼까요. 천안의 이름과 함께 불리는 호두과자에는 팥을 넣어 만드는 제품이 있어요. 농촌진흥청이 소개한 천안 호두과자에는 아라리라는 팥 품종이 쓰이기도 했죠. 작은 간식을 재료 쪽에서 바라보면, 지역 먹거리와 농산물이 만나는 이야기도 찾을 수 있습니다."
+    }
+   ],
+   "status": "published",
+   "storyId": "f5af3604-7b23-50fb-b697-e8c549b68c33",
+   "storyVersionId": "c068725a-de13-5faa-b85c-1152f033786d",
+   "validUntil": null,
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "contentHash": "9b653b01252ec8b4c826a12bdc9f40ec8ee23b67b45a16b72659b0d84dc32915",
+   "createdAt": 1794154239017,
+   "estimatedDurationMs": 32000,
+   "paragraphs": [
+    {
+     "audioRef": null,
+     "estimatedDurationMs": 20000,
+     "factRevisionIds": [
+      "486c3f10-9ae3-5c69-88dd-0267ccff1a03"
+     ],
+     "ordinal": 0,
+     "paragraphId": "7096dd1b-060f-56e3-a43d-05fca89847b7",
+     "required": true,
+     "text": "천안삼거리라는 이름을 들으면 서로 다른 방향으로 이어지는 길을 떠올려보세요. 이곳은 북쪽 한양, 남쪽 경상도, 서쪽 전라도로 가는 길이 나뉘던 삼남대로의 분기점으로 알려져 있습니다."
+    },
+    {
+     "audioRef": null,
+     "estimatedDurationMs": 12000,
+     "factRevisionIds": [
+      "486c3f10-9ae3-5c69-88dd-0267ccff1a03"
+     ],
+     "ordinal": 1,
+     "paragraphId": "9ef8e1cc-1056-585b-94bb-b1a9e71fd61c",
+     "required": true,
+     "text": "삼거리의 세 갈래는 단순한 길 모양을 넘어, 서로 다른 목적지로 향하던 사람들의 이동을 생각하게 합니다."
+    }
+   ],
+   "status": "published",
+   "storyId": "16b09187-02dd-5655-8d46-4c8f4bb55d2f",
+   "storyVersionId": "fcb4e0a5-2ee1-5b87-97e8-3e2e371d0d5f",
+   "validUntil": null,
+   "verifiedAt": 1794154239017,
+   "version": 2
+  },
+  {
+   "contentHash": "b7e9afe136140dc5cb0fc5aef53209c0bde8950fe4c3bc6e1a589ba7232a895e",
+   "createdAt": 1794154239017,
+   "estimatedDurationMs": 33000,
+   "paragraphs": [
+    {
+     "audioRef": null,
+     "estimatedDurationMs": 33000,
+     "factRevisionIds": [
+      "249294d7-9cbd-5e20-8b4e-432f852cf4ae"
+     ],
+     "ordinal": 0,
+     "paragraphId": "e20056d1-113b-5771-8046-7dd228b0627f",
+     "required": true,
+     "text": "대전의 도시 이야기에 철도를 빼놓기 어렵습니다. 대전은 철도와 함께 성장했고, 경부선과 호남선이 갈라지는 중요한 교통의 자리였어요. 역을 열차가 서는 곳으로만 보면 놓치기 쉬운 이야기죠. 선로와 역을 따라 도시의 시간을 떠올려 보면, 대전이라는 고장의 모습을 다른 각도에서 만나게 됩니다."
+    }
+   ],
+   "status": "published",
+   "storyId": "5b3a3c95-6d72-5b49-9c5c-8f5487267f37",
+   "storyVersionId": "6014745e-d5a8-5c17-9ff3-2682b83e9e4c",
+   "validUntil": null,
+   "verifiedAt": 1794154239017,
+   "version": 1
+  },
+  {
+   "contentHash": "c33c7ce0de65bfd709c01963d7c1dec8ff155bd1591771396fec1ed05ba43fe2",
+   "createdAt": 1794154239017,
+   "estimatedDurationMs": 36000,
+   "paragraphs": [
+    {
+     "audioRef": null,
+     "estimatedDurationMs": 20000,
+     "factRevisionIds": [
+      "3ce2057c-bd6b-5e57-822a-3464a5ab4000"
+     ],
+     "ordinal": 0,
+     "paragraphId": "30592edf-f5c1-53a9-9b58-ed4d3ce2690f",
+     "required": true,
+     "text": "대전엑스포과학공원이라는 이름에는 천구백구십삼년의 대전세계박람회가 남아 있어요. 이 공원은 박람회를 기념하면서, 남은 시설과 부지를 과학교육의 장으로 활용하기 위해 조성되었습니다."
+    },
+    {
+     "audioRef": null,
+     "estimatedDurationMs": 16000,
+     "factRevisionIds": [
+      "3ce2057c-bd6b-5e57-822a-3464a5ab4000"
+     ],
+     "ordinal": 1,
+     "paragraphId": "2bee1cb0-3a21-5622-9b6c-2adff53f70a0",
+     "required": true,
+     "text": "큰 행사가 끝난 뒤 그 자리를 어떻게 이어 쓸 것인가에 대한 답이 공원이 된 셈이죠. 박람회의 기억이 다음 배움의 장소로 이어진 이야기입니다."
+    }
+   ],
+   "status": "published",
+   "storyId": "666b77d3-aba4-5ea6-b9fc-1a4c6556eef5",
+   "storyVersionId": "030a43fd-3c8c-5363-ad6d-32ccaef77bcf",
+   "validUntil": null,
+   "verifiedAt": 1794154239017,
+   "version": 2
+  },
+  {
+   "contentHash": "2be162ac33b7c96d4d7945901c51878725f0aa207a1ee77fdf6be2256d14aac3",
+   "createdAt": 1794464324951,
+   "estimatedDurationMs": 39000,
+   "paragraphs": [
+    {
+     "audioRef": null,
+     "estimatedDurationMs": 24000,
+     "factRevisionIds": [
+      "351d7068-abbc-5fbc-aa2e-5e49566986e4",
+      "3c85de30-5f33-568c-80cd-40d6d87c9b78"
+     ],
+     "ordinal": 0,
+     "paragraphId": "ce3aec99-4cb0-5e29-9538-c7866298b013",
+     "required": true,
+     "text": "땅속에 묻혀 있던 이름이 다시 나오는 경우가 있거든요. 청주 흥덕구 운천동에 통일신라 때 절터가 있어요. 1985년에 발굴을 해 봤더니 금당 자리, 강당 자리가 나왔고, '흥덕사'라고 새겨진 쇠북 조각도 나왔대요."
+    },
+    {
+     "audioRef": null,
+     "estimatedDurationMs": 15000,
+     "factRevisionIds": [
+      "511304f1-5eb3-5ffe-9b5b-4a358ce4a524"
+     ],
+     "ordinal": 1,
+     "paragraphId": "a9ab5cc9-314a-5c47-b9cb-7b93245c5859",
+     "required": true,
+     "text": "기와에 새겨진 글자로 보면 9세기에 지어져 고려 후기까지 이어진 절이었대요. 그 이름이 이 동네 이름이랑 같다는 거, 눈치채셨나요?"
+    }
+   ],
+   "status": "published",
+   "storyId": "6d8eae9e-4e24-5a73-bbdb-3f66d49854d6",
+   "storyVersionId": "c9845695-6d03-5efe-a083-d3350a209ff8",
+   "validUntil": null,
+   "verifiedAt": 1794464324951,
+   "version": 1
+  },
+  {
+   "contentHash": "5c1a3c2a832bb1975b3d75779246d43bb50ccfd0f39e8b4afe7c5d4327fc3696",
+   "createdAt": 1794464332360,
+   "estimatedDurationMs": 37000,
+   "paragraphs": [
+    {
+     "audioRef": null,
+     "estimatedDurationMs": 19000,
+     "factRevisionIds": [
+      "4a19a54b-6ead-5c8f-92ff-b7ed39b7ee54",
+      "a870921f-67bd-5dbe-b4b1-66b4e5c26eb8",
+      "e9b474f7-c851-5226-8371-71a5f21390bb"
+     ],
+     "ordinal": 0,
+     "paragraphId": "43f04623-0d84-5c69-9678-6e22fea7c1b3",
+     "required": true,
+     "text": "고속도로 나들목 근처에 오래된 단골집이 하나씩 있기 마련이죠. 덕암동에 신탄면옥이라고, 신탄진로 바로 옆에 있고 신탄진IC에서도 가깝거든요. 냉면이랑 갈비탕을 하는 집이에요."
+    },
+    {
+     "audioRef": null,
+     "estimatedDurationMs": 18000,
+     "factRevisionIds": [
+      "5cd65de8-5b41-5fd9-bcc0-419ec666f222",
+      "b0a4498d-5585-55ea-b9ef-3fe2f77bdeaa",
+      "f59ba675-497e-52c7-9ecd-bf22e6a8a4a2"
+     ],
+     "ordinal": 1,
+     "paragraphId": "dbb44f87-815e-513b-a5b2-90fdb2c442f2",
+     "required": true,
+     "text": "신탄진동에는 부추해물칼국수식당이 있는데, 대전 도심과 대청댐 사이쯤 되는 자리예요. 칼국수에 주꾸미, 족발까지 하는 집이에요. 이 길목에서 뭘 먹고 싶으세요?"
+    }
+   ],
+   "status": "published",
+   "storyId": "3faab0e7-baf2-58e1-bfa0-e0bece5e2ea0",
+   "storyVersionId": "48481af7-b218-5871-a15d-4bfaeb289c91",
+   "validUntil": null,
+   "verifiedAt": 1794464332360,
+   "version": 1
+  }
+ ]
+}

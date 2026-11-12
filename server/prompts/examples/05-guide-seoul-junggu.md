@@ -1,4 +1,4 @@
-<!-- prompt: example_guide_seoul_junggu | version: story-guide-v3 | 말투 기준 예시 3(docs/story-voice-examples.md, 시작=물음으로 바꾼 이름(첫 문장은 사실)·끝=여운) | 규칙: 내용을 바꾸면 version을 올린다(story.md·guide_persona.md와 같은 버전) -->
+<!-- prompt: example_guide_seoul_junggu | version: story-guide-v4 | 말투 기준 예시 3(docs/story-voice-examples.md, 시작=물음으로 바꾼 이름(첫 문장은 사실)·끝=여운) | 규칙: 내용을 바꾸면 version을 올린다(story.md·guide_persona.md와 같은 버전) -->
 ### 예시: 서울 중구 (opening: question, ending: afterglow)
 
 근거 사실

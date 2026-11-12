@@ -38,9 +38,9 @@ internal class BundledStoryCatalog(context: Context) {
     }
 
     companion object {
-        /** The seoul-daejeon Content Pack (server/tools/build_pack.py): the v2 stories unchanged + window landmarks. */
-        const val ASSET = "content/packs/seoul-daejeon.json"
-        const val SHA256 = "e0ebcf20a19cfc61d72af538da814f28b15aef456c8fa4a5688d7c54807ffca1"
+        /** The cheonan-kaist Content Pack (server/tools/build_pack.py): v2 stories + 흥덕구·대덕구 + window landmarks. */
+        const val ASSET = "content/packs/cheonan-kaist.json"
+        const val SHA256 = "1339fc5ac9c449bde189e09003179676b9924d16e3c6f4a80fded101607c2f51"
         private const val MAX_BYTES = 262_144
     }
 }

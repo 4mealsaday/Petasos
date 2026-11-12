@@ -1,0 +1,484 @@
+{
+ "regionCode": "43113",
+ "regionName": "청주 흥덕구",
+ "codes": [
+  "43113"
+ ],
+ "pack": "cheonan-kaist",
+ "createdAt": 1794394299679,
+ "note": "평가 세트(고정). 팩의 검토된 사실 + TourAPI 공공누리 제1유형 개요 문장. 바꾸면 이전 결과와 비교할 수 없다.",
+ "existingStories": [],
+ "sources": [
+  {
+   "sourceRevisionId": "c3dd3057-1667-55b8-be3b-619bcd469dcf",
+   "sourceId": "tourapi:127276",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=127276",
+   "title": "청주 충렬사",
+   "fetchedAt": 1794391146761,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20260430174634",
+   "verifiedAt": 1794394299679,
+   "contentHash": "215d6894eb8a9033ac0af952c7c93e0bfa48df6e54e7a115b960f9ca67ecf2e0",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "청주 충렬사(충청북도 지방기념물)는 임진왜란 때 순절한 동래부사 충렬공 송상현의 위패를 모신 곳이다. 선조 28년(1595)에 동래에서 청주로 묘소를 이장하고 광해군 2년(1610)에 사당을 창건했으며, 그 후 여러 차례 중수하여 오늘의 모습을 갖추었다. 송상현의 자는 덕구, 호는 천곡, 시호는 충렬이다. 국가의 위난을 죽음으로 지켜 시호를 ‘충렬’이라 하였다.\n충렬공은 선조 9년(1576) 문과에 급제해 여러 요직을 거친 후, 선조 24년(1591) 동래부사가 되었다. 이듬해 4월 임진왜란이 일어나 왜군이 부산진성을 함락하고 14일에 동래성을 공격하며 항복을 권했으나, 끝까지 항전하다가 15일 순절하였다. 왜장도 송상현의 충절에 탄복하여 동문 밖에 장사를 지내주었다고 한다.\n충렬사 뒷산에는 송상현의 묘소와 현종 원년(1659)에 세운 신도비가 있고, 사당 입구에 선조 28년(1595)에 건립한 충신문이 있다. 지금의 건물은 1980년에 중수한 것으로 목조기와집과 마당 앞 삼문, 석축담장 등이 있다.\n청주시에서는 송상현 선생의 애국충절 정신을 기리기 위해 2001년 인근 부지를 정비하여 전시관과 사당을 신축했으며, 주변을 공원화해 더 많은 시민들이 이곳을 찾고 역사와 함께 호흡하는 공간을 만들었다. 문화관광해설사의 정규해설도 진행하고 있다."
+  },
+  {
+   "sourceRevisionId": "7b1642ab-e3da-5c9a-b030-50b1e8b92d6b",
+   "sourceId": "tourapi:127274",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=127274",
+   "title": "청주 신전동 고가",
+   "fetchedAt": 1794391146559,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20260311100340",
+   "verifiedAt": 1794394299679,
+   "contentHash": "4e448ecb333e86b55b6afdcff0a3efb237cfdd368ea905d230125b57445fd1c0",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "이 집은 1926년에 지은 것으로 안채의 종도리 장여에 상량문이 적혀 있다. 일자형의 안채와 사랑채, 행랑채가 ㄷ자 형으로 배치되어 있는데, 집의 형태를 보면 안채는 3단의 장대석 기단 위에 둥근 주춧돌을 놓고 네모기둥을 세웠고, 기둥 위에 큰 부재로 된 대들보를 걸고, 그 위에 종보를 올렸다. 종보 위에는 파련대공을 세우고 종도리와 뜬창방을 결구하였는데 주택에서는 보기 드문 수법이다. 건물이 세워진 연대는 오래되지 않았으나 안채･사랑채･행랑채가 고루 갖추어져 있는 전통 주거 건축의 모습을 잘 나타내고 있다. 현재는 소유자가 거주하면서 관리를 하고 있다.\n(출처 : 청주 문화관광 홈페이지)"
+  },
+  {
+   "sourceRevisionId": "8df727fd-4e3f-5326-9aea-915eeeba8e3d",
+   "sourceId": "tourapi:129829",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=129829",
+   "title": "한국교원대학교 교육박물관",
+   "fetchedAt": 1794391149275,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261111084802",
+   "verifiedAt": 1794394299679,
+   "contentHash": "b07549f4362e4b74077d75ff32575eeeb7ec2789f8a2a2ca84413301569a23fa",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "한국 교육의 요람인 한국교원대학교의 특성을 살린 교육 분야 특화 박물관이다. 2010년 11월 16일 개관한 한국교원대학교 교육박물관은\n한국 교육에 관한 유물을 전문적으로 수집, 정리, 보존할 뿐만 아니라, 우리 교육의 발자취를 생생하게 보고 느낄 수 있도록 다양한 전시와 체험 프로그램을 진행하고 있다. 한국 교육사실, 교육 테마실, 학교 사실, 기획 전시실로 이루어진 전시실을 통해 한국 교육의 역사를 살펴볼 수 있고, 교육 체험실을 통해 부모 세대가 경험한 과거의 교육을 직접 체험해 볼 수 있는 이곳은 학생과 교사, 지역주민 등을 대상으로 하는 다양한 사회교육 프로그램을 준비하고 있다. 또한 수준 높은 사회교육 프로그램을 운영하여 많은 방문객을 유치할 뿐 아니라 박물관 내부 및 외부의 야외 박물관도 정비해가고 있다.\n대학의 박물관이지만 2,270여 평의 규모에 3만 점 이상의 유물을 보유하고 있어, 여느 지방 국립박물관에 뒤지지 않으며 교육박물관으로서는 최대 규모를 자랑하고 있다."
+  },
+  {
+   "sourceRevisionId": "db572430-21f3-5f21-aebb-deec20db03b0",
+   "sourceId": "tourapi:125970",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=125970",
+   "title": "청주 흥덕사지",
+   "fetchedAt": 1794391146968,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261111084802",
+   "verifiedAt": 1794394299679,
+   "contentHash": "35f020bbec5471805f35395d1b0e0827e6ce1ff4e4d1e78870d742c6aa0ec001",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "청주 운천동에 있는 통일신라시대의 절터이다. 1985년 발굴조사 때 금당터·서회랑터·강당터·부속건물들이 있던 건물터가 확인되었고 ‘흥덕사’라고 새겨진 쇠북(금구) 조각이 나와 절의 이름이 흥덕사였음을 알 수 있었다. ‘대중 3년명(大中 3年銘)’이라 새겨진 기와와 기타 유물들로 보아 늦어도 9세기에 지어져 고려 후기까지 그 명맥을 유지하였던 것으로 보인다. 치미·기와조각·그릇 들과 청동제품이 많이 출토되었고, 현재 남아있는 세계에서 가장 오래된 금속활자본인 『직지심체요절』을 찍은 곳이다.\n(출처 : 국가유산청)"
+  },
+  {
+   "sourceRevisionId": "66f9d7d0-056f-5b0c-8a6b-90cd70ec1ebb",
+   "sourceId": "tourapi:2708067",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=2708067",
+   "title": "청주 가로수길",
+   "fetchedAt": 1794391147364,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261022112543",
+   "verifiedAt": 1794394299679,
+   "contentHash": "c083b49861efa9fc521f5af78e58646b403dd76f76eb537a38f75a1a39d77d77",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "한국의 아름다운 길 100선에 선정되어 전국에서 가장 아름다운 길로 뽑히는 청주가로수길은 경부고속도로 청주 인터 체인지에서 가경천 죽천교에 걸쳐 1948년에 식재된 1,527그루의 플라타너스가 마치 터널을 이루듯 장관을 연출하고 있어 전국의 진입로 중 가장 아름답고 운치 있는 곳이다. 영화 만추와 드라마 모래시계의 촬영 장소로도 유명한 이곳은 연둣빛 봄과 싱그러운 녹음, 가을빛 거리, 비움의 자세를 보여주는 겨울까지 춘하추동 사계절 마다 특색 있는 모습으로 청주를 찾는 이들의 감탄을 자아내고 있다. 가족과 연인과 함께 드라이브 하기에도 좋은 청주의 숨겨진 명소이다.\n(출처 : 청주시청 문화관광 홈페이지)"
+  },
+  {
+   "sourceRevisionId": "5fcdc08c-6e40-5769-8099-5c0a09b3a1b5",
+   "sourceId": "tourapi:605173",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=605173",
+   "title": "청주 강내연꽃마을",
+   "fetchedAt": 1794391148215,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261029160205",
+   "verifiedAt": 1794394299679,
+   "contentHash": "63854a04e6d0098935c6a6b8fce44b084a22f85670b0414794d3c40d8aeb1933",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "연꽃은 불교를 상징하기도 해서 연꽃에는 신비감과 경외감이 깃들어 있다. 황순원의 「소나기」에 나올 법한 풍경이 있는 마을, 바로 충북 청주시에 있는 청원연꽃마을이다.연꽃은 여름에만 피지만 연꽃마을에는 사계절 내내 사람들의 발길이 끊이지 않는다. 연을 테마로 한 갖가지 체험거리를 만든 마을 사람들의노력이 있기에 가능한 일이다.부녀회원들은 2년간에 걸쳐 음식 전문가를 마을에 초빙, 연을 활용한 음식을 배우는 수고를 아끼지 않았다. 이들이 내어놓는 연잎밥과 연꽃지짐은 그윽한 향내가 일품이다. 마을에서 준비한 농촌체험은 신나는 놀이이다. 수생식물도 관찰하고, 봉숭아 꽃물도 들여 보고, 전통부채에 민화도 그려볼 수 있다."
+  },
+  {
+   "sourceRevisionId": "95598993-8b22-5a24-8051-cb09017b32d2",
+   "sourceId": "tourapi:1627209",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=1627209",
+   "title": "청주백제유물전시관",
+   "fetchedAt": 1794391148868,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261111084802",
+   "verifiedAt": 1794394299679,
+   "contentHash": "7d0b28a40d6c429ab17e0382cd92c3520356d16d45b6330f92ee7b33e046f79d",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "청주백제유물전시관은 사적 청주 신봉동 고분군의 역사와 문화를 보존하기 위해 2001년 11월 29일 개관했다. 선사시대부터 조선에 이르는 청주의 역사를 비롯해, 청주 신봉동 백제 고분군을 중심으로 인근의 송절동, 봉명동, 명암동, 가경동 유적과 청원의 송대리와 주성리 유적과 여러 유물을 전시하고 있다. 주요 소장 유물로는 삼국시대의 굽다리접시, 굽단지, 바리 모양토 기, 병 모양 토기, 세발토기, 손잡이 잔, 단지, 대구 등이 있다. 그밖에 기획 전시와 다채로운 문화행사, 체험·교육 프로그램을 열어 청주의 역사와 문화를 전하고 있다. 전시관에서는 청주시 문화 관광해설사의 전시관 해설을 진행한다."
+  },
+  {
+   "sourceRevisionId": "3f7d9c8d-0455-5032-b1d2-4accd0f860d4",
+   "sourceId": "tourapi:2804708",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=2804708",
+   "title": "청주고인쇄박물관",
+   "fetchedAt": 1794391148645,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261111084802",
+   "verifiedAt": 1794394299679,
+   "contentHash": "2bf5bc6a13e55d82a92b917535e78095b7a61f508fb107645597f47dc76d6a0f",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "청주고인쇄박물관은 현존하는 세계에서 가장 오래된 금속활자본이자 유네스코 세계기록유산인 『직지』를 중심으로 고려의 금속활자 인쇄술과 청주 흥덕사 관련 자료를 전시하고 있으며, 금속활자의 의미와 가치를 소개하고 있다. 또한 고려의 목판인쇄술로부터 19세기말까지 우리나라 전통 인쇄문화 전반을 소개하며 근대와 현대의 인쇄문화를 이해하는데 도움이 된다. 직지 디지털 실감영상관에서 증강현실 인터랙션(손으로 기록하다), 모션인식 인터랙션(몸으로 기록하다), 활자 미디어 아트(마음으로 기록하다) 등 다채로운 콘텐츠를 체험할 수 있는 공간이 있어 아이들과 함께 즐길 수 있다."
+  }
+ ],
+ "facts": [
+  {
+   "factRevisionId": "1a0f89af-5c61-57fc-8a6f-0c5b2e34c687",
+   "factId": "d14a8d89-2615-5024-ab75-cde0cd857111",
+   "version": 1,
+   "statement": "청주 충렬사(충청북도 지방기념물)는 임진왜란 때 순절한 동래부사 충렬공 송상현의 위패를 모신 곳이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794394299679,
+   "sourceRevisionIds": [
+    "c3dd3057-1667-55b8-be3b-619bcd469dcf"
+   ]
+  },
+  {
+   "factRevisionId": "af0fdd4b-2385-55f2-a1a8-8616941af8e9",
+   "factId": "ae169fc4-ba35-521f-a95b-1c53f5243ff3",
+   "version": 1,
+   "statement": "선조 28년(1595)에 동래에서 청주로 묘소를 이장하고 광해군 2년(1610)에 사당을 창건했으며, 그 후 여러 차례 중수하여 오늘의 모습을 갖추었다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794394299679,
+   "sourceRevisionIds": [
+    "c3dd3057-1667-55b8-be3b-619bcd469dcf"
+   ]
+  },
+  {
+   "factRevisionId": "ca92d13d-8168-52c8-a28d-b2597f3633b5",
+   "factId": "e2930209-f3dd-5d03-a9b1-b85dae806058",
+   "version": 1,
+   "statement": "송상현의 자는 덕구, 호는 천곡, 시호는 충렬이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794394299679,
+   "sourceRevisionIds": [
+    "c3dd3057-1667-55b8-be3b-619bcd469dcf"
+   ]
+  },
+  {
+   "factRevisionId": "baa7f284-9b8f-5be4-adc5-9a13f1673e1b",
+   "factId": "5cbf871b-20fa-581b-afc5-55f1f7d480c7",
+   "version": 1,
+   "statement": "일자형의 안채와 사랑채, 행랑채가 ㄷ자 형으로 배치되어 있는데, 집의 형태를 보면 안채는 3단의 장대석 기단 위에 둥근 주춧돌을 놓고 네모기둥을 세웠고, 기둥 위에 큰 부재로 된 대들보를 걸고, 그 위에 종보를 올렸다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794394299679,
+   "sourceRevisionIds": [
+    "7b1642ab-e3da-5c9a-b030-50b1e8b92d6b"
+   ]
+  },
+  {
+   "factRevisionId": "df208e7f-e125-5bc1-94ba-e3cccbc131a5",
+   "factId": "05b4aafd-f23c-54a3-a9f1-fc202e385923",
+   "version": 1,
+   "statement": "종보 위에는 파련대공을 세우고 종도리와 뜬창방을 결구하였는데 주택에서는 보기 드문 수법이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794394299679,
+   "sourceRevisionIds": [
+    "7b1642ab-e3da-5c9a-b030-50b1e8b92d6b"
+   ]
+  },
+  {
+   "factRevisionId": "f198b110-a180-5075-8901-5f802326884f",
+   "factId": "a19ecf7a-ef45-5786-8309-017918112beb",
+   "version": 1,
+   "statement": "건물이 세워진 연대는 오래되지 않았으나 안채･사랑채･행랑채가 고루 갖추어져 있는 전통 주거 건축의 모습을 잘 나타내고 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794394299679,
+   "sourceRevisionIds": [
+    "7b1642ab-e3da-5c9a-b030-50b1e8b92d6b"
+   ]
+  },
+  {
+   "factRevisionId": "d8ec45ff-7d3a-5c80-9f73-b641c2a763c8",
+   "factId": "6e465eac-2c5a-58d2-9d4f-e3db6cecbe6e",
+   "version": 1,
+   "statement": "한국 교육의 요람인 한국교원대학교의 특성을 살린 교육 분야 특화 박물관이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794394299679,
+   "sourceRevisionIds": [
+    "8df727fd-4e3f-5326-9aea-915eeeba8e3d"
+   ]
+  },
+  {
+   "factRevisionId": "c715c6cf-2a93-5765-8b81-530ae8b62e2f",
+   "factId": "bda7cfe5-88cd-58cb-bd32-8bde42c59383",
+   "version": 1,
+   "statement": "한국 교육에 관한 유물을 전문적으로 수집, 정리, 보존할 뿐만 아니라, 우리 교육의 발자취를 생생하게 보고 느낄 수 있도록 다양한 전시와 체험 프로그램을 진행하고 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794394299679,
+   "sourceRevisionIds": [
+    "8df727fd-4e3f-5326-9aea-915eeeba8e3d"
+   ]
+  },
+  {
+   "factRevisionId": "58dd7cc0-b271-5df3-bf4d-939d3a228ee8",
+   "factId": "469ddcf9-9721-50c0-ad2e-8a2a14dfbadc",
+   "version": 1,
+   "statement": "한국 교육사실, 교육 테마실, 학교 사실, 기획 전시실로 이루어진 전시실을 통해 한국 교육의 역사를 살펴볼 수 있고, 교육 체험실을 통해 부모 세대가 경험한 과거의 교육을 직접 체험해 볼 수 있는 이곳은 학생과 교사, 지역주민 등을 대상으로 하는 다양한 사회교육 프로그램을 준비하고 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794394299679,
+   "sourceRevisionIds": [
+    "8df727fd-4e3f-5326-9aea-915eeeba8e3d"
+   ]
+  },
+  {
+   "factRevisionId": "3c85de30-5f33-568c-80cd-40d6d87c9b78",
+   "factId": "e427b9c2-7a5d-5b8b-8220-d5b856815ff6",
+   "version": 1,
+   "statement": "청주 운천동에 있는 통일신라시대의 절터이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794394299679,
+   "sourceRevisionIds": [
+    "db572430-21f3-5f21-aebb-deec20db03b0"
+   ]
+  },
+  {
+   "factRevisionId": "351d7068-abbc-5fbc-aa2e-5e49566986e4",
+   "factId": "31968191-4afb-598c-9dac-62758031bed5",
+   "version": 1,
+   "statement": "1985년 발굴조사 때 금당터·서회랑터·강당터·부속건물들이 있던 건물터가 확인되었고 ‘흥덕사’라고 새겨진 쇠북(금구) 조각이 나와 절의 이름이 흥덕사였음을 알 수 있었다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794394299679,
+   "sourceRevisionIds": [
+    "db572430-21f3-5f21-aebb-deec20db03b0"
+   ]
+  },
+  {
+   "factRevisionId": "511304f1-5eb3-5ffe-9b5b-4a358ce4a524",
+   "factId": "788b69c4-e540-527d-8b53-ccf488b8641d",
+   "version": 1,
+   "statement": "‘대중 3년명(大中 3年銘)’이라 새겨진 기와와 기타 유물들로 보아 늦어도 9세기에 지어져 고려 후기까지 그 명맥을 유지하였던 것으로 보인다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794394299679,
+   "sourceRevisionIds": [
+    "db572430-21f3-5f21-aebb-deec20db03b0"
+   ]
+  },
+  {
+   "factRevisionId": "5a6d624e-3ddc-5cfb-992c-256a8d95679e",
+   "factId": "8b57943e-c213-5de6-88fd-3e1dd68cb253",
+   "version": 1,
+   "statement": "한국의 아름다운 길 100선에 선정되어 전국에서 가장 아름다운 길로 뽑히는 청주가로수길은 경부고속도로 청주 인터 체인지에서 가경천 죽천교에 걸쳐 1948년에 식재된 1,527그루의 플라타너스가 마치 터널을 이루듯 장관을 연출하고 있어 전국의 진입로 중 가장 아름답고 운치 있는 곳이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794394299679,
+   "sourceRevisionIds": [
+    "66f9d7d0-056f-5b0c-8a6b-90cd70ec1ebb"
+   ]
+  },
+  {
+   "factRevisionId": "5048c791-f8df-50a3-9fba-f61c610f098a",
+   "factId": "8ca48357-c965-5d77-8f19-18cbe8f88d73",
+   "version": 1,
+   "statement": "영화 만추와 드라마 모래시계의 촬영 장소로도 유명한 이곳은 연둣빛 봄과 싱그러운 녹음, 가을빛 거리, 비움의 자세를 보여주는 겨울까지 춘하추동 사계절 마다 특색 있는 모습으로 청주를 찾는 이들의 감탄을 자아내고 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794394299679,
+   "sourceRevisionIds": [
+    "66f9d7d0-056f-5b0c-8a6b-90cd70ec1ebb"
+   ]
+  },
+  {
+   "factRevisionId": "b52916e4-85ef-5477-839c-1ab2af7c40f6",
+   "factId": "8af37108-43c7-50c6-9141-01cc31e9dc5b",
+   "version": 1,
+   "statement": "가족과 연인과 함께 드라이브 하기에도 좋은 청주의 숨겨진 명소이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794394299679,
+   "sourceRevisionIds": [
+    "66f9d7d0-056f-5b0c-8a6b-90cd70ec1ebb"
+   ]
+  },
+  {
+   "factRevisionId": "2455fb1d-f99c-52c7-b7f0-b7a4e828651b",
+   "factId": "af557d33-6ffc-5bd5-aa03-eeb82a65b7b3",
+   "version": 1,
+   "statement": "연꽃은 불교를 상징하기도 해서 연꽃에는 신비감과 경외감이 깃들어 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794394299679,
+   "sourceRevisionIds": [
+    "5fcdc08c-6e40-5769-8099-5c0a09b3a1b5"
+   ]
+  },
+  {
+   "factRevisionId": "56f46598-ad78-59cf-9c4c-22eee55fa36b",
+   "factId": "c2c67a7c-3979-5c11-9ef8-9776c19747dc",
+   "version": 1,
+   "statement": "황순원의 「소나기」에 나올 법한 풍경이 있는 마을, 바로 충북 청주시에 있는 청원연꽃마을이다.연꽃은 여름에만 피지만 연꽃마을에는 사계절 내내 사람들의 발길이 끊이지 않는다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794394299679,
+   "sourceRevisionIds": [
+    "5fcdc08c-6e40-5769-8099-5c0a09b3a1b5"
+   ]
+  },
+  {
+   "factRevisionId": "820a0a35-a1c5-5e69-8957-25955f1a3506",
+   "factId": "807cfbaa-5de5-51ed-91da-efc46fe46a0f",
+   "version": 1,
+   "statement": "연을 테마로 한 갖가지 체험거리를 만든 마을 사람들의노력이 있기에 가능한 일이다.부녀회원들은 2년간에 걸쳐 음식 전문가를 마을에 초빙, 연을 활용한 음식을 배우는 수고를 아끼지 않았다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794394299679,
+   "sourceRevisionIds": [
+    "5fcdc08c-6e40-5769-8099-5c0a09b3a1b5"
+   ]
+  },
+  {
+   "factRevisionId": "9c0fe30f-9507-512e-b051-d8a2886ff737",
+   "factId": "ad391957-a1bc-5e52-b53c-ab520c6dc113",
+   "version": 1,
+   "statement": "청주백제유물전시관은 사적 청주 신봉동 고분군의 역사와 문화를 보존하기 위해 2001년 11월 29일 개관했다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794394299679,
+   "sourceRevisionIds": [
+    "95598993-8b22-5a24-8051-cb09017b32d2"
+   ]
+  },
+  {
+   "factRevisionId": "f9326338-8141-5cc2-a048-15cda1edaeb4",
+   "factId": "9753c675-8b6d-50fd-8a03-cff7e80c7616",
+   "version": 1,
+   "statement": "선사시대부터 조선에 이르는 청주의 역사를 비롯해, 청주 신봉동 백제 고분군을 중심으로 인근의 송절동, 봉명동, 명암동, 가경동 유적과 청원의 송대리와 주성리 유적과 여러 유물을 전시하고 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794394299679,
+   "sourceRevisionIds": [
+    "95598993-8b22-5a24-8051-cb09017b32d2"
+   ]
+  },
+  {
+   "factRevisionId": "9f9dab1e-54de-5694-98bf-2f37a961bd66",
+   "factId": "78b8323d-12ff-5e01-9bb6-0ad4592777f0",
+   "version": 1,
+   "statement": "주요 소장 유물로는 삼국시대의 굽다리접시, 굽단지, 바리 모양토 기, 병 모양 토기, 세발토기, 손잡이 잔, 단지, 대구 등이 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794394299679,
+   "sourceRevisionIds": [
+    "95598993-8b22-5a24-8051-cb09017b32d2"
+   ]
+  },
+  {
+   "factRevisionId": "e771ff29-f1dc-55fa-90e5-bd30e3dff277",
+   "factId": "39dd103f-7e1b-5636-b578-6fd55bb44f61",
+   "version": 1,
+   "statement": "청주고인쇄박물관은 현존하는 세계에서 가장 오래된 금속활자본이자 유네스코 세계기록유산인 『직지』를 중심으로 고려의 금속활자 인쇄술과 청주 흥덕사 관련 자료를 전시하고 있으며, 금속활자의 의미와 가치를 소개하고 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794394299679,
+   "sourceRevisionIds": [
+    "3f7d9c8d-0455-5032-b1d2-4accd0f860d4"
+   ]
+  },
+  {
+   "factRevisionId": "6bccc56b-d3e2-56b0-93fd-d468c8f2bb71",
+   "factId": "a0fc6673-c9fe-5d98-9a20-858cb3f85426",
+   "version": 1,
+   "statement": "직지 디지털 실감영상관에서 증강현실 인터랙션(손으로 기록하다), 모션인식 인터랙션(몸으로 기록하다), 활자 미디어 아트(마음으로 기록하다) 등 다채로운 콘텐츠를 체험할 수 있는 공간이 있어 아이들과 함께 즐길 수 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794394299679,
+   "sourceRevisionIds": [
+    "3f7d9c8d-0455-5032-b1d2-4accd0f860d4"
+   ]
+  }
+ ]
+}
