@@ -300,7 +300,13 @@ class Media3RuntimeMusic(context: Context) : RuntimeMusic {
     }
 
     companion object {
-        /** DEMO: a track counts as completely played after this long (also what the planner assumes for the gap). */
+        /**
+         * DEMO: a track counts as completely played after this long (also what the planner assumes
+         * for the gap). Raising it to fill a whole region squeezes the next story out of its window
+         * (`--video` paces story regions at 45 s), and withdrawing the offer to limit the count
+         * stalls story scheduling outright — the planner derives the next story boundary from the
+         * offered duration. Change the story length or the pacing instead.
+         */
         const val DEMO_MUSIC_DURATION_MS = 15_000L
     }
 }

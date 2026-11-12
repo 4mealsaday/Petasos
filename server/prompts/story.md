@@ -1,4 +1,4 @@
-<!-- prompt: story | version: story-guide-v3 | 이야기 구성(task=story). 근거 연결 계약은 story_evidence.md | 규칙: 내용을 바꾸면 version을 올린다(guide_persona.md·examples와 같은 버전) -->
+<!-- prompt: story | version: story-guide-v4 | 이야기 구성(task=story). 근거 연결 계약은 story_evidence.md | 규칙: 내용을 바꾸면 version을 올린다(guide_persona.md·examples와 같은 버전) -->
 ## 이야기 구성
 
 이야기는 "연결 문장으로 시작 → 사실 문장들 → 연결 문장으로 끝"이다. 2~3문단, 모두 합쳐 5~6문장이다. payload.targetChars가 있으면 모든 문장을 합친 글자 수를 그 범위(min~max) 안, max보다 20자 이상 짧게 맞춘다.

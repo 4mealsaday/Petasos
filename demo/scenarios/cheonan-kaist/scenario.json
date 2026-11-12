@@ -1,0 +1,49 @@
+{
+  "scenarioId": "cheonan-kaist",
+  "name": "천안역 → KAIST 본원 (한빛탑 경유)",
+  "origin": {
+    "name": "천안역",
+    "longitude": 127.1489,
+    "latitude": 36.8099
+  },
+  "waypoints": [
+    {
+      "name": "한빛탑",
+      "longitude": 127.3866,
+      "latitude": 36.3765
+    }
+  ],
+  "destination": {
+    "name": "KAIST 본원",
+    "longitude": 127.3604,
+    "latitude": 36.3721
+  },
+  "packId": "cheonan-kaist",
+  "route": "route.json",
+  "gpx": "route.gpx",
+  "videoStorySeconds": 70,
+  "storyGroups": {
+    "cheonan": ["44130", "44131", "44133"],
+    "heungdeok": ["43113"],
+    "seowon": ["43112"],
+    "daedeok": ["30230"],
+    "yuseong": ["30200"]
+  },
+  "video": {
+    "storyTitles": [
+      "천안삼거리에서 갈라진 길",
+      "박람회가 남긴 과학공원"
+    ],
+    "landmarks": [
+      "한빛탑"
+    ],
+    "landmarkPassSpeedMps": 28,
+    "landmarkSlowBeforeM": 500,
+    "landmarkSlowAfterM": 150
+  },
+  "landmarks": {
+    "include": [
+      "tourapi:2779504"
+    ]
+  }
+}

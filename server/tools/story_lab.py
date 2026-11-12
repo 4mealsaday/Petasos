@@ -9,6 +9,9 @@
   compare --a X --b Y             both versions side by side per region -> server/eval/out/compare-X-Y.md
   approve --pack P --story S01 --from X [--install]
                                   put one approved story into the pack (new story version, pack version + 1)
+  add --region C --region-name N --from X --like C2 --out B
+                                  append a NEW story for a region the bundle has none for; approve only revises
+                                  stories that already exist. Feed --out to build_pack.py --stories.
 
 X is a prompt version: the legacy conversation prompt (petasos-v0.8-5) or the version that server/prompts/story.md
 declares now. To compare a prompt edit: generate the current version, edit the prompt files and bump their version,
@@ -42,7 +45,8 @@ DEFAULT_STORIES = ROOT / "app" / "src" / "main" / "assets" / "content" / "p0-sto
 # (eval region code, spoken name, si/gun/gu codes whose facts belong to it). 용인·천안 group their districts.
 EVAL_REGIONS = (("11140", "서울 중구", ("11140",)), ("41460", "용인", ("41460", "41461", "41463", "41465")),
                 ("41550", "안성", ("41550",)), ("44130", "천안", ("44130", "44131", "44133")),
-                ("30200", "대전 유성구", ("30200",)))
+                ("30200", "대전 유성구", ("30200",)), ("43113", "청주 흥덕구", ("43113",)),
+                ("30230", "대전 대덕구", ("30230",)))
 TOURAPI_PLACES_PER_REGION = 3
 LAB_TEMPERATURE = 0.4   # story generation in the lab; the grounding judge always runs at 0
 TOURAPI_FACTS_PER_PLACE = 3
@@ -92,7 +96,7 @@ def _pack_rows_for(pack, codes):
     return source_rows, fact_rows, existing
 
 
-def _tourapi_rows(adapter, codes, taken_names, verified_at, log):
+def _tourapi_rows(adapter, codes, taken_names, verified_at, log, places_per_region=TOURAPI_PLACES_PER_REGION):
     places = {}
     for code in codes:
         try:
@@ -114,7 +118,7 @@ def _tourapi_rows(adapter, codes, taken_names, verified_at, log):
             scored.append((STORY_CATEGORIES[place.category] + min(1.0, len(document.text) / 600.0), place, document, lines))
     scored.sort(key=lambda row: (-row[0], row[1].place_id))
     sources, facts = [], []
-    for _score, place, document, lines in scored[:TOURAPI_PLACES_PER_REGION]:
+    for _score, place, document, lines in scored[:places_per_region]:
         source = _source_row(document, verified_at)
         sources.append(source)
         for index, sentence in enumerate(lines):
@@ -134,11 +138,14 @@ def build_eval(args):
     key = environment.get("PETASOS_TOURAPI_SERVICE_KEY") or environment.get("PETASOS_DATA_GO_KR_SERVICE_KEY")
     adapter = TourApiAdapter(key or "offline", SourceCache(offline=args.offline or not key))
     verified_at = int(time.time() * 1000)
+    only = set(args.region) if args.region else None
     for code, name, codes in EVAL_REGIONS:
+        if only is not None and code not in only:
+            continue
         print(f"{code} {name}")
         pack_sources, pack_facts, existing = _pack_rows_for(pack, set(codes))
         taken = [s["title"] for s in pack_sources]
-        tour_sources, tour_facts = _tourapi_rows(adapter, codes, taken, verified_at, print)
+        tour_sources, tour_facts = _tourapi_rows(adapter, codes, taken, verified_at, print, args.places)
         document = {"regionCode": code, "regionName": name, "codes": list(codes), "pack": args.pack,
                     "createdAt": verified_at,
                     "note": "평가 세트(고정). 팩의 검토된 사실 + TourAPI 공공누리 제1유형 개요 문장. 바꾸면 이전 결과와 비교할 수 없다.",
@@ -504,6 +511,78 @@ def judge_examples(args):
     asyncio.run(run())
 
 
+# ----------------------------------------------------------------------------------------------- add
+
+def cite_rows(bundle, draft, region):
+    """Copy the sources/facts the draft cites from the eval set into the bundle. Returns the cited fact ids."""
+    eval_facts = {f["factRevisionId"]: f for f in region["facts"]}
+    eval_sources = {s["sourceRevisionId"]: s for s in region["sources"]}
+    have_facts = {f["factRevisionId"] for f in bundle["facts"]}
+    have_sources = {s["sourceRevisionId"] for s in bundle["sources"]}
+    cited = sorted({f for p in draft.paragraphs for f in p["factRevisionIds"]})
+    for fact_id in cited:
+        if fact_id in have_facts:
+            continue
+        fact = eval_facts[fact_id]
+        for source_id in fact["sourceRevisionIds"]:
+            if source_id not in have_sources:
+                bundle["sources"].append(eval_sources[source_id])
+                have_sources.add(source_id)
+        bundle["facts"].append(fact)
+        have_facts.add(fact_id)
+    return cited
+
+
+def add(args):
+    """Append a brand-new story for a region the bundle has none for (approve only revises existing ones)."""
+    base = _json(args.base)
+    region = next((r for r in eval_regions() if r["regionCode"] == args.region), None)
+    if region is None:
+        raise SystemExit(f"No evaluation set for {args.region}; run build-eval --region {args.region} first.")
+    result = _json(OUT / args.from_version / f"{args.region}.json")
+    story = result["stories"][args.index - 1]
+    if story["status"] != "ok":
+        raise SystemExit(f"story {args.index} of {args.region} did not pass the checks.")
+    draft = StoryDraft.from_dict(story)
+    if any(b["regionCode"] == args.region for b in base["regionBindings"]):
+        raise SystemExit(f"{args.base} already binds a story to {args.region}; use approve to revise it.")
+
+    now = int(time.time() * 1000)
+    cited = cite_rows(base, draft, region)
+    story_id = _id("story", args.region, draft.title, draft.prompt_version)
+    base["stories"].append({"storyId": story_id, "topicId": _id("topic", story_id), "title": draft.title,
+                            "coreQuestion": draft.core_question, "interestTags": list(args.tags), "placeId": None})
+    base["versions"].append(draft.bundle_version(story_id, 1, now))
+    # The association fact only states which region the story belongs to; it need not be spoken.
+    association = args.association or cited[0]
+    facts_by_id = {f["factRevisionId"]: f for f in base["facts"]}
+    if association not in facts_by_id:
+        raise SystemExit(f"association fact {association} is not in the bundle.")
+    reference = next(b for b in base["regionBindings"] if b["regionCode"] == args.like)
+    base["regionBindings"].append({
+        "associationFactRevisionId": association,
+        "datasetVersion": reference["datasetVersion"],
+        "regionCode": args.region,
+        "regionId": f"kr-sigungu-{args.region}",
+        "regionName": args.region_name,
+        "regionRevisionId": f"kr-sigungu-{args.region}-{reference['datasetVersion']}",
+        "regionSourceRevisionId": reference["regionSourceRevisionId"],
+        "reviewBasis": args.review_basis,
+        "storyId": story_id,
+        "verifiedAt": max(now, facts_by_id[association]["verifiedAt"]),
+    })
+    validate_bundle(base)
+    out = args.out if args.out.is_absolute() else ROOT / args.out
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(base, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    story["reviewStatus"] = "approved"
+    story["addedInto"] = {"bundle": str(out.relative_to(ROOT)), "storyId": story_id, "regionCode": args.region}
+    _write_json(OUT / args.from_version / f"{args.region}.json", result)
+    print(f"Added '{draft.title}' as {story_id} ({args.region} {args.region_name}) -> "
+          f"{out.relative_to(ROOT)} ({len(base['stories'])} stories)")
+    print(f"  DemoVideoMode.REPRESENTATIVE_STORY_IDS must list {story_id} or video mode skips it.")
+
+
 # ----------------------------------------------------------------------------------------------- approve
 
 def apply_story(bundle, story_id, draft, region, now_ms):
@@ -577,6 +656,12 @@ def main(argv=None):
     build = commands.add_parser("build-eval")
     build.add_argument("--pack", default="seoul-daejeon")
     build.add_argument("--offline", action="store_true", help="use only cached TourAPI responses")
+    build.add_argument("--region", action="append",
+                       help="only this eval region code (repeatable); default: all. Use it to add a region "
+                            "without rewriting the frozen files of the others.")
+    build.add_argument("--places", type=int, default=TOURAPI_PLACES_PER_REGION,
+                       help=f"TourAPI places kept per region (default {TOURAPI_PLACES_PER_REGION}); raise it when the "
+                            "top-scoring places make poor story material")
     gen = commands.add_parser("generate")
     gen.add_argument("--prompt-version", required=True, help=f"{LEGACY_VERSION} or the version in server/prompts/story.md")
     gen.add_argument("--region", action="append", help="eval region code (repeatable); default: all")
@@ -587,6 +672,19 @@ def main(argv=None):
     cmp_ = commands.add_parser("compare")
     cmp_.add_argument("--a", required=True)
     cmp_.add_argument("--b", required=True)
+    new = commands.add_parser("add", help="append a new story for a region the bundle has none for")
+    new.add_argument("--region", required=True, help="eval region code, e.g. 43113")
+    new.add_argument("--region-name", required=True, help="regionName written into the binding, e.g. 흥덕구")
+    new.add_argument("--from", dest="from_version", required=True, help="prompt version whose lab output to take")
+    new.add_argument("--index", type=int, default=1, help="which story of that region's output (1-based)")
+    new.add_argument("--base", type=Path, default=DEFAULT_STORIES, help="reviewed bundle to extend")
+    new.add_argument("--out", type=Path, required=True, help="where the extended bundle is written")
+    new.add_argument("--like", required=True,
+                     help="regionCode of an existing binding whose dataset/source revisions are reused")
+    new.add_argument("--association", help="association factRevisionId (default: the story's first cited fact)")
+    new.add_argument("--tags", nargs="*", default=(), help="interestTags")
+    new.add_argument("--review-basis", required=True, help="why this region binding was accepted")
+
     app = commands.add_parser("approve")
     app.add_argument("--pack", required=True)
     app.add_argument("--story", required=True, help="S01..S10 in the pack's story order")
@@ -599,7 +697,7 @@ def main(argv=None):
     if getattr(args, "stories", None) is not None and str(args.stories) in ("", "."):
         args.stories = None
     {"build-eval": build_eval, "generate": generate, "compare": compare, "approve": approve,
-     "judge-examples": judge_examples}[args.command](args)
+     "add": add, "judge-examples": judge_examples}[args.command](args)
 
 
 if __name__ == "__main__":
