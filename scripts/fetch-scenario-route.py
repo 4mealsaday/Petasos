@@ -31,10 +31,12 @@ def main():
     environment = load_environment(args.env_file)
     origin = (scenario["origin"]["longitude"], scenario["origin"]["latitude"])
     destination = (scenario["destination"]["longitude"], scenario["destination"]["latitude"])
-    request = NaverRouteRequest(origin, destination)
+    waypoints = tuple((point["longitude"], point["latitude"]) for point in scenario.get("waypoints", ()))
+    request = NaverRouteRequest(origin, destination, waypoints)
     route = NaverDirectionsClient(environment["PETASOS_NAVER_MAPS_CLIENT_ID"],
                                   environment["PETASOS_NAVER_MAPS_CLIENT_SECRET"]).lookup(request)
     value = {"origin": list(origin), "destination": list(destination),
+             "waypoints": [list(point) for point in waypoints],
              "providerOrigin": list(route.provider_origin), "providerDestination": list(route.provider_destination),
              "path": [list(point) for point in route.path], "totalDistanceMeters": route.total_distance_meters,
              "totalDurationMs": route.total_duration_ms,

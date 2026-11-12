@@ -133,23 +133,25 @@ class RegionIndex:
         return None, None
 
 
-def category_for(code):
+def category_for(code, groups=None):
     if code is None:
         return "passthrough", None
-    for group, codes in STORY_GROUPS.items():
+    for group, codes in (groups or STORY_GROUPS).items():
         if code in codes:
             return "story", group
     return "passthrough", None
 
 
-def build_runs(points, index, slow=None):
+def build_runs(points, index, slow=None, groups=None):
     """Groups consecutive points by (category, group) so each contiguous stretch gets one pacing target.
 
-    slow[i] is the seconds to wait before point i inside a landmark slow zone (None elsewhere)."""
+    slow[i] is the seconds to wait before point i inside a landmark slow zone (None elsewhere).
+    groups overrides STORY_GROUPS so a scenario can pace regions that carry no story (a music or
+    conversation beat still needs dwell time)."""
     annotated = []
     for i, (lon, lat) in enumerate(points):
         code, name = index.containing_code(lon, lat)
-        category, group = category_for(code)
+        category, group = category_for(code, groups)
         annotated.append((lon, lat, code, name, category, group, slow[i] if slow else None))
 
     runs = []
@@ -231,8 +233,13 @@ def landmark_slow_zones(points, scenario, packs_dir, log=print):
     return out, slow
 
 
-def video_targets(runs):
-    """Per-run seconds: each story group gets 45 s in total, split over its fragments by point count."""
+def video_targets(runs, per_group=None):
+    """Per-run seconds: each story group gets its budget, split over its fragments by point count.
+
+    A group needs room for one music track to finish plus the whole story, and a region with a
+    window announcement needs that on top, so the budget is per group (scenario.json
+    `videoStorySecondsPerGroup`) rather than one number for all."""
+    per_group = per_group or {}
     group_points = {}
     for run in runs:
         if run["key"][0] == "story":
@@ -240,7 +247,8 @@ def video_targets(runs):
     for run in runs:
         category, group = run["key"]
         if category == "story":
-            run["target"] = VIDEO_STORY_TARGET_SECONDS * len(run["items"]) / group_points[group]
+            budget = float(per_group.get(group, VIDEO_STORY_TARGET_SECONDS))
+            run["target"] = budget * len(run["items"]) / group_points[group]
         else:
             run["target"] = VIDEO_PASSTHROUGH_TARGET_SECONDS * min(1.0, len(run["items"]) / 200)
     return runs
@@ -412,9 +420,15 @@ def main():
     if args.video:
         points, slow = landmark_slow_zones(points, scenario, PACKS_DIR)
     print("Classifying route points into region runs...")
-    runs = build_runs(points, index, slow)
+    story_groups = {name: set(codes) for name, codes in scenario["storyGroups"].items()} \
+        if "storyGroups" in scenario else None
+    # A region must hold one music track plus the story, or the story never gets a slot:
+    # music is offered in DEMO_MUSIC_DURATION_MS chunks and the story only starts at a boundary.
+    global VIDEO_STORY_TARGET_SECONDS
+    VIDEO_STORY_TARGET_SECONDS = float(scenario.get("videoStorySeconds", VIDEO_STORY_TARGET_SECONDS))
+    runs = build_runs(points, index, slow, story_groups)
     if args.video:
-        runs = video_targets(runs)
+        runs = video_targets(runs, scenario.get("videoStorySecondsPerGroup"))
 
     if args.gpx:
         write_gpx(args.gpx, runs, args.speed)

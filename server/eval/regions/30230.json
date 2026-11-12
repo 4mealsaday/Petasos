@@ -1,0 +1,621 @@
+{
+ "regionCode": "30230",
+ "regionName": "대전 대덕구",
+ "codes": [
+  "30230"
+ ],
+ "pack": "cheonan-kaist",
+ "createdAt": 1794414787914,
+ "note": "평가 세트(고정). 팩의 검토된 사실 + TourAPI 공공누리 제1유형 개요 문장. 바꾸면 이전 결과와 비교할 수 없다.",
+ "existingStories": [],
+ "sources": [
+  {
+   "sourceRevisionId": "e14fc7d5-e9df-5b54-9f46-0331fe17d430",
+   "sourceId": "tourapi:127663",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=127663",
+   "title": "대청댐",
+   "fetchedAt": 1794391152355,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261111084802",
+   "verifiedAt": 1794414787914,
+   "contentHash": "dc722554a373548a6336c60f9e77d7a7ac6f0f8e4f3c11cd865033052cfeda02",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "비단처럼 아름다운 강이라하여 이름 붙여진 금강에 위치한 대청댐은 대전광역시 대덕구와 충청북도 청주시 사이에 위치해 있는 다목적댐이다. 댐 건설로 생긴 대청호는 저수용량이 14억 9천만 톤에 이르러 중부권에서는 충주호 다음으로 큰 호수이다.\n1980년 댐의 완공으로 댐 하류지역의 홍수피해를 경감시키는 한편, 하류지역 농경지에 농업용수를 공급하고, 대전광역시, 청주시, 전주시, 군산시 등 충청과 호남지역에 생활용수 및 공업용수를 공급하고 있다.\n국내 최장의 다목적 인공호수인 대청댐은 산간 계곡과 어울려 빼어난 경관을 이루고 있다. 대청호의 끝없이 이어지는 잔잔한 물결과 호반 위에 섬처럼 떠 있는 산봉우리들이 이른 아침에는 하얀 물안개로 가려지고 낮에는 쪽빛 하늘과 흰 구름으로 장식된다. 호수 주변에는 20년 만에 개방된 청남대를 비롯해 현암사, 문의향교 등 많은 문화유적이 잘 보존되어 있다.\n물길을 따라 이어지다가 사이사이 울창한 숲을 지나는 호반도로는 드라이브 코스로 알려져 있다. 대청호 드라이브 코스는 청주와 신탄진을 잇는 호수 북쪽 코스와 보은과 옥천으로 이어지는 남쪽 코스가 있다. 특히 북쪽의 청주시 문의면과 현도면 오가리 사이의 경관이 빼어나다."
+  },
+  {
+   "sourceRevisionId": "34a1b360-9754-5636-b857-f61db73ea0e0",
+   "sourceId": "tourapi:705678",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=705678",
+   "title": "장동산림욕장",
+   "fetchedAt": 1794391151286,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261026141536",
+   "verifiedAt": 1794414787914,
+   "contentHash": "6eadf4b404e35ff4b6679544549d3c31f3b804ef2bc8f719303127045f6b37e0",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "장동산림욕장은 대전 대덕구 계족산에 위치한 삼림욕장이다. 계족산의 자연 산림을 그대로 활용하여 1995년에 개장한 이곳은 대전 시민들과 관광객이 쉽게 찾을 수 있는 휴식공간으로 삼림욕을 통해 계족산의 맑은 공기와 피톤치드를 마실 수 있다. 계족산성 아래 숲 골짜기에 있으며, 체육시설, 등산 순환로, 모험놀이 시설 등이 있어 시민들의 휴식공간으로 이용된다. 체육, 모험, 놀이시설 20여 종과 등산 순환로, 물놀이장, 잔디광장 등의 기타 편의시설 등이 구비되어 있고 계족산 황톳길의 시작점 역할도 한다. 삼림욕장에서 시작되는 계족산 황톳길에서는 맨발 걷기 체험을 할 수 있는 곳으로, 자연이 주는 건강을 경험할 수 있다. 인근 관광지로는 계족산, 계족산성 외에 산디마을 캠핑장, 회덕 메타세쿼이아길 등이 있다."
+  },
+  {
+   "sourceRevisionId": "d38235c7-d6d6-53e5-8e76-93cbe29e6a76",
+   "sourceId": "tourapi:2407303",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=2407303",
+   "title": "금강로하스대청공원",
+   "fetchedAt": 1794391151509,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261111084802",
+   "verifiedAt": 1794414787914,
+   "contentHash": "ff35183bf9268d251a9d3a798a3618fb7dbecac4210753f31719cae0c512448f",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "금강로하스대청공원은 대전 대덕구 대청댐 인근에 조성된 공원이다. 도시민의 건전한 여가생활과 보건휴양 및 공공복리 증진을 위하여 1998년부터 2011년까지 조성된 자연생태공원으로 현장학습, 가족 나들이, 기업 및 단체의 야유회 등 친목 도모의 공간으로 적합하다. 대청호와 금강에 접하고 있으며 강변을 따라 수변데크가 조성되어 백로 등의 조류와 왕버드나무군락지 등을 감상할 수 있다. 또한, 넓은 잔디광장, 암석식물원, 삼림욕과 휴식을 즐길 수 있는 메타세쿼이아 숲 속쉼터 및 유아숲체험원도 갖추고 있다. 이처럼 자연친화적인 시민 휴식공간으로 인정받아 환경부의 자연생태복원 우수마을에 선정되기도 하였다. 인근에는 대청댐 외에 청남대, 용호동 구석기 유적, 신탄진장 등의 관광지가 있어 함께 둘러볼 수 있다."
+  },
+  {
+   "sourceRevisionId": "ccd79057-b368-55e1-b6a5-0e2fbf1975af",
+   "sourceId": "tourapi:2689761",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=2689761",
+   "title": "삼정생태공원",
+   "fetchedAt": 1794391151060,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261026100840",
+   "verifiedAt": 1794414787914,
+   "contentHash": "2a65346f942ba55d693bed7b004da3ba7b77851f3ed3738f43041b45b480a889",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "삼정생태공원은 대전 대청호오백리길 중, 1구간에 있는 자그마한 공원이다. 삼정마을이라고 불리며 대청호를 따라 삼정생태공원이 조성되어 있는 곳으로 아직 잘 안 알려져 있어 관광객들이 많지 않아 한적하게 즐길 수 있는 곳이다. 데크를 따라 걸으면서 대청호를 구경할 수 있고 잘 정비된 숲속 오솔길이 적당히 섞여있어 걷는 재미도 있다. 삼정생태공원은 갈대군락과 미나리원, 참강지 등 다양한 생태가 모여있어 자연을 만끽할 수 있다. 아름다운 호수의 풍경을 감상하며 자연 속에서 고요한 시간을 보낼 수 있다."
+  },
+  {
+   "sourceRevisionId": "4f3c0331-b3ee-5934-b41f-4ca9a18b3739",
+   "sourceId": "tourapi:129723",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=129723",
+   "title": "한남대학교 성지관",
+   "fetchedAt": 1794391152955,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261111084802",
+   "verifiedAt": 1794414787914,
+   "contentHash": "d6ee6853cd81d48ecba618e5fbdee10ba218729394d7866c442ca354e47cd7c5",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "한남대학교 성지관은 한남대학교 교문에서 정면 오른쪽에 보이는 건물로 북쪽에 위치하고 있다. 이 건물은 1985년 4월에 착공하여 1986년 8월에 준공하였다. 연면적 905평에 당시 강당이었으며 현재는 채플을 비롯한 각종 학교 행사와 지역 시민의 문화공간으로 활용되고 있다. 남서쪽 벽면에 낱자가 가로 세로 각각 2m 크기의 글씨를 볼 수 있는데 이 글씨는 국전초대 작가인 장암 이곤순의 글씨체를 그대로 주물로 제작한 것이다. 또한 성지관 정면에 걸린 십자가는 미술교육과 박병희 교수가 설계하였다. 십자가는 교문에서 정면 방향으로 설치되어 한남대학교의 교육 이념을 상징한다."
+  },
+  {
+   "sourceRevisionId": "097392eb-85d6-508b-9744-ae63549a1cf3",
+   "sourceId": "tourapi:1622646",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=1622646",
+   "title": "길치문화공원",
+   "fetchedAt": 1794391151919,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261111084802",
+   "verifiedAt": 1794414787914,
+   "contentHash": "3d508adcdea2248b5b1f7623a7f2d5308041867d962d28fb7042b3b1f56fc501",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "길치문화공원은 약 42만 평으로 대전광역시의 동부권에 위치한 주로 산림 형태의 공원이다. 남간정사가 있는 우암사적공원과 경부고속도로 대전육교 주변의 중앙광장이 조성되어 있는 곳으로 이용권이 양분되어 있다. 특히, 우암사적공원은 낮은 야산 기슭의 숲이 우거진 골짜기를 배경으로 하여 위치하고 있어 대전시민은 물론, 외지인들의 이용객이 날로 증가하고 있다. 길치문화공원은에는 큰 주차장이 마련되어 있어 접근성이 좋으며 상시 개방되어 있어 누구나 자유롭게 산책하며 휴식을 취할 수 있는 공원이다."
+  },
+  {
+   "sourceRevisionId": "d7aa7b79-68ac-54d1-b292-291c4d2144e4",
+   "sourceId": "tourapi:2913032",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=2913032",
+   "title": "금강로하스산호빛공원",
+   "fetchedAt": 1794391151714,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261111084802",
+   "verifiedAt": 1794414787914,
+   "contentHash": "6659fc7823f7e1f9608bd257be76bfa4b01300cc05b3a9eeb20828def9951ce1",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "금강로하스산호빛공원은 대전광역시 대덕구 석봉동에 있다. 한갓지게 산책하기 좋은 곳이라 많은 사람이 찾는다. 공원에는 체력 단련 시설을 비롯해 야외 수영장, 배드민턴장, 롤러스케이트장 등이 갖추어져 있다. 음악 분수와 바닥분수도 운영하는데 매년 7~8월 오전 10시, 오후 1시, 오후 3시, 오후 5시부터 각각 30분간 물을 뿜는다. 단, 일요일과 우천 시에는 운영되지 않는다. 신탄진IC에서 가깝고, 주변에 장동산림욕장과 계족산 황톳길이 있다."
+  },
+  {
+   "sourceRevisionId": "6043f772-854b-5877-91c7-99b6df948b63",
+   "sourceId": "tourapi:2733533",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do#contentId=2733533",
+   "title": "대전무형유산전수교육관",
+   "fetchedAt": 1794391152139,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": "20261111084802",
+   "verifiedAt": 1794414787914,
+   "contentHash": "95f8bfb0a2e370f4c9a880b0450c56b586fe5144ba5cd777de5584919ab621af",
+   "license": {
+    "type": "KOGL-1",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "TourAPI cpyrhtDivCd=Type1: 공공누리 제1유형(출처표시)"
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "build_pack: 공식 API 원문을 문장 단위로 인용. 팩 검토표로 사람 확인"
+   },
+   "attribution": "한국관광공사 TourAPI (KOGL-1)",
+   "reviewStatus": "verified",
+   "normalizedText": "대전무형유산전수교육관은 대전광역시 무형 유산 전승과 육성을 위해 2009년 4월 15일 개관하였다. 현재 대전광역시 지정 무형 유산은 웃다리농악 등 총 23개 종목으로 다른 시도에 비해 많은 무형 유산을 보유하고 있다. 또한 그 분야도 대전 전래의 예능, 민속신앙, 조각공예 등 매우 다양하다. 무형 유산 예능 종목 11종목을 전수·보존하며 교육, 공연, 행사 등 다양한 프로그램으로 시민 전통문화 향유 기회를 확대해 나아가고 있다."
+  },
+  {
+   "sourceRevisionId": "52788d0c-edb6-5787-b769-15aa5aa0172a",
+   "sourceId": "tourapi:sintanjin-ic-food:plain-facts",
+   "provider": "한국관광공사 TourAPI",
+   "sourceUrl": "https://www.data.go.kr/data/15101578/openapi.do",
+   "title": "신탄진IC 주변 음식점 — 소재지·취급 음식 사실",
+   "fetchedAt": 1794414787914,
+   "sourceUpdatedAt": null,
+   "sourceUpdatedRaw": null,
+   "verifiedAt": 1794414787914,
+   "contentHash": "1baf90f99312a98c93a5ddbfefd81d526f4dd631acd4dc17ec4f10177c9a4e4a",
+   "license": {
+    "type": "INDEPENDENT_FACT_STATEMENTS_ONLY",
+    "url": "https://www.kogl.or.kr/info/license.do",
+    "scope": "text",
+    "reviewBasis": "검토 대상은 normalizedText의 자체 작성 사실문장 9개에 한정한다. 소재지·취급 음식 종류·인접 도로라는 단순 사실만 새 문장으로 작성했다. 원자료인 TourAPI 항목 2581586(신탄면옥), 2913089(찌글이짜글이 본점), 2581103(부추해물칼국수식당)의 설명 본문은 모두 공공누리 제3유형(변경 금지)이므로 문장·배열·표현을 복제하지 않았고 이 출처에 포함하지 않는다. 2026-11-12 각 항목 본문과 대조했다. 영업 상태·영업 시간·메뉴 구성·가격·품질 평가·추천 여부는 확인 대상이 아니며 이 출처로 승인하지 않는다."
+   },
+   "allowedUses": {
+    "allowGeneration": true,
+    "allowDisplay": true,
+    "allowDistribution": true,
+    "reviewBasis": "검토 대상은 normalizedText의 자체 작성 사실문장 9개에 한정한다. 소재지·취급 음식 종류·인접 도로라는 단순 사실만 새 문장으로 작성했다. 원자료인 TourAPI 항목 2581586(신탄면옥), 2913089(찌글이짜글이 본점), 2581103(부추해물칼국수식당)의 설명 본문은 모두 공공누리 제3유형(변경 금지)이므로 문장·배열·표현을 복제하지 않았고 이 출처에 포함하지 않는다. 2026-11-12 각 항목 본문과 대조했다. 영업 상태·영업 시간·메뉴 구성·가격·품질 평가·추천 여부는 확인 대상이 아니며 이 출처로 승인하지 않는다."
+   },
+   "attribution": "사실 확인: 한국관광공사 TourAPI 2581586(신탄면옥), 2913089(찌글이짜글이 본점), 2581103(부추해물칼국수식당), https://www.data.go.kr/data/15101578/openapi.do. Petasos 자체 사실문장; 제3유형 원문 표현 복제 없음.",
+   "reviewStatus": "verified",
+   "normalizedText": "경부고속도로 신탄진IC 주변인 대전 대덕구에는 음식점이 여럿 있다. 신탄면옥은 대전 대덕구 덕암동에 있는 음식점이다. 신탄면옥은 냉면과 갈비탕을 취급한다. 신탄면옥은 신탄진로변에 있고 신탄진IC에서 가깝다. 찌글이짜글이 본점은 대전 대덕구 목상동에 있고 신탄진IC에서 가깝다. 찌글이짜글이 본점은 돼지고기를 넣고 끓인 찌개를 취급한다. 부추해물칼국수식당은 대전 대덕구 신탄진동에 있다. 부추해물칼국수식당은 칼국수와 주꾸미, 족발을 취급한다. 부추해물칼국수식당은 대전 도심과 대청댐 사이에 있다."
+  }
+ ],
+ "facts": [
+  {
+   "factRevisionId": "ea0f9572-4a5e-5542-a6c5-cf7ced127c61",
+   "factId": "340438f7-f080-539c-bc61-08db5cd5513d",
+   "version": 1,
+   "statement": "비단처럼 아름다운 강이라하여 이름 붙여진 금강에 위치한 대청댐은 대전광역시 대덕구와 충청북도 청주시 사이에 위치해 있는 다목적댐이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "e14fc7d5-e9df-5b54-9f46-0331fe17d430"
+   ]
+  },
+  {
+   "factRevisionId": "3bad77eb-ec4e-5f51-926b-7c28aa35e380",
+   "factId": "3049e1c0-3ee8-5727-bd4a-0f016c050960",
+   "version": 1,
+   "statement": "댐 건설로 생긴 대청호는 저수용량이 14억 9천만 톤에 이르러 중부권에서는 충주호 다음으로 큰 호수이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "e14fc7d5-e9df-5b54-9f46-0331fe17d430"
+   ]
+  },
+  {
+   "factRevisionId": "293e7d39-59e7-5373-a0f1-1afb96c2a0a9",
+   "factId": "0a767948-be76-5a2c-9d66-876737c5b0b2",
+   "version": 1,
+   "statement": "1980년 댐의 완공으로 댐 하류지역의 홍수피해를 경감시키는 한편, 하류지역 농경지에 농업용수를 공급하고, 대전광역시, 청주시, 전주시, 군산시 등 충청과 호남지역에 생활용수 및 공업용수를 공급하고 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "e14fc7d5-e9df-5b54-9f46-0331fe17d430"
+   ]
+  },
+  {
+   "factRevisionId": "8bfce068-95b1-58f4-b16b-41286e51a0be",
+   "factId": "b3f64af7-9950-5d40-9ebb-b305cb6b59e0",
+   "version": 1,
+   "statement": "장동산림욕장은 대전 대덕구 계족산에 위치한 삼림욕장이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "34a1b360-9754-5636-b857-f61db73ea0e0"
+   ]
+  },
+  {
+   "factRevisionId": "781cecd5-7cd9-540a-99c4-ba3043ee0830",
+   "factId": "12b20632-1d47-54a5-852f-c24f62041198",
+   "version": 1,
+   "statement": "계족산의 자연 산림을 그대로 활용하여 1995년에 개장한 이곳은 대전 시민들과 관광객이 쉽게 찾을 수 있는 휴식공간으로 삼림욕을 통해 계족산의 맑은 공기와 피톤치드를 마실 수 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "34a1b360-9754-5636-b857-f61db73ea0e0"
+   ]
+  },
+  {
+   "factRevisionId": "2d29e93a-4b28-5b85-8b0e-5fe4096a1cba",
+   "factId": "fc07892e-678b-525b-b69e-3909422b0c38",
+   "version": 1,
+   "statement": "계족산성 아래 숲 골짜기에 있으며, 체육시설, 등산 순환로, 모험놀이 시설 등이 있어 시민들의 휴식공간으로 이용된다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "34a1b360-9754-5636-b857-f61db73ea0e0"
+   ]
+  },
+  {
+   "factRevisionId": "3b1a025e-d5ab-5289-9c2e-5a4e6d4db0d8",
+   "factId": "4478faf6-59ea-5e77-bb23-81ecbac7e654",
+   "version": 1,
+   "statement": "금강로하스대청공원은 대전 대덕구 대청댐 인근에 조성된 공원이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "d38235c7-d6d6-53e5-8e76-93cbe29e6a76"
+   ]
+  },
+  {
+   "factRevisionId": "e8e13ee5-36c5-5b47-beee-d0d8edf33af8",
+   "factId": "6d5b284a-2857-5f1c-b6d3-25d6fc65ce6a",
+   "version": 1,
+   "statement": "도시민의 건전한 여가생활과 보건휴양 및 공공복리 증진을 위하여 1998년부터 2011년까지 조성된 자연생태공원으로 현장학습, 가족 나들이, 기업 및 단체의 야유회 등 친목 도모의 공간으로 적합하다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "d38235c7-d6d6-53e5-8e76-93cbe29e6a76"
+   ]
+  },
+  {
+   "factRevisionId": "6b2273ac-8393-54ff-9bad-d29a098fadc5",
+   "factId": "9a4d452d-1d9a-5b89-ab9b-47f939e3ff8a",
+   "version": 1,
+   "statement": "대청호와 금강에 접하고 있으며 강변을 따라 수변데크가 조성되어 백로 등의 조류와 왕버드나무군락지 등을 감상할 수 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "d38235c7-d6d6-53e5-8e76-93cbe29e6a76"
+   ]
+  },
+  {
+   "factRevisionId": "e9db2904-5d3c-5ee5-81e4-e986d485c303",
+   "factId": "893244a3-1253-5537-a36f-10c51a432b3e",
+   "version": 1,
+   "statement": "삼정생태공원은 대전 대청호오백리길 중, 1구간에 있는 자그마한 공원이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "ccd79057-b368-55e1-b6a5-0e2fbf1975af"
+   ]
+  },
+  {
+   "factRevisionId": "0c40260d-2455-55ae-8dde-754858b00255",
+   "factId": "d35d2eca-c741-5a7e-8a8f-b3ee39eb8721",
+   "version": 1,
+   "statement": "삼정마을이라고 불리며 대청호를 따라 삼정생태공원이 조성되어 있는 곳으로 아직 잘 안 알려져 있어 관광객들이 많지 않아 한적하게 즐길 수 있는 곳이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "ccd79057-b368-55e1-b6a5-0e2fbf1975af"
+   ]
+  },
+  {
+   "factRevisionId": "68dc033c-dc1f-51e4-b38b-85f1462548aa",
+   "factId": "3493c616-0561-5a03-9251-1a6f8125bf90",
+   "version": 1,
+   "statement": "데크를 따라 걸으면서 대청호를 구경할 수 있고 잘 정비된 숲속 오솔길이 적당히 섞여있어 걷는 재미도 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "ccd79057-b368-55e1-b6a5-0e2fbf1975af"
+   ]
+  },
+  {
+   "factRevisionId": "b032f410-5a03-506a-98e7-261892a7e09b",
+   "factId": "d72bf120-5358-5fa9-9690-1adcc38fa176",
+   "version": 1,
+   "statement": "한남대학교 성지관은 한남대학교 교문에서 정면 오른쪽에 보이는 건물로 북쪽에 위치하고 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "4f3c0331-b3ee-5934-b41f-4ca9a18b3739"
+   ]
+  },
+  {
+   "factRevisionId": "813c14b3-6131-5d4a-8668-c2a0d3ffb0a3",
+   "factId": "5f4a24fb-644f-5368-985c-eec9011a9463",
+   "version": 1,
+   "statement": "연면적 905평에 당시 강당이었으며 현재는 채플을 비롯한 각종 학교 행사와 지역 시민의 문화공간으로 활용되고 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "4f3c0331-b3ee-5934-b41f-4ca9a18b3739"
+   ]
+  },
+  {
+   "factRevisionId": "89433c75-909f-5306-bf98-147657f44075",
+   "factId": "75c78c27-e175-5a72-b0ba-7f3c3e03af48",
+   "version": 1,
+   "statement": "남서쪽 벽면에 낱자가 가로 세로 각각 2m 크기의 글씨를 볼 수 있는데 이 글씨는 국전초대 작가인 장암 이곤순의 글씨체를 그대로 주물로 제작한 것이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "4f3c0331-b3ee-5934-b41f-4ca9a18b3739"
+   ]
+  },
+  {
+   "factRevisionId": "7afc519c-671e-573b-9451-5268fcd97321",
+   "factId": "e4fab36d-514b-5f5c-9a30-ab424d982119",
+   "version": 1,
+   "statement": "길치문화공원은 약 42만 평으로 대전광역시의 동부권에 위치한 주로 산림 형태의 공원이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "097392eb-85d6-508b-9744-ae63549a1cf3"
+   ]
+  },
+  {
+   "factRevisionId": "85717b03-f472-5ddb-9852-a7f0ae8b0e39",
+   "factId": "0f3a4e8a-6f1a-5e12-a02b-8fa81f511a07",
+   "version": 1,
+   "statement": "남간정사가 있는 우암사적공원과 경부고속도로 대전육교 주변의 중앙광장이 조성되어 있는 곳으로 이용권이 양분되어 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "097392eb-85d6-508b-9744-ae63549a1cf3"
+   ]
+  },
+  {
+   "factRevisionId": "a9d7dd0e-8d9d-5a94-a3cd-759d8756b56e",
+   "factId": "dc652ad7-f5a6-542c-8528-bc7e5f989cdf",
+   "version": 1,
+   "statement": "특히, 우암사적공원은 낮은 야산 기슭의 숲이 우거진 골짜기를 배경으로 하여 위치하고 있어 대전시민은 물론, 외지인들의 이용객이 날로 증가하고 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "097392eb-85d6-508b-9744-ae63549a1cf3"
+   ]
+  },
+  {
+   "factRevisionId": "effb7e2e-ac20-5fae-badf-deda9df16b39",
+   "factId": "06ed0103-213a-59e3-8799-c008ac889d7a",
+   "version": 1,
+   "statement": "금강로하스산호빛공원은 대전광역시 대덕구 석봉동에 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "d7aa7b79-68ac-54d1-b292-291c4d2144e4"
+   ]
+  },
+  {
+   "factRevisionId": "d9798722-881d-501c-9c5a-7226b4309676",
+   "factId": "398a229e-9a22-534d-8c1a-2e5201783276",
+   "version": 1,
+   "statement": "한갓지게 산책하기 좋은 곳이라 많은 사람이 찾는다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "d7aa7b79-68ac-54d1-b292-291c4d2144e4"
+   ]
+  },
+  {
+   "factRevisionId": "336a7d8a-3106-54f7-848e-c57cb1e430f4",
+   "factId": "0bbfb8b0-80af-51ab-a309-469064df2384",
+   "version": 1,
+   "statement": "공원에는 체력 단련 시설을 비롯해 야외 수영장, 배드민턴장, 롤러스케이트장 등이 갖추어져 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "d7aa7b79-68ac-54d1-b292-291c4d2144e4"
+   ]
+  },
+  {
+   "factRevisionId": "b0531521-ed43-5f60-93d2-83f8d3f6724e",
+   "factId": "5fed237b-3260-52f6-a1bf-d18052e5f337",
+   "version": 1,
+   "statement": "대전무형유산전수교육관은 대전광역시 무형 유산 전승과 육성을 위해 2009년 4월 15일 개관하였다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "6043f772-854b-5877-91c7-99b6df948b63"
+   ]
+  },
+  {
+   "factRevisionId": "37302837-ee6c-511b-9830-8d5dd283c36a",
+   "factId": "f70699c5-430f-5b6a-aaea-678341a539a9",
+   "version": 1,
+   "statement": "현재 대전광역시 지정 무형 유산은 웃다리농악 등 총 23개 종목으로 다른 시도에 비해 많은 무형 유산을 보유하고 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "6043f772-854b-5877-91c7-99b6df948b63"
+   ]
+  },
+  {
+   "factRevisionId": "37dd1684-80de-5536-9953-8d9c7f357023",
+   "factId": "10cc20d9-b42e-5d9c-a4b8-2cdb3301aa71",
+   "version": 1,
+   "statement": "무형 유산 예능 종목 11종목을 전수·보존하며 교육, 공연, 행사 등 다양한 프로그램으로 시민 전통문화 향유 기회를 확대해 나아가고 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "6043f772-854b-5877-91c7-99b6df948b63"
+   ]
+  },
+  {
+   "factRevisionId": "1538808c-f2a4-51c4-be8d-2de495bb6354",
+   "factId": "641cff67-958f-5e10-bc9e-12e9061d2518",
+   "version": 1,
+   "statement": "경부고속도로 신탄진IC 주변인 대전 대덕구에는 음식점이 여럿 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "52788d0c-edb6-5787-b769-15aa5aa0172a"
+   ]
+  },
+  {
+   "factRevisionId": "a870921f-67bd-5dbe-b4b1-66b4e5c26eb8",
+   "factId": "f9379a91-2e0b-5993-8080-fc1d95a03b1a",
+   "version": 1,
+   "statement": "신탄면옥은 대전 대덕구 덕암동에 있는 음식점이다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "52788d0c-edb6-5787-b769-15aa5aa0172a"
+   ]
+  },
+  {
+   "factRevisionId": "e9b474f7-c851-5226-8371-71a5f21390bb",
+   "factId": "4ccb466c-9a95-5e9f-8c19-fbd93fc09841",
+   "version": 1,
+   "statement": "신탄면옥은 냉면과 갈비탕을 취급한다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "52788d0c-edb6-5787-b769-15aa5aa0172a"
+   ]
+  },
+  {
+   "factRevisionId": "4a19a54b-6ead-5c8f-92ff-b7ed39b7ee54",
+   "factId": "01d62c43-3f55-5644-9e62-f18a3b160ee4",
+   "version": 1,
+   "statement": "신탄면옥은 신탄진로변에 있고 신탄진IC에서 가깝다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "52788d0c-edb6-5787-b769-15aa5aa0172a"
+   ]
+  },
+  {
+   "factRevisionId": "c83654dd-c7a1-5030-8c8c-e34de73b25b6",
+   "factId": "677fc69b-d788-52f1-ab1c-3c3ed07c7eb5",
+   "version": 1,
+   "statement": "찌글이짜글이 본점은 대전 대덕구 목상동에 있고 신탄진IC에서 가깝다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "52788d0c-edb6-5787-b769-15aa5aa0172a"
+   ]
+  },
+  {
+   "factRevisionId": "4c4e3fdf-d000-5efb-9e8c-16ebf01e3491",
+   "factId": "014c9e4c-4fb9-5d92-a8a8-855cd95fd4d2",
+   "version": 1,
+   "statement": "찌글이짜글이 본점은 돼지고기를 넣고 끓인 찌개를 취급한다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "52788d0c-edb6-5787-b769-15aa5aa0172a"
+   ]
+  },
+  {
+   "factRevisionId": "f59ba675-497e-52c7-9ecd-bf22e6a8a4a2",
+   "factId": "a9996ca4-f1e1-5610-b54d-f024729b44e2",
+   "version": 1,
+   "statement": "부추해물칼국수식당은 대전 대덕구 신탄진동에 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "52788d0c-edb6-5787-b769-15aa5aa0172a"
+   ]
+  },
+  {
+   "factRevisionId": "b0a4498d-5585-55ea-b9ef-3fe2f77bdeaa",
+   "factId": "c3490c17-9765-5362-90ff-f6f999a06770",
+   "version": 1,
+   "statement": "부추해물칼국수식당은 칼국수와 주꾸미, 족발을 취급한다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "52788d0c-edb6-5787-b769-15aa5aa0172a"
+   ]
+  },
+  {
+   "factRevisionId": "5cd65de8-5b41-5fd9-bcc0-419ec666f222",
+   "factId": "6da19e81-3af2-5f12-ad99-4a6b3475c3ae",
+   "version": 1,
+   "statement": "부추해물칼국수식당은 대전 도심과 대청댐 사이에 있다.",
+   "kind": "verified_fact",
+   "verifiedAt": 1794414787914,
+   "sourceRevisionIds": [
+    "52788d0c-edb6-5787-b769-15aa5aa0172a"
+   ]
+  }
+ ]
+}

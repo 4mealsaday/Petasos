@@ -1,4 +1,4 @@
-<!-- prompt: example_guide_cheonan | version: story-guide-v3 | 말투 기준 예시 2(docs/story-voice-examples.md, 시작=장면·끝=물음) | 규칙: 내용을 바꾸면 version을 올린다(story.md·guide_persona.md와 같은 버전) -->
+<!-- prompt: example_guide_cheonan | version: story-guide-v4 | 말투 기준 예시 2(docs/story-voice-examples.md, 시작=장면·끝=물음) | 규칙: 내용을 바꾸면 version을 올린다(story.md·guide_persona.md와 같은 버전) -->
 ### 예시: 천안 (opening: scene, ending: question)
 
 근거 사실
