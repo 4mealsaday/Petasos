@@ -21,6 +21,19 @@ Petasos는 차량 내비게이션 위에서 **지금 지나는 지역의 이야�
 | --- | --- | --- |
 | <img src="docs/screenshots/home.png" width="320"> | <img src="docs/screenshots/overlay.png" width="320"> | <img src="docs/screenshots/my-trips.png" width="320"> |
 
+## 제출 정보
+
+| 항목 | 내용 |
+| --- | --- |
+| 앱 이름 | **Petasos** |
+| 한 줄 소개 | 지나는 지역의 이야기를 들려주는 Pleos 동행 앱 |
+| APK | **`apk/Petasos_Petasos_release.apk`** (release 서명, 약 80 MB). 저장소를 clone 하면 같이 받아집니다 |
+| 실행 방법 | 아래 "[설치와 실행](#설치와-실행)" → "[데모 시연](#데모-시연)" |
+| 테스트 환경 | Pleos Connect **2.1.0** 에뮬레이터 (Android 14 / API 34, ARM64) · AVD 기기 프로필 `Pleos_Connect_v2_0` |
+| 화면 규격 | **2560 × 1440, mdpi, 가로** |
+| 호스트 | macOS (Apple Silicon), `adb`, Python 3 |
+| 필요한 설정 | 내비 위 표시(overlay) 권한, 호스트 마이크 입력. 음성 질문까지 보시려면 "[질문 응답용 로컬 서버](#질문-응답용-로컬-서버)" |
+
 ## 무엇을 하는 앱인가
 
 내비게이션은 "어디로 가는지"는 알려 주지만 "지금 어디를 지나고 있는지"는 말해 주지 않습니다. Petasos는 그 빈자리를 채웁니다. 차가 시·군·구 경계를 넘을 때마다 그 지역의 이야기를 한 편씩 들려주고, 궁금한 것은 말로 물어볼 수 있습니다.
