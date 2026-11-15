@@ -27,7 +27,7 @@ Petasos는 차량 내비게이션 위에서 **지금 지나는 지역의 이야�
 | --- | --- |
 | 앱 이름 | **Petasos** |
 | 한 줄 소개 | 지나는 지역의 이야기를 들려주는 Pleos 동행 앱 |
-| APK | **`apk/Petasos_Petasos_release.apk`** (release 서명, 76.3 MiB). 저장소를 clone 하면 같이 받아집니다 |
+| APK | **`apk/Petasos_Petasos_release.apk`** (76.3 MiB). 저장소를 clone 하면 같이 받아집니다 |
 | APK 내려받기 | [Releases v1.0.0-demo](https://github.com/4mealsaday/Petasos/releases/tag/v1.0.0-demo) — 저장소의 파일과 같은 빌드입니다 |
 | 실행 방법 | 아래 "[설치와 실행](#설치와-실행)" → "[데모 시연](#데모-시연)" |
 | 테스트 환경 | Pleos Connect **2.1.0** 에뮬레이터 (Android 14 / API 34, ARM64) · AVD 기기 프로필 `Pleos_Connect_v2_0` |
@@ -86,7 +86,7 @@ Petasos는 차량 내비게이션 위에서 **지금 지나는 지역의 이야�
 
 > 에뮬레이터 AVD를 만들 때 **기기 프로필을 `Pleos_Connect_v2_0`으로 고르셔야 합니다**(2560×1440, mdpi, 가로). 일반 Automotive 프로필(1024×768 등)로 만들면 Pleos UI가 깨져 보이고 앱 화면도 제대로 뜨지 않습니다. AVD 이름은 아래 명령과 같게 `Pleos_Connect_v2.1.0`으로 합니다.
 
-**저장소를 먼저 clone 합니다.** 시연에 쓰는 reset 스크립트·주행 스크립트·경로 시나리오가 모두 저장소 안에 있어서, APK만 받아서는 데모를 돌릴 수 없습니다. clone 하면 제출용 APK(`apk/Petasos_Petasos_release.apk`, 약 80 MB)도 같이 받아집니다. 코드를 고쳐 빌드하시려면 아래 "소스에서 빌드하기"를 보시면 됩니다.
+**저장소를 먼저 clone 합니다.** 시연에 쓰는 reset 스크립트·주행 스크립트·경로 시나리오가 모두 저장소 안에 있어서, APK만 받아서는 데모를 돌릴 수 없습니다. clone 하면 제출용 APK(`apk/Petasos_Petasos_release.apk`, 76.3 MiB)도 같이 받아집니다. 코드를 직접 빌드해 보시려면 아래 "소스에서 빌드하기"를 보시면 됩니다.
 
 사용자 ID가 10이 아니면(`adb shell pm list users`로 확인) 아래 모든 `--user` 값을 바꿉니다. **1)·3)을 뺀 나머지는 에뮬레이터를 재부팅할 때마다 다시 합니다.**
 
@@ -124,13 +124,13 @@ adb emu geo fix 127.1489 36.8099
 
 시연 경로는 **천안역 → 한빛탑 → KAIST 본원**이고, 이야기 4편·음악 1곡·창밖 안내 1곳·질문 응답이 이 한 경로에 모두 들어 있습니다. `--video` 프리셋으로 약 7분입니다.
 
-**주행 전에 reset을 돌립니다.** 열려 있는 동행을 정상 종료하고, 청취 기록을 지우고, 출발 위치와 볼륨을 되돌립니다. 이미 들은 이야기는 다시 나오지 않으므로 **다시 시연할 때마다 필요합니다.**
+**주행 전에 reset을 돌립니다.** 열려 있는 동행을 정상 종료하고, 출발 위치를 천안역으로 되돌리고, 차량 볼륨을 올립니다.
 
 ```sh
 ./scripts/demo-reset.sh
 ```
 
-> 제출용 release APK로 돌리실 때는 **청취 기록 초기화만 앱에서 직접 해 주세요**: ⚙ 설정 → **청취 기록 초기화**(한 번 더 누르면 지워집니다). 그 단계는 debug 빌드 전용 브로드캐스트를 쓰기 때문에 스크립트가 조용히 건너뜁니다. 나머지 단계는 그대로 동작하고, 지역당 이야기 한 편만 재생하는 데모 모드는 release에서 **항상 켜져 있어** 따로 할 일이 없습니다.
+> **청취 기록만 앱에서 직접 지워 주세요**: ⚙ 설정 → **청취 기록 초기화** → 한 번 더 누르면 삭제됩니다. 이미 들은 이야기는 다시 나오지 않으므로, 두 번째 주행부터는 이 과정이 꼭 필요합니다. 나머지(동행 종료·출발 위치·볼륨)는 스크립트가 알아서 합니다.
 
 그다음 앱에서 **동행 시작** → 내비에서 **안내 시작**을 누르고, 주행 스크립트를 실행합니다.
 
@@ -208,18 +208,18 @@ Pleos SDK(Maven)는 빌드가 `nexus-playground.pleos.ai`에서 받습니다. �
 # 1) local.properties — Android SDK 위치(비추적 파일). 환경변수 ANDROID_HOME으로 대신해도 됩니다.
 echo "sdk.dir=$HOME/Library/Android/sdk" > local.properties
 
-# 2) JDK 17 지정 후 debug 빌드 — 처음에는 의존성을 받느라 몇 분 걸립니다
+# 2) JDK 17 지정 후 빌드 — 처음에는 의존성을 받느라 몇 분 걸립니다
 export JAVA_HOME="$(brew --prefix openjdk@17)/libexec/openjdk.jdk/Contents/Home"
 ./gradlew assembleDebug
 # 결과: app/build/outputs/apk/debug/app-debug.apk
 
-# 3) 설치 — 저장소의 release APK와 서명이 달라 서로 덮어쓸 수 없으므로 먼저 지웁니다
+# 3) 설치 — 서명이 달라 제출용 APK를 덮어쓸 수 없으므로 먼저 지웁니다
 adb uninstall com.petasos.app 2>/dev/null
 adb install --user 10 app/build/outputs/apk/debug/app-debug.apk
 # 이후 권한·온보딩·시연은 "설치와 실행" 4)부터와 같습니다
 ```
 
-지도 키가 담긴 `.env`가 없어도 빌드·실행됩니다(내장 지도로 대신 뜹니다). 빌드 유형은 debug/release 둘뿐이고 **둘 다 `BuildConfig.DEMO=true`**입니다. release 서명 키(`.local/android/`)는 개발자 개인 키라 없으면 debug만 빌드됩니다. 테스트는 `./gradlew :app:testDebugUnitTest`로 돌립니다.
+지도 키가 담긴 `.env`가 없어도 빌드·실행됩니다(내장 지도로 대신 뜹니다). 제출본과 같은 서명으로 만들려면 서명 키(`.local/android/`)가 필요한데, 비추적 파일이라 저장소에는 들어 있지 않습니다. 위 명령으로 빌드한 APK로도 "데모 시연" 절차는 그대로 동작합니다. 테스트는 `./gradlew :app:testDebugUnitTest`로 돌립니다.
 
 **코드를 보실 때**
 
