@@ -2,7 +2,9 @@
 
 Petasos는 차량 내비게이션 위에서 **지금 지나는 지역의 이야기를 들려주는** Pleos Android 동행 앱이다.
 내비 화면 위에 뜨는 말하기 버튼과 자막 카드로 지도를 가리지 않고 듣다가, 궁금하면 버튼을 눌러 AI에게 물어볼 수 있고, 길가에 보이는 곳은 짧게 알려 준다.
-이동이 끝나면 지나온 길과 들은 이야기가 "내 여행" 지도에 남는다. 시연 경로는 서울역 → 대전 엑스포과학공원(경부축)이다.
+이동이 끝나면 지나온 길과 들은 이야기가 "내 여행" 지도에 남는다.
+시연 경로는 **천안역 → (한빛탑 경유) → KAIST 본원**이고, 이 한 경로에 이야기 4편·음악 1곡·창밖 안내 1곳·질문 응답을 모두 담았다.
+아래 "데모 시연"이 그 경로를 처음부터 끝까지 재현하는 절차다.
 
 > **시연 영상**: (링크 추가 예정)
 
@@ -18,10 +20,13 @@ Petasos는 차량 내비게이션 위에서 **지금 지나는 지역의 이야�
 | 앱 | `com.petasos.app` 1.0.0-demo, minSdk 28 / targetSdk 34 |
 | 호스트 | macOS, `adb`, Android Emulator (호스트 마이크 사용), Python 3 |
 | AI 대화 서버(선택) | Python 3, OpenRouter API 키 |
+| 시연 시나리오 | `cheonan-kaist` — 천안역 → 한빛탑 → KAIST 본원, `--video` 프리셋으로 약 7분 |
+| 콘텐츠 팩 | `content/packs/cheonan-kaist.json` version 4 (이야기 4편이 시연에 나온다) |
 
-## 설치·실행 (시연·녹화 준비)
+## 설치·실행
 
-아래 블록을 위에서부터 그대로 복사해 실행한다. 사용자 ID가 10이 아니면(`adb shell pm list users`로 확인) `--user` 값을 바꾼다. 에뮬레이터를 재부팅할 때마다 처음부터 다시 한다.
+사용자 ID가 10이 아니면(`adb shell pm list users`로 확인) 아래 모든 `--user` 값을 바꾼다.
+에뮬레이터를 재부팅할 때마다 2)를 뺀 나머지를 다시 한다.
 
 ```sh
 # 1) 에뮬레이터 부팅 — 호스트 DNS가 막힌 뒤에는 내비가 "서비스 연결 중"에서 멈추므로 DNS를 지정한다
@@ -40,37 +45,86 @@ adb shell pm grant --user 10 com.petasos.app android.permission.SYSTEM_ALERT_WIN
 # 4) 에뮬레이터가 Mac 마이크를 입력으로 쓰도록 (부팅할 때마다)
 adb emu avd hostmicon
 
-# 5) 출발 위치를 서울역에 맞춘다
-adb emu geo fix 126.9698291 37.5547273
+# 5) 출발 위치를 천안역에 맞춘다
+adb emu geo fix 127.1489 36.8099
 ```
 
-6. **앱 실행** — 에뮬레이터 하단 바의 Petasos 아이콘(또는 `adb shell am start --user 10 -n com.petasos.app/.MainActivity`). 처음이면 "계속하기" → 관심사 선택(또는 "건너뛰기").
-7. **청취 기록 초기화** — 새로 설치한 직후에는 필요 없다. 다시 시연할 때는 ⚙ 설정 → "청취 기록 초기화"를 누르고, 한 번 더 누르면 지운다. **초기화하면 여정 기록(내 여행 지도의 갈래)도 지워진다.** 아래 "여정 기록 만들기"를 마친 뒤에는 누르지 않는다.
-8. **영상 모드 + 동행 시작** — 홈에서 **동행 시작**을 누르고 권한 대화상자를 모두 허용한다(오디오 녹음 → "알 수 없는 작업"(Pleos 권한) → 위치). 내비가 앞으로 나오고 오른쪽에 둥근 말하기 버튼, 아래에 자막 카드가 뜬다. 내비에 "경로 탐색 오류"가 뜨면 **닫기**를 누른다(앱 동작과 무관). 지역이 확정되기 전에는 카드에 "출발하면 이야기를 들려드릴게요"만 나온다.
-9. **GPS 재생** — 둘 중 하나를 고른다. 약 9분 코스다.
+6. **앱 실행** — 에뮬레이터 하단 바의 Petasos 아이콘(또는 `adb shell am start --user 10 -n com.petasos.app/.MainActivity`).
+7. **온보딩** — "계속하기" → 관심사 선택(또는 "건너뛰기"). **권한은 반드시 앱 화면에서 허용한다.** `pm grant`로 위치·마이크를 미리 주면 온보딩이 건너뛰어져 홈 화면의 조작부가 그려지지 않는다.
+8. **동행 시작** — 홈에서 **동행 시작**을 누르고 권한 대화상자를 모두 허용한다(오디오 녹음 → "알 수 없는 작업"(Pleos 권한) → 위치). 내비가 앞으로 나오고 오른쪽에 둥근 말하기 버튼, 아래에 자막 카드가 뜬다.
+9. **내비에서 "안내 시작"을 누른다.** 경로 후보 화면이 뜨면 반드시 눌러야 한다. 내비가 안내 중이 아니면 앱이 지역 편성 대상을 잡지 못해 **아무 이야기도 나오지 않는다**(내비 하단에 "안내 종료"가 보이면 안내 중이다). "경로 탐색 오류"가 뜨면 **닫기**를 누르고 목적지를 다시 고른다.
+10. **소리** — 차량 볼륨은 부팅할 때마다 20/45로 돌아간다. `adb shell 'for i in $(seq 1 50); do input keyevent 24; done'`로 올리거나 에뮬레이터 볼륨 버튼을 올린다(`demo-reset.sh`가 매번 해 준다). Mac 출력 볼륨도 85% 이상으로 둔다(낮으면 음성 인식도 안 된다).
+
+## 데모 시연
+
+`scripts/demo-reset.sh`가 시연 직전 준비를 한 번에 한다. **매 주행 전에 반드시 돌린다.**
 
 ```sh
-# (a) 스크립트 — --video가 녹화용 속도 프리셋이다(지역마다 이야기를 들을 만큼 머물고, 창밖 안내 지점은 실제 주행 속도로 지난다)
-python3 scripts/demo_route.py --video
-# (b) GPX — Extended controls(⋯) → Location → Routes → Load GPX/KML → demo/scenarios/seoul-daejeon/route.gpx → Play route
+./scripts/demo-reset.sh                 # 기본 시나리오 cheonan-kaist
 ```
 
-서울 중구에서 이야기가 시작되고 용인·안성·천안·대전을 지나며 이야기와 음악이 이어진다. 길가의 반포대교 달빛무지개분수·청계산·용인포은아트홀·한빛탑 앞에서는 "앞쪽 멀리 …이 보여요", "오른쪽 앞으로 …이 보여요"처럼 짧은 안내가 나오고 이야기로 돌아온다.
+하는 일(출력에 단계가 그대로 찍힌다):
 
-**말하기**: 오른쪽 둥근 버튼을 누른다. 이야기 중이면 현재 문장이 끝난 뒤, 아니면 바로 **말씀해 주세요 → 듣는 중… → 인식한 질문 → 답변 자막** 순으로 나오고, 답변이 끝나면 이야기(없으면 음악 → 다음 이야기)로 돌아온다. AI 서버가 없으면 카드에 "지금은 답변 서버에 연결할 수 없어요."가 나온 뒤 돌아온다. Mac 출력 볼륨이 낮으면(50% 이하) 음성이 인식되지 않으니 85% 이상으로 둔다.
+| 단계 | 하는 일 | 이게 없으면 |
+| --- | --- | --- |
+| 1 | 열려 있는 동행을 **정상 종료**(앱 화면의 "동행 끝내기"를 눌러서) | 음악 도중에 끊긴 동행이 남기는 `musicCheckpoint` 때문에 다음 주행이 IDLE에서 멈추고 첫 이야기가 안 나온다 |
+| 2 | 앱 종료 | 초기화가 재생과 경합한다 |
+| 3 | 청취·수집 기록 초기화 | 이미 들은 이야기는 조용히 건너뛰어진다 |
+| 4 | **기기 DB와 콘텐츠 팩 대조** | 아래 "콘텐츠를 바꿨다면" 참고 |
+| 5 | 출발 위치를 시나리오 출발점으로 되돌림 | 지난 주행의 끝 위치에서 시작한다 |
+| 6 | 차량 볼륨 최대 | 부팅 기본값(20/45)이라 잘 안 들린다 |
+| 7 | 앱 시작 | — |
+| 8 | 영상 모드 켜기(지역당 대표 이야기 1편) | 지역마다 준비된 이야기가 모두 나와 데모가 길어진다 |
 
-**끝내기**: 도착하면 홈에서 **동행 끝내기**를 누른다. "내 여행"에서 지나온 길, 이야기를 끝까지 들은 지역, 이야기 카드를 볼 수 있다.
+**콘텐츠를 바꿨다면** — `adb install`은 앱 데이터를 **지우지 않고**, 콘텐츠 설치기는 이미 설치된 팩을 덮어쓰지 않는다. 그래서 새 이야기가 DB에 영원히 들어가지 못하고, 그 지역은 **아무 로그도 없이 조용히 건너뛰어진다.** `demo-reset.sh`의 4단계가 이걸 잡아내 경고한다. 경고가 나오면:
 
-**여정 기록 만들기(내 여행 지도용, 녹화 전에 한 번)** — 순서: ① 필요하면 7단계 초기화 → ② 위 서울→대전 주행과 동행 끝내기 → ③ 아래 세 경로를 하나씩 "출발 위치 고정 → 동행 시작 → 재생 → 동행 끝내기" → ④ **그 뒤에는 초기화하지 않는다.** 경로 시나리오(`demo/scenarios/seoul-chuncheon`·`seoul-incheon`·`daejeon-jeonju`)는 이야기 없이 경로만 있고, 각각 내 여행의 별도 여정이 된다. 이야기를 듣지 않은 지역은 회색으로 남는다.
+```sh
+adb shell pm clear --user 10 com.petasos.app
+```
+
+그 뒤 위 "설치·실행" 3)부터(overlay 권한 → 앱 실행 → 온보딩 → 서버 토큰 전달) 다시 한다. `pm clear`는 권한과 서버 토큰까지 지운다.
+
+### 주행
+
+reset이 끝나면 앱에서 **동행 시작** → 내비에서 **안내 시작**을 누른 다음:
+
+```sh
+.local/server-venv/bin/python scripts/demo_route.py --scenario cheonan-kaist --video
+```
+
+`--video`가 녹화용 속도 프리셋이다. 지역마다 이야기를 들을 만큼 머물고, 창밖 안내 지점(한빛탑)은 실제 주행 속도로 지난다. 약 7분이다.
+(GPX로 하려면 Extended controls(⋯) → Location → Routes → Load GPX/KML → `demo/scenarios/cheonan-kaist/route.gpx` → Play route. 이 쪽은 직접 재생해 확인하지 못했다.)
+
+### 장면별 진행
+
+| # | 위치 | 들리는 것 | 시연자가 할 일 |
+| --- | --- | --- | --- |
+| 1 | 천안 동남구 | 이야기 "천안삼거리에서 갈라진 길" (32초) | — |
+| 2 | — | "여기까지 듣고, 잠깐 음악 한 곡 틀어 드릴게요." → 음악 (Prelude No. 1, 35초) | — |
+| 3 | 청주 흥덕구 | 이야기 "운천동 흥덕사 터" (33초) — 끊지 않고 자연스럽게 넘어온다 | — |
+| 4 | — | 전환 멘트 → 음악 | — |
+| 5 | 대전 대덕구 | 이야기 "신탄진 길목의 식당들" (37초) | 이야기가 **끝난 뒤** 말하기 버튼을 누르고 **"아까 그 칼국수집, 어디 있다고 했지?"** 라고 묻는다 |
+| 6 | — | 전환 멘트 → 음악 | — |
+| 7 | 대전 유성구 (한빛탑 앞) | 그때 재생 중인 이야기나 음악에 🗼 **"오른쪽 앞으로 한빛탑이 보여요. 1993년 대전엑스포를 기념해…"** 가 끼어들고, 끝나면 원래 재생으로 돌아온다. 이어서 이야기 "박람회가 남긴 과학공원" (36초) | — |
+| 8 | KAIST 본원 도착 | — | 홈에서 **동행 끝내기** → **내 여행**에서 지나온 길과 들은 이야기 카드를 보여 준다 |
+
+**말하기(5번)**: 오른쪽 둥근 버튼을 누른다. 이야기 중이면 현재 문장이 끝난 뒤, 아니면 바로 **말씀해 주세요 → 듣는 중… → 인식한 질문 → 답변 자막** 순으로 나오고, 답변이 끝나면 이야기(없으면 음악 → 다음 이야기)로 돌아온다. 답변은 **그 이야기에서 끝까지 들은 문단에 있는 사실만** 근거로 쓴다. 그래서 질문은 이야기가 끝난 뒤에 해야 답이 나온다. AI 서버가 없으면 카드에 "지금은 답변 서버에 연결할 수 없어요."가 나온 뒤 돌아온다.
+
+**내비 화면을 가리지 않으려면**: ⚙ 설정 → **내비 위 자막**을 끈다. 말하기 버튼은 그대로 남는다. 자막이 필요한 녹화에서는 켜 둔다.
+
+**재시연**: `동행 끝내기` → `./scripts/demo-reset.sh` → 다시 `동행 시작`. 초기화하면 "내 여행"의 여정 기록도 지워진다.
+
+### (선택) "내 여행" 지도에 여정 여러 개 만들기
+
+녹화 전에 한 번만 한다. 순서: ① `demo-reset.sh` → ② 위 천안→KAIST 주행과 동행 끝내기 → ③ 아래 세 경로를 하나씩 "출발 위치 고정 → 동행 시작 → 안내 시작 → 재생 → 동행 끝내기" → ④ **그 뒤에는 초기화하지 않는다.** 이 세 시나리오는 이야기 없이 경로만 있고, 각각 내 여행의 별도 여정이 된다. 이야기를 듣지 않은 지역은 회색으로 남는다.
 
 ```sh
 adb emu geo fix 126.9698291 37.5547273 && python3 scripts/demo_route.py --scenario seoul-chuncheon   # 서울역 → 춘천역, 약 6분
 adb emu geo fix 126.9698291 37.5547273 && python3 scripts/demo_route.py --scenario seoul-incheon     # 서울역 → 송도 센트럴파크, 약 5분
 adb emu geo fix 127.3866 36.3765 && python3 scripts/demo_route.py --scenario daejeon-jeonju          # 대전엑스포과학공원 → 전주 한옥마을, 약 6분
 ```
-(각 줄마다 geo fix 뒤 앱에서 **동행 시작**을 누르고 재생을 시작하며, 재생이 끝나면 **동행 끝내기**를 누른다.)
 
-> release 빌드에는 영상용 대표 이야기 필터(지역당 1편)가 없다. 그래서 지역마다 준비된 이야기가 모두 나오고 `--video` 코스가 약 9분 걸린다. 그 필터와 청취 기록 초기화 브로드캐스트는 debug 빌드 전용이다("개발자용" 참고).
+> `demo-reset.sh`의 3·8단계(청취 기록 초기화, 영상 모드)는 **debug 빌드 전용 브로드캐스트**다. `apk/`의 release 빌드로 시연할 때는 ⚙ 설정 → "청취 기록 초기화"를 쓰고, 영상 모드가 없어 지역마다 준비된 이야기가 모두 나온다.
 
 ## (선택) AI 대화용 로컬 서버
 
@@ -84,19 +138,20 @@ cp .env.example .env        # PETASOS_OPENROUTER_API_KEY 만 채우면 된다 (.
 # 2) 기기 토큰·설정 생성 (토큰은 24시간 유효, 값은 출력되지 않는다)
 python3.11 server/provision-local.py --directory .local/server
 
-# 3) 앱에 번들된 이야기에서 서버용 근거 파일 생성
+# 3) 앱에 번들된 이야기에서 서버용 근거 파일 생성 — 시연에 쓰는 콘텐츠 팩에서 뽑는다.
+#    답변은 "끝까지 들은 문단에 있는 사실"만 근거로 쓰므로, 지금 설치된 팩과 같은 팩이어야 질문에 답이 나온다.
 mkdir -p .local/content/bundles .local/content/evidence
 chmod 700 .local .local/content .local/content/bundles .local/content/evidence   # 출력 폴더는 소유자 전용이어야 한다
-cp app/src/main/assets/content/p0-stories-v2.json .local/content/bundles/p0-stories-v2.json && chmod 600 .local/content/bundles/p0-stories-v2.json
-.local/server-venv/bin/python scripts/build-content-bundle.py \
-  --evidence-from-bundle .local/content/bundles/p0-stories-v2.json \
-  --allow-device-id local-development-device --output .local/content/evidence/demo.json
+cp app/src/main/assets/content/packs/cheonan-kaist.json .local/content/bundles/ && chmod 600 .local/content/bundles/cheonan-kaist.json
+PYTHONPATH=server .local/server-venv/bin/python scripts/build-content-bundle.py \
+  --evidence-from-bundle .local/content/bundles/cheonan-kaist.json \
+  --allow-device-id local-development-device --output .local/content/evidence/cheonan-kaist.json
 
 # 4) 로컬 개발 인증서 생성 (CA 30일, 서버 인증서 7일)
 PYTHONPATH=server .local/server-venv/bin/python server/dev-local-https.py prepare
 ```
 
-5. `.local/server/config.json`을 열어 `evidenceFile`을 `.local/content/evidence/demo.json`의 절대 경로로 바꾸고 `provider`를 채운다. 아래는 개발 중 사용한 값이다. `privacyReviewedUntil`은 미래의 Unix 초이고, **OpenRouter 계정의 Privacy 설정(ZDR only, 입출력 로깅 OFF)을 직접 확인한 뒤에만** `accountContentLoggingDisabled`를 `true`로 둔다. 서버는 이 값만 믿고 호출하므로 확인은 사용자 몫이다.
+5. `.local/server/config.json`을 열어 `evidenceFile`을 `.local/content/evidence/cheonan-kaist.json`의 절대 경로로 바꾸고 `provider`를 채운다. 아래는 개발 중 사용한 값이다. `privacyReviewedUntil`은 미래의 Unix 초이고, **OpenRouter 계정의 Privacy 설정(ZDR only, 입출력 로깅 OFF)을 직접 확인한 뒤에만** `accountContentLoggingDisabled`를 `true`로 둔다. 서버는 이 값만 믿고 호출하므로 확인은 사용자 몫이다.
 
 ```json
 "provider": {
@@ -136,7 +191,7 @@ adb shell rm -r /data/local/tmp/petasos-demo                        # 읽은 뒤
 | --- | --- | --- |
 | Pleos SDK | `TextToSpeech` 3.3.1 (ON_DEVICE) | 이야기·답변·창밖 안내를 문장 단위로 읽어 자막과 소리를 맞춘다 |
 | Pleos SDK | `SpeechToText` 3.3.1 | 말하기 버튼으로 들어온 질문을 글자로 바꾼다(호스트 마이크 PCM 입력) |
-| Pleos SDK | `NaviHelper` 3.0.5 | 동행을 켜면 내비를 앞으로 가져오고, 목적지(대전엑스포과학공원) 경로를 요청하고, 경로 상태를 살핀다 |
+| Pleos SDK | `NaviHelper` 3.0.5 | 동행을 켜면 내비를 앞으로 가져오고, 목적지(KAIST 본원) 경로를 요청하고, 경로 상태를 살핀다 |
 | Pleos SDK | `FusedLocation` 1.1.3 · `pleos.car.permission.FUSED_LOCATION` | Pleos 위치 사용 허가를 받아 이야기를 고를 지역을 확정한다 |
 | Pleos 권한 | `TTS_SERVICE` · `STT_SERVICE` · `NAVI_ROUTE` · `NAVI_ROUTE_SEARCH` · `NAVI_CUSTOM_MAP` | 위 SDK 호출 허가 |
 | Android Car | `READ_CAR_POWER_POLICY`, `CarUxRestrictions` | 전원 상태에서 소리를 멈추고, 주행 제한 중에는 자막 카드를 한 줄로 줄인다 |
@@ -154,13 +209,13 @@ adb shell rm -r /data/local/tmp/petasos-demo                        # 읽은 뒤
 ## 라이선스·출처
 
 - **글꼴**: Pretendard — SIL Open Font License 1.1 (`app/src/main/assets/licenses/Pretendard-OFL.txt`).
-- **음악**: Chris Zabriskie, CC BY 4.0, 원본 파일을 변경 없이 사용. 곡마다 크레딧이 `app/src/main/assets/music/CREDITS.txt`와 앱의 "데이터 출처" 화면에 있다. 이 크레딧이 작곡가의 보증을 뜻하지는 않는다.
+- **음악**: Chris Zabriskie, CC BY 4.0, 원본 파일을 변경 없이 사용. 곡마다 크레딧이 `app/src/main/assets/music/CREDITS.txt`와 앱의 "데이터 출처" 화면에 있다. 이 크레딧이 작곡가의 보증을 뜻하지는 않는다. 네 곡이 번들돼 있고 **데모 빌드는 이야기 사이에 "Prelude No. 1" 한 곡만** 쓴다(`BundledMusicCatalog.DEMO_TRACK_ASSET_ID`).
   - "Prelude No. 1" — 앨범 *Preludes* (2009)
   - "A New Day In a New Sector" — 앨범 *Music from Neptune Flux* (2016)
   - "The Temperature of the Air on the Bow of the Kaleetan" — 앨범 *Undercover Vampire Policeman* (2012)
   - "I Knew My Way Downtown and Walking Was Deluxe" — 앨범 *I Made This While You Were Asleep* (2020)
 - **지역 경계**: 국토지리정보원 연속수치지형도 행정경계(시군구), 브이월드 제공 — CC BY 2.0 KR. 화면용으로 단순화했다.
-- **이야기·창밖 안내**: 한국관광공사 TourAPI(공공누리 제1유형, 변경 금지인 제3유형 원문은 쓰지 않음)·Odii, 문화체육관광부·농촌진흥청·국토교통부·국사편찬위원회(공공누리 제1유형), 한국학중앙연구원 한국민족문화대백과사전(청계산 사실; 공공저작물, 사실만 새 문장으로 작성). 출처 행은 `app/src/main/assets/content/packs/seoul-daejeon.json`의 `sources`에 있다.
+- **이야기·창밖 안내**: 한국관광공사 TourAPI(공공누리 제1유형, 변경 금지인 제3유형 원문은 쓰지 않음)·Odii, 문화체육관광부·농촌진흥청·국토교통부·국사편찬위원회(공공누리 제1유형), 한국학중앙연구원 한국민족문화대백과사전(청계산 사실; 공공저작물, 사실만 새 문장으로 작성). 출처 행은 콘텐츠 팩(`app/src/main/assets/content/packs/cheonan-kaist.json`, `seoul-daejeon.json`)의 `sources`에 있다.
 - **지도**: NAVER 지도 (NAVER Maps SDK). 지도 키는 공개 식별자만 APK에 들어간다.
 - **코드 라이선스**: 추후 결정.
 
@@ -170,10 +225,15 @@ adb shell rm -r /data/local/tmp/petasos-demo                        # 읽은 뒤
 - **하단 바 아이콘 캐시**: 에뮬레이터 하단 바(CarSystemUI)가 패키지별 아이콘을 따로 캐시해서, 앱 아이콘을 바꾼 뒤에도 예전 모양이 남을 수 있다. 앱 목록·내비 위 버튼은 새 아이콘이다.
 - **서버 없이는 대화 불가**: AI 답변은 로컬 서버(OpenRouter)가 만든다. 서버가 없으면 이야기·음악·창밖 안내·내 여행은 그대로 되지만 질문에는 "지금은 답변 서버에 연결할 수 없어요."만 나온다.
 - **내비 경로 오류 창**: 에뮬레이터 네트워크가 내비 자체 서버에 닿지 않을 때 "경로 탐색 오류"가 뜬다. 닫으면 된다.
+- **에뮬레이터를 오래 켜 두면 차량 서비스가 죽는다**: 홈에 "차량 연결 상태를 확인하고 있어요"만 남고 **동행 시작**이 사라진다(로그 `car_service not ready`). 에뮬레이터를 재부팅하면 된다. 시연 전에는 새로 부팅해 두는 게 안전하다.
 - **음성 입력**: 호스트 마이크로 들어오는 소리가 작으면 인식이 안 된다. Pleos 음성 서비스가 인식 문장을 자체 로그에 남기는 플랫폼 이슈가 있으며 앱에서 제어할 수 없다.
 - **내 여행 첫 진입**: 지도 타일을 처음 받느라 3초가 넘으면 자체 지도(흰 바탕)로 대신 뜰 수 있다. 다음 진입부터는 네이버 지도다.
-- **데모 빌드 동작**: 가상(에뮬레이터) 위치를 허용하고, 이야기 사이 음악은 15초로 줄였으며, 동행 끝내기가 여정 종료다. 실차용 정책 검수는 하지 않았다.
-- **콘텐츠**: 이야기 10편(서울~대전 구간)과 창밖 안내 4곳뿐이다. 경로가 지나지 않는 동구 이야기는 대전 안에서 대체 선택된다. 모델 답변은 틀릴 수 있다.
+- **데모 빌드 동작**: 가상(에뮬레이터) 위치를 허용하고, 이야기 사이 음악은 **35초**로 줄여 한 곡만 쓰며(`Media3RuntimeMusic.DEMO_MUSIC_DURATION_MS`), 동행 끝내기가 여정 종료다. 실차용 정책 검수는 하지 않았다.
+- **음악 길이를 더 늘리면 이야기가 밀린다**: 음악 길이는 다음 이야기 시작 시각 계산에 그대로 들어간다. 45초로 올리면 지역을 벗어나기 전에 이야기가 들어갈 자리가 없어 그 지역 이야기가 통째로 빠진다. 반대로 "한 곡만 틀고 더 안 틀기"처럼 음악 제안을 **철회**하면 다음 이야기 시각을 계산할 근거가 없어져 재생이 아예 멈춘다. 둘 다 실제로 겪어 되돌렸다.
+- **콘텐츠**: 시연 경로(천안~대전)의 이야기 4편·창밖 안내 1곳과, 이전 서울~대전 경로의 이야기 10편·창밖 안내 4곳이 있다. 모델 답변은 틀릴 수 있다.
+- **질문 응답의 근거 범위**: 답변은 **끝까지 들은 문단**에 있는 사실만 근거로 쓴다. 이야기 도중에 물으면 아직 못 들은 내용은 답에 쓰이지 않는다. 서버의 `evidenceFile`이 기기에 설치된 팩과 다르면 어떤 질문에도 근거가 없어 답이 나오지 않는다.
+- **음악 전환 멘트**: 이야기 → 음악 전환에만 멘트가 붙는다(`strings.xml`의 `handoff_story_to_music`, 세 문장을 돌려 쓴다). 음악 → 이야기는 이야기 자체의 첫 문장이 이어받게 두었다. 곡이 시작하는 순간에 바로 말하면 에뮬레이터의 `CarAudioFocus`가 앱 자신의 포커스를 회수해 `FOCUS_LOST`로 재생이 멈추는 일이 있어, 전환 1.5초 뒤에 말하도록 미뤘다(`HANDOFF_DELAY_MS`).
+- **창밖 안내가 가끔 빠진다**: 안내는 말하던 문장이 끝난 뒤에 끼어든다. 그 사이 차가 랜드마크를 지나가 버리면 `window done DROPPED`로 조용히 취소된다(한 여정에 한 번뿐이라 다시 시도하지 않는다). 그래서 시연 시나리오는 한빛탑 구간 속도를 16 m/s로 낮추고 전후 구간을 800 m/400 m로 넓혀 두었다(`demo/scenarios/cheonan-kaist/scenario.json`의 `video`).
 - **GPX 재생**: Extended controls의 GPX 재생은 직접 재생해 확인하지 못했다. 검증된 경로는 `scripts/demo_route.py`이다.
 
 ## APK
@@ -199,7 +259,9 @@ macOS(Apple Silicon) 기준이다. Windows에서 다른 명령은 괄호로 적�
 | Pleos Connect 에뮬레이터 | 2.1.0 (Android 14 / API 34, ARM64) | [공식 설치 가이드](https://document.pleos.ai/docs/connect/guide/getting-started/application-development/setup-connect-sdk-emulator) |
 | Git | 2.x | `brew install git` |
 
-Pleos 에뮬레이터는 SDK Manager → SDK Update Sites에 `https://nexus-playground.pleos.ai/repository/raw-releases/connect-avd/2.x/crp-arm64-sys-img.xml`을 추가한 뒤, API 34의 Pleos Connect 이미지를 설치하고 AVD를 만든다(Automotive → Pleos Connect, RAM 4 GB, **Cold boot**). AVD 이름은 아래 명령과 같게 `Pleos_Connect_v2.1.0`으로 한다. Windows용 이미지 주소는 공식 가이드를 따른다. Pleos SDK(Maven)는 빌드가 `nexus-playground.pleos.ai`에서 받는다.
+Pleos 에뮬레이터는 SDK Manager → SDK Update Sites에 `https://nexus-playground.pleos.ai/repository/raw-releases/connect-avd/2.x/crp-arm64-sys-img.xml`을 추가한 뒤, API 34의 Pleos Connect 이미지를 설치하고 AVD를 만든다(Automotive → Pleos Connect, RAM 4 GB, **Cold boot**). AVD 이름은 아래 명령과 같게 `Pleos_Connect_v2.1.0`으로 한다.
+
+**기기 프로필을 꼭 `Pleos_Connect_v2_0`으로 고른다**(2560×1440, mdpi, 가로). 일반 Automotive 프로필(1024×768 등)로 만들면 Pleos UI가 깨져 보이고 앱 화면도 제대로 안 뜬다. 명령으로 만들 때는 `avdmanager create avd -d "Pleos_Connect_v2_0" ...`이고, `~/.android/avd/<이름>.avd/config.ini`에 `hw.initialOrientation=landscape`, `hw.ramSize=4096`, `hw.gpu.enabled=yes`, `disk.dataPartition.size=6442450944`가 있어야 한다. Windows용 이미지 주소는 공식 가이드를 따른다. Pleos SDK(Maven)는 빌드가 `nexus-playground.pleos.ai`에서 받는다.
 
 ### 순서
 
@@ -236,7 +298,7 @@ adb install --user 10 app/build/outputs/apk/debug/app-debug.apk
 adb shell appops set --user 10 com.petasos.app SYSTEM_ALERT_WINDOW allow
 adb shell pm grant --user 10 com.petasos.app android.permission.SYSTEM_ALERT_WINDOW
 adb emu avd hostmicon                                      # 호스트 마이크 입력(부팅할 때마다)
-adb emu geo fix 126.9698291 37.5547273                     # 출발 위치: 서울역
+adb emu geo fix 127.1489 36.8099                           # 출발 위치: 천안역 (시연 시나리오 cheonan-kaist)
 adb shell am start --user 10 -n com.petasos.app/.MainActivity
 ```
 
@@ -250,9 +312,9 @@ python3.11 -m venv .local/server-venv                      # (Windows: py -3.11 
 python3.11 server/provision-local.py --directory .local/server
 mkdir -p .local/content/bundles .local/content/evidence
 chmod 700 .local .local/content .local/content/bundles .local/content/evidence   # 근거 파일 출력 폴더는 소유자 전용이어야 한다
-cp app/src/main/assets/content/p0-stories-v2.json .local/content/bundles/ && chmod 600 .local/content/bundles/p0-stories-v2.json
-.local/server-venv/bin/python scripts/build-content-bundle.py --evidence-from-bundle .local/content/bundles/p0-stories-v2.json \
-  --allow-device-id local-development-device --output .local/content/evidence/demo.json
+cp app/src/main/assets/content/packs/cheonan-kaist.json .local/content/bundles/ && chmod 600 .local/content/bundles/cheonan-kaist.json
+PYTHONPATH=server .local/server-venv/bin/python scripts/build-content-bundle.py --evidence-from-bundle .local/content/bundles/cheonan-kaist.json \
+  --allow-device-id local-development-device --output .local/content/evidence/cheonan-kaist.json
 PYTHONPATH=server .local/server-venv/bin/python server/dev-local-https.py prepare      # (Windows: set PYTHONPATH=server 후 실행)
 git restore app/src/debug/res/raw/dev_local_generation_ca.pem                          # prepare가 덮어쓴 추적 파일은 커밋하지 않는다(서버 연결은 CA 파일 전달로 된다)
 # .local/server/config.json 의 evidenceFile(절대 경로)과 provider 를 채운 뒤:
@@ -263,8 +325,8 @@ adb reverse tcp:8443 tcp:8443                              # 에뮬레이터를 
 ```
 
 ```sh
-# 7) 데모 재생 — 에뮬레이터에서 동행 시작을 켠 뒤. 약 9분, Python 표준 라이브러리만 쓴다
-python3 scripts/demo_route.py --video                      # (Windows: py scripts\demo_route.py --video)
+# 7) 데모 재생 — 먼저 ./scripts/demo-reset.sh 를 돌리고, 앱에서 동행 시작 → 내비에서 안내 시작을 누른 뒤. 약 7분
+.local/server-venv/bin/python scripts/demo_route.py --scenario cheonan-kaist --video   # (Windows: py scripts\demo_route.py --scenario cheonan-kaist --video)
 ```
 
 **테스트**: `./gradlew :app:testDebugUnitTest`(앱), `PYTHONPATH=server .local/server-venv/bin/python -m unittest discover -s server/tests -t .`(서버).
@@ -290,32 +352,38 @@ release 서명은 `.local/android/release.keystore`와 `.local/android/release-s
 ```sh
 # 청취 이력 초기화 (재시연용)
 adb shell am broadcast --user 10 -f 0x20 -p com.petasos.app -a com.petasos.app.debug.RESET_LISTENING_HISTORY
-# 영상 프리셋: 지역당 대표 이야기 1편(S01·S03·S05·S08·S10)만 재생
+# 영상 프리셋: 지역당 대표 이야기 1편만 재생 (목록은 DemoVideoMode.REPRESENTATIVE_STORY_IDS)
 adb shell am broadcast --user 10 -f 0x20 -p com.petasos.app -a com.petasos.app.debug.SET_VIDEO_MODE --ez enabled true
 ```
+
+새 이야기를 팩에 넣고 영상 모드로 시연하려면 그 `storyId`를 `DemoVideoMode.REPRESENTATIVE_STORY_IDS`에도 넣어야 한다. 넣지 않으면 **아무 로그도 없이** 그 지역이 조용히 건너뛰어진다.
 
 서버 토큰·CA 전달은 위 "(선택) AI 대화용 로컬 서버" 절의 파일 방식이 debug/release 공통이다(debug에는 `PROVISION_SERVER` 브로드캐스트도 남아 있으며 `run-as`로 앱 cache에 둔 토큰을 읽는다). `-f 0x20 --user 10 -p <패키지>`는 강제 종료된 패키지에도 브로드캐스트를 전달하기 위해 필요하다. debug 로그는 `adb logcat -s PetasosTalk`로 본다(상태 전이, STT 인식, 답변 지연).
 
 ## 콘텐츠 팩
 
-앱의 이야기와 창밖 안내(랜드마크)는 콘텐츠 팩 `app/src/main/assets/content/packs/seoul-daejeon.json`이고 SHA-256이 `BundledStoryCatalog.SHA256`에 고정돼 있다. 구조와 만드는 방식은 `docs/CONTENT_PIPELINE.md`에 있다. 이야기 10편은 검토된 번들(`content/p0-stories-v2.json`, `scripts/build-content-bundle.py`로 만듦)을 그대로 옮긴 것이고, 랜드마크는 서버 도구가 만든다.
+앱이 쓰는 팩은 `BundledStoryCatalog.ASSET`/`SHA256` 한 쌍으로 고정된다. 지금은 `app/src/main/assets/content/packs/cheonan-kaist.json`(version 4, 이야기 12편·랜드마크 1곳)이고, 이전 경로의 `seoul-daejeon.json`도 asset에 남아 있다. 구조와 만드는 방식은 `docs/CONTENT_PIPELINE.md`에 있다.
 
 ```sh
-PYTHONPATH=server .local/server-venv/bin/python server/tools/build_pack.py --scenario seoul-daejeon --version 2 --install
+PYTHONPATH=server .local/server-venv/bin/python server/tools/build_pack.py --scenario cheonan-kaist --version 5 --install
 ```
 
-`demo/scenarios/seoul-daejeon/scenario.json`의 `landmarks.include`(허용 목록)·`notes`(intro 강조 메모)·`curatedSources`(변경 금지 원문 대체 출처)를 고친 뒤 다시 만들고, 검토표 `demo/packs/seoul-daejeon.review.md`를 읽어 확정한다. `--install`이 팩을 앱 asset으로 복사하면 출력되는 SHA-256을 `BundledStoryCatalog.SHA256`에 넣는다. 이미 설치된 (이야기, 버전)은 바뀔 수 없으므로 내용을 바꾸면 `version`을 올린다. TourAPI·OpenRouter 키가 필요하고 출처 응답은 `.local/content/cache`에 캐시된다.
+`demo/scenarios/cheonan-kaist/scenario.json`의 `landmarks.include`(허용 목록)·`notes`(intro 강조 메모)·`curatedSources`(변경 금지 원문 대체 출처)·`storyGroups`(지역 코드 묶음)·`videoStorySeconds`(지역에 머무는 시간)를 고친 뒤 다시 만들고, 검토표 `demo/packs/cheonan-kaist.review.md`를 읽어 확정한다. `--install`이 팩을 앱 asset으로 복사하면 출력되는 SHA-256을 `BundledStoryCatalog.SHA256`에 넣는다. 이미 설치된 (이야기, 버전)은 바뀔 수 없으므로 내용을 바꾸면 `version`을 올린다. TourAPI·OpenRouter 키가 필요하고 출처 응답은 `.local/content/cache`에 캐시된다.
+
+**팩을 바꾼 뒤 반드시 할 일** — ① `BundledStoryCatalog.SHA256` 갱신 ② 새 이야기의 `storyId`를 `DemoVideoMode.REPRESENTATIVE_STORY_IDS`에 추가 ③ 기기에서 `adb shell pm clear --user 10 com.petasos.app`(안 하면 새 이야기가 DB에 안 들어간다) ④ 서버 근거 파일을 새 팩에서 다시 만들기(위 "AI 대화용 로컬 서버" 3단계). 네 가지 중 하나라도 빠지면 그 지역이 조용히 건너뛰어지거나 질문에 답이 안 나온다.
 
 **이야기 프롬프트 고치고 비교하기** (`server/tools/story_lab.py`, 에뮬레이터 불필요, 서버 설정·OpenRouter 키 필요. 아래 `lab` = `PYTHONPATH=server .local/server-venv/bin/python server/tools/story_lab.py`)
 1. 고치기 전 결과를 만든다: `lab generate --prompt-version <지금 버전>`(지금 버전은 `server/prompts/story.md` 첫 줄, 결과는 `server/eval/out/<버전>/`, git 제외).
 2. `server/prompts/`의 `guide_persona.md`(말투)·`story.md`(구성)·`examples/`를 고치고, 세 곳 첫 줄의 version을 같은 새 값으로 올린다.
 3. `lab generate --prompt-version <새 버전>` → `lab compare --a <이전> --b <새>` → `server/eval/out/compare-<이전>-<새>.md`를 읽는다(지역 5곳 나란히, 검증 실패 사유 포함).
-4. 마음에 드는 이야기만 `lab approve --pack seoul-daejeon --story S01 --from <새 버전> --install`로 팩에 넣고, 출력된 SHA-256을 `BundledStoryCatalog.SHA256`에 넣는다(팩 version +1).
+4. 마음에 드는 이야기만 `lab approve --pack cheonan-kaist --story S01 --from <새 버전> --install`로 팩에 넣고, 출력된 SHA-256을 `BundledStoryCatalog.SHA256`에 넣는다(팩 version +1).
+5. `approve`는 **이미 있는 이야기를 고쳐 쓴다.** 없던 지역에 이야기를 새로 넣을 때는 `lab add`를 쓴다. 평가셋이 없는 지역은 먼저 `lab build-eval --region <코드>`로 만든다.
 
 ## 스크립트
 
-- `scripts/fetch-scenario-route.py`: 시나리오 경로를 서버의 네이버 길찾기로 1회 조회해 `route.json`으로 고정(이미 있으면 덮어쓰지 않음).
-- `scripts/demo_route.py`: GPS 재생. `--scenario`(기본 seoul-daejeon), `--video`(영상 프리셋 속도), `--gpx demo/scenarios/seoul-daejeon/route.gpx`(타임스탬프 GPX 내보내기), `--speed`, `--pause`.
+- `scripts/demo-reset.sh`: **시연 직전 준비 한 번에**(동행 정상 종료 → 기록 초기화 → 기기 DB와 팩 대조 → 출발 위치 → 볼륨 → 앱 시작 → 영상 모드). 인자로 시나리오 ID를 받는다(기본 `cheonan-kaist`). 위 "데모 시연" 참고.
+- `scripts/fetch-scenario-route.py`: 시나리오 경로를 서버의 네이버 길찾기로 1회 조회해 `route.json`으로 고정(이미 있으면 덮어쓰지 않음). `scenario.json`의 `waypoints`(천안→KAIST는 한빛탑)도 함께 넘긴다.
+- `scripts/demo_route.py`: GPS 재생. `--scenario`(기본 seoul-daejeon, 시연은 `cheonan-kaist`), `--video`(영상 프리셋 속도), `--gpx demo/scenarios/cheonan-kaist/route.gpx`(타임스탬프 GPX 내보내기), `--speed`, `--pause`.
 - `server/tools/build_pack.py`: 시나리오 경로 주변 장소를 모아 콘텐츠 팩과 랜드마크 검토표를 만든다.
 - `scripts/build-region-dataset.py`, `scripts/region-boundaries.py`: 시·군·구 경계 데이터 변환.
 - `server/provision-local.py`, `server/dev-local-https.py`: 로컬 서버 설정과 HTTPS 개발 서버.
@@ -326,7 +394,7 @@ PYTHONPATH=server .local/server-venv/bin/python server/tools/build_pack.py --sce
 - `app/src/main/java/com/petasos/app/playback/`: 이야기·말하기·복귀·음악 상태기계(`PlaybackCoordinator`).
 - `runtime/`: 직렬 효과 실행, 타이머, 자막(`CaptioningRuntimeSpeech`) 등 플랫폼 독립 포트.
 - `platform/`: Pleos TTS/STT·내비·위치 어댑터, 미디어 세션, 동행 서비스, `overlay/CompanionOverlay`, `runtime/PetasosSessionHost`(전체 조립).
-- `planning/`, `location/`, `music/`, `content/`: 지역 편성, 지역 판정, 창밖 안내 판단(`WindowLandmarks`), 음악, 콘텐츠 검증.
+- `planning/`, `location/`, `music/`, `content/`: 지역 편성, 지역 판정, 창밖 안내 판단(`WindowLandmarks`), 음악(`AutomaticMusicPlaybackBridge`가 다음 한 곡을 대기시킨다), 콘텐츠 검증. 내비 위 자막 켜고 끄기는 `planning/OverlayCaptionSetting`.
 - `generation/`: 서버 HTTPS 클라이언트와 `DemoServerSetup`(DEMO 서버 연결).
 - `storage/`: Room 스키마, 암호화 저장소, 기록·수집 증명.
 - `presentation/`: 홈·나의 기록 화면.

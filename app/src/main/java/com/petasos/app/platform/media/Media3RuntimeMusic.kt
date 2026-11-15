@@ -138,6 +138,18 @@ class Media3RuntimeMusic(context: Context) : RuntimeMusic {
             if (!permitted()) { stopSlot(slot); return }
             player.prepare()
             if (!permitted()) { stopSlot(slot); return }
+            if (holdOnStart) {
+                // DEMO: the story -> music hand-off line speaks first. The line is requested from the
+                // transition observer, which runs BEFORE this StartOutput effect, so holdForAnnouncement()
+                // would find no slot yet and the first seconds of the track would play under the line.
+                // Nothing is played and no focus is taken until holdForAnnouncement(false) releases it,
+                // which also keeps the track's focus request out of the announcement's own.
+                holdOnStart = false
+                slot.held = true
+                focus.close()
+                slot.focus = null
+                return
+            }
             if (!focus.acquire()) {
                 slot.callback(RuntimeMusicEvent.FocusLost)
                 stopSlot(slot)
@@ -157,6 +169,13 @@ class Media3RuntimeMusic(context: Context) : RuntimeMusic {
             stopSlot(slot)
         }
     }
+
+    /**
+     * DEMO: hold the NEXT track to start, before its player exists, for an announcement that is
+     * requested at the mode transition. Cleared by the matching holdForAnnouncement(false).
+     */
+    private var holdOnStart = false
+    fun holdNextStartForAnnouncement() { main.post { holdOnStart = true } }
 
     private fun createFocus(slot: Slot, player: ExoPlayer): AndroidOutputAudioFocus {
         return AndroidOutputAudioFocus(context, android.media.AudioAttributes.Builder()
@@ -192,6 +211,7 @@ class Media3RuntimeMusic(context: Context) : RuntimeMusic {
      */
     fun holdForAnnouncement(hold: Boolean) {
         main.post {
+            if (!hold) holdOnStart = false // Releasing also cancels a hold queued for a track that never started.
             val slot = current ?: return@post
             val player = slot.player ?: return@post
             if (slot.stopping || closed || slot.held == hold) return@post
@@ -307,6 +327,6 @@ class Media3RuntimeMusic(context: Context) : RuntimeMusic {
          * stalls story scheduling outright — the planner derives the next story boundary from the
          * offered duration. Change the story length or the pacing instead.
          */
-        const val DEMO_MUSIC_DURATION_MS = 15_000L
+        const val DEMO_MUSIC_DURATION_MS = 35_000L
     }
 }

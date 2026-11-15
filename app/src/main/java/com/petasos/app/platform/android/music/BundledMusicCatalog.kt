@@ -1,6 +1,7 @@
 package com.petasos.app.platform.android.music
 
 import android.content.Context
+import com.petasos.app.BuildConfig
 import com.petasos.app.music.LocalMusicCatalog
 import com.petasos.app.music.MusicCatalog
 import com.petasos.app.music.MusicCredit
@@ -35,7 +36,15 @@ class BundledMusicCatalog(context: Context, private val now: () -> Long = System
     /** Manifest order is deterministic; each candidate includes a complete current hash/rights check. */
     fun automaticCandidates(): List<AutomaticMusicCandidate> = try {
         val state = snapshot()
-        state.bundle.entries.mapNotNull { entry ->
+        // DEMO: one reviewed track separates every story, so the recording has a single recognizable
+        // interlude instead of four. The bridge re-offers a one-entry catalog after each natural
+        // completion (see AutomaticMusicPlaybackBridge), so this does not stall story scheduling the
+        // way withdrawing the offer would. Filtering by ID keeps the review/rights path untouched.
+        val entries = if (BuildConfig.DEMO) {
+            state.bundle.entries.filter { it.asset.assetId == DEMO_TRACK_ASSET_ID }
+                .ifEmpty { state.bundle.entries }
+        } else state.bundle.entries
+        entries.mapNotNull { entry ->
             try {
                 AutomaticMusicCandidate(state.local.prepare(entry.asset.assetId),
                     ReviewedMusicBundleCodec.sha256("${state.bundle.fingerprint}:${entry.asset.assetId}".toByteArray(Charsets.UTF_8)))
@@ -71,4 +80,9 @@ class BundledMusicCatalog(context: Context, private val now: () -> Long = System
 
     private inline fun <T> available(block: () -> T): T = try { block() }
         catch (_: Exception) { throw RuntimeContentUnavailable() }
+
+    companion object {
+        /** "Prelude No. 1" (CC BY 4.0, 68.5s) — the one interlude the demo recording uses. */
+        const val DEMO_TRACK_ASSET_ID = "music-chris-zabriskie-prelude-no-1"
+    }
 }

@@ -5,9 +5,11 @@ import com.petasos.app.BuildConfig
 import java.io.File
 
 /**
- * DEMO-only "video" preset: one representative story per region (S01·S03·S05·S08·S10) so the
- * whole Seoul -> Daejeon recording fits in about 4-5 minutes. Toggled by the debug receiver
- * (`SET_VIDEO_MODE`); persisted as a marker file so it survives an app restart.
+ * DEMO-only "video" preset: one representative story per region, so a recording stays short.
+ * The Cheonan -> KAIST demo plays four of these (Cheonan S08, Cheongju Heungdeok, Daejeon Daedeok,
+ * Daejeon Yuseong S10); the older Seoul -> Daejeon route's representatives are kept so that pack
+ * still records in 4-5 minutes. Toggled by the debug receiver (`SET_VIDEO_MODE`); persisted as a
+ * marker file so it survives an app restart.
  */
 object DemoVideoMode {
     private const val MARKER = "demo-video-mode"
