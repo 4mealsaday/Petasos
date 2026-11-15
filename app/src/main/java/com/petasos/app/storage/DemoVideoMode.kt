@@ -5,11 +5,16 @@ import com.petasos.app.BuildConfig
 import java.io.File
 
 /**
- * DEMO-only "video" preset: one representative story per region, so a recording stays short.
+ * DEMO-only "video" preset: one representative story per region, so a run stays short.
+ *
+ * The submitted release APK is the demo, and its reviewer has no debug receiver to switch this on,
+ * so release keeps it ALWAYS on: the drive then matches the scene-by-scene table in README.md
+ * exactly. Only debug honours the marker file, which the debug receiver (`SET_VIDEO_MODE`) writes
+ * and `scripts/demo-reset.sh` toggles; it survives an app restart.
+ *
  * The Cheonan -> KAIST demo plays four of these (Cheonan S08, Cheongju Heungdeok, Daejeon Daedeok,
- * Daejeon Yuseong S10); the older Seoul -> Daejeon route's representatives are kept so that pack
- * still records in 4-5 minutes. Toggled by the debug receiver (`SET_VIDEO_MODE`); persisted as a
- * marker file so it survives an app restart.
+ * Daejeon Yuseong S10). Without the preset Cheonan would add a second story bound to the parent
+ * region code. The older Seoul -> Daejeon route's representatives are kept for that pack.
  */
 object DemoVideoMode {
     private const val MARKER = "demo-video-mode"
@@ -27,7 +32,7 @@ object DemoVideoMode {
         private set
 
     fun load(context: Context) {
-        enabled = BuildConfig.DEMO && File(context.filesDir, MARKER).exists()
+        enabled = BuildConfig.DEMO && (!BuildConfig.DEBUG || File(context.filesDir, MARKER).exists())
     }
 
     fun set(context: Context, value: Boolean) {
