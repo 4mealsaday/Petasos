@@ -27,6 +27,7 @@ Petasos는 차량 내비게이션 위에서 **지금 지나는 지역의 이야�
 | --- | --- |
 | 앱 이름 | **Petasos** |
 | 한 줄 소개 | 지나는 지역의 이야기를 들려주는 Pleos 동행 앱 |
+| **시연 영상** | **https://youtu.be/nvoNckiXXgQ** |
 | APK | **`apk/Petasos_Petasos_release.apk`** (76.3 MiB). 저장소를 clone 하면 같이 받아집니다 |
 | APK 내려받기 | [Releases v1.0.0-demo](https://github.com/4mealsaday/Petasos/releases/tag/v1.0.0-demo) — 저장소의 파일과 같은 빌드입니다 |
 | 실행 방법 | 아래 "[설치와 실행](#설치와-실행)" → "[데모 시연](#데모-시연)" |
