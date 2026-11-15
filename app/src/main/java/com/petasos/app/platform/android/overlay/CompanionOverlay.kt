@@ -18,6 +18,7 @@ import android.widget.TextView
 import com.petasos.app.R
 import com.petasos.app.platform.android.runtime.PetasosSessionHost
 import com.petasos.app.platform.automotive.CarPolicySource
+import com.petasos.app.planning.OverlayCaptionSetting
 import com.petasos.app.playback.PlaybackMode
 import com.petasos.app.presentation.DesignScale
 import com.petasos.app.presentation.records.CurrentRegionLabel
@@ -101,11 +102,17 @@ class CompanionOverlay(serviceContext: Context, private val host: PetasosSession
         cardView = null
     }
 
-    /** Hidden and untouchable while Petasos itself is in front; shown again over navigation. */
+    /**
+     * Hidden and untouchable while Petasos itself is in front; shown again over navigation.
+     * The caption card is additionally hidden when the user turned "내비 위 자막" off, so the map
+     * stays clear while recording. The talk button is never hidden by that setting.
+     */
     private fun applyAppInFront() {
-        val hide = AppInFront.value
-        listOf(buttonView, cardView).forEach { view ->
+        val inFront = AppInFront.value
+        val captionsOff = !OverlayCaptionSetting.enabled(context)
+        listOf(buttonView to false, cardView to captionsOff).forEach { (view, alsoHide) ->
             view ?: return@forEach
+            val hide = inFront || alsoHide
             view.visibility = if (hide) View.GONE else View.VISIBLE
             val params = view.layoutParams as? WindowManager.LayoutParams ?: return@forEach
             params.flags = if (hide) params.flags or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE

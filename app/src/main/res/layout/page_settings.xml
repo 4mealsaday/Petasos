@@ -35,6 +35,15 @@
                         android:layout_width="wrap_content" android:layout_height="wrap_content" />
                 </LinearLayout>
                 <View style="@style/Widget.Petasos.Divider" android:layout_marginHorizontal="@dimen/space_32" />
+                <LinearLayout android:id="@+id/settings_row_caption" style="@style/Widget.Petasos.Row">
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                        <TextView style="@style/Text.Title" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/settings_caption" />
+                        <TextView style="@style/Text.Caption" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/settings_caption_desc" />
+                    </LinearLayout>
+                    <com.petasos.app.presentation.ToggleView android:id="@+id/settings_caption_switch"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                </LinearLayout>
+                <View style="@style/Widget.Petasos.Divider" android:layout_marginHorizontal="@dimen/space_32" />
                 <LinearLayout android:id="@+id/settings_row_interests" style="@style/Widget.Petasos.Row" android:clickable="true" android:focusable="true">
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                         <TextView style="@style/Text.Title" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/settings_interests" />

@@ -9,15 +9,18 @@
 # either. Run this before every demo drive.
 #
 # It does, in order:
-#   1. stops the app                      (so the reset is not racing playback)
-#   2. clears listening + collection history
-#   3. restores the scenario's origin     (adb emu geo fix)
-#   4. raises the car volume to maximum   (resets to 20/45 on every boot)
-#   5. re-enables video mode              (one representative story per region)
-#   6. starts the app
+#   1. ends an open trip through the UI   (a trip killed mid-music leaves a musicCheckpoint that
+#                                          keeps the next run in IDLE — see PlaybackLookahead)
+#   2. stops the app                      (so the reset is not racing playback)
+#   3. clears listening + collection history
+#   4. compares the device DB with the content pack (see the pm clear note below)
+#   5. restores the scenario's origin     (adb emu geo fix)
+#   6. raises the car volume to maximum   (resets to 20/45 on every boot)
+#   7. starts the app
+#   8. re-enables video mode              (one representative story per region)
 #
-# It does NOT re-provision the server token: that survives a reinstall. If answers fail
-# with "연결할 수 없어요", re-run the token steps in demo/seoul-daejeon-demo/01-실행절차.md.
+# It does NOT re-provision the server token: that survives a reinstall but NOT `pm clear`. If
+# answers fail with "연결할 수 없어요", re-run the token steps in README.md ("AI 대화용 로컬 서버" 6).
 set -eu
 
 SCENARIO="${1:-cheonan-kaist}"
@@ -61,6 +64,25 @@ LON=$(read_origin longitude)
 LAT=$(read_origin latitude)
 NAME=$(read_origin name)
 
+# Report whether a Petasos button with this label is on screen, without touching it.
+has_label() {
+    ADB="$ADB" python3 - "$1" <<'PY'
+import os, re, subprocess, sys
+adb = os.environ["ADB"]
+def sh(*a):
+    return subprocess.run([adb, *a], capture_output=True, text=True, timeout=60).stdout
+sh("shell", "uiautomator", "dump", "/sdcard/ui.xml")
+xml = sh("shell", "cat", "/sdcard/ui.xml")
+for m in re.finditer(r"<node[^>]*>", xml):
+    t = m.group(0)
+    text = (re.search(r'text="([^"]*)"', t) or [None, ""])[1]
+    pkg = (re.search(r'package="([^"]*)"', t) or [None, ""])[1]
+    if sys.argv[1] in text and "petasos" in pkg and 'clickable="true"' in t:
+        sys.exit(0)
+sys.exit(1)
+PY
+}
+
 # Tap a Petasos button by its label. Returns 0 when it was found and tapped.
 tap_label() {
     ADB="$ADB" python3 - "$1" <<'PY'
@@ -83,26 +105,42 @@ sys.exit(1)
 PY
 }
 
-echo "[1/7] 열려 있는 동행 정상 종료"
+echo "[1/8] 열려 있는 동행 정상 종료"
 # A trip killed mid-music leaves a musicCheckpoint, and PlaybackLookahead only bootstraps the
 # first story when `state.musicCheckpoint == null`. Force-stopping does NOT clear it, so an
 # unfinished trip makes every later run sit in IDLE with target=null and play nothing.
 "$ADB" shell am start --user "$USER_ID" -n "$PKG/.MainActivity" >/dev/null 2>&1
-sleep 4
-if tap_label "동행 끝내기"; then
-    echo "      '동행 끝내기' 눌렀음 (확인 한 번 더)"
-    sleep 4
-    tap_label "동행 끝내기" || true
+# Wait for the home controls to render. Right after `adb install` the first draw takes longer than
+# a fixed sleep, and a missed tap leaves the trip open -> the next drive plays nothing at all.
+ended=no
+i=0
+while [ "$i" -lt 8 ]; do
+    i=$((i + 1))
     sleep 3
-else
-    echo "      열린 동행 없음"
+    if has_label "동행 시작"; then
+        echo "      열린 동행 없음"
+        ended=yes
+        break
+    fi
+    if tap_label "동행 끝내기"; then
+        echo "      '동행 끝내기' 눌렀음 (확인 한 번 더)"
+        sleep 4
+        tap_label "동행 끝내기" || true
+        sleep 4
+        ended=yes
+        break
+    fi
+done
+if [ "$ended" = no ]; then
+    echo "      ⚠️  홈 화면을 읽지 못했습니다. 앱에서 직접 '동행 끝내기'를 누른 뒤 다시 실행하세요." >&2
+    echo "      ⚠️  열린 동행이 남으면 다음 주행은 아무 이야기도 재생하지 않습니다." >&2
 fi
 
-echo "[2/7] 앱 종료"
+echo "[2/8] 앱 종료"
 "$ADB" shell am force-stop --user "$USER_ID" "$PKG"
 sleep 2
 
-echo "[3/7] 청취·수집 기록 초기화"
+echo "[3/8] 청취·수집 기록 초기화"
 "$ADB" shell am broadcast --user "$USER_ID" -f 0x20 -p "$PKG" \
     -a com.petasos.app.debug.RESET_LISTENING_HISTORY >/dev/null
 sleep 3
@@ -114,19 +152,49 @@ fi
 "$ADB" shell am force-stop --user "$USER_ID" "$PKG"
 sleep 1
 
-echo "[4/7] 출발 위치 복귀: ${NAME:-origin} ($LON, $LAT)"
+echo "[4/8] 기기 DB와 팩 대조"
+# `adb install` keeps app data and the content installer never overwrites a pack that is already
+# installed, so new stories silently never reach the DB. Nothing is logged when that happens: the
+# region just plays no story. Compare the two and say so loudly.
+ADB="$ADB" PACK="$ROOT/app/src/main/assets/content/packs" python3 - <<'PY' || true
+import glob, json, os, sqlite3, subprocess, tempfile
+adb, packs = os.environ["ADB"], os.environ["PACK"]
+tmp = tempfile.mkdtemp()
+db = os.path.join(tmp, "petasos.db")
+for ext in ("", "-wal", "-shm"):
+    with open(db + ext, "wb") as f:
+        subprocess.run([adb, "shell", "run-as", "com.petasos.app", "--user", "10", "cat",
+                        f"/data/user/10/com.petasos.app/databases/petasos.db{ext}"],
+                       stdout=f, stderr=subprocess.DEVNULL, timeout=120)
+if not os.path.getsize(db):
+    print("      (DB 없음 — 앱이 아직 한 번도 안 떴습니다)")
+    raise SystemExit
+installed = {r[0] for r in sqlite3.connect(db).execute("select story_id from story")}
+expected = set()
+for path in glob.glob(os.path.join(packs, "*.json")):
+    expected |= {s["storyId"] for s in json.load(open(path))["stories"]}
+missing = expected - installed
+if missing:
+    print(f"      ⚠️  팩의 이야기 {len(missing)}편이 DB에 없습니다. 그 지역은 아무 소리 없이 건너뛰어집니다.")
+    print("      ⚠️  콘텐츠를 바꿨다면:  adb shell pm clear --user 10 com.petasos.app")
+    print("      ⚠️  그 뒤 권한·온보딩·서버 토큰을 다시 설정하세요 (01-실행절차.md 5·6장).")
+else:
+    print(f"      확인: 팩의 이야기 {len(expected)}편이 모두 DB에 있습니다")
+PY
+
+echo "[5/8] 출발 위치 복귀: ${NAME:-origin} ($LON, $LAT)"
 "$ADB" emu geo fix "$LON" "$LAT" >/dev/null
 
-echo "[5/7] 차량 볼륨 최대"
-"$ADB" shell 'for i in $(seq 1 30); do input keyevent 24; done'
+echo "[6/8] 차량 볼륨 최대"
+"$ADB" shell 'for i in $(seq 1 50); do input keyevent 24; done'
 "$ADB" shell dumpsys car_service --services CarAudioService 2>/dev/null \
     | grep -m1 "Gain indexes" | sed 's/^ */      /'
 
-echo "[6/7] 앱 시작"
+echo "[7/8] 앱 시작"
 "$ADB" shell am start --user "$USER_ID" -n "$PKG/.MainActivity" >/dev/null
 sleep 5
 
-echo "[7/7] 영상 모드 켜기"
+echo "[8/8] 영상 모드 켜기"
 "$ADB" shell am broadcast --user "$USER_ID" -f 0x20 -p "$PKG" \
     -a com.petasos.app.debug.SET_VIDEO_MODE --ez enabled true >/dev/null
 sleep 2
