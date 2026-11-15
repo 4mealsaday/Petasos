@@ -147,7 +147,8 @@ sleep 3
 if "$ADB" logcat -d -s DemoResetReceiver 2>/dev/null | tail -1 | grep -q "history reset$"; then
     echo "      확인: Demo listening history reset"
 else
-    echo "      ⚠️  초기화 확인 로그를 찾지 못했습니다. adb logcat -s DemoResetReceiver 로 확인하세요." >&2
+    # The receiver lives in src/debug, so the submitted build has nothing to receive this.
+    echo "      건너뜀 — 앱에서 ⚙ 설정 → '청취 기록 초기화'를 눌러 주세요 (한 번 더 누르면 삭제)"
 fi
 "$ADB" shell am force-stop --user "$USER_ID" "$PKG"
 sleep 1
@@ -167,7 +168,8 @@ for ext in ("", "-wal", "-shm"):
                         f"/data/user/10/com.petasos.app/databases/petasos.db{ext}"],
                        stdout=f, stderr=subprocess.DEVNULL, timeout=120)
 if not os.path.getsize(db):
-    print("      (DB 없음 — 앱이 아직 한 번도 안 떴습니다)")
+    # `run-as` only works on a debuggable build, so the submitted build cannot be read here.
+    print("      건너뜀 — 콘텐츠를 바꿨을 때만 필요한 확인입니다")
     raise SystemExit
 installed = {r[0] for r in sqlite3.connect(db).execute("select story_id from story")}
 expected = set()
@@ -205,5 +207,5 @@ cat <<EOF
 준비 완료. 이제 앱에서:
   1. 세션이 열려 있으면 '동행 끝내기' → '동행 시작'
   2. 내비 경로 선택 화면이 뜨면 '안내 시작'
-  3. 주행:  .local/server-venv/bin/python scripts/demo_route.py --scenario $SCENARIO --video
+  3. 주행:  python3 scripts/demo_route.py --scenario $SCENARIO --video
 EOF
