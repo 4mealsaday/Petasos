@@ -8,6 +8,7 @@ import android.widget.TextView
 import com.google.common.util.concurrent.ListenableFuture
 import com.petasos.app.BuildConfig
 import com.petasos.app.R
+import com.petasos.app.planning.OverlayCaptionSetting
 import com.petasos.app.planning.WindowGuideSetting
 import com.petasos.app.platform.android.location.LocationAccess
 import com.petasos.app.platform.android.runtime.PetasosSessionHost
@@ -25,6 +26,7 @@ class TripControls(private val activity: Activity) {
     var onInterestsSaved: ((Boolean) -> Unit)? = null
     private val locationSwitch = activity.findViewById<ToggleView>(R.id.settings_location_switch)
     private val windowSwitch = activity.findViewById<ToggleView>(R.id.settings_window_switch)
+    private val captionSwitch = activity.findViewById<ToggleView>(R.id.settings_caption_switch)
     private val permissionRow = activity.findViewById<View>(R.id.settings_location_permission_row)
     private val permission = activity.findViewById<Button>(R.id.settings_location_permission)
     private val notice = activity.findViewById<TextView>(R.id.settings_notice)
@@ -58,6 +60,12 @@ class TripControls(private val activity: Activity) {
         windowSwitch.setOnClickListener {
             windowSwitch.checked = !windowSwitch.checked
             WindowGuideSetting.set(activity, windowSwitch.checked)
+        }
+        // 내비 위 자막: hides only the caption card of the overlay, never the talk button.
+        captionSwitch.checked = OverlayCaptionSetting.enabled(activity)
+        captionSwitch.setOnClickListener {
+            captionSwitch.checked = !captionSwitch.checked
+            OverlayCaptionSetting.set(activity, captionSwitch.checked)
         }
         permission.setOnClickListener { requestPermission() }
         saveSettings.setOnClickListener { saveInterests() }

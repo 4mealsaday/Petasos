@@ -1,6 +1,7 @@
 package com.petasos.app.platform.android.runtime
 
 import android.Manifest
+import com.petasos.app.R
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Handler
@@ -602,6 +603,64 @@ class PetasosSessionHost(
     /** Memory-only last recognized question, for the overlay card's GENERATING line. */
     fun lastHeardText(): String? = speech?.lastHeard?.value
 
+    /**
+     * DEMO: a one-line hand-off at both ends of every story, so a story never cuts straight into a
+     * track and a track never cuts straight into a story.
+     *
+     * Spoken through the same interjection path the window announcements use, so it never touches
+     * playback scheduling.
+     *
+     * Order matters in both directions, and the observer runs BEFORE the transition's effects:
+     *  - story -> music: the track has not started yet, so [RuntimeMusic.holdNextStartForAnnouncement]
+     *    keeps it silent (and keeps its audio-focus request out of the announcement's own, which once
+     *    produced a permanent FOCUS_LOST) until `done` releases it. story | line | track.
+     *  - -> story: the speech layer is still free, so the line is spoken standalone and the story's
+     *    own output waits for it (see InterjectingRuntimeSpeech). track | line | story.
+     *
+     * Only a NEW story is introduced: a paragraph restarted after a pause or a question carries the
+     * same storyId and is not announced again.
+     */
+    private var lastHandoffIndex = -1
+    private var lastIntroIndex = -1
+    private var introducedStoryId: String? = null
+
+    private fun announceHandoff(previous: PlaybackMode?, transition: PlaybackTransition) {
+        if (!BuildConfig.DEMO) return
+        if (previous == PlaybackMode.STORY && transition.snapshot.mode == PlaybackMode.MUSIC) {
+            val player = music
+            player?.holdNextStartForAnnouncement()
+            lastHandoffIndex++
+            speakHandoff(R.array.handoff_story_to_music, lastHandoffIndex, PlaybackMode.MUSIC, "close") {
+                player?.holdForAnnouncement(false)
+            }
+            return
+        }
+        val started = transition.effects.filterIsInstance<PlaybackEffect.StartOutput>()
+            .mapNotNull { it.reference as? OutputReference.StoryParagraph }.lastOrNull() ?: return
+        if (started.storyId == introducedStoryId) return
+        introducedStoryId = started.storyId
+        lastIntroIndex++
+        speakHandoff(R.array.handoff_to_story, lastIntroIndex, PlaybackMode.STORY, "intro") {}
+    }
+
+    /** Reads one line of [lines] in order; [release] always runs, whether it was spoken or not. */
+    private fun speakHandoff(lines: Int, index: Int, expected: PlaybackMode, tag: String, release: () -> Unit) {
+        val speaker = window
+        val values = try { context.resources.getStringArray(lines) } catch (_: Exception) { emptyArray() }
+        if (speaker == null || values.isEmpty()) { release(); return }
+        val line = values[index.mod(values.size)]
+        speaker.interject(build = build@{
+            val state = latest
+            if (state == null || state.closed || !state.playIntent || state.interactionIntent ||
+                state.blockers.isNotEmpty() || state.mode != expected) return@build null
+            if (BuildConfig.DEBUG) android.util.Log.i("PetasosTalk", "handoff $tag speak")
+            InterjectingRuntimeSpeech.Interjection(RuntimeText(line), context.getString(R.string.overlay_label_handoff), line)
+        }, done = { outcome ->
+            release()
+            if (BuildConfig.DEBUG) android.util.Log.i("PetasosTalk", "handoff $tag done $outcome")
+        })
+    }
+
     private var talkStartedAt = 0L
     private fun logTalkTransition(previous: PlaybackMode?, transition: PlaybackTransition) {
         val state = transition.snapshot
@@ -856,6 +915,7 @@ class PetasosSessionHost(
                     val previousMode = latest?.mode
                     latest = transition.snapshot
                     if (BuildConfig.DEBUG) logTalkTransition(previousMode, transition)
+                    announceHandoff(previousMode, transition)
                     lookahead?.onTransition(transition, SystemClock.elapsedRealtime())
                     musicPlanning?.onTransition(transition)
                     // Preserve the selected permit while the exact automatic start is being prepared.
@@ -1558,5 +1618,6 @@ class PetasosSessionHost(
         private const val DEMO_FIRST_SPEECH_MS = 9_000L
         /** Story: at the next sentence end. Music: paused around it. Idle: on its own. Never during a conversation. */
         private val WINDOW_MODES = setOf(PlaybackMode.STORY, PlaybackMode.MUSIC, PlaybackMode.IDLE)
+
     }
 }

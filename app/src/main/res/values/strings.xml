@@ -88,6 +88,19 @@
     <string name="settings_location_desc">지나온 길과 지역을 기기에만 저장합니다</string>
     <string name="settings_window">창밖 안내</string>
     <string name="settings_window_desc">길가에서 보이는 장소를 짧게 안내합니다</string>
+    <string name="settings_caption">내비 위 자막</string>
+    <string name="settings_caption_desc">끄면 내비 화면을 가리지 않습니다. 말하기 버튼은 그대로입니다</string>
+    <string name="overlay_label_handoff">잠시 후</string>
+    <string-array name="handoff_to_story">
+        <item>이 지역 이야기 하나 들려드릴게요.</item>
+        <item>지금 지나는 곳 이야기를 들려드릴게요.</item>
+        <item>여기 이야기가 하나 있어요. 들려드릴게요.</item>
+    </string-array>
+    <string-array name="handoff_story_to_music">
+        <item>여기까지 듣고, 잠깐 음악 한 곡 틀어 드릴게요.</item>
+        <item>이야기는 여기까지예요. 음악 들으면서 조금 더 가 볼까요.</item>
+        <item>다음 이야기까지 음악 한 곡 놓고 갈게요.</item>
+    </string-array>
     <string name="settings_location_permission">위치 권한 허용</string>
     <string name="settings_location_permission_android">위치 권한 한 번 더 허용</string>
     <string name="settings_interests">관심사</string>

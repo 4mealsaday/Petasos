@@ -23,11 +23,23 @@
   "gpx": "route.gpx",
   "videoStorySeconds": 70,
   "storyGroups": {
-    "cheonan": ["44130", "44131", "44133"],
-    "heungdeok": ["43113"],
-    "seowon": ["43112"],
-    "daedeok": ["30230"],
-    "yuseong": ["30200"]
+    "cheonan": [
+      "44130",
+      "44131",
+      "44133"
+    ],
+    "heungdeok": [
+      "43113"
+    ],
+    "seowon": [
+      "43112"
+    ],
+    "daedeok": [
+      "30230"
+    ],
+    "yuseong": [
+      "30200"
+    ]
   },
   "video": {
     "storyTitles": [
@@ -37,9 +49,9 @@
     "landmarks": [
       "한빛탑"
     ],
-    "landmarkPassSpeedMps": 28,
-    "landmarkSlowBeforeM": 500,
-    "landmarkSlowAfterM": 150
+    "landmarkPassSpeedMps": 16,
+    "landmarkSlowBeforeM": 800,
+    "landmarkSlowAfterM": 400
   },
   "landmarks": {
     "include": [
